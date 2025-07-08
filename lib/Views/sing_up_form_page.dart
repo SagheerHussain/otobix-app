@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/sign_up_form_controller.dart';
+import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Widgets/button_widget.dart';
 
 class SingUpFormPage extends StatelessWidget {
   SingUpFormPage({super.key});
@@ -10,18 +12,62 @@ class SingUpFormPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up Form')),
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        title: const Text('Sign Up Form'),
+        automaticallyImplyLeading: false,
+        elevation: 4,
+        centerTitle: true,
+        backgroundColor: AppColors.white,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildLocationField(),
-            _buildDealershipNameField(),
-            _buildEntityTypeField(),
-            _buildPrimaryContactPersonField(),
-            _buildPrimaryMobileField(),
-            _buildSecondaryContactPersonField(),
-            _buildSecondaryMobileField(),
+            _buildLocationDropdown(),
+            _buildCustomTextField(
+              label: "Dealer Name",
+              controller: getxController.dealerNameController,
+              hintText: "e.g. Mukesh Kumar",
+              keyboardType: TextInputType.text,
+            ),
+            _buildCustomTextField(
+              label: "Dealer Email",
+              controller: getxController.dealerEmailController,
+              hintText: "e.g. mukeshkumar@gmail.com",
+              keyboardType: TextInputType.emailAddress,
+            ),
+            _buildCustomTextField(
+              label: "Dealership Name",
+              controller: getxController.dealershipNameController,
+              hintText: "e.g. Super Cars Pvt Ltd",
+              keyboardType: TextInputType.text,
+            ),
+            _buildEntityTypeDropdown(),
+            _buildCustomTextField(
+              label: "Primary Contact Person",
+              controller: getxController.primaryContactPersonController,
+              hintText: "e.g. Rajesh Kumar",
+              keyboardType: TextInputType.text,
+            ),
+            _buildCustomTextField(
+              label: "Primary Contact Mobile No.",
+              controller: getxController.primaryMobileController,
+              hintText: "e.g. 9876543210",
+              keyboardType: TextInputType.phone,
+            ),
+            _buildCustomTextField(
+              label: "Secondary Contact Person (Optional)",
+              controller: getxController.secondaryContactPersonController,
+              hintText: "e.g. Pawan Singh",
+              keyboardType: TextInputType.text,
+            ),
+            _buildCustomTextField(
+              label: "Secondary Contact Mobile No. (Optional)",
+              controller: getxController.secondaryMobileController,
+              hintText: "e.g. 9123456789",
+              keyboardType: TextInputType.phone,
+            ),
             _buildAddressFields(),
             const SizedBox(height: 20),
             _buildSubmitButton(),
@@ -31,175 +77,124 @@ class SingUpFormPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLocationField() {
+  Widget _buildLocationDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           "Location (State)",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: AppColors.gray,
+          ),
         ),
-        const SizedBox(height: 5),
+        // const SizedBox(height: 5),
         GetBuilder<SignUpFormController>(
           builder: (getxController) {
-            return DropdownButtonFormField<String>(
-              value: getxController.selectedState,
-              items:
-                  getxController.indianStates
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
-              onChanged: (val) {
-                getxController.selectedState = val;
-              },
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Select State",
+            return SizedBox(
+              height: 40,
+              child: DropdownButtonFormField<String>(
+                value: getxController.selectedState,
+                items:
+                    getxController.indianStates
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(
+                              e,
+                              style: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                onChanged: (val) {
+                  getxController.selectedState = val;
+                },
+                style: TextStyle(
+                  color: AppColors.gray.withValues(alpha: .5),
+                  fontSize: 12,
+                ),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  // border: OutlineInputBorder(),
+                  hintText: "Select State",
+                  hintStyle: TextStyle(
+                    color: AppColors.gray.withValues(alpha: .5),
+                    fontSize: 12,
+                  ),
+                  labelStyle: TextStyle(
+                    color: AppColors.gray.withValues(alpha: .5),
+                    fontSize: 12,
+                  ),
+                ),
               ),
             );
           },
         ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 30),
       ],
     );
   }
 
-  Widget _buildDealershipNameField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Dealership Name",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: getxController.dealershipNameController,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "e.g. Super Cars Pvt Ltd",
-          ),
-        ),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildEntityTypeField() {
+  Widget _buildEntityTypeDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           "Entity Type",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: AppColors.gray,
+          ),
         ),
-        const SizedBox(height: 5),
+        // const SizedBox(height: 5),
         GetBuilder<SignUpFormController>(
           builder: (getxController) {
-            return DropdownButtonFormField<String>(
-              value: getxController.selectedEntityType,
-              items:
-                  getxController.entityTypes
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
-              onChanged: (val) {
-                getxController.selectedEntityType = val;
-              },
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Select Entity Type",
+            return SizedBox(
+              height: 40,
+              child: DropdownButtonFormField<String>(
+                value: getxController.selectedEntityType,
+                items:
+                    getxController.entityTypes
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(
+                              e,
+                              style: TextStyle(
+                                color: AppColors.black,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                onChanged: (val) {
+                  getxController.selectedEntityType = val;
+                },
+                style: TextStyle(
+                  color: AppColors.gray.withValues(alpha: .5),
+                  fontSize: 12,
+                ),
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                  // border: const OutlineInputBorder(),
+                  hintText: "Select Entity Type",
+                  hintStyle: TextStyle(
+                    color: AppColors.gray.withValues(alpha: .5),
+                    fontSize: 12,
+                  ),
+                ),
               ),
             );
           },
         ),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildPrimaryContactPersonField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Primary Contact Person",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: getxController.primaryContactPersonController,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "e.g. Rajesh Kumar",
-          ),
-        ),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildPrimaryMobileField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Primary Contact Mobile No.",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: getxController.primaryMobileController,
-          keyboardType: TextInputType.phone,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "e.g. 9876543210",
-            prefixText: "+91 ",
-          ),
-        ),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildSecondaryContactPersonField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Secondary Contact Person (Optional)",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: getxController.secondaryContactPersonController,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "e.g. Pawan Singh",
-          ),
-        ),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildSecondaryMobileField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Secondary Contact Mobile No. (Optional)",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        TextField(
-          controller: getxController.secondaryMobileController,
-          keyboardType: TextInputType.phone,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "e.g. 9123456789",
-            prefixText: "+91 ",
-          ),
-        ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 30),
       ],
     );
   }
@@ -208,30 +203,50 @@ class SingUpFormPage extends StatelessWidget {
     return GetBuilder<SignUpFormController>(
       builder: (getxController) {
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Addresses",
-              style: TextStyle(fontWeight: FontWeight.bold),
+            Align(
+              alignment: Alignment.topLeft,
+              child: const Text(
+                "Addresses",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  color: AppColors.gray,
+                ),
+              ),
             ),
-            const SizedBox(height: 10),
+            // const SizedBox(height: 5),
             ...getxController.addressControllers.asMap().entries.map(
               (entry) => Padding(
                 padding: const EdgeInsets.only(bottom: 10.0),
                 child: Row(
                   children: [
                     Expanded(
-                      child: TextField(
-                        controller: entry.value,
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          hintText: "Enter Address ${entry.key + 1}",
+                      child: SizedBox(
+                        height: 40,
+                        child: TextField(
+                          controller: entry.value,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                            ),
+                            // border: const OutlineInputBorder(),
+                            hintText: "Enter Address ${entry.key + 1}",
+                            hintStyle: TextStyle(
+                              color: AppColors.gray.withValues(alpha: .5),
+                              fontSize: 12,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.red,
+                        size: 30,
+                      ),
                       onPressed: () {
                         getxController.removeAddressField(entry.key);
                       },
@@ -245,7 +260,10 @@ class SingUpFormPage extends StatelessWidget {
                 getxController.addAddressField();
               },
               icon: const Icon(Icons.add),
-              label: const Text("Add Another Address"),
+              label: const Text(
+                "Add Another Address",
+                style: TextStyle(fontSize: 15),
+              ),
             ),
           ],
         );
@@ -253,35 +271,55 @@ class SingUpFormPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSubmitButton() {
-    return ElevatedButton(
-      onPressed: () {
-        // Here you can handle submit logic
-        debugPrint("Selected State: ${getxController.selectedState}");
-        debugPrint(
-          "Dealership Name: ${getxController.dealershipNameController.text}",
-        );
-        debugPrint(
-          "Selected Entity Type: ${getxController.selectedEntityType}",
-        );
-        debugPrint(
-          "Primary Contact Person: ${getxController.primaryContactPersonController.text}",
-        );
-        debugPrint(
-          "Primary Mobile: ${getxController.primaryMobileController.text}",
-        );
-        debugPrint(
-          "Secondary Contact Person: ${getxController.secondaryContactPersonController.text}",
-        );
-        debugPrint(
-          "Secondary Mobile: ${getxController.secondaryMobileController.text}",
-        );
-        debugPrint(
-          "Addresses: ${getxController.addressControllers.map((e) => e.text).toList()}",
-        );
-        debugPrint("Form submitted!");
-      },
-      child: const Text("Submit"),
+  Widget _buildSubmitButton() => ButtonWidget(
+    text: 'Submit',
+    isLoading: getxController.isLoading,
+    onTap: () => getxController.dummySubmitForm(),
+    height: 40,
+    width: 150,
+    backgroundColor: AppColors.green,
+    textColor: AppColors.white,
+    loaderSize: 15,
+    loaderStrokeWidth: 1,
+    loaderColor: AppColors.white,
+  );
+
+  Widget _buildCustomTextField({
+    required String label,
+    required TextEditingController controller,
+    required String hintText,
+    required TextInputType keyboardType,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: AppColors.gray,
+          ),
+        ),
+        // const SizedBox(height: 5),
+        SizedBox(
+          height: 40,
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+              hintStyle: TextStyle(
+                color: AppColors.gray.withValues(alpha: .5),
+                fontSize: 12,
+              ),
+              // border: const OutlineInputBorder(),
+              hintText: hintText,
+            ),
+          ),
+        ),
+        const SizedBox(height: 30),
+      ],
     );
   }
 }
