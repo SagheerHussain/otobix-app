@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/sign_up_page.dart';
-import 'package:otobix/Views/sing_up_form_page.dart';
+import 'package:otobix/Views/register_page.dart';
 
 void main() {
   Get.config(enableLog: false);
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.green),
       ),
-      home: SignUpPage(),
+      home: RegisterPage(),
       // home: SingUpFormPage(),
     );
   }

@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/user_model.dart';
-import 'package:otobix/Views/pin_code_fields_page.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/waiting_for_approval_page.dart';
 
 class SignUpFormController extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Ensure at least one address exists
+    if (addressControllers.isEmpty) {
+      addressControllers.add(TextEditingController());
+    }
+  }
+
   RxBool isLoading = false.obs;
   String? selectedState;
   String? selectedEntityType;
@@ -33,44 +43,7 @@ class SignUpFormController extends GetxController {
     'One person Company',
   ];
 
-  List<String> indianStates = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Andaman and Nicobar Islands",
-    "Chandigarh",
-    "Dadra and Nagar Haveli",
-    "Delhi",
-    "Jammu and Kashmir",
-    "Ladakh",
-    "Lakshadweep",
-    "Puducherry",
-  ];
+  List<String> indianStates = AppConstants.indianStates;
 
   void addAddressField() {
     addressControllers.add(TextEditingController());

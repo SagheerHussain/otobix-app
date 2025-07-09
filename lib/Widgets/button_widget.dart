@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Utils/app_colors.dart';
 
 class ButtonWidget extends StatelessWidget {
   final String text;
@@ -23,12 +24,12 @@ class ButtonWidget extends StatelessWidget {
     this.height = 40,
     this.width = 150,
     this.borderRadius = 50,
-    this.backgroundColor = Colors.green,
-    this.textColor = Colors.white,
+    this.backgroundColor = AppColors.green,
+    this.textColor = AppColors.white,
     this.textStyle,
     this.loaderSize = 15,
     this.loaderStrokeWidth = 1,
-    this.loaderColor = Colors.white,
+    this.loaderColor = AppColors.white,
   });
 
   @override

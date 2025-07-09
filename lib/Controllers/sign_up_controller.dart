@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:otobix/Utils/app_urls.dart';
-import 'package:otobix/Views/pin_code_fields_page.dart';
+import 'package:otobix/Views/register_pin_code_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'dart:convert';
 
@@ -63,7 +63,7 @@ class SignUpController extends GetxController {
       if (response.statusCode == 200) {
         Get.to(
           // () => PinCodeFieldsPage(phoneNumber: "+91${phoneController.text}"),
-          () => PinCodeFieldsPage(phoneNumber: formattedPhoneNumber),
+          () => RegisterPinCodePage(phoneNumber: formattedPhoneNumber),
         );
         ToastWidget.show(
           context: Get.context!,
@@ -122,7 +122,7 @@ class SignUpController extends GetxController {
         return;
       }
       await Future.delayed(const Duration(seconds: 2), () {
-        Get.to(() => PinCodeFieldsPage(phoneNumber: "+92${phoneNumber}"));
+        Get.to(() => RegisterPinCodePage(phoneNumber: "+92${phoneNumber}"));
       });
     } catch (e) {
       debugPrint(e.toString());

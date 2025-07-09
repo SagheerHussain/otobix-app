@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Utils/app_urls.dart';
-import 'package:otobix/Views/sing_up_form_page.dart';
+import 'package:otobix/Views/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class PinCodeFieldsController extends GetxController {
+class LoginPinCodeController extends GetxController {
   // Send OTP
   Future<void> verifyOtp({
     required String phoneNumber,
@@ -19,7 +19,7 @@ class PinCodeFieldsController extends GetxController {
         body: jsonEncode({"phoneNumber": phoneNumber, "otp": otp}),
       );
       if (response.statusCode == 200) {
-        Get.to(() => SingUpFormPage());
+        Get.to(() => BottomNavigationPage());
         ToastWidget.show(
           context: Get.context!,
           message: "OTP Verified Successfully",

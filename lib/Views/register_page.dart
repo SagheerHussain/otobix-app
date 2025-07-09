@@ -4,12 +4,10 @@ import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/login_page.dart';
 import 'package:otobix/Controllers/sign_up_controller.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Views/pin_code_fields_page.dart';
 import 'package:otobix/Widgets/button_widget.dart';
-import 'package:otobix/Widgets/toast_widget.dart';
 
-class SignUpPage extends StatelessWidget {
-  SignUpPage({super.key});
+class RegisterPage extends StatelessWidget {
+  RegisterPage({super.key});
 
   final SignUpController getxController = Get.put(SignUpController());
   final TextEditingController phoneController = TextEditingController();
@@ -46,10 +44,10 @@ class SignUpPage extends StatelessWidget {
                       ),
                       SizedBox(width: 5),
                       InkWell(
-                        // onTap: () => Get.to(() => const LoginPage()),
+                        onTap: () => Get.to(() => LoginPage()),
                         borderRadius: BorderRadius.circular(50),
 
-                        onTap: () {},
+                        // onTap: () {},
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 3),
                           child: Text(
