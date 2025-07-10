@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Views/home_page.dart';
+import 'package:otobix/Views/Home%20Tab/Home/home_page.dart';
 
 class BottomNavigationController extends GetxController {
   RxInt currentIndex = 0.obs;

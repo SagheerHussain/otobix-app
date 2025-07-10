@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:otobix/Utils/app_urls.dart';
-import 'package:otobix/Views/register_pin_code_page.dart';
+import 'package:otobix/Views/Register/register_pin_code_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'dart:convert';
 
-class SignUpController extends GetxController {
+class RegisterController extends GetxController {
   RxBool isLoading = false.obs;
   RxString selectedRole = ''.obs;
 

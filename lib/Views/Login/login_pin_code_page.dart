@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/register_pin_code_controller.dart';
+import 'package:otobix/Controllers/Login/login_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
-import 'package:otobix/Views/registration_form_page.dart';
+import 'package:otobix/Views/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-class RegisterPinCodePage extends StatelessWidget {
+class LoginPinCodePage extends StatelessWidget {
   final String phoneNumber;
 
-  RegisterPinCodePage({super.key, required this.phoneNumber});
+  LoginPinCodePage({super.key, required this.phoneNumber});
 
-  final RegisterPinCodeController pinCodeFieldsController = Get.put(
-    RegisterPinCodeController(),
-  );
+  final LoginController pinCodeFieldsController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +113,7 @@ class RegisterPinCodePage extends StatelessWidget {
         message: "OTP Verified Successfully",
         type: ToastType.success,
       );
-      Get.to(() => RegistrationFormPage());
+      Get.to(() => BottomNavigationPage());
 
       // pinCodeFieldsController.verifyOtp(
       //   phoneNumber: phoneNumber,

@@ -3,5 +3,6 @@ class AppImages {
   static const String customerIcon = 'lib/assets/images/customer.png';
   static const String dealerIcon = 'lib/assets/images/dealer.png';
   static const String salesManagerIcon = 'lib/assets/images/salesManager.png';
-  static const String carImage = 'lib/assets/images/carAlternateImage.jpg';
+  static const String carAlternateImage =
+      'lib/assets/images/carAlternateImage.jpg';
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/sign_up_form_controller.dart';
+import 'package:otobix/Controllers/Register/registration_form_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_icons.dart';
 import 'package:otobix/Widgets/button_widget.dart';
@@ -10,7 +10,9 @@ import 'package:otobix/Widgets/dropdown_widget.dart';
 class RegistrationFormPage extends StatelessWidget {
   RegistrationFormPage({super.key});
 
-  final SignUpFormController getxController = Get.put(SignUpFormController());
+  final RegistrationFormController getxController = Get.put(
+    RegistrationFormController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +146,7 @@ class RegistrationFormPage extends StatelessWidget {
   }
 
   Widget _buildLocationDropdown() {
-    return GetBuilder<SignUpFormController>(
+    return GetBuilder<RegistrationFormController>(
       builder: (getxController) {
         return DropdownWidget(
           label: "Location (State)",
@@ -163,7 +165,7 @@ class RegistrationFormPage extends StatelessWidget {
   }
 
   Widget _buildEntityTypeDropdown(BuildContext context) {
-    return GetBuilder<SignUpFormController>(
+    return GetBuilder<RegistrationFormController>(
       builder: (getxController) {
         return DropdownWidget(
           label: "Entity Type",
@@ -466,7 +468,7 @@ class RegistrationFormPage extends StatelessWidget {
   // }
 
   Widget _buildAddressFields() {
-    return GetBuilder<SignUpFormController>(
+    return GetBuilder<RegistrationFormController>(
       builder: (getxController) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

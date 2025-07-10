@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Views/login_pin_code_page.dart';
+import 'package:otobix/Views/Login/login_pin_code_page.dart';
 
 class LoginController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool obsecureText = false.obs;
 
-  dummySendOtp(String phoneNumber) {
+  dummySendOtp(String phoneNumber) async {
+    isLoading.value = true;
     try {
-      isLoading.value = true;
-      Future.delayed(const Duration(seconds: 2), () {
+      await Future.delayed(const Duration(seconds: 2), () {
         Get.to(() => LoginPinCodePage(phoneNumber: phoneNumber));
       });
     } catch (e) {

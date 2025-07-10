@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
-import 'package:otobix/Views/login_page.dart';
-import 'package:otobix/Controllers/sign_up_controller.dart';
+import 'package:otobix/Views/Login/login_page.dart';
+import 'package:otobix/Controllers/Register/register_controller.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
 
-  final SignUpController getxController = Get.put(SignUpController());
+  final RegisterController getxController = Get.put(RegisterController());
   final TextEditingController phoneController = TextEditingController();
 
   @override
@@ -120,7 +120,7 @@ class RegisterPage extends StatelessWidget {
   Widget _buildRoleSelectionButton({
     required IconData icon,
     required String role,
-  }) => GetBuilder<SignUpController>(
+  }) => GetBuilder<RegisterController>(
     builder:
         (getxController) => InkWell(
           onTap: () => getxController.setSelectedRole(role),

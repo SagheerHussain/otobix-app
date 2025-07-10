@@ -8,6 +8,7 @@ class CarModel {
   final String fuelType;
   final String location;
   final bool isInspected;
+  final List<String>? imageUrls;
 
   CarModel({
     this.id,
@@ -19,6 +20,7 @@ class CarModel {
     required this.fuelType,
     required this.location,
     this.isInspected = false,
+    this.imageUrls,
   });
 
   // Factory constructor to create a Car from JSON map
@@ -36,6 +38,7 @@ class CarModel {
       fuelType: data['fuelType'] as String,
       location: data['location'] as String,
       isInspected: data['isInspected'] as bool? ?? false,
+      imageUrls: data['imageUrls'] as List<String>?,
     );
   }
 
@@ -50,6 +53,7 @@ class CarModel {
       'fuelType': fuelType,
       'location': location,
       'isInspected': isInspected,
+      'imageUrls': imageUrls,
     };
   }
 }

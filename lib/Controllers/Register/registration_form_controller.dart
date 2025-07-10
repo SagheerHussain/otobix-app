@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Models/user_model.dart';
+import 'package:otobix/Models/Login%20Register/user_model.dart';
 import 'package:otobix/Utils/app_constants.dart';
-import 'package:otobix/Views/waiting_for_approval_page.dart';
+import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 
-class SignUpFormController extends GetxController {
+class RegistrationFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();

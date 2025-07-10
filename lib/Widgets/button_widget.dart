@@ -15,6 +15,8 @@ class ButtonWidget extends StatelessWidget {
   final double loaderSize;
   final double loaderStrokeWidth;
   final Color loaderColor;
+  final double fontSize;
+  final double elevation;
 
   const ButtonWidget({
     super.key,
@@ -30,6 +32,8 @@ class ButtonWidget extends StatelessWidget {
     this.loaderSize = 15,
     this.loaderStrokeWidth = 1,
     this.loaderColor = AppColors.white,
+    this.fontSize = 15,
+    this.elevation = 0,
   });
 
   @override
@@ -38,33 +42,38 @@ class ButtonWidget extends StatelessWidget {
       onTap: isLoading.value ? null : onTap,
       borderRadius: BorderRadius.circular(borderRadius),
       child: Obx(
-        () => Container(
-          height: height,
-          width: width,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          child: Center(
-            child:
-                isLoading.value
-                    ? SizedBox(
-                      height: loaderSize,
-                      width: loaderSize,
-                      child: CircularProgressIndicator(
-                        color: loaderColor,
-                        strokeWidth: loaderStrokeWidth,
+        () => Material(
+          elevation: elevation,
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: Container(
+            height: height,
+            width: width,
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(borderRadius),
+            ),
+            child: Center(
+              child:
+                  isLoading.value
+                      ? SizedBox(
+                        height: loaderSize,
+                        width: loaderSize,
+                        child: CircularProgressIndicator(
+                          color: loaderColor,
+                          strokeWidth: loaderStrokeWidth,
+                        ),
+                      )
+                      : Text(
+                        text,
+                        style:
+                            textStyle ??
+                            TextStyle(
+                              color: textColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: fontSize,
+                            ),
                       ),
-                    )
-                    : Text(
-                      text,
-                      style:
-                          textStyle ??
-                          TextStyle(
-                            color: textColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
+            ),
           ),
         ),
       ),
