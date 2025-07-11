@@ -40,7 +40,7 @@ class CarImagesPage extends StatelessWidget {
         backgroundDecoration: const BoxDecoration(color: Colors.black),
         builder: (context, index) {
           return PhotoViewGalleryPageOptions(
-            imageProvider: NetworkImage(imageUrls[index]),
+            imageProvider: AssetImage(imageUrls[index]), //
             minScale: PhotoViewComputedScale.contained,
             maxScale: PhotoViewComputedScale.covered * 2,
             heroAttributes: PhotoViewHeroAttributes(

@@ -2,11 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/Home%20Tab/car_model.dart';
 import 'package:otobix/Utils/app_constants.dart';
+import 'package:otobix/Utils/app_images.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 class HomeController extends GetxController {
   TextEditingController searchController = TextEditingController();
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
+
+  // dummy add/remove cars to favorite
+  final RxList<CarModel> favorites = <CarModel>[].obs;
+  void changeFavoriteCars(CarModel car) {
+    car.isFavorite.value = !car.isFavorite.value;
+
+    if (car.isFavorite.value) {
+      favorites.add(car);
+      ToastWidget.show(
+        context: Get.context!,
+        message: 'Added to wishlist',
+        type: ToastType.success,
+      );
+    } else {
+      favorites.remove(car);
+      ToastWidget.show(
+        context: Get.context!,
+        message: 'Removed from wishlist',
+        type: ToastType.error,
+      );
+    }
+  }
 
   // single instance of ValueNotifier
   RxInt liveCarsCount = 23.obs;
@@ -65,8 +89,7 @@ class HomeController extends GetxController {
 
   final List<CarModel> cars = [
     CarModel(
-      imageUrl:
-          'https://www.financialexpress.com/wp-content/uploads/2024/09/Tata-Nexon-CNG.jpg',
+      imageUrl: AppImages.tataNexon1,
       name: 'Tata Nexon',
       price: 1200000,
       year: 2021,
@@ -75,14 +98,13 @@ class HomeController extends GetxController {
       location: 'Mumbai',
       isInspected: true,
       imageUrls: [
-        'https://www.financialexpress.com/wp-content/uploads/2024/09/Tata-Nexon-CNG.jpg',
-        'https://stimg.cardekho.com/images/carexteriorimages/630x420/Tata/Nexon/9675/1751559838445/front-left-side-47.jpg',
-        'https://img.autocarindia.com/ExtraImages/20240511115937_IMG_20240511_WA0003_01.jpeg',
+        AppImages.tataNexon1,
+        AppImages.tataNexon2,
+        AppImages.tataNexon3,
       ],
     ),
     CarModel(
-      imageUrl:
-          'https://cdn.pixabay.com/photo/2015/01/19/13/51/car-604019_1280.jpg',
+      imageUrl: AppImages.marutiSuzukiBaleno1,
       name: 'Maruti Suzuki Baleno',
       price: 850000,
       year: 2020,
@@ -90,13 +112,13 @@ class HomeController extends GetxController {
       fuelType: 'Petrol',
       location: 'Delhi',
       imageUrls: [
-        'https://cdn.pixabay.com/photo/2015/01/19/13/51/car-604019_1280.jpg',
-        'https://www.financialexpress.com/wp-content/uploads/2022/02/2022-Maruti-Suzuki-Baleno-Facelift-1-1.jpg',
+        AppImages.marutiSuzukiBaleno1,
+        AppImages.marutiSuzukiBaleno2,
+        AppImages.marutiSuzukiBaleno3,
       ],
     ),
     CarModel(
-      imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzrSIsq6KxwpSGmyHSxjxfcf8ziHI2F_8FLA&s',
+      imageUrl: AppImages.hyundaiCreta1,
       name: 'Hyundai Creta',
       price: 1600000,
       year: 2022,
@@ -105,13 +127,13 @@ class HomeController extends GetxController {
       location: 'Bengaluru',
       isInspected: true,
       imageUrls: [
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzrSIsq6KxwpSGmyHSxjxfcf8ziHI2F_8FLA&s',
-        'https://spn-sta.spinny.com/blog/20220228144639/Spinny-Assured-2021-Hyundai-Creta.jpg',
+        AppImages.hyundaiCreta1,
+        AppImages.hyundaiCreta2,
+        AppImages.hyundaiCreta3,
       ],
     ),
     CarModel(
-      imageUrl:
-          'https://imgd.aeplcdn.com/664x374/n/cw/ec/159231/swift-right-front-three-quarter.jpeg?isig=0&q=80',
+      imageUrl: AppImages.marutiSuzukiSwift1,
       name: 'Maruti Suzuki Swift',
       price: 700000,
       year: 2019,
@@ -119,10 +141,10 @@ class HomeController extends GetxController {
       fuelType: 'Petrol',
       location: 'Pune',
       isInspected: true,
+      imageUrls: [AppImages.marutiSuzukiSwift1],
     ),
     CarModel(
-      imageUrl:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvKMeQAUM9EKCh9MPoy9r3-BUVWd-9bS5l-w&s',
+      imageUrl: AppImages.mahindraThar1,
       name: 'Mahindra Thar',
       price: 1450000,
       year: 2021,
@@ -130,23 +152,23 @@ class HomeController extends GetxController {
       fuelType: 'Diesel',
       location: 'Chandigarh',
       imageUrls: [
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvKMeQAUM9EKCh9MPoy9r3-BUVWd-9bS5l-w&s',
-        'https://images.livemint.com/img/2020/10/02/1600x900/Thar_1601615282959_1601615288316.jpg',
+        AppImages.mahindraThar1,
+        AppImages.mahindraThar2,
+        AppImages.mahindraThar3,
       ],
     ),
     CarModel(
-      imageUrl:
-          'https://imgd.aeplcdn.com/664x374/n/cw/ec/139139/harrier-exterior-right-front-three-quarter-6.jpeg?isig=0&q=80',
+      imageUrl: AppImages.tataHarrier1,
       name: 'Tata Harrier',
       price: 1750000,
       year: 2022,
       kmDriven: 5000,
       fuelType: 'Diesel',
       location: 'Hyderabad',
+      imageUrls: [AppImages.tataHarrier1],
     ),
     CarModel(
-      imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg/960px-Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg',
+      imageUrl: AppImages.kiaSeltos1,
       name: 'Kia Seltos',
       price: 1400000,
       year: 2020,
@@ -155,23 +177,23 @@ class HomeController extends GetxController {
       location: 'Ahmedabad',
       isInspected: true,
       imageUrls: [
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg/960px-Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg',
-        'https://motorsactu.com/wp-content/uploads/2019/06/cropped-Kia-Seltos-2020-1280-01.jpg',
+        AppImages.kiaSeltos1,
+        AppImages.kiaSeltos2,
+        AppImages.kiaSeltos3,
       ],
     ),
     CarModel(
-      imageUrl:
-          'https://global.honda/content/dam/site/global-en/newsroom-new/cq_img/news/2019/11/dl/c191125_001H.jpg',
+      imageUrl: AppImages.hondaCity1,
       name: 'Honda City',
       price: 1100000,
       year: 2019,
       kmDriven: 35000,
       fuelType: 'Petrol',
       location: 'Kolkata',
+      imageUrls: [AppImages.hondaCity1],
     ),
     CarModel(
-      imageUrl:
-          'https://www.jeep.co.uk/content/dam/jeep/crossmarket/compass-my-25/mhev/06-defining-your-style/summit/figurines/JEEP-COMPASS-SUMMIT-MHEV-MY25-565x330-SOLID-BLACK-FIGURINE.png',
+      imageUrl: AppImages.jeepCompass1,
       name: 'Jeep Compass',
       price: 1850000,
       year: 2021,
@@ -179,9 +201,10 @@ class HomeController extends GetxController {
       fuelType: 'Diesel',
       location: 'Jaipur',
       isInspected: true,
+      imageUrls: [AppImages.jeepCompass1],
     ),
     CarModel(
-      imageUrl: 'https://i.cdn.newsbytesapp.com/images/l7320220416122307.jpeg',
+      imageUrl: AppImages.renaultKwid1,
       name: 'Renault Kwid',
       price: 450000,
       year: 2018,
@@ -189,6 +212,136 @@ class HomeController extends GetxController {
       fuelType: 'Petrol',
       location: 'Surat',
       isInspected: true,
+      imageUrls: [AppImages.renaultKwid1],
     ),
   ];
+
+  // final List<CarModel> cars = [
+  //   CarModel(
+  //     imageUrl:
+  //         'https://www.financialexpress.com/wp-content/uploads/2024/09/Tata-Nexon-CNG.jpg',
+  //     name: 'Tata Nexon',
+  //     price: 1200000,
+  //     year: 2021,
+  //     kmDriven: 15000,
+  //     fuelType: 'Petrol',
+  //     location: 'Mumbai',
+  //     isInspected: true,
+  //     imageUrls: [
+  //       'https://www.financialexpress.com/wp-content/uploads/2024/09/Tata-Nexon-CNG.jpg',
+  //       'https://stimg.cardekho.com/images/carexteriorimages/630x420/Tata/Nexon/9675/1751559838445/front-left-side-47.jpg',
+  //       'https://img.autocarindia.com/ExtraImages/20240511115937_IMG_20240511_WA0003_01.jpeg',
+  //     ],
+  //   ),
+  //   CarModel(
+  //     imageUrl:
+  //         'https://cdn.pixabay.com/photo/2015/01/19/13/51/car-604019_1280.jpg',
+  //     name: 'Maruti Suzuki Baleno',
+  //     price: 850000,
+  //     year: 2020,
+  //     kmDriven: 22000,
+  //     fuelType: 'Petrol',
+  //     location: 'Delhi',
+  //     imageUrls: [
+  //       'https://cdn.pixabay.com/photo/2015/01/19/13/51/car-604019_1280.jpg',
+  //       'https://www.financialexpress.com/wp-content/uploads/2022/02/2022-Maruti-Suzuki-Baleno-Facelift-1-1.jpg',
+  //     ],
+  //   ),
+  //   CarModel(
+  //     imageUrl:
+  //         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzrSIsq6KxwpSGmyHSxjxfcf8ziHI2F_8FLA&s',
+  //     name: 'Hyundai Creta',
+  //     price: 1600000,
+  //     year: 2022,
+  //     kmDriven: 8000,
+  //     fuelType: 'Diesel',
+  //     location: 'Bengaluru',
+  //     isInspected: true,
+  //     imageUrls: [
+  //       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzrSIsq6KxwpSGmyHSxjxfcf8ziHI2F_8FLA&s',
+  //       'https://spn-sta.spinny.com/blog/20220228144639/Spinny-Assured-2021-Hyundai-Creta.jpg',
+  //     ],
+  //   ),
+  //   CarModel(
+  //     imageUrl:
+  //         'https://imgd.aeplcdn.com/664x374/n/cw/ec/159231/swift-right-front-three-quarter.jpeg?isig=0&q=80',
+  //     name: 'Maruti Suzuki Swift',
+  //     price: 700000,
+  //     year: 2019,
+  //     kmDriven: 30000,
+  //     fuelType: 'Petrol',
+  //     location: 'Pune',
+  //     isInspected: true,
+  //   ),
+  //   CarModel(
+  //     imageUrl:
+  //         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvKMeQAUM9EKCh9MPoy9r3-BUVWd-9bS5l-w&s',
+  //     name: 'Mahindra Thar',
+  //     price: 1450000,
+  //     year: 2021,
+  //     kmDriven: 12000,
+  //     fuelType: 'Diesel',
+  //     location: 'Chandigarh',
+  //     imageUrls: [
+  //       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvKMeQAUM9EKCh9MPoy9r3-BUVWd-9bS5l-w&s',
+  //       'https://images.livemint.com/img/2020/10/02/1600x900/Thar_1601615282959_1601615288316.jpg',
+  //     ],
+  //   ),
+  //   CarModel(
+  //     imageUrl:
+  //         'https://imgd.aeplcdn.com/664x374/n/cw/ec/139139/harrier-exterior-right-front-three-quarter-6.jpeg?isig=0&q=80',
+  //     name: 'Tata Harrier',
+  //     price: 1750000,
+  //     year: 2022,
+  //     kmDriven: 5000,
+  //     fuelType: 'Diesel',
+  //     location: 'Hyderabad',
+  //   ),
+  //   CarModel(
+  //     imageUrl:
+  //         'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg/960px-Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg',
+  //     name: 'Kia Seltos',
+  //     price: 1400000,
+  //     year: 2020,
+  //     kmDriven: 18000,
+  //     fuelType: 'Petrol',
+  //     location: 'Ahmedabad',
+  //     isInspected: true,
+  //     imageUrls: [
+  //       'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg/960px-Kia_Seltos_SP2_PE_Snow_White_Pearl_%286%29_%28cropped%29.jpg',
+  //       'https://motorsactu.com/wp-content/uploads/2019/06/cropped-Kia-Seltos-2020-1280-01.jpg',
+  //     ],
+  //   ),
+  //   CarModel(
+  //     imageUrl:
+  //         'https://global.honda/content/dam/site/global-en/newsroom-new/cq_img/news/2019/11/dl/c191125_001H.jpg',
+  //     name: 'Honda City',
+  //     price: 1100000,
+  //     year: 2019,
+  //     kmDriven: 35000,
+  //     fuelType: 'Petrol',
+  //     location: 'Kolkata',
+  //   ),
+  //   CarModel(
+  //     imageUrl:
+  //         'https://www.jeep.co.uk/content/dam/jeep/crossmarket/compass-my-25/mhev/06-defining-your-style/summit/figurines/JEEP-COMPASS-SUMMIT-MHEV-MY25-565x330-SOLID-BLACK-FIGURINE.png',
+  //     name: 'Jeep Compass',
+  //     price: 1850000,
+  //     year: 2021,
+  //     kmDriven: 10000,
+  //     fuelType: 'Diesel',
+  //     location: 'Jaipur',
+  //     isInspected: true,
+  //   ),
+  //   CarModel(
+  //     imageUrl: 'https://i.cdn.newsbytesapp.com/images/l7320220416122307.jpeg',
+  //     name: 'Renault Kwid',
+  //     price: 450000,
+  //     year: 2018,
+  //     kmDriven: 42000,
+  //     fuelType: 'Petrol',
+  //     location: 'Surat',
+  //     isInspected: true,
+  //   ),
+  // ];
 }

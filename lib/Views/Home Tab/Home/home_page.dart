@@ -1,24 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_advanced_segment/flutter_advanced_segment.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/Home%20Tab/home_controller.dart';
+import 'package:otobix/Controllers/Widgets/tab_bar_buttons_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Home%20Tab/Home/live_bids_section.dart';
 import 'package:otobix/Views/Home%20Tab/Home/ocb_70_section.dart';
 import 'package:otobix/Widgets/button_widget.dart';
+import 'package:otobix/Widgets/tab_bar_buttons_widget.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final HomeController getxController = Get.put(HomeController());
+  final tabBarController = Get.put(TabBarButtonsController(tabLength: 2));
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.white,
-        body: Column(
+        body: Stack(
           children: [
+            // TabBar Screens
+            Padding(
+              padding: const EdgeInsets.only(top: 150, left: 15, right: 15),
+              child: TabBarView(
+                controller: tabBarController.tabController,
+                children: [LiveBidsSection(), Ocb70Section()],
+              ),
+            ),
+
             Material(
               elevation: 4,
               borderRadius: BorderRadius.only(
@@ -34,6 +45,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 20),
 
@@ -41,17 +53,27 @@ class HomePage extends StatelessWidget {
                     _buildSearchBar(context),
                     const SizedBox(height: 10),
 
-                    _buildChangeSegmentsButton(),
+                    // TabBar Buttons
+                    TabBarButtonsWidget(
+                      titles: ['Live', 'OCB 70'],
+                      counts: [getxController.liveCarsCount.value, 0],
+                      controller: tabBarController.tabController,
+                      selectedIndex: tabBarController.selectedIndex,
+                      titleSize: 11,
+                      countSize: 9,
+                      tabsHeight: 30,
+                      spaceFromSides: 15,
+                    ),
+
                     const SizedBox(height: 10),
 
+                    // Filter and Sort buttons
                     _buildFilterAndSortButtons(),
                     const SizedBox(height: 20),
                   ],
                 ),
               ),
             ),
-
-            _buildSegmentsScreens(),
           ],
         ),
       ),
@@ -125,32 +147,32 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildChangeSegmentsButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        // color: AppColors.gray.withValues(alpha: .1),
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: AdvancedSegment(
-        controller: getxController.selectedSegmentNotifier,
-        segments: getxController.segments,
-        activeStyle: const TextStyle(
-          color: AppColors.white,
-          fontWeight: FontWeight.bold,
-        ),
-        inactiveStyle: const TextStyle(color: AppColors.black),
-        backgroundColor: AppColors.gray.withValues(alpha: .1),
-        sliderDecoration: BoxDecoration(
-          color: AppColors.green,
-          borderRadius: BorderRadius.circular(50),
-        ),
-        borderRadius: BorderRadius.circular(50),
-      ),
-    );
-  }
+  // Widget _buildChangeSegmentsButton() {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  //     margin: const EdgeInsets.symmetric(horizontal: 16),
+  //     width: double.infinity,
+  //     decoration: BoxDecoration(
+  //       // color: AppColors.gray.withValues(alpha: .1),
+  //       borderRadius: BorderRadius.circular(50),
+  //     ),
+  //     child: AdvancedSegment(
+  //       controller: getxController.selectedSegmentNotifier,
+  //       segments: getxController.segments,
+  //       activeStyle: const TextStyle(
+  //         color: AppColors.white,
+  //         fontWeight: FontWeight.bold,
+  //       ),
+  //       inactiveStyle: const TextStyle(color: AppColors.black),
+  //       backgroundColor: AppColors.gray.withValues(alpha: .1),
+  //       sliderDecoration: BoxDecoration(
+  //         color: AppColors.green,
+  //         borderRadius: BorderRadius.circular(50),
+  //       ),
+  //       borderRadius: BorderRadius.circular(50),
+  //     ),
+  //   );
+  // }
 
   // Filter and Sort buttons
   Widget _buildFilterAndSortButtons() {
@@ -199,9 +221,20 @@ class HomePage extends StatelessWidget {
               ),
           child: Row(
             children: [
-              Text('Sort', style: const TextStyle(fontSize: 14)),
+              Text(
+                getxController.selectedSegment.value != 'live'
+                    ? 'Default'
+                    : 'Sort',
+                style: const TextStyle(fontSize: 14),
+              ),
               SizedBox(width: 5),
-              Icon(Icons.sort, size: 14, color: Colors.grey),
+              Icon(
+                getxController.selectedSegment.value != 'live'
+                    ? Icons.import_export
+                    : Icons.sort,
+                size: 14,
+                color: Colors.grey,
+              ),
             ],
           ),
         ),
@@ -209,25 +242,25 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Segments Screens
-  Widget _buildSegmentsScreens() {
-    return Expanded(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Obx(
-              () =>
-                  getxController.selectedSegment.value != 'live'
-                      ? Ocb70Section()
-                      : LiveBidsSection(),
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
-      ),
-    );
-  }
+  // // Segments Screens
+  // Widget _buildSegmentsScreens() {
+  //   return Expanded(
+  //     child: SingleChildScrollView(
+  //       padding: const EdgeInsets.all(16.0),
+  //       child: Column(
+  //         children: [
+  //           Obx(
+  //             () =>
+  //                 getxController.selectedSegment.value != 'live'
+  //                     ? Ocb70Section()
+  //                     : LiveBidsSection(),
+  //           ),
+  //           const SizedBox(height: 10),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // Filter Content
   Widget _buildFilterContent() {
@@ -359,6 +392,10 @@ class HomePage extends StatelessWidget {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Min (Lacs)',
+                                labelStyle: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.gray,
+                                ),
                                 isDense: true,
                                 contentPadding: EdgeInsets.symmetric(
                                   horizontal: 10,
@@ -392,6 +429,10 @@ class HomePage extends StatelessWidget {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Max (Lacs)',
+                                labelStyle: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.gray,
+                                ),
                                 isDense: true,
                                 contentPadding: EdgeInsets.symmetric(
                                   horizontal: 10,

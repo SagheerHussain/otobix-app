@@ -1,3 +1,5 @@
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+
 class CarModel {
   String? id;
   final String imageUrl;
@@ -9,6 +11,7 @@ class CarModel {
   final String location;
   final bool isInspected;
   final List<String>? imageUrls;
+  final RxBool isFavorite;
 
   CarModel({
     this.id,
@@ -21,7 +24,8 @@ class CarModel {
     required this.location,
     this.isInspected = false,
     this.imageUrls,
-  });
+    bool isFavorite = false,
+  }) : isFavorite = isFavorite.obs;
 
   // Factory constructor to create a Car from JSON map
   factory CarModel.fromJson({

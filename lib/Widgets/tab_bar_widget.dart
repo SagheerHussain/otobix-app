@@ -1,0 +1,124 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:otobix/Controllers/Widgets/tab_bar_widget_controller.dart';
+import 'package:otobix/Utils/app_colors.dart';
+
+class TabBarWidget extends StatelessWidget {
+  final List<String> titles;
+  final List<int> counts;
+  final List<Widget> screens;
+  final double titleSize;
+  final double countSize;
+  final double tabsHeight;
+  final double spaceFromSides;
+
+  const TabBarWidget({
+    super.key,
+    required this.titles,
+    required this.counts,
+    required this.screens,
+    this.titleSize = 12,
+    this.countSize = 10,
+    this.tabsHeight = 35,
+    this.spaceFromSides = 15,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tabController = Get.put(
+      TabBarWidgetController(tabLength: titles.length),
+    );
+
+    return Obx(
+      () => Column(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(50)),
+            child: Container(
+              height: tabsHeight,
+              margin: EdgeInsets.symmetric(horizontal: spaceFromSides),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(50)),
+                color: AppColors.gray.withValues(alpha: .2),
+              ),
+              child: TabBar(
+                controller: tabController.tabController,
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                indicator: const BoxDecoration(
+                  color: AppColors.green,
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                ),
+                tabs: List.generate(
+                  titles.length,
+                  (index) => TabItem(
+                    title: titles[index],
+                    count: counts[index],
+                    selected: tabController.selectedIndex.value == index,
+                    titleSize: titleSize,
+                    countSize: countSize,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: TabBarView(
+              controller: tabController.tabController,
+              children: screens,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TabItem extends StatelessWidget {
+  final String title;
+  final int count;
+  final bool selected;
+  final double titleSize;
+  final double countSize;
+
+  const TabItem({
+    super.key,
+    required this.title,
+    required this.count,
+    required this.selected,
+    this.titleSize = 12,
+    this.countSize = 10,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final titleColor = selected ? AppColors.white : AppColors.black;
+    final badgeBg =
+        selected ? AppColors.blue : AppColors.gray.withValues(alpha: .5);
+    final badgeTextColor = selected ? AppColors.white : AppColors.black;
+
+    return Tab(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: titleSize, color: titleColor),
+          ),
+          if (count > 0)
+            Container(
+              margin: const EdgeInsetsDirectional.only(start: 5),
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(color: badgeBg, shape: BoxShape.circle),
+              child: Text(
+                count > 99 ? '99+' : count.toString(),
+                style: TextStyle(color: badgeTextColor, fontSize: countSize),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

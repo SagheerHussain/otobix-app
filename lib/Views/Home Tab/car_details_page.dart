@@ -108,7 +108,7 @@ class CarDetailsPage extends StatelessWidget {
               onPageChanged: (index) => getxController.updateIndex(index),
               builder: (context, index) {
                 return PhotoViewGalleryPageOptions(
-                  imageProvider: NetworkImage(imageUrls[index]),
+                  imageProvider: AssetImage(imageUrls[index]), //
                   minScale: PhotoViewComputedScale.contained,
                   maxScale: PhotoViewComputedScale.covered * 2,
 
@@ -459,7 +459,6 @@ class CarDetailsPage extends StatelessWidget {
               text: TextSpan(
                 text: '$title: ',
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold,
                   fontSize: 10,
                   color: AppColors.black,
                 ),
@@ -468,7 +467,6 @@ class CarDetailsPage extends StatelessWidget {
                     text: value,
                     style: const TextStyle(
                       fontSize: 10,
-                      color: AppColors.black,
                     ),
                   ),
                 ],
@@ -554,53 +552,53 @@ class CarDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBidButton1(CarDetailsController getxController) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.gray.withValues(alpha: .5),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      child: Column(
-        children: [
-          Obx(
-            () => Text(
-              getxController.remainingTime.value,
-              style: const TextStyle(
-                fontSize: 12,
-                color: AppColors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+  // Widget _buildBidButton1(CarDetailsController getxController) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  //     decoration: BoxDecoration(
+  //       color: AppColors.gray.withValues(alpha: .5),
+  //       borderRadius: BorderRadius.only(
+  //         topLeft: Radius.circular(20),
+  //         topRight: Radius.circular(20),
+  //       ),
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         Obx(
+  //           () => Text(
+  //             getxController.remainingTime.value,
+  //             style: const TextStyle(
+  //               fontSize: 12,
+  //               color: AppColors.red,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //         ),
 
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ButtonWidget(
-                text: 'Place Bid',
-                onTap: () {},
-                isLoading: getxController.isLoading,
-                height: 30,
-                fontSize: 10,
-              ),
-              ButtonWidget(
-                text: 'Start Auto Bid',
-                onTap: () {},
-                isLoading: getxController.isLoading,
-                height: 30,
-                fontSize: 10,
-                backgroundColor: AppColors.blue,
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-        ],
-      ),
-    );
-  }
+  //         const SizedBox(height: 20),
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             ButtonWidget(
+  //               text: 'Place Bid',
+  //               onTap: () {},
+  //               isLoading: getxController.isLoading,
+  //               height: 30,
+  //               fontSize: 10,
+  //             ),
+  //             ButtonWidget(
+  //               text: 'Start Auto Bid',
+  //               onTap: () {},
+  //               isLoading: getxController.isLoading,
+  //               height: 30,
+  //               fontSize: 10,
+  //               backgroundColor: AppColors.blue,
+  //             ),
+  //           ],
+  //         ),
+  //         const SizedBox(height: 10),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
