@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
       //     ],
       //   ),
       // ),
-      home: BottomNavigationPage(),
+      home: RegisterPage(),
     );
   }
 }

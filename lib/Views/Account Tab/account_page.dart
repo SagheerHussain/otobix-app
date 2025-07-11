@@ -11,7 +11,6 @@ class AccountPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
