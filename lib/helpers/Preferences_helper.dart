@@ -1,6 +1,10 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefsHelper {
+  static const String tokenKey = 'token';
+  static const String userTypeKey = 'userType';
+  static const String userKey = 'user';
+
   static SharedPreferences? _prefs;
 
   /// Call this once at app start (like in main())

@@ -30,7 +30,14 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
       ),
-      // home: CarDetailsPage(
+
+      home: SplashScreen(),
+    );
+  }
+}
+
+
+  // home: CarDetailsPage(
       //   car: CarModel(
       //     imageUrl:
       //         'https://imgcdn.oto.com/large/gallery/exterior/15/1968/hyundai-creta-front-cross-side-view-356951.jpg',
@@ -48,7 +55,3 @@ class MyApp extends StatelessWidget {
       //     ],
       //   ),
       // ),
-      home: SplashScreen(),
-    );
-  }
-}

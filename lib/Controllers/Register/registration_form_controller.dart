@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:otobix/Models/Login Register/user_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
+import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
@@ -41,11 +42,15 @@ class RegistrationFormController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController dealerNameController = TextEditingController();
   final TextEditingController dealerEmailController = TextEditingController();
-  final TextEditingController dealershipNameController = TextEditingController();
-  final TextEditingController primaryContactPersonController = TextEditingController();
+  final TextEditingController dealershipNameController =
+      TextEditingController();
+  final TextEditingController primaryContactPersonController =
+      TextEditingController();
   final TextEditingController primaryMobileController = TextEditingController();
-  final TextEditingController secondaryContactPersonController = TextEditingController();
-  final TextEditingController secondaryMobileController = TextEditingController();
+  final TextEditingController secondaryContactPersonController =
+      TextEditingController();
+  final TextEditingController secondaryMobileController =
+      TextEditingController();
 
   List<TextEditingController> addressControllers = [];
 
@@ -53,9 +58,12 @@ class RegistrationFormController extends GetxController {
     if (query.isEmpty) {
       filteredStates = List.from(indianStates);
     } else {
-      filteredStates = indianStates
-          .where((state) => state.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      filteredStates =
+          indianStates
+              .where(
+                (state) => state.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
     }
     update();
   }
@@ -176,20 +184,25 @@ class RegistrationFormController extends GetxController {
         primaryContactNumber: primaryMobileController.text,
         password: passwordController.text,
         contactNumber: contactNumber,
-        secondaryContactPerson: secondaryContactPersonController.text.isEmpty
-
-            ? null
-            : secondaryContactPersonController.text,
-        secondaryContactNumber: secondaryMobileController.text.isEmpty
-            ? null
-            : secondaryMobileController.text,
-        addressList: addressControllers.map((e) => e.text).toList(), id: '', approvalStatus: 'Pending', createdAt: DateTime.now(), updatedAt: DateTime.now(),
+        secondaryContactPerson:
+            secondaryContactPersonController.text.isEmpty
+                ? null
+                : secondaryContactPersonController.text,
+        secondaryContactNumber:
+            secondaryMobileController.text.isEmpty
+                ? null
+                : secondaryMobileController.text,
+        addressList: addressControllers.map((e) => e.text).toList(),
+        id: '',
+        approvalStatus: 'Pending',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       debugPrint("Sending payload → ${userModel.toJson()}");
 
       final response = await ApiService.post(
-        endpoint: "user/register",
+        endpoint: AppUrls.register,
         body: userModel.toJson(),
       );
 
@@ -202,9 +215,7 @@ class RegistrationFormController extends GetxController {
           message: "registered successfully!",
           type: ToastType.success,
         );
-        Get.to(
-          () =>LoginPage(),
-        );
+        Get.to(() => LoginPage());
       } else {
         ToastWidget.show(
           context: Get.context!,
@@ -215,6 +226,11 @@ class RegistrationFormController extends GetxController {
     } catch (e, stacktrace) {
       debugPrint("Error → $e");
       debugPrint("Stacktrace → $stacktrace");
+      ToastWidget.show(
+        context: Get.context!,
+        message: e.toString(),
+        type: ToastType.error,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -226,7 +242,8 @@ class RegistrationFormController extends GetxController {
       await Future.delayed(const Duration(seconds: 2));
       Get.to(
         () => WaitingForApprovalPage(
-          documents: entityDocuments[selectedEntityType ?? 'Individual'] ??
+          documents:
+              entityDocuments[selectedEntityType ?? 'Individual'] ??
               entityDocuments['Individual']!,
         ),
       );

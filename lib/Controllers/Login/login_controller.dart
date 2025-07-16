@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Views/bottom_navigation_page.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/admin_home.dart';
 import 'package:otobix/admin/rejected_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
@@ -72,113 +74,119 @@ class LoginController extends GetxController {
       'Cancelled Cheque',
     ],
   };
-  
- Future<void> loginUser() async {
-  isLoading.value = true;
 
-  try {
-    String dealerName = dealerNameController.text.trim();
-    String contactNumber = phoneNumberController.text.trim();
-    final requestBody = {
-      "dealerName": dealerName,
-      "contactNumber": contactNumber,
-      "password": passwordController.text.trim(),
-    };
-    print("Sending body: $requestBody");
-    final response = await ApiService.post(
-      endpoint: "user/login",
-      body: requestBody,
-    );
+  Future<void> loginUser() async {
+    isLoading.value = true;
 
-    final data = jsonDecode(response.body);
-
-    if (response.statusCode == 200) {
-      final token = data['token'];
-      final user = data['user'];
-      final userType = user['userType'];
-      final approvalStatus = user['approvalStatus'];
-
-      print("userType: $userType");
-      print("token: $token");
-      print("approvalStatus: $approvalStatus");
-
-      await SharedPrefsHelper.saveString('token', token);
-      await SharedPrefsHelper.saveString('user', jsonEncode(user));
-      await SharedPrefsHelper.saveString('userType', userType);
-
-      if (userType == 'admin') {
-        Get.to(() => AdminHome());
-      } else {
-        if (approvalStatus == 'Pending') {        
- Get.to(
-        () => WaitingForApprovalPage(
-          documents:
-              entityDocuments[selectedEntityType ?? 'Individual'] ??
-              entityDocuments['Individual']!,
-        ),
-      );        } else if (approvalStatus == 'Approved') {
-          Get.to(() => BottomNavigationPage());
-        } else if (approvalStatus == 'Rejected') {
-         Get.to(() => RejectedScreen(userId: user['id']));
-        } else {
-          Get.snackbar(
-            "Unknown Status",
-            "Invalid approval status. Please contact admin.",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red.shade100,
-          );
-        }
-      }
-    } else {
-      print("data: $data");
-      Get.snackbar(
-        "Login Failed",
-        data['message'] ?? "Invalid credentials",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade100,
+    try {
+      String dealerName = dealerNameController.text.trim();
+      String contactNumber = phoneNumberController.text.trim();
+      final requestBody = {
+        "dealerName": dealerName,
+        "contactNumber": contactNumber,
+        "password": passwordController.text.trim(),
+      };
+      print("Sending body: $requestBody");
+      final response = await ApiService.post(
+        endpoint: AppUrls.login,
+        body: requestBody,
       );
+
+      final data = jsonDecode(response.body);
+      print("Status Code: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final token = data['token'];
+        final user = data['user'];
+        final userType = user['userType'];
+        final approvalStatus = user['approvalStatus'];
+
+        print("userType: $userType");
+        print("token: $token");
+        print("approvalStatus: $approvalStatus");
+
+        await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
+        await SharedPrefsHelper.saveString(
+          SharedPrefsHelper.userKey,
+          jsonEncode(user),
+        );
+        await SharedPrefsHelper.saveString(
+          SharedPrefsHelper.userTypeKey,
+          userType,
+        );
+
+        if (userType == 'admin') {
+          Get.to(() => AdminHome());
+        } else {
+          if (approvalStatus == 'Pending') {
+            Get.to(
+              () => WaitingForApprovalPage(
+                documents:
+                    entityDocuments[selectedEntityType ?? 'Individual'] ??
+                    entityDocuments['Individual']!,
+              ),
+            );
+          } else if (approvalStatus == 'Approved') {
+            Get.to(() => BottomNavigationPage());
+          } else if (approvalStatus == 'Rejected') {
+            Get.to(() => RejectedScreen(userId: user['id']));
+          } else {
+            ToastWidget.show(
+              context: Get.context!,
+              message: "Invalid approval status. Please contact admin.",
+              type: ToastType.error,
+            );
+          }
+        }
+      } else {
+        print("data: $data");
+        ToastWidget.show(
+          context: Get.context!,
+          message: data['message'] ?? "Invalid credentials",
+          type: ToastType.error,
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+      ToastWidget.show(
+        context: Get.context!,
+        message: e.toString(),
+        type: ToastType.error,
+      );
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    print("Error: $e");
-    Get.snackbar(
-      "Error",
-      e.toString(),
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red.shade100,
-    );
-  } finally {
-    isLoading.value = false;
   }
-}
 
   String? validatePassword(String password) {
     if (password.isEmpty) return "Password is required.";
-    if (password.length < 8) return "Password must be at least 8 characters long.";
-    if (!RegExp(r'[A-Z]').hasMatch(password)) return "At least one uppercase letter required.";
-    if (!RegExp(r'[a-z]').hasMatch(password)) return "At least one lowercase letter required.";
+    if (password.length < 8)
+      return "Password must be at least 8 characters long.";
+    if (!RegExp(r'[A-Z]').hasMatch(password))
+      return "At least one uppercase letter required.";
+    if (!RegExp(r'[a-z]').hasMatch(password))
+      return "At least one lowercase letter required.";
     if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-]').hasMatch(password)) {
       return "At least one special character required.";
     }
     return null;
   }
 
-Future<void> logout() async {
-  try {
-    await ApiService.post(endpoint: "user/logout", body: {});
-    await SharedPrefsHelper.remove('token');
-    await SharedPrefsHelper.remove('user');
-    await SharedPrefsHelper.remove('userType');
+  Future<void> logout() async {
+    try {
+      await ApiService.post(endpoint: "user/logout/", body: {});
+      await SharedPrefsHelper.remove(SharedPrefsHelper.tokenKey);
+      await SharedPrefsHelper.remove(SharedPrefsHelper.userKey);
+      await SharedPrefsHelper.remove(SharedPrefsHelper.userTypeKey);
 
-    Get.offAll(() => LoginPage());
-  } catch (e) {
-    print("Error: $e");
-    Get.snackbar(
-      "Error",
-      e.toString(),
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red.shade100,
-    );
+      Get.offAll(() => LoginPage());
+    } catch (e) {
+      print("Error: $e");
+      Get.snackbar(
+        "Error",
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+      );
+    }
   }
-}
-
 }
