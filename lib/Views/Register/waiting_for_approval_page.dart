@@ -2,11 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:otobix/Utils/app_animations.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/helpers/Preferences_helper.dart';
 
-class WaitingForApprovalPage extends StatelessWidget {
+class WaitingForApprovalPage extends StatefulWidget {
   final List<String> documents;
 
   const WaitingForApprovalPage({super.key, required this.documents});
+
+  @override
+  State<WaitingForApprovalPage> createState() => _WaitingForApprovalPageState();
+}
+
+class _WaitingForApprovalPageState extends State<WaitingForApprovalPage> {
+@override
+  initState() {
+    super.initState();
+  }
+  Future<void> deletetoken() async {
+    await SharedPrefsHelper.remove('token');
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +94,16 @@ class WaitingForApprovalPage extends StatelessWidget {
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: documents.length,
+              itemCount: widget.documents.length,
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
-                final doc = documents[index];
+                final doc = widget.documents[index];
                 return _buildDocumentCard(doc);
               },
             ),
+          
           ],
+          
         ),
       ),
     );

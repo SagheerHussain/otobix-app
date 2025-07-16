@@ -29,7 +29,7 @@ class DropdownWidget extends StatelessWidget {
     this.onChanged,
     this.useCustomPicker = true,
     this.height = 40,
-    this.dialogMaxWidth = 300,
+    this.dialogMaxWidth = 300, required String? Function(dynamic value) validator,
   });
 
   @override

@@ -6,8 +6,8 @@ import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Home%20Tab/car_details_page.dart';
 import 'package:otobix/Controllers/Home%20Tab/home_controller.dart';
 
-class Ocb70Section extends StatelessWidget {
-  Ocb70Section({super.key});
+class MarketpalceSection extends StatelessWidget {
+  MarketpalceSection({super.key});
 
   final HomeController getxController = Get.put(HomeController());
 
@@ -24,10 +24,9 @@ class Ocb70Section extends StatelessWidget {
               separatorBuilder: (_, __) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final car = getxController.cars.reversed.toList()[index];
-                // InkWell for car card
                 return InkWell(
                   onTap: () {
-                    Get.to(() => CarDetailsPage(car: car, type: 'ocb_70'));
+                    Get.to(() => CarDetailsPage(car: car, type: 'marketplace'));
                   },
                   child: Card(
                     elevation: 4,
@@ -42,8 +41,8 @@ class Ocb70Section extends StatelessWidget {
                             top: 10,
                             right: 10,
                             child: InkWell(
-                              onTap:
-                                  () => getxController.changeFavoriteCars(car),
+                              onTap: () =>
+                                  getxController.changeFavoriteCars(car),
                               borderRadius: BorderRadius.circular(20),
                               child: Container(
                                 padding: const EdgeInsets.all(6),
@@ -55,17 +54,15 @@ class Ocb70Section extends StatelessWidget {
                                   car.isFavorite.value
                                       ? Icons.favorite
                                       : Icons.favorite_outline,
-                                  color:
-                                      car.isFavorite.value
-                                          ? AppColors.red
-                                          : AppColors.gray,
+                                  color: car.isFavorite.value
+                                      ? AppColors.red
+                                      : AppColors.gray,
                                   size: 20,
                                 ),
                               ),
                             ),
                           ),
                         ),
-
                         Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Column(
@@ -110,15 +107,6 @@ class Ocb70Section extends StatelessWidget {
                                           ),
                                         ),
                                         const SizedBox(height: 4),
-                                        Text(
-                                          'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.price)}/-',
-
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: AppColors.green,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
                                         const SizedBox(height: 4),
                                         Row(
                                           children: [
@@ -179,55 +167,53 @@ class Ocb70Section extends StatelessWidget {
                                             ),
                                           ],
                                         ),
+                                        const SizedBox(height: 4),
+                                        // NAYA ROW FOR REGISTRATION NUMBER
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.confirmation_number,
+                                              size: 14,
+                                              color: Colors.grey,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              "WB-02AE-1234",
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),
-
-                                  // // Watchlist button
-                                  // Row(
-                                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                                  //   children: [
-                                  //     Padding(
-                                  //       padding: const EdgeInsets.only(right: 10),
-                                  //       child: InkWell(
-                                  //         onTap: () {},
-                                  //         child: const Icon(
-                                  //           Icons.favorite_outline,
-                                  //           color: AppColors.gray,
-                                  //           size: 22,
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // ),
                                 ],
                               ),
                               const SizedBox(height: 5),
                               car.isInspected == true
                                   ? Column(
-                                    children: [
-                                      Divider(),
-                                      // const SizedBox(height: 5),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.verified_user,
-                                            size: 14,
-                                            color: AppColors.green,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            'Inspected 8.2/10',
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              // fontWeight: FontWeight.bold,
+                                      children: [
+                                        Divider(),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.verified_user,
+                                              size: 14,
                                               color: AppColors.green,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              'Inspected 8.2/10',
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                color: AppColors.green,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
                                   : const SizedBox.shrink(),
                             ],
                           ),

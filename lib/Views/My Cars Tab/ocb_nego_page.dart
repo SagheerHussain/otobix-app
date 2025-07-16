@@ -42,7 +42,7 @@ class OcbNegoPage extends StatelessWidget {
           // InkWell for car card
           return InkWell(
             onTap: () {
-              Get.to(() => CarDetailsPage(car: car));
+              Get.to(() => CarDetailsPage(car: car, type: 'ocb_nego'));
             },
             child: Card(
               elevation: 4,

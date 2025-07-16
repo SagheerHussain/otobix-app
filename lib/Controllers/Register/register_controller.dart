@@ -15,6 +15,24 @@ class RegisterController extends GetxController {
     update();
   }
 
+Future<void> register() async {
+  isLoading.value = true;
+  try {
+    
+  } catch (e) {
+    debugPrint(e.toString());
+    ToastWidget.show(
+      context: Get.context!,
+      message: "Failed to register",
+      type: ToastType.error,
+    );
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+
+
   // Send OTP
   Future<void> sendOTP({required String phoneNumber}) async {
     isLoading.value = true;
@@ -44,8 +62,6 @@ class RegisterController extends GetxController {
         );
         return;
       }
-
-      //Check if phone number is valid
       if (phoneNumber.length != 10) {
         ToastWidget.show(
           context: Get.context!,

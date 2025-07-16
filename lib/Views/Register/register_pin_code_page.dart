@@ -115,7 +115,7 @@ class RegisterPinCodePage extends StatelessWidget {
         message: "OTP Verified Successfully",
         type: ToastType.success,
       );
-      Get.to(() => RegistrationFormPage());
+      Get.to(() => RegistrationFormPage(userType: "Dealer", contactNumber: phoneNumber));
 
       // pinCodeFieldsController.verifyOtp(
       //   phoneNumber: phoneNumber,

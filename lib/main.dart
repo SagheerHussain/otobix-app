@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Models/Home%20Tab/car_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/Account%20Tab/account_page.dart';
-import 'package:otobix/Views/Add%20Ons%20Tab/add_ons_page.dart';
-import 'package:otobix/Views/My%20Cars%20Tab/my_cars_page.dart';
-import 'package:otobix/Views/Orders%20Tab/orders_page.dart';
-import 'package:otobix/Views/bottom_navigation_page.dart';
-import 'package:otobix/Views/Home%20Tab/car_details_page.dart';
-import 'package:otobix/Views/Register/register_page.dart';
+import 'package:otobix/Views/splash/splash_screen.dart';
+import 'package:otobix/helpers/Preferences_helper.dart';
 
 void main() {
   Get.config(enableLog: false);
+  SharedPrefsHelper.init();
   runApp(const MyApp());
 }
 
@@ -53,7 +48,7 @@ class MyApp extends StatelessWidget {
       //     ],
       //   ),
       // ),
-      home: BottomNavigationPage(),
+      home: SplashScreen(),
     );
   }
 }

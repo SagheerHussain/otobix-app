@@ -1,64 +1,87 @@
 class UserModel {
-  String? id;
-  String dealerName;
-  String dealerEmail;
-  String dealershipName;
-  String primaryContactPerson;
-  String primaryMobile;
-  String? secondaryContactPerson;
-  String? secondaryMobile;
-  String selectedState;
-  String selectedEntityType;
-  List<String>? addresses;
+  final String id;
+  final String userType;
+  final String location;
+  final String dealerName;
+  final String dealerEmail;
+  final String dealershipName;
+  final String entityType;
+  final String primaryContactPerson;
+  final String primaryContactNumber;
+  final String? secondaryContactPerson;
+  final String? secondaryContactNumber;
+  final List<String> addressList;
+  final String password;
+  final String? contactNumber;
+  final String approvalStatus;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   UserModel({
-    this.id,
+    required this.id,
+    required this.userType,
+    required this.location,
     required this.dealerName,
     required this.dealerEmail,
     required this.dealershipName,
+    required this.entityType,
     required this.primaryContactPerson,
-    required this.primaryMobile,
+    required this.primaryContactNumber,
     this.secondaryContactPerson,
-    this.secondaryMobile,
-    required this.selectedState,
-    required this.selectedEntityType,
-    this.addresses,
+    this.secondaryContactNumber,
+    required this.addressList,
+    required this.password,
+    this.contactNumber,
+    required this.approvalStatus,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  factory UserModel.fromJson({
-    required String id,
-    required Map<String, dynamic> data,
-  }) {
+  factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: id,
-      dealerName: data['dealerName'] as String,
-      dealerEmail: data['dealerEmail'] as String,
-      dealershipName: data['dealershipName'] as String,
-      primaryContactPerson: data['primaryContactPerson'] as String,
-      primaryMobile: data['primaryMobile'] as String,
-      secondaryContactPerson: data['secondaryContactPerson'] as String,
-      secondaryMobile: data['secondaryMobile'] as String,
-      selectedState: data['selectedState'] as String,
-      selectedEntityType: data['selectedEntityType'] as String,
-      addresses:
-          (data['addresses'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList(),
+      id: json['_id'] ?? '',
+      userType: json['userType'] ?? '',
+      location: json['location'] ?? '',
+      dealerName: json['dealerName'] ?? '',
+      dealerEmail: json['dealerEmail'] ?? '',
+      dealershipName: json['dealershipName'] ?? '',
+      entityType: json['entityType'] ?? '',
+      primaryContactPerson: json['primaryContactPerson'] ?? '',
+      primaryContactNumber: json['primaryContactNumber'] ?? '',
+      secondaryContactPerson: json['secondaryContactPerson'],
+      secondaryContactNumber: json['secondaryContactNumber'],
+      addressList: List<String>.from(json['addressList'] ?? []),
+      password: json['password'] ?? '',
+      contactNumber: json['contactNumber'],
+      approvalStatus: json['approvalStatus'] ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      '_id': id,
+      'userType': userType,
+      'location': location,
       'dealerName': dealerName,
       'dealerEmail': dealerEmail,
       'dealershipName': dealershipName,
+      'entityType': entityType,
       'primaryContactPerson': primaryContactPerson,
-      'primaryMobile': primaryMobile,
+      'primaryContactNumber': primaryContactNumber,
       'secondaryContactPerson': secondaryContactPerson,
-      'secondaryMobile': secondaryMobile,
-      'selectedState': selectedState,
-      'selectedEntityType': selectedEntityType,
-      'addresses': addresses,
+      'secondaryContactNumber': secondaryContactNumber,
+      'addressList': addressList,
+      'password': password,
+      'contactNumber': contactNumber,
+      'approvalStatus': approvalStatus,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }

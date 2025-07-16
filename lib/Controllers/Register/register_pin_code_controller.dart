@@ -19,7 +19,7 @@ class RegisterPinCodeController extends GetxController {
         body: jsonEncode({"phoneNumber": phoneNumber, "otp": otp}),
       );
       if (response.statusCode == 200) {
-        Get.to(() => RegistrationFormPage());
+        Get.to(() => RegistrationFormPage(userType: "Dealer", contactNumber: phoneNumber));
         ToastWidget.show(
           context: Get.context!,
           message: "OTP Verified Successfully",

@@ -4,6 +4,7 @@ import 'package:otobix/Controllers/Home%20Tab/home_controller.dart';
 import 'package:otobix/Controllers/Widgets/tab_bar_buttons_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Home%20Tab/Home/live_bids_section.dart';
+import 'package:otobix/Views/Home%20Tab/Home/marketpalce_section.dart';
 import 'package:otobix/Views/Home%20Tab/Home/ocb_70_section.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/tab_bar_buttons_widget.dart';
@@ -12,7 +13,7 @@ class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final HomeController getxController = Get.put(HomeController());
-  final tabBarController = Get.put(TabBarButtonsController(tabLength: 2));
+  final tabBarController = Get.put(TabBarButtonsController(tabLength: 4));
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +22,13 @@ class HomePage extends StatelessWidget {
         backgroundColor: AppColors.white,
         body: Stack(
           children: [
+            
             // TabBar Screens
             Padding(
               padding: const EdgeInsets.only(top: 150, left: 15, right: 15),
               child: TabBarView(
                 controller: tabBarController.tabController,
-                children: [LiveBidsSection(), Ocb70Section()],
+                children: [LiveBidsSection(), Ocb70Section(), Ocb70Section(), MarketpalceSection()],
               ),
             ),
 
@@ -55,8 +57,8 @@ class HomePage extends StatelessWidget {
 
                     // TabBar Buttons
                     TabBarButtonsWidget(
-                      titles: ['Live', 'OCB 70'],
-                      counts: [getxController.liveCarsCount.value, 0],
+                      titles: ['Live', 'Upcoming', 'OCB 70','Marketplace'],
+                      counts: [getxController.liveCarsCount.value, 0, 0, 0],
                       controller: tabBarController.tabController,
                       selectedIndex: tabBarController.selectedIndex,
                       titleSize: 11,
@@ -286,8 +288,6 @@ class HomePage extends StatelessWidget {
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-
-          // Fuel Type checkboxes
           const Text(
             'Fuel Type',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),

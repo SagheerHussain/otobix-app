@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Models/Login%20Register/user_model.dart';
+import 'package:otobix/Models/Login Register/user_model.dart';
+import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
+import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 class RegistrationFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    filteredStates = List.from(indianStates);
 
     // Ensure at least one address exists
     if (addressControllers.isEmpty) {
@@ -15,23 +19,51 @@ class RegistrationFormController extends GetxController {
     }
   }
 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  /// Track touched fields
+  final Set<String> touchedFields = {};
+
+  void markFieldTouched(String fieldKey) {
+    touchedFields.add(fieldKey);
+    update();
+  }
+
   RxBool isLoading = false.obs;
   String? selectedState;
   String? selectedEntityType;
 
+  List<String> filteredStates = [];
+  List<String> indianStates = AppConstants.indianStates;
+
+  final RxBool obscurePassword = false.obs;
+
+  final TextEditingController passwordController = TextEditingController();
   final TextEditingController dealerNameController = TextEditingController();
   final TextEditingController dealerEmailController = TextEditingController();
-  final TextEditingController dealershipNameController =
-      TextEditingController();
-  final TextEditingController primaryContactPersonController =
-      TextEditingController();
+  final TextEditingController dealershipNameController = TextEditingController();
+  final TextEditingController primaryContactPersonController = TextEditingController();
   final TextEditingController primaryMobileController = TextEditingController();
-  final TextEditingController secondaryContactPersonController =
-      TextEditingController();
-  final TextEditingController secondaryMobileController =
-      TextEditingController();
+  final TextEditingController secondaryContactPersonController = TextEditingController();
+  final TextEditingController secondaryMobileController = TextEditingController();
 
   List<TextEditingController> addressControllers = [];
+
+  void filterStates(String query) {
+    if (query.isEmpty) {
+      filteredStates = List.from(indianStates);
+    } else {
+      filteredStates = indianStates
+          .where((state) => state.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    update();
+  }
+
+  void selectState(String state) {
+    selectedState = state;
+    update();
+  }
 
   final List<String> entityTypes = [
     'Individual',
@@ -43,16 +75,14 @@ class RegistrationFormController extends GetxController {
     'One person Company',
   ];
 
-  List<String> indianStates = AppConstants.indianStates;
-
   void addAddressField() {
     addressControllers.add(TextEditingController());
-    update(); // Trigger UI update
+    update();
   }
 
   void removeAddressField(int index) {
     addressControllers.removeAt(index);
-    update(); // Trigger UI update
+    update();
   }
 
   final Map<String, List<String>> entityDocuments = {
@@ -112,25 +142,79 @@ class RegistrationFormController extends GetxController {
     ],
   };
 
-  Future<void> submitForm() async {
+  Future<void> submitForm(String userType, String contactNumber) async {
     try {
+      // Validate form
+      bool isValid = formKey.currentState!.validate();
+
+      if (!isValid) {
+        /// Mark all required fields as touched so errors show
+        touchedFields.addAll([
+          "State",
+          "Dealer Name",
+          "Dealer Email",
+          "Dealership Name",
+          "Entity Type",
+          "Primary Contact Person",
+          "Primary Contact Mobile No.",
+          "Password",
+        ]);
+        update();
+        return;
+      }
+
       isLoading.value = true;
+
       final userModel = UserModel(
-        selectedState: selectedState!,
+        userType: "Dealer",
+        location: selectedState ?? "",
         dealerName: dealerNameController.text,
         dealerEmail: dealerEmailController.text,
         dealershipName: dealershipNameController.text,
-        selectedEntityType: selectedEntityType!,
+        entityType: selectedEntityType ?? "",
         primaryContactPerson: primaryContactPersonController.text,
-        primaryMobile: primaryMobileController.text,
-        secondaryContactPerson: secondaryContactPersonController.text,
-        secondaryMobile: secondaryMobileController.text,
-        addresses: addressControllers.map((e) => e.text).toList(),
+        primaryContactNumber: primaryMobileController.text,
+        password: passwordController.text,
+        contactNumber: contactNumber,
+        secondaryContactPerson: secondaryContactPersonController.text.isEmpty
+
+            ? null
+            : secondaryContactPersonController.text,
+        secondaryContactNumber: secondaryMobileController.text.isEmpty
+            ? null
+            : secondaryMobileController.text,
+        addressList: addressControllers.map((e) => e.text).toList(), id: '', approvalStatus: 'Pending', createdAt: DateTime.now(), updatedAt: DateTime.now(),
       );
 
-      debugPrint(userModel.toJson().toString());
-    } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("Sending payload → ${userModel.toJson()}");
+
+      final response = await ApiService.post(
+        endpoint: "user/register",
+        body: userModel.toJson(),
+      );
+
+      debugPrint("Status Code → ${response.statusCode}");
+      debugPrint("Response → ${response.body}");
+
+      if (response.statusCode == 201) {
+        ToastWidget.show(
+          context: Get.context!,
+          message: "registered successfully!",
+          type: ToastType.success,
+        );
+        Get.to(
+          () =>LoginPage(),
+        );
+      } else {
+        ToastWidget.show(
+          context: Get.context!,
+          message: "Failed to register user",
+          type: ToastType.error,
+        );
+      }
+    } catch (e, stacktrace) {
+      debugPrint("Error → $e");
+      debugPrint("Stacktrace → $stacktrace");
     } finally {
       isLoading.value = false;
     }
@@ -142,8 +226,7 @@ class RegistrationFormController extends GetxController {
       await Future.delayed(const Duration(seconds: 2));
       Get.to(
         () => WaitingForApprovalPage(
-          documents:
-              entityDocuments[selectedEntityType ?? 'Individual'] ??
+          documents: entityDocuments[selectedEntityType ?? 'Individual'] ??
               entityDocuments['Individual']!,
         ),
       );

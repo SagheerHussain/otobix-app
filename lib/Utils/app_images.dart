@@ -6,7 +6,8 @@ class AppImages {
   static const String carAlternateImage =
       'lib/assets/images/carAlternateImage.jpg';
   static const String addOnsHeaderImage = 'lib/assets/images/addOnsHeader.png';
-
+static const String filterIcon = 'lib/assets/images/sort.png';
+static const String rejectedIcon = 'lib/assets/animations/Rejected.json';
   // Temporary car images
   static const String hondaCity1 = 'lib/assets/images/hondaCity1.jpg';
   static const String hyundaiCreta1 = 'lib/assets/images/hyundaiCreta1.jpg';

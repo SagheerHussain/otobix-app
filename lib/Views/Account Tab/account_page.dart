@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:otobix/Controllers/Widgets/tab_bar_widget_controller.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Views/Login/login_page.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -103,7 +104,7 @@ class AccountPage extends StatelessWidget {
                   title: "Logout",
                   description: "Sign out of your account securely.",
                   onTap: () {
-                    // Handle logout
+                    Get.offAll(() => LoginPage());
                   },
                 ),
               ],

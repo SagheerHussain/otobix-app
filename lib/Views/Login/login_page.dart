@@ -8,14 +8,8 @@ import 'package:otobix/Widgets/button_widget.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
-
   final formKey = GlobalKey<FormState>();
-
   final LoginController getxController = Get.put(LoginController());
-  final TextEditingController userNameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -38,7 +32,7 @@ class LoginPage extends StatelessWidget {
                     _buildCustomTextField(
                       icon: Icons.person,
                       label: 'User Name / User ID',
-                      controller: userNameController,
+                      controller: getxController.dealerNameController,
                       hintText: 'e.g. rakeshkuman007',
                       keyboardType: TextInputType.text,
                       isRequired: true,
@@ -46,7 +40,7 @@ class LoginPage extends StatelessWidget {
                     _buildCustomTextField(
                       icon: Icons.lock,
                       label: 'Password',
-                      controller: passwordController,
+                      controller: getxController.passwordController,
                       hintText: 'e.g. 123456789',
                       keyboardType: TextInputType.visiblePassword,
                       isRequired: true,
@@ -54,9 +48,9 @@ class LoginPage extends StatelessWidget {
                     ),
                     _buildCustomTextField(
                       label: 'Contact Number',
-                      controller: phoneController,
+                      controller: getxController.phoneNumberController,
                       hintText: 'e.g. 9876543210',
-                      limitLengthToTen: true,
+                      // limitLengthToTen: true,
                       keyboardType: TextInputType.phone,
                       isRequired: true,
                     ),
@@ -120,39 +114,49 @@ class LoginPage extends StatelessWidget {
       ),
     ],
   );
+Widget _buildCustomTextField({
+  IconData? icon,
+  required String label,
+  required TextEditingController controller,
+  required String hintText,
+  required TextInputType keyboardType,
+  required bool isRequired,
+  bool isPasswordField = false,
+  bool limitLengthToTen = false,
+}) {
+  String? validator(String? value) {
+    if (isRequired && (value == null || value.trim().isEmpty)) {
+      return "$label is required";
+    }
+    if (limitLengthToTen && value!.length != 10) {
+      return "Contact Number must be exactly 10 digits";
+    }
+    return null;
+  }
 
-  Widget _buildCustomTextField({
-    IconData? icon,
-    required String label,
-    required TextEditingController controller,
-    required String hintText,
-    required TextInputType keyboardType,
-    required bool isRequired,
-    bool isPasswordField = false,
-    bool limitLengthToTen = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: AppColors.black,
-          ),
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: AppColors.black,
         ),
-        SizedBox(height: 5),
-        !isPasswordField
-            ? TextFormField(
+      ),
+      SizedBox(height: 5),
+      !isPasswordField
+          ? TextFormField(
               controller: controller,
               keyboardType: keyboardType,
               maxLength: limitLengthToTen ? 10 : null,
+              validator: validator,
               decoration: InputDecoration(
                 counterText: "",
                 hintText: hintText,
                 hintStyle: TextStyle(
-                  color: AppColors.gray.withValues(alpha: .5),
+                  color: AppColors.gray.withOpacity(.5),
                 ),
                 prefixIconConstraints: BoxConstraints(
                   minWidth: 0,
@@ -166,13 +170,13 @@ class LoginPage extends StatelessWidget {
                       icon != null
                           ? Icon(icon, color: AppColors.black, size: 20)
                           : Text(
-                            '+91',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.black,
-                              fontWeight: FontWeight.bold,
+                              '+91',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
                       SizedBox(width: 8),
                       Container(width: 1, height: 20, color: Colors.grey),
                       SizedBox(width: 8),
@@ -193,16 +197,20 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             )
-            : Obx(
+          : Obx(
               () => TextFormField(
                 controller: controller,
                 keyboardType: keyboardType,
                 maxLength: limitLengthToTen ? 10 : null,
+                obscureText: isPasswordField
+                    ? getxController.obsecureText.value
+                    : false,
+                validator: validator,
                 decoration: InputDecoration(
                   counterText: "",
                   hintText: hintText,
                   hintStyle: TextStyle(
-                    color: AppColors.gray.withValues(alpha: .5),
+                    color: AppColors.gray.withOpacity(.5),
                   ),
                   prefixIconConstraints: BoxConstraints(
                     minWidth: 0,
@@ -216,13 +224,13 @@ class LoginPage extends StatelessWidget {
                         icon != null
                             ? Icon(icon, color: AppColors.black, size: 20)
                             : Text(
-                              '+91',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColors.black,
-                                fontWeight: FontWeight.bold,
+                                '+91',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
                         SizedBox(width: 8),
                         Container(width: 1, height: 20, color: Colors.grey),
                         SizedBox(width: 8),
@@ -241,44 +249,32 @@ class LoginPage extends StatelessWidget {
                     vertical: 15,
                     horizontal: 10,
                   ),
-
-                  suffixIcon:
-                      isPasswordField
-                          ? GestureDetector(
-                            onTap:
-                                () =>
-                                    getxController.obsecureText.value =
-                                        !getxController.obsecureText.value,
-                            child: Icon(
-                              getxController.obsecureText.value
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                            ),
-                          )
-                          : SizedBox.shrink(),
+                  suffixIcon: isPasswordField
+                      ? GestureDetector(
+                          onTap: () => getxController.obsecureText.value =
+                              !getxController.obsecureText.value,
+                          child: Icon(
+                            getxController.obsecureText.value
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                        )
+                      : SizedBox.shrink(),
                 ),
-
-                obscureText:
-                    isPasswordField ? getxController.obsecureText.value : false,
-                // validator:
-                //     (value) => getxController.validatePassword(value ?? ""),
               ),
             ),
+      SizedBox(height: 15),
+    ],
+  );
+}
 
-        SizedBox(height: 15),
-      ],
-    );
-  }
 
-  //Continue Button
   Widget _buildContinueButton(BuildContext context) => ButtonWidget(
     text: 'Continue',
     isLoading: getxController.isLoading,
     // onTap: () => getxController.sendOTP(phoneNumber: phoneController.text),
     onTap: () {
-      if (formKey.currentState!.validate()) {
-        getxController.dummySendOtp(phoneController.text);
-      }
+      getxController.loginUser();
     },
     height: 40,
     width: 150,
