@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otobix/Models/Login%20Register/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Login/login_page.dart';
@@ -98,9 +99,21 @@ class RegisterPage extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildRoleSelectionButton(icon: Icons.group, role: 'Customer'),
-          _buildRoleSelectionButton(icon: Icons.person, role: 'Sales Manager'),
-          _buildRoleSelectionButton(icon: Icons.phone, role: 'Dealer'),
+          _buildRoleSelectionButton(
+            icon: Icons.group,
+            titleText: 'Customer',
+            role: UserModel.customer,
+          ),
+          _buildRoleSelectionButton(
+            icon: Icons.person,
+            titleText: 'Sales Manager',
+            role: UserModel.salesManager,
+          ),
+          _buildRoleSelectionButton(
+            icon: Icons.phone,
+            titleText: 'Dealer',
+            role: UserModel.dealer,
+          ),
         ],
       ),
       SizedBox(height: 10),
@@ -116,6 +129,7 @@ class RegisterPage extends StatelessWidget {
   );
   Widget _buildRoleSelectionButton({
     required IconData icon,
+    required String titleText,
     required String role,
   }) => GetBuilder<RegisterController>(
     builder:
@@ -154,7 +168,7 @@ class RegisterPage extends StatelessWidget {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  role,
+                  titleText,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 10,

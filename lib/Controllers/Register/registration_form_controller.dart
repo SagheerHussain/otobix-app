@@ -150,7 +150,10 @@ class RegistrationFormController extends GetxController {
     ],
   };
 
-  Future<void> submitForm(String userType, String contactNumber) async {
+  Future<void> submitForm({
+    required String userRole,
+    required String contactNumber,
+  }) async {
     try {
       // Validate form
       bool isValid = formKey.currentState!.validate();
@@ -174,16 +177,16 @@ class RegistrationFormController extends GetxController {
       isLoading.value = true;
 
       final userModel = UserModel(
-        userType: "Dealer",
+        userRole: userRole,
         location: selectedState ?? "",
-        dealerName: dealerNameController.text,
-        dealerEmail: dealerEmailController.text,
+        userName: dealerNameController.text,
+        email: dealerEmailController.text,
         dealershipName: dealershipNameController.text,
         entityType: selectedEntityType ?? "",
         primaryContactPerson: primaryContactPersonController.text,
         primaryContactNumber: primaryMobileController.text,
         password: passwordController.text,
-        contactNumber: contactNumber,
+        phoneNumber: contactNumber,
         secondaryContactPerson:
             secondaryContactPersonController.text.isEmpty
                 ? null
@@ -236,7 +239,7 @@ class RegistrationFormController extends GetxController {
     }
   }
 
-  Future<void> dummySubmitForm() async {
+  Future<void> dummySubmitForm({required String userRole}) async {
     try {
       isLoading.value = true;
       await Future.delayed(const Duration(seconds: 2));
@@ -245,6 +248,7 @@ class RegistrationFormController extends GetxController {
           documents:
               entityDocuments[selectedEntityType ?? 'Individual'] ??
               entityDocuments['Individual']!,
+          userRole: userRole,
         ),
       );
     } catch (e) {

@@ -7,10 +7,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RegisterPinCodeController extends GetxController {
-  // Send OTP
+  // Verify OTP
   Future<void> verifyOtp({
     required String phoneNumber,
     required String otp,
+    required String userType,
   }) async {
     try {
       final response = await http.post(
@@ -19,11 +20,22 @@ class RegisterPinCodeController extends GetxController {
         body: jsonEncode({"phoneNumber": phoneNumber, "otp": otp}),
       );
       if (response.statusCode == 200) {
-        Get.to(() => RegistrationFormPage(userType: "Dealer", contactNumber: phoneNumber));
+        Get.to(
+          () => RegistrationFormPage(
+            userRole: "Dealer",
+            phoneNumber: phoneNumber,
+          ),
+        );
         ToastWidget.show(
           context: Get.context!,
           message: "OTP Verified Successfully",
           type: ToastType.success,
+        );
+        Get.to(
+          () => RegistrationFormPage(
+            userRole: userType,
+            phoneNumber: phoneNumber,
+          ),
         );
       } else {
         debugPrint(response.body);
@@ -37,9 +49,25 @@ class RegisterPinCodeController extends GetxController {
       debugPrint(e.toString());
       ToastWidget.show(
         context: Get.context!,
-        message: "Invalid OTP",
+        message: "Error Verifying OTP",
         type: ToastType.error,
       );
     }
+  }
+
+  // Dummy verify OTP
+  Future<void> dummyVerifyOtp({
+    required String phoneNumber,
+    required String otp,
+    required String userType,
+  }) async {
+    ToastWidget.show(
+      context: Get.context!,
+      message: "OTP Verified Successfully",
+      type: ToastType.success,
+    );
+    Get.to(
+      () => RegistrationFormPage(userRole: userType, phoneNumber: phoneNumber),
+    );
   }
 }

@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/Register/registration_form_controller.dart';
+import 'package:otobix/Models/Login%20Register/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_icons.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/dropdown_widget.dart';
 
 class RegistrationFormPage extends StatelessWidget {
-  final String userType;
-  final String contactNumber;
+  final String userRole;
+  final String phoneNumber;
   RegistrationFormPage({
     super.key,
-    required this.userType,
-    required this.contactNumber,
+    required this.userRole,
+    required this.phoneNumber,
   });
 
   final RegistrationFormController getxController = Get.put(
@@ -79,7 +80,12 @@ class RegistrationFormPage extends StatelessWidget {
                       SizedBox(height: 20),
                       _buildCustomTextField(
                         icon: Icons.person,
-                        label: "Dealer Name",
+                        label:
+                            userRole == UserModel.dealer
+                                ? "Dealer Name"
+                                : userRole == UserModel.customer
+                                ? "Customer Name"
+                                : "Sales Manager Name",
                         controller: getxController.dealerNameController,
                         hintText: "e.g. Mukesh Kumar",
                         keyboardType: TextInputType.text,
@@ -87,55 +93,62 @@ class RegistrationFormPage extends StatelessWidget {
                       ),
                       _buildCustomTextField(
                         icon: Icons.email,
-                        label: "Dealer Email",
+                        label: "Email",
                         controller: getxController.dealerEmailController,
                         hintText: "e.g. mukeshkumar@gmail.com",
                         keyboardType: TextInputType.emailAddress,
                         isRequired: true,
                       ),
-                      _buildCustomTextField(
-                        icon: Icons.business,
-                        label: "Dealership Name",
-                        controller: getxController.dealershipNameController,
-                        hintText: "e.g. Super Cars Pvt Ltd",
-                        keyboardType: TextInputType.text,
-                        isRequired: true,
-                      ),
-                      _buildEntityTypeDropdown(context),
-                      _buildCustomTextField(
-                        icon: Icons.person_outline,
-                        label: "Primary Contact Person",
-                        controller:
-                            getxController.primaryContactPersonController,
-                        hintText: "e.g. Rajesh Kumar",
-                        keyboardType: TextInputType.text,
-                        isRequired: true,
-                      ),
-                      _buildCustomTextField(
-                        icon: Icons.phone_android,
-                        label: "Primary Contact Mobile No.",
-                        controller: getxController.primaryMobileController,
-                        hintText: "e.g. 9876543210",
-                        keyboardType: TextInputType.phone,
-                        isRequired: true,
-                      ),
-                      _buildCustomTextField(
-                        icon: Icons.person_outline,
-                        label: "Secondary Contact Person (Optional)",
-                        controller:
-                            getxController.secondaryContactPersonController,
-                        hintText: "e.g. Pawan Singh",
-                        keyboardType: TextInputType.text,
-                        isRequired: false,
-                      ),
-                      _buildCustomTextField(
-                        icon: Icons.phone_android,
-                        label: "Secondary Contact Mobile No. (Optional)",
-                        controller: getxController.secondaryMobileController,
-                        hintText: "e.g. 9123456789",
-                        keyboardType: TextInputType.phone,
-                        isRequired: false,
-                      ),
+                      if (userRole == UserModel.dealer)
+                        _buildCustomTextField(
+                          icon: Icons.business,
+                          label: "Dealership Name",
+                          controller: getxController.dealershipNameController,
+                          hintText: "e.g. Super Cars Pvt Ltd",
+                          keyboardType: TextInputType.text,
+                          isRequired: true,
+                        ),
+                      if (userRole == UserModel.dealer)
+                        _buildEntityTypeDropdown(context),
+
+                      if (userRole == UserModel.dealer)
+                        _buildCustomTextField(
+                          icon: Icons.person_outline,
+                          label: "Primary Contact Person",
+                          controller:
+                              getxController.primaryContactPersonController,
+                          hintText: "e.g. Rajesh Kumar",
+                          keyboardType: TextInputType.text,
+                          isRequired: true,
+                        ),
+                      if (userRole == UserModel.dealer)
+                        _buildCustomTextField(
+                          icon: Icons.phone_android,
+                          label: "Primary Contact Mobile No.",
+                          controller: getxController.primaryMobileController,
+                          hintText: "e.g. 9876543210",
+                          keyboardType: TextInputType.phone,
+                          isRequired: true,
+                        ),
+                      if (userRole == UserModel.dealer)
+                        _buildCustomTextField(
+                          icon: Icons.person_outline,
+                          label: "Secondary Contact Person (Optional)",
+                          controller:
+                              getxController.secondaryContactPersonController,
+                          hintText: "e.g. Pawan Singh",
+                          keyboardType: TextInputType.text,
+                          isRequired: false,
+                        ),
+                      if (userRole == UserModel.dealer)
+                        _buildCustomTextField(
+                          icon: Icons.phone_android,
+                          label: "Secondary Contact Mobile No. (Optional)",
+                          controller: getxController.secondaryMobileController,
+                          hintText: "e.g. 9123456789",
+                          keyboardType: TextInputType.phone,
+                          isRequired: false,
+                        ),
                       _buildCustomTextField(
                         icon: Icons.lock,
                         label: "Password",
@@ -167,91 +180,104 @@ class RegistrationFormPage extends StatelessWidget {
           text: getxController.selectedState,
         );
 
-        return RawAutocomplete<String>(
-          textEditingController: textController,
-          focusNode: FocusNode(),
-          optionsBuilder: (TextEditingValue textEditingValue) {
-            if (textEditingValue.text == '') {
-              return getxController.indianStates;
-            } else {
-              return getxController.indianStates.where(
-                (state) => state.toLowerCase().contains(
-                  textEditingValue.text.toLowerCase(),
-                ),
-              );
-            }
-          },
-          displayStringForOption: (String option) => option,
-          onSelected: (String selection) {
-            getxController.selectedState = selection;
-            getxController.update();
-          },
-          fieldViewBuilder: (
-            BuildContext context,
-            TextEditingController fieldTextEditingController,
-            FocusNode fieldFocusNode,
-            VoidCallback onFieldSubmitted,
-          ) {
-            return TextFormField(
-              controller: fieldTextEditingController,
-              focusNode: fieldFocusNode,
-              decoration: InputDecoration(
-                hintText: "Select State",
-                prefixIcon: Icon(Icons.location_on),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.arrow_drop_down),
-                  onPressed: () {
-                    fieldFocusNode.requestFocus();
-                  },
-                ),
-                border: UnderlineInputBorder(),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue, width: 2),
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 0,
-                  vertical: 10,
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'State is required';
-                }
-                return null;
-              },
-            );
-          },
-          optionsViewBuilder: (
-            BuildContext context,
-            AutocompleteOnSelected<String> onSelected,
-            Iterable<String> options,
-          ) {
-            return Align(
-              alignment: Alignment.topLeft,
-              child: Material(
-                elevation: 4,
-                child: SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: options.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final String option = options.elementAt(index);
-                      return ListTile(
-                        title: Text(option),
-                        onTap: () {
-                          onSelected(option);
-                        },
-                      );
+        return SizedBox(
+          height: 30,
+          child: RawAutocomplete<String>(
+            textEditingController: textController,
+            focusNode: FocusNode(),
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text == '') {
+                return getxController.indianStates;
+              } else {
+                return getxController.indianStates.where(
+                  (state) => state.toLowerCase().contains(
+                    textEditingValue.text.toLowerCase(),
+                  ),
+                );
+              }
+            },
+            displayStringForOption: (String option) => option,
+            onSelected: (String selection) {
+              getxController.selectedState = selection;
+              getxController.update();
+            },
+            fieldViewBuilder: (
+              BuildContext context,
+              TextEditingController fieldTextEditingController,
+              FocusNode fieldFocusNode,
+              VoidCallback onFieldSubmitted,
+            ) {
+              return TextFormField(
+                controller: fieldTextEditingController,
+                focusNode: fieldFocusNode,
+                decoration: InputDecoration(
+                  hintText: "Select State",
+                  hintStyle: TextStyle(color: AppColors.gray, fontSize: 10),
+                  prefixIcon: Icon(
+                    Icons.location_on,
+                    color: AppColors.gray,
+                    size: 15,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: AppColors.gray,
+                      size: 15,
+                    ),
+                    onPressed: () {
+                      fieldFocusNode.requestFocus();
                     },
                   ),
+                  border: UnderlineInputBorder(),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 2),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
                 ),
-              ),
-            );
-          },
+                style: TextStyle(color: AppColors.gray, fontSize: 10),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'State is required';
+                  }
+                  return null;
+                },
+              );
+            },
+            optionsViewBuilder: (
+              BuildContext context,
+              AutocompleteOnSelected<String> onSelected,
+              Iterable<String> options,
+            ) {
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4,
+                  child: SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: options.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final String option = options.elementAt(index);
+                        return ListTile(
+                          title: Text(option),
+                          onTap: () {
+                            onSelected(option);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         );
       },
     );
@@ -270,7 +296,8 @@ class RegistrationFormPage extends StatelessWidget {
           onChanged: (val) {
             getxController.selectedEntityType = val;
             getxController.update();
-          }, validator: (value) {  },
+          },
+          validator: (value) {},
         );
       },
     );
@@ -303,7 +330,7 @@ class RegistrationFormPage extends StatelessWidget {
                       TextSpan(
                         text: ' *',
                         style: TextStyle(
-                          color: Colors.red,
+                          color: AppColors.red,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -318,13 +345,13 @@ class RegistrationFormPage extends StatelessWidget {
           decoration: InputDecoration(
             prefixIcon: Icon(
               icon,
-              color: AppColors.gray.withOpacity(.5),
+              color: AppColors.gray.withValues(alpha: .5),
               size: 15,
             ),
             prefixIconConstraints: BoxConstraints(minWidth: 30, minHeight: 20),
             contentPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
             hintStyle: TextStyle(
-              color: AppColors.gray.withOpacity(.5),
+              color: AppColors.gray.withValues(alpha: .5),
               fontSize: 12,
             ),
             hintText: hintText,
@@ -436,7 +463,11 @@ class RegistrationFormPage extends StatelessWidget {
   Widget _buildSubmitButton() => ButtonWidget(
     text: 'Submit',
     isLoading: getxController.isLoading,
-    onTap: () => getxController.submitForm(userType, contactNumber),
+    onTap:
+        () => getxController.submitForm(
+          userRole: userRole,
+          contactNumber: phoneNumber,
+        ),
     height: 40,
     width: 150,
     backgroundColor: AppColors.green,

@@ -8,17 +8,16 @@ import 'package:otobix/helpers/Preferences_helper.dart';
 class RejectedScreen extends StatefulWidget {
   final String userId;
 
-  const RejectedScreen({
-    super.key,
-    required this.userId,
-  });
+  const RejectedScreen({super.key, required this.userId});
 
   @override
   State<RejectedScreen> createState() => _RejectedScreenState();
 }
 
 class _RejectedScreenState extends State<RejectedScreen> {
-  final UserCommentController userCommentController = Get.put(UserCommentController());
+  final UserCommentController userCommentController = Get.put(
+    UserCommentController(),
+  );
 
   @override
   void initState() {
@@ -73,22 +72,26 @@ class _RejectedScreenState extends State<RejectedScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.redAccent, width: 1.2),
                   ),
-                  child: userCommentController.isLoading.value
-                      ? const Center(child: CircularProgressIndicator())
-                      : Text(
-                          userCommentController.rejectionComment.value.isNotEmpty
-                              ? userCommentController.rejectionComment.value
-                              : "Your application has been rejected. Please contact support for more details.",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black87,
+                  child:
+                      userCommentController.isLoading.value
+                          ? const Center(child: CircularProgressIndicator())
+                          : Text(
+                            userCommentController
+                                    .rejectionComment
+                                    .value
+                                    .isNotEmpty
+                                ? userCommentController.rejectionComment.value
+                                : "Your application has been rejected. Please contact support for more details.",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
                 ),
               ),
 
@@ -96,13 +99,10 @@ class _RejectedScreenState extends State<RejectedScreen> {
 
               const Text(
                 "For assistance, contact us at:",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
               const Text(
-                "support@example.com",
+                "support@otobix.com",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

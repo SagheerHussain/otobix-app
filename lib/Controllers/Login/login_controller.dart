@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Models/Login%20Register/user_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
+import 'package:otobix/Views/Sales%20Manager%20Panel/sales_manager_homepage.dart';
 import 'package:otobix/Views/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/admin_home.dart';
@@ -123,10 +126,17 @@ class LoginController extends GetxController {
                 documents:
                     entityDocuments[selectedEntityType ?? 'Individual'] ??
                     entityDocuments['Individual']!,
+                userRole: userType,
               ),
             );
           } else if (approvalStatus == 'Approved') {
-            Get.to(() => BottomNavigationPage());
+            if (userType == UserModel.customer) {
+              Get.to(() => CustomerHomepage());
+            } else if (userType == UserModel.salesManager) {
+              Get.to(() => SalesManagerHomepage());
+            } else if (userType == UserModel.dealer) {
+              Get.to(() => BottomNavigationPage());
+            }
           } else if (approvalStatus == 'Rejected') {
             Get.to(() => RejectedScreen(userId: user['id']));
           } else {
@@ -159,12 +169,15 @@ class LoginController extends GetxController {
 
   String? validatePassword(String password) {
     if (password.isEmpty) return "Password is required.";
-    if (password.length < 8)
+    if (password.length < 8) {
       return "Password must be at least 8 characters long.";
-    if (!RegExp(r'[A-Z]').hasMatch(password))
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
       return "At least one uppercase letter required.";
-    if (!RegExp(r'[a-z]').hasMatch(password))
+    }
+    if (!RegExp(r'[a-z]').hasMatch(password)) {
       return "At least one lowercase letter required.";
+    }
     if (!RegExp(r'[!@#\$%^&*(),.?":{}|<>_\-]').hasMatch(password)) {
       return "At least one special character required.";
     }

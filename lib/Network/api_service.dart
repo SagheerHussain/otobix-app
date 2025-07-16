@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:otobix/Utils/app_urls.dart';
 
 class ApiService {
   // static const String baseUrl = "https://otobix-app-backend.onrender.com/api";

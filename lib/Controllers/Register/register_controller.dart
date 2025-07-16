@@ -12,29 +12,27 @@ class RegisterController extends GetxController {
     update();
   }
 
-Future<void> register() async {
-  isLoading.value = true;
-  try {
-    
-  } catch (e) {
-    debugPrint(e.toString());
-    ToastWidget.show(
-      context: Get.context!,
-      message: "Failed to register",
-      type: ToastType.error,
-    );
-  } finally {
-    isLoading.value = false;
-  }
-}
+  // Future<void> register() async {
+  //   isLoading.value = true;
+  //   try {} catch (e) {
+  //     debugPrint(e.toString());
+  //     ToastWidget.show(
+  //       context: Get.context!,
+  //       message: "Failed to register",
+  //       type: ToastType.error,
+  //     );
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   Future<void> sendOTP({required String phoneNumber}) async {
     isLoading.value = true;
     try {
-      final formattedPhoneNumber =
-          phoneNumber.startsWith('0')
-              ? '+92${phoneNumber.substring(1)}'
-              : '+92$phoneNumber';
+      // final formattedPhoneNumber =
+      //     phoneNumber.startsWith('0')
+      //         ? '+92${phoneNumber.substring(1)}'
+      //         : '+92$phoneNumber';
 
       if (selectedRole.value.isEmpty) {
         ToastWidget.show(
@@ -44,48 +42,55 @@ Future<void> register() async {
         );
         return;
       }
-      if (selectedRole.value == 'Customer' ||
-          selectedRole.value == 'Sales\nManager') {
+      // if (selectedRole.value == 'Customer' ||
+      //     selectedRole.value == 'Sales\nManager') {
+      //   ToastWidget.show(
+      //     context: Get.context!,
+      //     message: "${selectedRole.value} role is not available yet",
+      //     type: ToastType.error,
+      //   );
+      //   return;
+      // }
+
+      // For both pak and indian numbers
+      final RegExp pakIndiaRegex = RegExp(r'^[3-9]\d{9}$');
+
+      // For indian numbers only
+      // final RegExp indianRegex = RegExp(r'^[6-9]\d{9}$');
+
+      if (!pakIndiaRegex.hasMatch(phoneNumber)) {
         ToastWidget.show(
           context: Get.context!,
-          message: "${selectedRole.value} role is not available yet",
-          type: ToastType.error,
-        );
-        return;
-      }
-      if (phoneNumber.length != 10) {
-        ToastWidget.show(
-          context: Get.context!,
-          message: "Please enter a valid 10-digit mobile number",
+          message: "Enter a valid mobile number",
           type: ToastType.error,
         );
         return;
       }
 
-    
-      
-        Get.to(
-          () => RegisterPinCodePage(phoneNumber: formattedPhoneNumber, userType: selectedRole.value),
-        );
-        ToastWidget.show(
-          context: Get.context!,
-          message: "OTP Sent Successfully",
-          type: ToastType.success,
-        );
-      
+      Get.to(
+        () => RegisterPinCodePage(
+          phoneNumber: phoneNumber,
+          userRole: selectedRole.value,
+        ),
+      );
+      ToastWidget.show(
+        context: Get.context!,
+        message: "OTP Sent Successfully",
+        type: ToastType.success,
+      );
     } catch (e) {
       debugPrint(e.toString());
       ToastWidget.show(
         context: Get.context!,
         message: "Failed to send OTP",
         type: ToastType.error,
-        );
-      }
-  
+      );
+    }
   }
 
   Future<void> dummySendOtp({required String phoneNumber}) async {
     isLoading.value = true;
+    debugPrint("Sending OTP to $phoneNumber");
     try {
       if (selectedRole.value.isEmpty) {
         ToastWidget.show(
@@ -96,22 +101,30 @@ Future<void> register() async {
         return;
       }
 
-      if (phoneNumber.length < 10) {
+      // For indian numbers only
+      // final RegExp indianRegex = RegExp(r'^[6-9]\d{9}$');
+
+      // For both pak and indian numbers
+      final RegExp pakIndiaRegex = RegExp(r'^[3-9]\d{9}$');
+
+      if (!pakIndiaRegex.hasMatch(phoneNumber)) {
         ToastWidget.show(
           context: Get.context!,
-          message: "Please enter a valid mobile number",
+          message: "Enter a valid mobile number",
           type: ToastType.error,
         );
         return;
       }
 
       await Future.delayed(const Duration(seconds: 2), () {
-        Get.to(() => RegisterPinCodePage(
-              phoneNumber: phoneNumber,
-              userType: selectedRole.value,
-            ));
+        Get.to(
+          () => RegisterPinCodePage(
+            phoneNumber: phoneNumber,
+            userRole: selectedRole.value,
+          ),
+        );
       });
-print("OTP Sent Successfully (Dummy) $phoneNumber $selectedRole");
+      print("OTP Sent Successfully (Dummy) $phoneNumber $selectedRole");
       ToastWidget.show(
         context: Get.context!,
         message: "OTP Sent Successfully (Dummy)",

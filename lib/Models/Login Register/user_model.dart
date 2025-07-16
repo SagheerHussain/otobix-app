@@ -1,37 +1,42 @@
 class UserModel {
+  // Fields
+  static const String customer = 'customer';
+  static const String salesManager = 'sales manager';
+  static const String dealer = 'Dealer';
+
   final String id;
-  final String userType;
+  final String userRole;
   final String location;
-  final String dealerName;
-  final String dealerEmail;
-  final String dealershipName;
-  final String entityType;
-  final String primaryContactPerson;
-  final String primaryContactNumber;
+  final String userName;
+  final String email;
+  final String? dealershipName;
+  final String? entityType;
+  final String? primaryContactPerson;
+  final String? primaryContactNumber;
   final String? secondaryContactPerson;
   final String? secondaryContactNumber;
   final List<String> addressList;
   final String password;
-  final String? contactNumber;
+  final String phoneNumber;
   final String approvalStatus;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
   UserModel({
     required this.id,
-    required this.userType,
+    required this.userRole,
     required this.location,
-    required this.dealerName,
-    required this.dealerEmail,
-    required this.dealershipName,
-    required this.entityType,
-    required this.primaryContactPerson,
-    required this.primaryContactNumber,
+    required this.userName,
+    required this.email,
+    this.dealershipName,
+    this.entityType,
+    this.primaryContactPerson,
+    this.primaryContactNumber,
     this.secondaryContactPerson,
     this.secondaryContactNumber,
     required this.addressList,
     required this.password,
-    this.contactNumber,
+    required this.phoneNumber,
     required this.approvalStatus,
     this.createdAt,
     this.updatedAt,
@@ -40,10 +45,10 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['_id'] ?? '',
-      userType: json['userType'] ?? '',
+      userRole: json['userRole'] ?? '',
       location: json['location'] ?? '',
-      dealerName: json['dealerName'] ?? '',
-      dealerEmail: json['dealerEmail'] ?? '',
+      userName: json['userName'] ?? '',
+      email: json['email'] ?? '',
       dealershipName: json['dealershipName'] ?? '',
       entityType: json['entityType'] ?? '',
       primaryContactPerson: json['primaryContactPerson'] ?? '',
@@ -52,24 +57,22 @@ class UserModel {
       secondaryContactNumber: json['secondaryContactNumber'],
       addressList: List<String>.from(json['addressList'] ?? []),
       password: json['password'] ?? '',
-      contactNumber: json['contactNumber'],
+      phoneNumber: json['phoneNumber'],
       approvalStatus: json['approvalStatus'] ?? '',
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'userType': userType,
+      'userRole': userRole,
       'location': location,
-      'dealerName': dealerName,
-      'dealerEmail': dealerEmail,
+      'userName': userName,
+      'email': email,
       'dealershipName': dealershipName,
       'entityType': entityType,
       'primaryContactPerson': primaryContactPerson,
@@ -78,7 +81,7 @@ class UserModel {
       'secondaryContactNumber': secondaryContactNumber,
       'addressList': addressList,
       'password': password,
-      'contactNumber': contactNumber,
+      'phoneNumber': phoneNumber,
       'approvalStatus': approvalStatus,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
