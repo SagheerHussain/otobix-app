@@ -92,7 +92,6 @@ class RegisterPage extends StatelessWidget {
     ],
   );
 
-  //Role Selection
   Widget _buildRoleSelection() => Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -100,7 +99,7 @@ class RegisterPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildRoleSelectionButton(icon: Icons.group, role: 'Customer'),
-          _buildRoleSelectionButton(icon: Icons.person, role: 'Sales\nManager'),
+          _buildRoleSelectionButton(icon: Icons.person, role: 'Sales Manager'),
           _buildRoleSelectionButton(icon: Icons.phone, role: 'Dealer'),
         ],
       ),
@@ -115,8 +114,6 @@ class RegisterPage extends StatelessWidget {
       ),
     ],
   );
-
-  //Role Selection Button
   Widget _buildRoleSelectionButton({
     required IconData icon,
     required String role,

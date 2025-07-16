@@ -10,8 +10,9 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 class RegisterPinCodePage extends StatelessWidget {
   final String phoneNumber;
+  final String userType;
 
-  RegisterPinCodePage({super.key, required this.phoneNumber});
+  RegisterPinCodePage({super.key, required this.phoneNumber, required this.userType});
 
   final RegisterPinCodeController pinCodeFieldsController = Get.put(
     RegisterPinCodeController(),
@@ -115,7 +116,7 @@ class RegisterPinCodePage extends StatelessWidget {
         message: "OTP Verified Successfully",
         type: ToastType.success,
       );
-      Get.to(() => RegistrationFormPage(userType: "Dealer", contactNumber: phoneNumber));
+      Get.to(() => RegistrationFormPage(userType: userType, contactNumber: phoneNumber));
 
       // pinCodeFieldsController.verifyOtp(
       //   phoneNumber: phoneNumber,
