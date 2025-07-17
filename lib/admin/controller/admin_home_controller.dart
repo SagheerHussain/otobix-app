@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/Login%20Register/user_model.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Utils/app_urls.dart';
 
 class AdminHomeController extends GetxController {
 
@@ -14,41 +15,49 @@ onInit() {
     fetchAllUsers();
   }
   Future<void> fetchAllUsers() async {
-    isLoading.value = true;
+  isLoading.value = true;
 
-    try {
-      final response = await ApiService.get(endpoint: "user/all-users");
+  try {
+    final response = await ApiService.get(endpoint: "user/all-users");
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final List<dynamic> usersJson = data['users'] ?? [];
+    print("Status Code: ${response.statusCode}");
+    print("Raw Response Body: ${response.body}");
 
-        usersList.value = usersJson
-            .map((json) => UserModel.fromJson(json))
-            .toList();
+    // Check for valid JSON response
+    if (response.statusCode == 200 &&
+        response.headers['content-type']?.contains('application/json') == true) {
+      final data = jsonDecode(response.body);
 
-        print("Fetched users: ${usersList.length}");
-      } else {
-        debugPrint("Failed to fetch users: ${response.body}");
-        Get.snackbar(
-          "Error",
-          "Failed to fetch users",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.shade100,
-        );
-      }
-    } catch (e) {
-      print("Error fetching users: $e");
+      final List<dynamic> usersJson = data['users'] ?? [];
+
+      usersList.value = usersJson
+          .map((json) => UserModel.fromJson(json))
+          .toList();
+
+      print("Fetched users: ${usersList.length}");
+    } else {
+      // This will catch HTML or unexpected content
+      debugPrint("Unexpected response format: ${response.body}");
       Get.snackbar(
         "Error",
-        e.toString(),
+        "Unexpected response. Please try again.",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade100,
       );
-    } finally {
-      isLoading.value = false;
     }
+  } catch (e) {
+    print("Error fetching users: $e");
+    Get.snackbar(
+      "Error",
+      e.toString(),
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red.shade100,
+    );
+  } finally {
+    isLoading.value = false;
   }
+}
+
 
 Future<void> updateUserStatus({
   required String userId,
