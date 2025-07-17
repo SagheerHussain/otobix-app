@@ -89,12 +89,12 @@ class LoginController extends GetxController {
         "phoneNumber": contactNumber,
         "password": passwordController.text.trim(),
       };
+
       print("Sending body: $requestBody");
       final response = await ApiService.post(
         endpoint: AppUrls.login,
         body: requestBody,
       );
-
       final data = jsonDecode(response.body);
       print("Status Code: ${response.statusCode}");
       if (response.statusCode == 200) {
