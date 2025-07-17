@@ -94,7 +94,7 @@ class SalesManagerHomepage extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               title,
-              style: const TextStyle(fontSize: 10, color: AppColors.gray),
+              style: const TextStyle(fontSize: 10, color: AppColors.grey),
             ),
           ],
         ),
@@ -161,7 +161,7 @@ class SalesManagerHomepage extends StatelessWidget {
                 SizedBox(height: 4),
                 Text(
                   "Active • 4 listings",
-                  style: TextStyle(fontSize: 10, color: AppColors.gray),
+                  style: TextStyle(fontSize: 10, color: AppColors.grey),
                 ),
               ],
             ),

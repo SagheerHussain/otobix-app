@@ -71,6 +71,7 @@ class RegistrationFormPage extends StatelessWidget {
               ),
               child: Form(
                 key: getxController.formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Column(
@@ -90,6 +91,11 @@ class RegistrationFormPage extends StatelessWidget {
                         hintText: "e.g. Mukesh Kumar",
                         keyboardType: TextInputType.text,
                         isRequired: true,
+                        isUserName: true,
+
+                        onChanged: (val) {
+                          getxController.validateUsername();
+                        },
                       ),
                       _buildCustomTextField(
                         icon: Icons.email,
@@ -98,6 +104,15 @@ class RegistrationFormPage extends StatelessWidget {
                         hintText: "e.g. mukeshkumar@gmail.com",
                         keyboardType: TextInputType.emailAddress,
                         isRequired: true,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Email is required';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Invalid email format';
+                          }
+                          return null;
+                        },
                       ),
                       if (userRole == UserModel.dealer)
                         _buildCustomTextField(
@@ -157,7 +172,7 @@ class RegistrationFormPage extends StatelessWidget {
                         keyboardType: TextInputType.visiblePassword,
                         isRequired: true,
                         isPassword: true,
-                        obscureTextController: getxController.obscurePassword,
+                        obscureText: getxController.obscurePassword,
                       ),
                       _buildAddressFields(),
                       const SizedBox(height: 20),
@@ -181,7 +196,7 @@ class RegistrationFormPage extends StatelessWidget {
         );
 
         return SizedBox(
-          height: 30,
+          height: 40,
           child: RawAutocomplete<String>(
             textEditingController: textController,
             focusNode: FocusNode(),
@@ -212,16 +227,19 @@ class RegistrationFormPage extends StatelessWidget {
                 focusNode: fieldFocusNode,
                 decoration: InputDecoration(
                   hintText: "Select State",
-                  hintStyle: TextStyle(color: AppColors.gray, fontSize: 10),
+                  hintStyle: TextStyle(
+                    color: AppColors.grey.withValues(alpha: .5),
+                    fontSize: 12,
+                  ),
                   prefixIcon: Icon(
                     Icons.location_on,
-                    color: AppColors.gray,
+                    color: AppColors.grey.withValues(alpha: .5),
                     size: 15,
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       Icons.arrow_drop_down,
-                      color: AppColors.gray,
+                      color: AppColors.grey,
                       size: 15,
                     ),
                     onPressed: () {
@@ -230,17 +248,16 @@ class RegistrationFormPage extends StatelessWidget {
                   ),
                   border: UnderlineInputBorder(),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
+                    borderSide: BorderSide(
+                      color: AppColors.grey.withValues(alpha: .5),
+                    ),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 2),
+                    borderSide: BorderSide(color: AppColors.green, width: 1.5),
                   ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 5,
-                    vertical: 2,
-                  ),
+                  // contentPadding: EdgeInsets.symmetric(horizontal: 10),
                 ),
-                style: TextStyle(color: AppColors.gray, fontSize: 10),
+                style: TextStyle(fontSize: 12),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'State is required';
@@ -266,7 +283,7 @@ class RegistrationFormPage extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         final String option = options.elementAt(index);
                         return ListTile(
-                          title: Text(option),
+                          title: Text(option, style: TextStyle(fontSize: 12)),
                           onTap: () {
                             onSelected(option);
                           },
@@ -311,8 +328,75 @@ class RegistrationFormPage extends StatelessWidget {
     required IconData icon,
     bool isRequired = false,
     bool isPassword = false,
-    RxBool? obscureTextController,
+    bool isUserName = false,
+    RxBool? obscureText,
+    Function(String?)? validator,
+    Function(String)? onChanged,
   }) {
+    Widget buildField({required bool obscure}) {
+      return TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        obscureText: isPassword && obscureText != null ? obscure : false,
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            icon,
+            color: AppColors.grey.withValues(alpha: .5),
+            size: 15,
+          ),
+          prefixIconConstraints: const BoxConstraints(
+            minWidth: 30,
+            minHeight: 20,
+          ),
+          suffixIcon:
+              isPassword && obscureText != null
+                  ? GestureDetector(
+                    child: Icon(
+                      obscure ? Icons.visibility_off : Icons.visibility,
+                      color: AppColors.grey,
+                      size: 15,
+                    ),
+                    onTap: () {
+                      obscureText.value = !obscureText.value;
+                    },
+                  )
+                  : null,
+          suffixIconConstraints:
+              isPassword && obscureText != null
+                  ? const BoxConstraints(minWidth: 30, minHeight: 20)
+                  : null,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 3,
+            horizontal: 10,
+          ),
+          hintStyle: TextStyle(
+            color: AppColors.grey.withValues(alpha: .5),
+            fontSize: 12,
+          ),
+          hintText: hintText,
+        ),
+        onChanged: onChanged,
+        validator: (value) {
+          if (isRequired &&
+              !isUserName &&
+              (value == null || value.trim().isEmpty)) {
+            return 'This field is required';
+          }
+          if (validator != null) {
+            return validator(value);
+          }
+          return null;
+        },
+
+        // validator:  (value) {
+        //   if (isRequired && (value == null || value.trim().isEmpty)) {
+        //     return 'This field is required';
+        //   }
+        //   return null;
+        // },
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -322,7 +406,7 @@ class RegistrationFormPage extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 12,
-              color: AppColors.gray,
+              color: AppColors.grey,
             ),
             children:
                 isRequired
@@ -339,29 +423,134 @@ class RegistrationFormPage extends StatelessWidget {
                     : [],
           ),
         ),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            prefixIcon: Icon(
-              icon,
-              color: AppColors.gray.withValues(alpha: .5),
-              size: 15,
-            ),
-            prefixIconConstraints: BoxConstraints(minWidth: 30, minHeight: 20),
-            contentPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-            hintStyle: TextStyle(
-              color: AppColors.gray.withValues(alpha: .5),
+
+        isPassword && obscureText != null
+            ? Obx(() => buildField(obscure: obscureText.value))
+            : buildField(obscure: false),
+
+        // show error manually
+        isUserName
+            ? Obx(() {
+              final error = getxController.usernameValidationError.value;
+              if (error.isEmpty) return SizedBox.shrink();
+
+              final isAvailable = error.toLowerCase().contains('available');
+              return Padding(
+                padding: const EdgeInsets.only(left: 8, top: 3),
+                child: Row(
+                  children: [
+                    Text(
+                      error,
+                      style: TextStyle(
+                        color: isAvailable ? AppColors.green : AppColors.red,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    isAvailable
+                        ? Icon(
+                          Icons.check_circle,
+                          color: AppColors.green,
+                          size: 15,
+                        )
+                        : SizedBox.shrink(),
+                  ],
+                ),
+              );
+            })
+            : SizedBox.shrink(),
+
+        const SizedBox(height: 30),
+      ],
+    );
+  }
+
+  Widget _buildCustomTextField1({
+    required String label,
+    required TextEditingController controller,
+    required String hintText,
+    required TextInputType keyboardType,
+    required IconData icon,
+    bool isRequired = false,
+    bool isPassword = false,
+    RxBool? obscureText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            text: label,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
               fontSize: 12,
+              color: AppColors.grey,
             ),
-            hintText: hintText,
+            children:
+                isRequired
+                    ? [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          color: AppColors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ]
+                    : [],
           ),
-          validator: (value) {
-            if (isRequired && (value == null || value.trim().isEmpty)) {
-              return 'This field is required';
-            }
-            return null;
-          },
+        ),
+        Obx(
+          () => TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            decoration: InputDecoration(
+              prefixIcon: Icon(
+                icon,
+                color: AppColors.grey.withValues(alpha: .5),
+                size: 15,
+              ),
+              prefixIconConstraints: BoxConstraints(
+                minWidth: 30,
+                minHeight: 20,
+              ),
+              suffixIcon:
+                  isPassword
+                      ? IconButton(
+                        icon: Icon(
+                          obscureText!.value
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: AppColors.grey.withValues(alpha: .5),
+                          size: 15,
+                        ),
+                        onPressed: () {
+                          obscureText.value = !obscureText.value;
+                        },
+                      )
+                      : null,
+              suffixIconConstraints:
+                  isPassword
+                      ? BoxConstraints(minWidth: 30, minHeight: 20)
+                      : null,
+
+              contentPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+              hintStyle: TextStyle(
+                color: AppColors.grey.withValues(alpha: .5),
+                fontSize: 12,
+              ),
+              hintText: hintText,
+            ),
+            obscureText: isPassword ? obscureText!.value : false,
+
+            validator: (value) {
+              if (isRequired && (value == null || value.trim().isEmpty)) {
+                return 'This field is required';
+              }
+              return null;
+            },
+          ),
         ),
         const SizedBox(height: 30),
       ],
@@ -377,7 +566,7 @@ class RegistrationFormPage extends StatelessWidget {
             Text(
               'Addresses',
               style: TextStyle(
-                color: AppColors.gray,
+                color: AppColors.grey,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
@@ -398,7 +587,7 @@ class RegistrationFormPage extends StatelessWidget {
                             decoration: InputDecoration(
                               prefixIcon: Icon(
                                 Icons.location_city,
-                                color: AppColors.gray.withOpacity(.5),
+                                color: AppColors.grey.withOpacity(.5),
                                 size: 15,
                               ),
                               prefixIconConstraints: BoxConstraints(
@@ -410,7 +599,7 @@ class RegistrationFormPage extends StatelessWidget {
                               ),
                               hintText: "Enter Address ${index + 1}",
                               hintStyle: TextStyle(
-                                color: AppColors.gray.withOpacity(.5),
+                                color: AppColors.grey.withOpacity(.5),
                                 fontSize: 12,
                               ),
                             ),

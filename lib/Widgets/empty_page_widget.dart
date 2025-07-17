@@ -54,7 +54,7 @@ class EmptyPageWidget extends StatelessWidget {
             Text(
               description,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: AppColors.gray),
+              style: TextStyle(fontSize: 14, color: AppColors.grey),
             ),
 
             if (buttonText != null && onButtonPressed != null) ...[

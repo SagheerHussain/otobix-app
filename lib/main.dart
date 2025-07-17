@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Models/Home%20Tab/car_model.dart';
 import 'package:otobix/Models/Login%20Register/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Account%20Tab/edit_account_page.dart';
 import 'package:otobix/Utils/app_constants.dart';
+import 'package:otobix/Views/Account%20Tab/user_preferences_page.dart';
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
+import 'package:otobix/Views/Home%20Tab/car_details_page.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/register_page.dart';
 import 'package:otobix/Views/Register/register_pin_code_page.dart';
@@ -41,7 +44,11 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
+<<<<<<< HEAD
       home: SplashScreen(),
+=======
+      home: UserPreferencesPage(),
+>>>>>>> 7b35fd5ec49326cbd58261e2ff0bae22dbb356a2
     );
   }
 }

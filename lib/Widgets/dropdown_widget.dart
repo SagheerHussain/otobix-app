@@ -29,7 +29,8 @@ class DropdownWidget extends StatelessWidget {
     this.onChanged,
     this.useCustomPicker = true,
     this.height = 40,
-    this.dialogMaxWidth = 300, required String? Function(dynamic value) validator,
+    this.dialogMaxWidth = 300,
+    required String? Function(dynamic value) validator,
   });
 
   @override
@@ -50,7 +51,7 @@ class DropdownWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border(
-                    bottom: BorderSide(color: AppColors.gray, width: 1.0),
+                    bottom: BorderSide(color: AppColors.grey, width: 1.0),
                   ),
                 ),
                 child: Row(
@@ -58,7 +59,7 @@ class DropdownWidget extends StatelessWidget {
                     Icon(
                       prefixIcon,
                       size: 15,
-                      color: AppColors.gray.withOpacity(.5),
+                      color: AppColors.grey.withValues(alpha: .5),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -67,7 +68,7 @@ class DropdownWidget extends StatelessWidget {
                         style: TextStyle(
                           color:
                               selectedValue == null
-                                  ? AppColors.gray.withOpacity(.5)
+                                  ? AppColors.grey.withValues(alpha: .5)
                                   : AppColors.black,
                           fontSize: 12,
                         ),
@@ -75,7 +76,7 @@ class DropdownWidget extends StatelessWidget {
                     ),
                     const Icon(
                       Icons.arrow_drop_down,
-                      color: AppColors.gray,
+                      color: AppColors.grey,
                       size: 20,
                     ),
                   ],
@@ -106,7 +107,7 @@ class DropdownWidget extends StatelessWidget {
                 decoration: InputDecoration(
                   prefixIcon: Icon(
                     prefixIcon,
-                    color: AppColors.gray.withOpacity(.5),
+                    color: AppColors.grey.withValues(alpha: .5),
                     size: 15,
                   ),
                   prefixIconConstraints: const BoxConstraints(
@@ -116,17 +117,17 @@ class DropdownWidget extends StatelessWidget {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                   hintText: hintText,
                   hintStyle: TextStyle(
-                    color: AppColors.gray.withOpacity(.5),
+                    color: AppColors.grey.withValues(alpha: .5),
                     fontSize: 12,
                   ),
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(
-                      color: AppColors.gray.withOpacity(.5),
+                      color: AppColors.grey.withValues(alpha: .5),
                     ),
                   ),
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(
-                      color: AppColors.gray.withOpacity(.5),
+                      color: AppColors.grey.withValues(alpha: .5),
                     ),
                   ),
                   focusedBorder: UnderlineInputBorder(
@@ -149,7 +150,7 @@ class DropdownWidget extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 12,
-          color: AppColors.gray,
+          color: AppColors.grey,
         ),
         children:
             isRequired
@@ -185,7 +186,7 @@ class DropdownWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               final item = items![index];
               return ListTile(
-                leading: Icon(prefixIcon, color: AppColors.gray, size: 20),
+                leading: Icon(prefixIcon, color: AppColors.grey, size: 20),
                 title: Text(
                   item,
                   style: TextStyle(color: AppColors.black, fontSize: 14),
