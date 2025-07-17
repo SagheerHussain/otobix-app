@@ -4,15 +4,17 @@ import 'package:get/get.dart';
 import 'package:otobix/Controllers/Register/register_pin_code_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
-import 'package:otobix/Views/Register/registration_form_page.dart';
-import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class RegisterPinCodePage extends StatelessWidget {
   final String phoneNumber;
-  final String userType;
+  final String userRole;
 
-  RegisterPinCodePage({super.key, required this.phoneNumber, required this.userType});
+  RegisterPinCodePage({
+    super.key,
+    required this.phoneNumber,
+    required this.userRole,
+  });
 
   final RegisterPinCodeController pinCodeFieldsController = Get.put(
     RegisterPinCodeController(),
@@ -33,6 +35,7 @@ class RegisterPinCodePage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
+            SizedBox(height: 20),
             _buildAppLogo(),
             SizedBox(height: 10),
             Column(
@@ -69,15 +72,15 @@ class RegisterPinCodePage extends StatelessWidget {
     children: [
       Text(
         "Enter the OTP sent to",
-        style: TextStyle(fontSize: 16, color: Colors.black),
+        style: TextStyle(fontSize: 16, color: AppColors.black),
       ),
 
       SizedBox(height: 8),
       Text(
-        phoneNumber,
+        '(+91) - $phoneNumber',
         style: TextStyle(
           fontSize: 18,
-          color: Colors.green,
+          color: AppColors.green,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -94,35 +97,35 @@ class RegisterPinCodePage extends StatelessWidget {
     length: 6,
     obscureText: false,
     animationType: AnimationType.fade,
-    cursorColor: Colors.green,
-    textStyle: TextStyle(fontSize: 20, color: Colors.black),
+    cursorColor: AppColors.green,
+    textStyle: TextStyle(fontSize: 20, color: AppColors.black),
     pinTheme: PinTheme(
       shape: PinCodeFieldShape.box,
       borderRadius: BorderRadius.circular(8),
       fieldHeight: 50,
       fieldWidth: 40,
-      activeFillColor: Colors.green.withValues(alpha: 0.2),
-      inactiveFillColor: Colors.white,
-      selectedFillColor: Colors.green.withValues(alpha: 0.1),
-      activeColor: Colors.green,
-      inactiveColor: Colors.grey,
-      selectedColor: Colors.green,
+      activeFillColor: AppColors.green.withValues(alpha: 0.2),
+      inactiveFillColor: AppColors.white,
+      selectedFillColor: AppColors.green.withValues(alpha: 0.1),
+      activeColor: AppColors.green,
+      inactiveColor: AppColors.gray,
+      selectedColor: AppColors.green,
     ),
     animationDuration: Duration(milliseconds: 300),
     enableActiveFill: true,
-    onCompleted: (value) {
-      ToastWidget.show(
-        context: parentContext,
-        message: "OTP Verified Successfully",
-        type: ToastType.success,
+    onCompleted: (otpValue) {
+      pinCodeFieldsController.dummyVerifyOtp(
+        phoneNumber: phoneNumber,
+        otp: otpValue,
+        userType: userRole,
       );
-      Get.to(() => RegistrationFormPage(userType: userType, contactNumber: phoneNumber));
 
       // pinCodeFieldsController.verifyOtp(
       //   phoneNumber: phoneNumber,
       //   otp: value,
+      // userType: userType,
       // );
     },
-    onChanged: (value) {},
+    onChanged: (otpValue) {},
   );
 }
