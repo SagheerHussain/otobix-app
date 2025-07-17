@@ -72,7 +72,7 @@ class LiveBidsPage extends StatelessWidget {
                             color:
                                 car.isFavorite.value
                                     ? AppColors.red
-                                    : AppColors.gray,
+                                    : AppColors.grey,
                             size: 20,
                           ),
                         ),

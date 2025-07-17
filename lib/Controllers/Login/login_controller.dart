@@ -16,7 +16,7 @@ import 'package:otobix/helpers/Preferences_helper.dart';
 
 class LoginController extends GetxController {
   RxBool isLoading = false.obs;
-  RxBool obsecureText = false.obs;
+  RxBool obsecureText = true.obs;
   final dealerNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final passwordController = TextEditingController();

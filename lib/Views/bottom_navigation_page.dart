@@ -55,7 +55,7 @@ class BottomNavigationPage extends StatelessWidget {
             SalomonBottomBarItem(
               icon: Icon(CupertinoIcons.person),
               title: Text("Account"),
-              selectedColor: AppColors.gray,
+              selectedColor: AppColors.grey,
             ),
           ],
         ),

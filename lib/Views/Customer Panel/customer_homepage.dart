@@ -40,9 +40,9 @@ class CustomerHomepage extends StatelessWidget {
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search for cars, brands, models...',
-                  hintStyle: TextStyle(color: AppColors.gray, fontSize: 10),
+                  hintStyle: TextStyle(color: AppColors.grey, fontSize: 10),
                   prefixIcon: const Icon(Icons.search, size: 15),
-                  prefixIconColor: AppColors.gray,
+                  prefixIconColor: AppColors.grey,
                   filled: true,
                   fillColor: AppColors.white,
                   contentPadding: const EdgeInsets.symmetric(vertical: 2),

@@ -39,7 +39,7 @@ class TabBarWidget extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: spaceFromSides),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(50)),
-                color: AppColors.gray.withValues(alpha: .2),
+                color: AppColors.grey.withValues(alpha: .2),
               ),
               child: TabBar(
                 controller: tabController.tabController,
@@ -95,7 +95,7 @@ class TabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final titleColor = selected ? AppColors.white : AppColors.black;
     final badgeBg =
-        selected ? AppColors.blue : AppColors.gray.withValues(alpha: .5);
+        selected ? AppColors.blue : AppColors.grey.withValues(alpha: .5);
     final badgeTextColor = selected ? AppColors.white : AppColors.black;
 
     return Tab(

@@ -44,7 +44,7 @@ class MyCarsPage extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Search...',
           hintStyle: TextStyle(
-            color: AppColors.gray.withValues(alpha: .5),
+            color: AppColors.grey.withValues(alpha: .5),
             fontSize: 12,
           ),
           prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 20),

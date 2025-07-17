@@ -7,6 +7,7 @@ import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
+import 'dart:convert';
 
 class RegistrationFormController extends GetxController {
   @override
@@ -17,6 +18,27 @@ class RegistrationFormController extends GetxController {
     // Ensure at least one address exists
     if (addressControllers.isEmpty) {
       addressControllers.add(TextEditingController());
+    }
+
+    // // Add listener for username change
+    // dealerNameController.addListener(() {
+    //   validateUsername();
+    // });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    dealerNameController.dispose();
+    dealerEmailController.dispose();
+    dealershipNameController.dispose();
+    primaryContactPersonController.dispose();
+    primaryMobileController.dispose();
+    secondaryContactPersonController.dispose();
+    secondaryMobileController.dispose();
+    passwordController.dispose();
+    for (var controller in addressControllers) {
+      controller.dispose();
     }
   }
 
@@ -30,6 +52,8 @@ class RegistrationFormController extends GetxController {
     update();
   }
 
+  RxString usernameValidationError = ''.obs;
+
   RxBool isLoading = false.obs;
   String? selectedState;
   String? selectedEntityType;
@@ -37,7 +61,7 @@ class RegistrationFormController extends GetxController {
   List<String> filteredStates = [];
   List<String> indianStates = AppConstants.indianStates;
 
-  final RxBool obscurePassword = false.obs;
+  final RxBool obscurePassword = true.obs;
 
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController dealerNameController = TextEditingController();
@@ -155,10 +179,13 @@ class RegistrationFormController extends GetxController {
     required String contactNumber,
   }) async {
     try {
-      // Validate form
-      bool isValid = formKey.currentState!.validate();
+      // Trigger username check
+      bool isUsernameValid = await validateUsername();
 
-      if (!isValid) {
+      // Validate form
+      bool isFormValid = formKey.currentState!.validate();
+
+      if (!isUsernameValid || !isFormValid) {
         /// Mark all required fields as touched so errors show
         touchedFields.addAll([
           "State",
@@ -255,6 +282,43 @@ class RegistrationFormController extends GetxController {
       debugPrint(e.toString());
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<bool> validateUsername() async {
+    String userName = dealerNameController.text.trim();
+
+    if (userName.isEmpty) {
+      usernameValidationError.value = "Username is required ";
+      return false;
+    }
+
+    try {
+      final response = await ApiService.post(
+        endpoint: AppUrls.checkUsernameExists(userName),
+        body: {},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        final bool isAvailable = data['available'] == true;
+
+        if (isAvailable) {
+          usernameValidationError.value = "Username is available ";
+          return true;
+        } else {
+          usernameValidationError.value = "Username already exists ";
+          return false;
+        }
+      } else {
+        usernameValidationError.value = "Error checking username ";
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Username validation error → $e");
+      usernameValidationError.value = "Error checking username ";
+      return false;
     }
   }
 }
