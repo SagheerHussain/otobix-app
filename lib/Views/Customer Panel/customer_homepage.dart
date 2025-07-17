@@ -54,7 +54,6 @@ class CustomerHomepage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Featured Section
             const Text(
               'Featured Cars',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
@@ -71,7 +70,6 @@ class CustomerHomepage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Live Auctions
             const Text(
               'Live Auctions',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
