@@ -81,12 +81,12 @@ class RegistrationFormPage extends StatelessWidget {
                       SizedBox(height: 20),
                       _buildCustomTextField(
                         icon: Icons.person,
-                        label:
-                            userRole == UserModel.dealer
-                                ? "Dealer Name"
-                                : userRole == UserModel.customer
-                                ? "Customer Name"
-                                : "Sales Manager Name",
+                        label: "User Name / User ID",
+                        // userRole == UserModel.dealer
+                        //     ? "Dealer Name"
+                        //     : userRole == UserModel.customer
+                        //     ? "Customer Name"
+                        //     : "Sales Manager Name",
                         controller: getxController.dealerNameController,
                         hintText: "e.g. Mukesh Kumar",
                         keyboardType: TextInputType.text,
@@ -144,6 +144,7 @@ class RegistrationFormPage extends StatelessWidget {
                           hintText: "e.g. 9876543210",
                           keyboardType: TextInputType.phone,
                           isRequired: true,
+                          maxLengthTen: true,
                         ),
                       if (userRole == UserModel.dealer)
                         _buildCustomTextField(
@@ -163,6 +164,7 @@ class RegistrationFormPage extends StatelessWidget {
                           hintText: "e.g. 9123456789",
                           keyboardType: TextInputType.phone,
                           isRequired: false,
+                          maxLengthTen: true,
                         ),
                       _buildCustomTextField(
                         icon: Icons.lock,
@@ -332,12 +334,14 @@ class RegistrationFormPage extends StatelessWidget {
     RxBool? obscureText,
     Function(String?)? validator,
     Function(String)? onChanged,
+    bool maxLengthTen = false,
   }) {
     Widget buildField({required bool obscure}) {
       return TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         obscureText: isPassword && obscureText != null ? obscure : false,
+        maxLength: maxLengthTen ? 10 : null,
         decoration: InputDecoration(
           prefixIcon: Icon(
             icon,

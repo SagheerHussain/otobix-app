@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_images.dart';
 
 class CustomerHomepage extends StatelessWidget {
   const CustomerHomepage({super.key});
@@ -91,50 +92,54 @@ class CustomerHomepage extends StatelessWidget {
   }
 
   Widget _buildCarCard() {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Car image placeholder
-          Container(
-            height: 90,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
-              color: Colors.grey,
-            ),
-            child: Center(
-              child: Icon(
-                FontAwesomeIcons.car,
-                size: 20,
-                color: AppColors.green,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        width: 200,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Car image placeholder
+            Container(
+              height: 90,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+                color: Colors.grey,
+              ),
+              child: Center(
+                child: Image.asset(
+                  AppImages.hondaCity1,
+                  height: 90,
+                  width: 200,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Toyota Corolla",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  "2021 | Automatic",
-                  style: TextStyle(fontSize: 10, color: Colors.grey),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "Toyota Corolla",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "2021 | Automatic",
+                    style: TextStyle(fontSize: 10, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

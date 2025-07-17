@@ -53,8 +53,8 @@ class _WaitingForApprovalPageState extends State<WaitingForApprovalPage> {
 
             // Main Title
             Text(
-              // 'Waiting for Approval',
-              _buildTitleForRole(widget.userRole),
+              'Waiting for Approval',
+              // _buildTitleForRole(widget.userRole),
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
