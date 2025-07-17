@@ -35,7 +35,7 @@ class TabBarButtonsWidget extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: spaceFromSides),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(50)),
-            color: AppColors.gray.withValues(alpha: .2),
+            color: AppColors.grey.withValues(alpha: .2),
           ),
           child: TabBar(
             controller: controller,

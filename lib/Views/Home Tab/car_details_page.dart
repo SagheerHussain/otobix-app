@@ -3,11 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Views/Home%20Tab/Home/Widgets/place_bid_button_widget.dart';
+import 'package:otobix/Views/Home%20Tab/Home/Widgets/start_auto_bid_widget.dart';
 import 'package:otobix/Views/Home%20Tab/car_images_page.dart';
-import 'package:otobix/Widgets/bid_dialogue.dart';
 import 'package:otobix/Widgets/button_widget.dart';
-import 'package:otobix/Widgets/oto_buy_widget.dart';
-import 'package:otobix/Widgets/upcoming_bid.dart' show upcomingBidSheet;
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:otobix/Models/Home%20Tab/car_model.dart';
@@ -19,11 +18,7 @@ class CarDetailsPage extends StatelessWidget {
   final CarModel car;
   final String type;
 
-  const CarDetailsPage({
-    super.key,
-    required this.car,
-    required this.type,
-  });
+  const CarDetailsPage({super.key, required this.car, required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -169,8 +164,11 @@ class CarDetailsPage extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.arrow_back_ios_new,
-                  color: AppColors.white, size: 12),
+              const Icon(
+                Icons.arrow_back_ios_new,
+                color: AppColors.white,
+                size: 12,
+              ),
               const SizedBox(width: 10),
               Text(
                 car.name,
@@ -223,7 +221,7 @@ class CarDetailsPage extends StatelessWidget {
         ),
         Row(
           children: [
-            const Icon(Icons.location_on, color: AppColors.gray, size: 12),
+            const Icon(Icons.location_on, color: AppColors.grey, size: 12),
             Text(car.location, style: const TextStyle(fontSize: 12)),
           ],
         ),
@@ -237,7 +235,7 @@ class CarDetailsPage extends StatelessWidget {
       children: [
         Column(
           children: [
-            const Icon(Icons.speed, color: AppColors.gray, size: 20),
+            const Icon(Icons.speed, color: AppColors.grey, size: 20),
             Text(
               NumberFormat.decimalPattern('en_IN').format(car.kmDriven),
               style: const TextStyle(fontSize: 10),
@@ -246,26 +244,29 @@ class CarDetailsPage extends StatelessWidget {
         ),
         Column(
           children: [
-            const Icon(Icons.local_gas_station,
-                color: AppColors.gray, size: 20),
+            const Icon(
+              Icons.local_gas_station,
+              color: AppColors.grey,
+              size: 20,
+            ),
             Text(car.fuelType, style: const TextStyle(fontSize: 10)),
           ],
         ),
         Column(
           children: [
-            const Icon(Icons.settings, color: AppColors.gray, size: 20),
+            const Icon(Icons.settings, color: AppColors.grey, size: 20),
             const Text('Automatic', style: TextStyle(fontSize: 10)),
           ],
         ),
         Column(
           children: [
-            const Icon(Icons.color_lens, color: AppColors.gray, size: 20),
+            const Icon(Icons.color_lens, color: AppColors.grey, size: 20),
             const Text('White', style: TextStyle(fontSize: 10)),
           ],
         ),
         Column(
           children: [
-            const Icon(Icons.event, color: AppColors.gray, size: 20),
+            const Icon(Icons.event, color: AppColors.grey, size: 20),
             const Text('Dec 2025', style: TextStyle(fontSize: 10)),
           ],
         ),
@@ -308,7 +309,7 @@ class CarDetailsPage extends StatelessWidget {
             Text(value, style: const TextStyle(fontSize: 10)),
           ],
         ),
-        Divider(color: AppColors.gray.withOpacity(0.2)),
+        Divider(color: AppColors.grey.withOpacity(0.2)),
       ],
     );
   }
@@ -317,7 +318,7 @@ class CarDetailsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.gray.withOpacity(0.1),
+        color: AppColors.grey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(7),
         border: Border.all(color: AppColors.green),
       ),
@@ -326,8 +327,11 @@ class CarDetailsPage extends StatelessWidget {
         children: [
           const Row(
             children: [
-              Icon(Icons.assignment_turned_in_outlined,
-                  size: 15, color: AppColors.blue),
+              Icon(
+                Icons.assignment_turned_in_outlined,
+                size: 15,
+                color: AppColors.blue,
+              ),
               SizedBox(width: 8),
               Text(
                 'Inspection Report',
@@ -339,7 +343,7 @@ class CarDetailsPage extends StatelessWidget {
               ),
             ],
           ),
-          Divider(color: AppColors.gray.withOpacity(0.5)),
+          Divider(color: AppColors.grey.withOpacity(0.5)),
           _buildDetailRowForInspectionReport(
             Icons.date_range,
             'Inspection Date',
@@ -384,7 +388,7 @@ class CarDetailsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.gray.withOpacity(0.1),
+        color: AppColors.grey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.green),
       ),
@@ -393,8 +397,11 @@ class CarDetailsPage extends StatelessWidget {
         children: [
           const Row(
             children: [
-              Icon(Icons.directions_car_filled_outlined,
-                  size: 15, color: AppColors.blue),
+              Icon(
+                Icons.directions_car_filled_outlined,
+                size: 15,
+                color: AppColors.blue,
+              ),
               SizedBox(width: 8),
               Text(
                 'Exterior',
@@ -406,16 +413,18 @@ class CarDetailsPage extends StatelessWidget {
               ),
             ],
           ),
-          Divider(color: AppColors.gray.withOpacity(0.5)),
+          Divider(color: AppColors.grey.withOpacity(0.5)),
           _buildExteriorItem(
-              'Body Condition', 'Excellent, no dents or scratches'),
+            'Body Condition',
+            'Excellent, no dents or scratches',
+          ),
           _buildExteriorItem('Paint Quality', 'Original paint, no touch-ups'),
+          _buildExteriorItem('Headlights & Tail Lights', 'Fully functional'),
+          _buildExteriorItem('Windshield & Windows', 'No cracks or chips'),
           _buildExteriorItem(
-              'Headlights & Tail Lights', 'Fully functional'),
-          _buildExteriorItem(
-              'Windshield & Windows', 'No cracks or chips'),
-          _buildExteriorItem('Tyres Condition',
-              'Front 80%, Rear 70% tread remaining'),
+            'Tyres Condition',
+            'Front 80%, Rear 70% tread remaining',
+          ),
           _buildExteriorItem('Spare Tyre', 'Available and unused'),
         ],
       ),
@@ -428,19 +437,15 @@ class CarDetailsPage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_circle,
-              size: 15, color: AppColors.green),
+          const Icon(Icons.check_circle, size: 15, color: AppColors.green),
           const SizedBox(width: 10),
           Expanded(
             child: RichText(
               text: TextSpan(
                 text: '$title: ',
-                style: const TextStyle(
-                    fontSize: 10, color: AppColors.black),
+                style: const TextStyle(fontSize: 10, color: AppColors.black),
                 children: [
-                  TextSpan(
-                      text: value,
-                      style: const TextStyle(fontSize: 10)),
+                  TextSpan(text: value, style: const TextStyle(fontSize: 10)),
                 ],
               ),
             ),
@@ -451,114 +456,88 @@ class CarDetailsPage extends StatelessWidget {
   }
 
   Widget _buildBidButton(
-  CarDetailsController getxController,
-  BuildContext context,
-  String type,
-) {
-  return ClipRRect(
-    borderRadius: const BorderRadius.only(
-      topLeft: Radius.circular(20),
-      topRight: Radius.circular(20),
-    ),
-    child: BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.white.withOpacity(0.5),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          border: Border(
-            top: BorderSide(
-                color: AppColors.green.withOpacity(0.5)),
-            left: BorderSide(
-                color: AppColors.green.withOpacity(0.5)),
-            right: BorderSide(
-                color: AppColors.green.withOpacity(0.5)),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withOpacity(0.2),
-              blurRadius: 10,
-              spreadRadius: 5,
-              offset: const Offset(5, 0),
+    CarDetailsController getxController,
+    BuildContext context,
+    String type,
+  ) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
+      ),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: AppColors.white.withValues(alpha: 0.5),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Obx(
-              () => Text(
-                getxController.remainingTime.value,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.red,
-                  fontWeight: FontWeight.bold,
+            border: Border(
+              top: BorderSide(color: AppColors.green.withValues(alpha: 0.5)),
+              left: BorderSide(color: AppColors.green.withValues(alpha: 0.5)),
+              right: BorderSide(color: AppColors.green.withValues(alpha: 0.5)),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.2),
+                blurRadius: 10,
+                spreadRadius: 5,
+                offset: const Offset(5, 0),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Obx(
+                () => Text(
+                  getxController.remainingTime.value,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            /// LOGIC: check if type is marketplace
-            if (type == 'marketplace')
-              SizedBox(
-                width: double.infinity,
-                child: ButtonWidget(
-                  text: 'Request for Auction',
-                  onTap: () {
-                    // Add your auction request logic here
-                    print("Request for Auction pressed!");
-                  },
-                  isLoading: getxController.isLoading,
-                  height: 40,
-                  fontSize: 12,
-                  elevation: 10,
-                  backgroundColor: AppColors.blue,
-                ),
-              )
-            else
-              /// Show normal two buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ButtonWidget(
-                    text: 'Place Bid',
+              /// LOGIC: check if type is marketplace
+              if (type == 'marketplace')
+                SizedBox(
+                  width: double.infinity,
+                  child: ButtonWidget(
+                    text: 'Request for Auction',
                     onTap: () {
-                      if (type == 'upcoming') {
-                        upcomingBidSheet(context);
-                      } else if (type == 'live_bids') {
-                        showExactBidSheet(context);
-                      } else if (type == 'ocb_70') {
-                        showMakeOfferSheet(context);
-                      } else {
-                        showExactBidSheet(context);
-                      }
+                      // Add your auction request logic here
+                      print("Request for Auction pressed!");
                     },
                     isLoading: getxController.isLoading,
-                    height: 30,
-                    fontSize: 10,
+                    height: 40,
+                    fontSize: 12,
                     elevation: 10,
-                  ),
-                  ButtonWidget(
-                    text: 'Start Auto Bid',
-                    onTap: () {},
-                    isLoading: getxController.isLoading,
-                    height: 30,
-                    fontSize: 10,
                     backgroundColor: AppColors.blue,
-                    elevation: 10,
                   ),
-                ],
-              ),
-            const SizedBox(height: 10),
-          ],
+                )
+              else
+                /// Show normal two buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    PlaceBidButtonWidget(
+                      type: type,
+                      getxController: getxController,
+                    ),
+                    StartAutoBidButtonWidget(),
+                  ],
+                ),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

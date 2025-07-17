@@ -41,7 +41,7 @@ class RegisterPage extends StatelessWidget {
                     children: [
                       Text(
                         'Already have an account?',
-                        style: TextStyle(color: AppColors.gray),
+                        style: TextStyle(color: AppColors.grey),
                       ),
                       SizedBox(width: 5),
                       InkWell(
@@ -88,7 +88,7 @@ class RegisterPage extends StatelessWidget {
       ),
       Text(
         'Welcome! Please enter your details',
-        style: TextStyle(fontSize: 12, color: AppColors.gray),
+        style: TextStyle(fontSize: 12, color: AppColors.grey),
       ),
     ],
   );
@@ -145,7 +145,7 @@ class RegisterPage extends StatelessWidget {
               color:
                   getxController.selectedRole.value == role
                       ? AppColors.green
-                      : AppColors.gray.withValues(alpha: .2),
+                      : AppColors.grey.withValues(alpha: .2),
               // borderRadius: BorderRadius.circular(10),
               // border: Border.all(
               // color:
@@ -164,7 +164,7 @@ class RegisterPage extends StatelessWidget {
                   color:
                       getxController.selectedRole.value == role
                           ? AppColors.white
-                          : AppColors.gray,
+                          : AppColors.grey,
                 ),
                 SizedBox(height: 5),
                 Text(
@@ -175,7 +175,7 @@ class RegisterPage extends StatelessWidget {
                     color:
                         getxController.selectedRole.value == role
                             ? AppColors.white
-                            : AppColors.gray,
+                            : AppColors.grey,
                   ),
                 ),
               ],
@@ -204,7 +204,7 @@ class RegisterPage extends StatelessWidget {
           decoration: InputDecoration(
             counterText: "",
             hintText: 'e.g. 9876543210',
-            hintStyle: TextStyle(color: AppColors.gray.withValues(alpha: .5)),
+            hintStyle: TextStyle(color: AppColors.grey.withValues(alpha: .5)),
             prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
             prefixIcon: Container(
               padding: EdgeInsets.symmetric(horizontal: 12),

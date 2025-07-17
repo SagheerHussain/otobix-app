@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:otobix/Controllers/Home%20Tab/home_controller.dart';
 import 'package:otobix/Controllers/Widgets/tab_bar_buttons_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/Home%20Tab/Home/live_bids_section.dart';
-import 'package:otobix/Views/Home%20Tab/Home/marketpalce_section.dart';
-import 'package:otobix/Views/Home%20Tab/Home/ocb_70_section.dart';
+import 'package:otobix/Views/Home%20Tab/Home/Sections/live_bids_section.dart';
+import 'package:otobix/Views/Home%20Tab/Home/Sections/marketpalce_section.dart';
+import 'package:otobix/Views/Home%20Tab/Home/Sections/ocb_70_section.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/tab_bar_buttons_widget.dart';
 
@@ -22,13 +22,17 @@ class HomePage extends StatelessWidget {
         backgroundColor: AppColors.white,
         body: Stack(
           children: [
-            
             // TabBar Screens
             Padding(
               padding: const EdgeInsets.only(top: 150, left: 15, right: 15),
               child: TabBarView(
                 controller: tabBarController.tabController,
-                children: [LiveBidsSection(), Ocb70Section(), Ocb70Section(), MarketpalceSection()],
+                children: [
+                  LiveBidsSection(),
+                  Ocb70Section(),
+                  Ocb70Section(),
+                  MarketpalceSection(),
+                ],
               ),
             ),
 
@@ -57,7 +61,7 @@ class HomePage extends StatelessWidget {
 
                     // TabBar Buttons
                     TabBarButtonsWidget(
-                      titles: ['Live', 'Upcoming', 'OCB 70','Marketplace'],
+                      titles: ['Live', 'Upcoming', 'OCB 70', 'Marketplace'],
                       counts: [getxController.liveCarsCount.value, 0, 0, 0],
                       controller: tabBarController.tabController,
                       selectedIndex: tabBarController.selectedIndex,
@@ -91,7 +95,7 @@ class HomePage extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Search...',
           hintStyle: TextStyle(
-            color: AppColors.gray.withValues(alpha: .5),
+            color: AppColors.grey.withValues(alpha: .5),
             fontSize: 12,
           ),
           prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 20),
@@ -366,7 +370,7 @@ class HomePage extends StatelessWidget {
                         values.end.toInt().toString();
                   },
                   activeColor: AppColors.green,
-                  inactiveColor: AppColors.gray.withValues(alpha: .3),
+                  inactiveColor: AppColors.grey.withValues(alpha: .3),
                 ),
                 const SizedBox(height: 5),
                 Row(
@@ -394,7 +398,7 @@ class HomePage extends StatelessWidget {
                                 labelText: 'Min (Lacs)',
                                 labelStyle: TextStyle(
                                   fontSize: 10,
-                                  color: AppColors.gray,
+                                  color: AppColors.grey,
                                 ),
                                 isDense: true,
                                 contentPadding: EdgeInsets.symmetric(
@@ -431,7 +435,7 @@ class HomePage extends StatelessWidget {
                                 labelText: 'Max (Lacs)',
                                 labelStyle: TextStyle(
                                   fontSize: 10,
-                                  color: AppColors.gray,
+                                  color: AppColors.grey,
                                 ),
                                 isDense: true,
                                 contentPadding: EdgeInsets.symmetric(
@@ -741,7 +745,7 @@ class HomePage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: AppColors.white,
-              border: Border.all(color: AppColors.gray.withValues(alpha: .3)),
+              border: Border.all(color: AppColors.grey.withValues(alpha: .3)),
               borderRadius: BorderRadius.circular(5),
               boxShadow: [
                 BoxShadow(

@@ -13,4 +13,7 @@ class AppUrls {
   static const String register = "${baseUrl}user/register";
 
   static const String allUsers = "${baseUrl}user/all-users";
+
+  static String checkUsernameExists(String username) =>
+      "${baseUrl}user/check-username?username=$username";
 }

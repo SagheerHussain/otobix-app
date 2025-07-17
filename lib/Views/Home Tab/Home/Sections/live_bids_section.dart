@@ -6,8 +6,8 @@ import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Home%20Tab/car_details_page.dart';
 import 'package:otobix/Controllers/Home%20Tab/home_controller.dart';
 
-class Ocb70Section extends StatelessWidget {
-  Ocb70Section({super.key});
+class LiveBidsSection extends StatelessWidget {
+  LiveBidsSection({super.key});
 
   final HomeController getxController = Get.put(HomeController());
 
@@ -21,13 +21,13 @@ class Ocb70Section extends StatelessWidget {
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: getxController.cars.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
+              separatorBuilder: (_, __) => const SizedBox(height: 15),
               itemBuilder: (context, index) {
-                final car = getxController.cars.reversed.toList()[index];
+                final car = getxController.cars[index];
                 // InkWell for car card
                 return InkWell(
                   onTap: () {
-                    Get.to(() => CarDetailsPage(car: car, type: 'ocb_70'));
+                    Get.to(() => CarDetailsPage(car: car, type: 'live_bids'));
                   },
                   child: Card(
                     elevation: 4,
@@ -37,35 +37,6 @@ class Ocb70Section extends StatelessWidget {
                     ),
                     child: Stack(
                       children: [
-                        Obx(
-                          () => Positioned(
-                            top: 10,
-                            right: 10,
-                            child: InkWell(
-                              onTap:
-                                  () => getxController.changeFavoriteCars(car),
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  car.isFavorite.value
-                                      ? Icons.favorite
-                                      : Icons.favorite_outline,
-                                  color:
-                                      car.isFavorite.value
-                                          ? AppColors.red
-                                          : AppColors.gray,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
                         Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Column(
@@ -230,6 +201,35 @@ class Ocb70Section extends StatelessWidget {
                                   )
                                   : const SizedBox.shrink(),
                             ],
+                          ),
+                        ),
+
+                        Obx(
+                          () => Positioned(
+                            top: 10,
+                            right: 10,
+                            child: InkWell(
+                              onTap:
+                                  () => getxController.changeFavoriteCars(car),
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  car.isFavorite.value
+                                      ? Icons.favorite
+                                      : Icons.favorite_outline,
+                                  color:
+                                      car.isFavorite.value
+                                          ? AppColors.red
+                                          : AppColors.grey,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],

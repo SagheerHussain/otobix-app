@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/Home%20Tab/car_details_controller.dart';
+import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Widgets/button_widget.dart';
 
 void showExactBidSheet(BuildContext context) {
   final CarDetailsController bidController = Get.put(CarDetailsController());
- bidController.resetBidIncrement();
+  bidController.resetBidIncrement();
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -15,8 +17,9 @@ void showExactBidSheet(BuildContext context) {
     builder: (context) {
       return DraggableScrollableSheet(
         expand: false,
-        maxChildSize: 0.35,
-        initialChildSize: 0.35,
+        maxChildSize: 0.9,
+        initialChildSize: 0.5,
+        minChildSize: 0.5,
         builder: (_, controller) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -25,7 +28,7 @@ void showExactBidSheet(BuildContext context) {
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppColors.black.withValues(alpha: 0.1),
                   blurRadius: 10,
                   offset: Offset(0, -2),
                 ),
@@ -41,25 +44,25 @@ void showExactBidSheet(BuildContext context) {
                     Text(
                       "Place your bid",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: AppColors.black,
                       ),
                     ),
                     Row(
                       children: [
-                        Icon(Icons.access_time, color: Colors.red, size: 16),
+                        Icon(Icons.access_time, color: AppColors.red, size: 15),
                         SizedBox(width: 4),
                         Text(
                           "23:47:56",
                           style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
+                            color: AppColors.red,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
-                        )
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -67,7 +70,7 @@ void showExactBidSheet(BuildContext context) {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
+                    border: Border.all(color: AppColors.grey),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -80,8 +83,8 @@ void showExactBidSheet(BuildContext context) {
                           Text(
                             "Starting Bid",
                             style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 13,
+                              color: AppColors.grey,
+                              fontSize: 10,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -89,17 +92,13 @@ void showExactBidSheet(BuildContext context) {
                             "Rs 54,000",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: Colors.black,
+                              fontSize: 12,
+                              color: AppColors.black,
                             ),
                           ),
                         ],
                       ),
-                      Container(
-                        width: 1,
-                        height: 30,
-                        color: Colors.grey[300],
-                      ),
+                      Container(width: 1, height: 30, color: AppColors.grey),
                       // Last Bid
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -107,8 +106,8 @@ void showExactBidSheet(BuildContext context) {
                           Text(
                             "Last Bid",
                             style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 13,
+                              color: AppColors.grey,
+                              fontSize: 10,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -116,8 +115,8 @@ void showExactBidSheet(BuildContext context) {
                             "Rs 55,000",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: Colors.black,
+                              fontSize: 12,
+                              color: AppColors.black,
                             ),
                           ),
                         ],
@@ -139,34 +138,40 @@ void showExactBidSheet(BuildContext context) {
                         child: Container(
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red),
+                            border: Border.all(color: AppColors.red),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Icons.remove, color: Colors.red, size: 20),
+                          child: Icon(
+                            Icons.remove,
+                            color: AppColors.red,
+                            size: 20,
+                          ),
                         ),
                       ),
                       SizedBox(width: 30),
                       // Bid Value
-                      Obx(() => Column(
-                            children: [
-                              Text(
-                                "Rs ${bidController.bidAmount.value}",
-                                style: TextStyle(
-                                  color: Colors.blue.shade800,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                      Obx(
+                        () => Column(
+                          children: [
+                            Text(
+                              "Rs ${bidController.bidAmount.value}",
+                              style: TextStyle(
+                                color: AppColors.blue,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
-                              SizedBox(height: 4),
-                              Text(
-                                "*Bid increase by Rs 4000",
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 12,
-                                ),
-                              )
-                            ],
-                          )),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Bid increase by Rs 4000",
+                              style: TextStyle(
+                                color: AppColors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       SizedBox(width: 30),
                       // Plus
                       GestureDetector(
@@ -176,10 +181,14 @@ void showExactBidSheet(BuildContext context) {
                         child: Container(
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
+                            border: Border.all(color: AppColors.green),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Icons.add, color: Colors.green, size: 20),
+                          child: Icon(
+                            Icons.add,
+                            color: AppColors.green,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ],
@@ -187,29 +196,26 @@ void showExactBidSheet(BuildContext context) {
                 ),
                 SizedBox(height: 30),
                 // Bid Button
-                Obx(() => SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: Text(
-                          "Place your bid at Rs ${bidController.bidAmount.value}",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () => ButtonWidget(
+                          text:
+                              "Place your bid at Rs ${bidController.bidAmount.value}",
+                          isLoading: bidController.isLoading,
+                          onTap: () {
+                            Get.back();
+                          },
+                          height: 35,
+                          fontSize: 12,
+                          elevation: 10,
+                          backgroundColor: AppColors.green,
                         ),
                       ),
-                    )),
+                    ),
+                  ],
+                ),
               ],
             ),
           );

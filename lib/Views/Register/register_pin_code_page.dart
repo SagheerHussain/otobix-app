@@ -108,7 +108,7 @@ class RegisterPinCodePage extends StatelessWidget {
       inactiveFillColor: AppColors.white,
       selectedFillColor: AppColors.green.withValues(alpha: 0.1),
       activeColor: AppColors.green,
-      inactiveColor: AppColors.gray,
+      inactiveColor: AppColors.grey,
       selectedColor: AppColors.green,
     ),
     animationDuration: Duration(milliseconds: 300),
