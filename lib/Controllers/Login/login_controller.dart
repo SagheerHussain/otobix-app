@@ -85,8 +85,8 @@ class LoginController extends GetxController {
       String dealerName = dealerNameController.text.trim();
       String contactNumber = phoneNumberController.text.trim();
       final requestBody = {
-        "dealerName": dealerName,
-        "contactNumber": contactNumber,
+        "userName": dealerName,
+        "phoneNumber": contactNumber,
         "password": passwordController.text.trim(),
       };
       print("Sending body: $requestBody");

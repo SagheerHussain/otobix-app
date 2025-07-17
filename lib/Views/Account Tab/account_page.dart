@@ -1,115 +1,137 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/Widgets/tab_bar_widget_controller.dart';
+import 'package:otobix/Controllers/account/account_controller.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Views/Account%20Tab/edit_account_page.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 
-class AccountPage extends StatelessWidget {
-  const AccountPage({super.key});
+class AccountPage extends StatefulWidget {
+   const AccountPage({super.key});
 
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+final AccountController accountController = Get.put(AccountController());
+
+  @override
+  void initState() {
+    super.initState();
+    accountController.getUserProfile();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
+        body: 
+     Obx(
+        () => SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Column(
+                        children: [
+                           Obx(() {
+                      final imageUrl = accountController.imageUrl.value; // make sure `user` is reactive
+                    
+                      return CircleAvatar(
+                        radius: 55,
+                        backgroundImage: imageUrl != null && imageUrl.isNotEmpty
+                            ? NetworkImage(imageUrl.startsWith('http') ? imageUrl : imageUrl)
+                            : null,
+                        child: imageUrl == null || imageUrl.isEmpty
+                            ? const Icon(Icons.person, size: 55)
+                            : null,
+                      );
+                    }),
 
-                /// Profile Photo + Name
-                Center(
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: AppColors.green.withValues(alpha: .3),
-                        child: Icon(
-                          Icons.person,
-                          color: AppColors.green,
-                          size: 40,
-                        ),
+                           SizedBox(height: 12),
+                          Text(
+                            accountController.username.value,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            accountController.useremail.value,
+                            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                        "Amit Parekh",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "amit.parekh@otobix.com",
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                      ),
-                    ],
-                  ),
+                    ),
+            
+                    const SizedBox(height: 30),
+            
+                    ProfileOption(
+                      icon: Icons.edit,
+                      color: Colors.green,
+                      title: "Edit Profile",
+                      description: "Change your name, email, and more.",
+                      onTap: () {
+                        Get.to(EditProfileScreen());
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.gavel,
+                      color: Colors.blue,
+                      title: "My Bids",
+                      description: "View all your active and past bids.",
+                      onTap: () {
+                        final navController =
+                            Get.find<BottomNavigationController>();
+                        navController.currentIndex.value = 1; 
+            
+                        final tabBarWidgetController =
+                            Get.find<TabBarWidgetController>();
+                        tabBarWidgetController.setSelectedTab(0);
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.favorite_border,
+                      color: Colors.red,
+                      title: "Wishlist",
+                      description: "See cars you've saved for later.",
+                      onTap: () {
+                        final navController =
+                            Get.find<BottomNavigationController>();
+                        navController.currentIndex.value = 1; 
+            
+                        final tabBarWidgetController =
+                            Get.find<TabBarWidgetController>();
+                        tabBarWidgetController.setSelectedTab(2);
+                      },
+                    ),
+                    ProfileOption(
+                      icon: Icons.settings,
+                      color: Colors.blue,
+                      title: "Settings",
+                      description: "Manage your app preferences and account.",
+                      onTap: () {},
+                    ),
+                    ProfileOption(
+                      icon: Icons.logout,
+                      color: Colors.red,
+                      title: "Logout",
+                      description: "Sign out of your account securely.",
+                      onTap: () {
+                        Get.offAll(() => LoginPage());
+                      },
+                    ),
+                  ],
                 ),
-
-                const SizedBox(height: 30),
-
-                /// Account Options
-                ProfileOption(
-                  icon: Icons.edit,
-                  color: Colors.green,
-                  title: "Edit Profile",
-                  description: "Change your name, email, and more.",
-                  onTap: () {},
-                ),
-                ProfileOption(
-                  icon: Icons.gavel,
-                  color: Colors.blue,
-                  title: "My Bids",
-                  description: "View all your active and past bids.",
-                  onTap: () {
-                    final navController =
-                        Get.find<BottomNavigationController>();
-                    navController.currentIndex.value = 1; // Go to My Cars tab
-
-                    final tabBarWidgetController =
-                        Get.find<TabBarWidgetController>();
-                    tabBarWidgetController.setSelectedTab(0);
-                  },
-                ),
-                ProfileOption(
-                  icon: Icons.favorite_border,
-                  color: Colors.red,
-                  title: "Wishlist",
-                  description: "See cars you’ve saved for later.",
-                  onTap: () {
-                    final navController =
-                        Get.find<BottomNavigationController>();
-                    navController.currentIndex.value = 1; // Go to My Cars tab
-
-                    final tabBarWidgetController =
-                        Get.find<TabBarWidgetController>();
-                    tabBarWidgetController.setSelectedTab(2);
-                  },
-                ),
-                ProfileOption(
-                  icon: Icons.settings,
-                  color: Colors.blue,
-                  title: "Settings",
-                  description: "Manage your app preferences and account.",
-                  onTap: () {},
-                ),
-                ProfileOption(
-                  icon: Icons.logout,
-                  color: Colors.red,
-                  title: "Logout",
-                  description: "Sign out of your account securely.",
-                  onTap: () {
-                    Get.offAll(() => LoginPage());
-                  },
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
+     ),
+        
       ),
     );
   }
@@ -154,7 +176,6 @@ class ProfileOption extends StatelessWidget {
                       ? CrossAxisAlignment.start
                       : CrossAxisAlignment.center,
               children: [
-                /// Icon
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -165,7 +186,6 @@ class ProfileOption extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
 
-                /// Title & Description
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,8 +211,6 @@ class ProfileOption extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                /// Chevron
                 Icon(Icons.chevron_right, color: Colors.grey, size: 20),
               ],
             ),

@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:otobix/Models/Home%20Tab/car_model.dart';
 import 'package:otobix/Models/Login%20Register/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
+<<<<<<< HEAD
+import 'package:otobix/Views/Account%20Tab/edit_account_page.dart';
+=======
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Account%20Tab/user_preferences_page.dart';
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
@@ -13,6 +16,7 @@ import 'package:otobix/Views/Register/register_pin_code_page.dart';
 import 'package:otobix/Views/Register/registration_form_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Views/bottom_navigation_page.dart';
+>>>>>>> 68f4f5a936b1e7b452c6d0ad495b0eaf9293b327
 import 'package:otobix/Views/splash/splash_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
