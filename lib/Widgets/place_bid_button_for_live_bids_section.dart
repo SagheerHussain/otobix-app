@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Widgets/button_widget.dart';
 
-void upcomingBidSheet(BuildContext context) {
+void placeBidButtonForLiveBidsSection(BuildContext context) {
   final CarDetailsController bidController = Get.put(CarDetailsController());
   bidController.resetBidIncrement();
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.white,
+    backgroundColor: Colors.transparent,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -23,7 +24,7 @@ void upcomingBidSheet(BuildContext context) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               boxShadow: [
                 BoxShadow(
@@ -36,12 +37,23 @@ void upcomingBidSheet(BuildContext context) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: AppColors.green,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 // Top Row: Title + Timer
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Place your bid",
+                      "Place Your Bid",
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -52,12 +64,14 @@ void upcomingBidSheet(BuildContext context) {
                       children: [
                         Icon(Icons.access_time, color: AppColors.red, size: 15),
                         SizedBox(width: 4),
-                        Text(
-                          "23:47:56",
-                          style: TextStyle(
-                            color: AppColors.red,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                        Obx(
+                          () => Text(
+                            bidController.remainingTime.value,
+                            style: TextStyle(
+                              color: AppColors.red,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],
@@ -65,12 +79,11 @@ void upcomingBidSheet(BuildContext context) {
                   ],
                 ),
                 SizedBox(height: 20),
+                // Bids Box
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppColors.grey.withValues(alpha: 0.5),
-                    ),
+                    border: Border.all(color: AppColors.grey),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -81,9 +94,9 @@ void upcomingBidSheet(BuildContext context) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Starting Bid",
+                            "Current Bid",
                             style: TextStyle(
-                              color: AppColors.grey.withValues(alpha: 0.5),
+                              color: AppColors.grey,
                               fontSize: 10,
                             ),
                           ),
@@ -98,29 +111,27 @@ void upcomingBidSheet(BuildContext context) {
                           ),
                         ],
                       ),
-                      Container(
-                        width: 1,
-                        height: 30,
-                        color: AppColors.grey.withValues(alpha: 0.5),
-                      ),
+                      Container(width: 1, height: 30, color: AppColors.grey),
                       // Last Bid
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Last Bid",
+                            "Your Bid",
                             style: TextStyle(
-                              color: AppColors.grey.withValues(alpha: 0.5),
+                              color: AppColors.grey,
                               fontSize: 10,
                             ),
                           ),
                           SizedBox(height: 4),
-                          Text(
-                            "Rs 55,000",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: AppColors.black,
+                          Obx(
+                            () => Text(
+                              "Rs ${bidController.bidAmount.value}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                color: AppColors.black,
+                              ),
                             ),
                           ),
                         ],
@@ -148,7 +159,7 @@ void upcomingBidSheet(BuildContext context) {
                           child: Icon(
                             Icons.remove,
                             color: AppColors.red,
-                            size: 15,
+                            size: 20,
                           ),
                         ),
                       ),
@@ -160,16 +171,16 @@ void upcomingBidSheet(BuildContext context) {
                             Text(
                               "Rs ${bidController.bidAmount.value}",
                               style: TextStyle(
-                                color: AppColors.green,
+                                color: AppColors.blue,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "*Bid increase by Rs 4000",
+                              "Bid increase by ${bidController.bidAmount.value - 54000}",
                               style: TextStyle(
-                                color: AppColors.grey.withValues(alpha: 0.5),
+                                color: AppColors.grey,
                                 fontSize: 12,
                               ),
                             ),
@@ -191,7 +202,7 @@ void upcomingBidSheet(BuildContext context) {
                           child: Icon(
                             Icons.add,
                             color: AppColors.green,
-                            size: 15,
+                            size: 20,
                           ),
                         ),
                       ),
@@ -200,30 +211,22 @@ void upcomingBidSheet(BuildContext context) {
                 ),
                 SizedBox(height: 30),
                 // Bid Button
-                Obx(
-                  () => SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: Text(
-                        "Pre-Bid-Now at Rs ${bidController.bidAmount.value}",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: AppColors.white,
-                        ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ButtonWidget(
+                        text: "Place Bid",
+                        isLoading: bidController.isLoading,
+                        onTap: () {
+                          Get.back();
+                        },
+                        height: 35,
+                        fontSize: 12,
+                        elevation: 10,
+                        backgroundColor: AppColors.green,
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),

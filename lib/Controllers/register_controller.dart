@@ -4,6 +4,14 @@ import 'package:otobix/Views/Register/register_pin_code_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 class RegisterController extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+    clearFields();
+  }
+
+  final TextEditingController phoneController = TextEditingController();
+
   RxBool isLoading = false.obs;
   RxString selectedRole = ''.obs;
 
@@ -140,5 +148,12 @@ class RegisterController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // Clear fields
+  void clearFields() {
+    isLoading.value = false;
+    phoneController.clear();
+    selectedRole.value = '';
   }
 }
