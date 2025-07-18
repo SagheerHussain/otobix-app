@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:get/get.dart';
@@ -150,7 +151,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Rs. ${bidController.bidAmount.value}",
+                                "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 12,
@@ -193,7 +194,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                           () => Column(
                             children: [
                               Text(
-                                "Rs. ${bidController.bidAmount.value}",
+                               "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
                                 style: TextStyle(
                                   color: AppColors.blue,
                                   fontSize: 15,
@@ -203,7 +204,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                               SizedBox(height: 4),
                               Obx(
                                 () => Text(
-                                  "Bid increase by Rs. ${bidController.bidAmount.value - 54000}",
+                                  "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value - 54000)}",
                                   style: TextStyle(
                                     color: AppColors.grey,
                                     fontSize: 12,

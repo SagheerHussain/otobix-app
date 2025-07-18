@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
@@ -126,7 +127,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                           SizedBox(height: 4),
                           Obx(
                             () => Text(
-                              "Rs ${bidController.bidAmount.value}",
+                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -169,7 +170,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                         () => Column(
                           children: [
                             Text(
-                              "Rs ${bidController.bidAmount.value}",
+                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -178,7 +179,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Bid increase by ${bidController.bidAmount.value - 54000}",
+                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value - 54000)}",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 12,

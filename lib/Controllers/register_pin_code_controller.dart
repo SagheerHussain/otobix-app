@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Controllers/registration_form_controller.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Register/registration_form_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
@@ -66,6 +67,7 @@ class RegisterPinCodeController extends GetxController {
       message: "OTP Verified Successfully",
       type: ToastType.success,
     );
+    Get.delete<RegistrationFormController>();
     Get.to(
       () => RegistrationFormPage(userRole: userType, phoneNumber: phoneNumber),
     );

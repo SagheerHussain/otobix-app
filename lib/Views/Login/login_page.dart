@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otobix/Controllers/login_controller.dart';
+import 'package:otobix/Controllers/register_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:get/get.dart';
@@ -66,7 +67,10 @@ class LoginPage extends StatelessWidget {
                         ),
                         SizedBox(width: 5),
                         InkWell(
-                          onTap: () => Get.to(() => RegisterPage()),
+                          onTap: () {
+                              Get.delete<RegisterController>();
+                            Get.to(() => RegisterPage());
+                          },
                           borderRadius: BorderRadius.circular(50),
 
                           // onTap: () => Get.to(() => SignUpPage()),
@@ -101,7 +105,7 @@ class LoginPage extends StatelessWidget {
   Widget _buildSignInText() => Column(
     children: [
       Text(
-        'Sign In',
+        'Login',
         style: TextStyle(
           fontSize: 25,
           fontWeight: FontWeight.bold,

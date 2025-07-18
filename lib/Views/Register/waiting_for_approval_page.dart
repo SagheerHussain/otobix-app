@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:lottie/lottie.dart';
+import 'package:otobix/Controllers/login_controller.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_animations.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Views/Login/login_page.dart';
+import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
 class WaitingForApprovalPage extends StatefulWidget {
@@ -45,6 +50,8 @@ class _WaitingForApprovalPageState extends State<WaitingForApprovalPage> {
         child: Column(
           children: [
             const SizedBox(height: 30),
+
+            
 
             // Illustration
             // Icon(Icons.hourglass_empty, size: 50, color: AppColors.green),

@@ -11,6 +11,7 @@ import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/register_page.dart';
 import 'package:otobix/Views/Register/registration_form_page.dart';
+import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 
 import 'package:otobix/Views/splash/splash_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otobix/Controllers/login_controller.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
@@ -44,7 +45,10 @@ class RegisterPage extends StatelessWidget {
                       ),
                       SizedBox(width: 5),
                       InkWell(
-                        onTap: () => Get.to(() => LoginPage()),
+                        onTap: () {
+                            Get.delete<LoginController>();
+                          Get.to(() => LoginPage());
+                        },
                         borderRadius: BorderRadius.circular(50),
 
                         // onTap: () {},
