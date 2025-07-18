@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Views/Dealer%20Panel/place_bid_button_widget.dart';
-import 'package:otobix/Views/Dealer%20Panel/start_auto_bid_widget.dart';
+import 'package:otobix/Views/Dealer%20Panel/start_auto_bid_button_widget.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_images_page.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:photo_view/photo_view.dart';

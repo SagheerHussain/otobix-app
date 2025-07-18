@@ -15,9 +15,15 @@ import 'package:otobix/admin/rejected_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
 class LoginController extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+    clearFields();
+  }
+
   RxBool isLoading = false.obs;
   RxBool obsecureText = true.obs;
-  final dealerNameController = TextEditingController();
+  final userNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final passwordController = TextEditingController();
   String? selectedEntityType;
@@ -82,7 +88,7 @@ class LoginController extends GetxController {
     isLoading.value = true;
 
     try {
-      String dealerName = dealerNameController.text.trim();
+      String dealerName = userNameController.text.trim();
       String contactNumber = phoneNumberController.text.trim();
       final requestBody = {
         "userName": dealerName,
@@ -101,7 +107,7 @@ class LoginController extends GetxController {
         final token = data['token'];
         final user = data['user'];
         final userType = user['userType'];
-        final  userId = user['id'];
+        final userId = user['id'];
         final approvalStatus = user['approvalStatus'];
 
         print("userType: $userType");
@@ -118,10 +124,7 @@ class LoginController extends GetxController {
           SharedPrefsHelper.userTypeKey,
           userType,
         );
-        await SharedPrefsHelper.saveString(
-          SharedPrefsHelper.userIdKey,
-          userId,
-        );
+        await SharedPrefsHelper.saveString(SharedPrefsHelper.userIdKey, userId);
         print("userId: $userId");
         if (userType == 'admin') {
           Get.to(() => AdminDashboard());
@@ -207,5 +210,13 @@ class LoginController extends GetxController {
         backgroundColor: Colors.red.shade100,
       );
     }
+  }
+
+  // Clear fields
+  void clearFields() {
+    userNameController.clear();
+    phoneNumberController.clear();
+    passwordController.clear();
+    obsecureText.value = true;
   }
 }

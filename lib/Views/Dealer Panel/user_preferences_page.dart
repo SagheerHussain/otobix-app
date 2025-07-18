@@ -23,7 +23,7 @@ class UserPreferencesPage extends StatelessWidget {
     'Car Condition',
     'Color Preferences',
     'Location Preference',
-    'Show only trusted sellers',
+    'Show Inspected Cars',
   ];
 
   @override
@@ -211,7 +211,7 @@ class UserPreferencesPage extends StatelessWidget {
         );
       // Show only trusted sellers
       case 9:
-        return _buildVerifiedSellerCheckbox();
+        return _buildInspectedCarsCheckbox();
       default:
         return const SizedBox.shrink();
     }
@@ -486,10 +486,10 @@ class UserPreferencesPage extends StatelessWidget {
     );
   }
 
-  Widget _buildVerifiedSellerCheckbox() {
+  Widget _buildInspectedCarsCheckbox() {
     return Obx(
       () => CheckboxListTile(
-        title: const Text('Show only trusted sellers'),
+        title: const Text('Show inspected cars'),
         value: getxController.showVerifiedOnly.value,
         activeColor: AppColors.green,
         checkColor: AppColors.white,

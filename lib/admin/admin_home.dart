@@ -213,7 +213,8 @@ class AdminHome extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
-                  user.entityType!,
+                  // user.entityType!,
+                  'Individual',
                   style: TextStyle(
                     color: Colors.green.shade700,
                     fontWeight: FontWeight.w500,
@@ -378,59 +379,76 @@ class AdminHome extends StatelessWidget {
       },
     );
   }
-Widget _buildShimmerCard() {
-  return Shimmer.fromColors(
-    baseColor: Colors.grey.shade300,
-    highlightColor: Colors.grey.shade100,
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Avatar, Name, Email, Location
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Avatar shimmer
-              Container(
-                height: 56,
-                width: 56,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 12),
 
-              /// Name, Email shimmer
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 14,
-                      width: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
+  Widget _buildShimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12.withOpacity(0.05),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Avatar, Name, Email, Location
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// Avatar shimmer
+                Container(
+                  height: 56,
+                  width: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                /// Name, Email shimmer
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: 14,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
+                      const SizedBox(height: 8),
+                      Container(
+                        height: 12,
+                        width: 180,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// Location shimmer
+                Column(
+                  children: [
+                    const SizedBox(height: 6),
                     Container(
                       height: 12,
-                      width: 180,
+                      width: 80,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -438,88 +456,68 @@ Widget _buildShimmerCard() {
                     ),
                   ],
                 ),
-              ),
+              ],
+            ),
 
-              /// Location shimmer
-              Column(
-                children: [
-                  const SizedBox(height: 6),
-                  Container(
-                    height: 12,
-                    width: 80,
+            const SizedBox(height: 20),
+
+            /// Role + EntityType shimmer chips
+            Row(
+              children: [
+                Container(
+                  height: 20,
+                  width: 70,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  height: 20,
+                  width: 90,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            /// Divider
+            Container(height: 1, color: Colors.grey.shade200),
+
+            const SizedBox(height: 20),
+
+            /// Buttons shimmer
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 40,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          /// Role + EntityType shimmer chips
-          Row(
-            children: [
-              Container(
-                height: 20,
-                width: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                height: 20,
-                width: 90,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          /// Divider
-          Container(
-            height: 1,
-            color: Colors.grey.shade200,
-          ),
-
-          const SizedBox(height: 20),
-
-          /// Buttons shimmer
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

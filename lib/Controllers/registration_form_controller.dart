@@ -13,6 +13,7 @@ class RegistrationFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    clearFields();
     filteredStates = List.from(indianStates);
 
     // Ensure at least one address exists
@@ -309,7 +310,7 @@ class RegistrationFormController extends GetxController {
         final bool isAvailable = data['available'] == true;
 
         if (isAvailable) {
-          usernameValidationError.value = "Username is available";
+          usernameValidationError.value = "Username is available ";
           return true;
         } else {
           usernameValidationError.value = "Username already exists";
@@ -324,5 +325,34 @@ class RegistrationFormController extends GetxController {
       usernameValidationError.value = "Error checking username";
       return false;
     }
+  }
+
+  // Clear fields
+  void clearFields() {
+    dealerNameController.clear();
+    dealerEmailController.clear();
+    dealershipNameController.clear();
+    primaryContactPersonController.clear();
+    primaryMobileController.clear();
+    secondaryContactPersonController.clear();
+    secondaryMobileController.clear();
+    passwordController.clear();
+
+    obscurePassword.value = true;
+    selectedEntityType = null;
+    selectedState = null;
+
+    addressControllers.clear();
+    addressControllers.add(TextEditingController());
+
+    // 🔁 Reset validation-related data
+    formKey.currentState?.reset();
+    usernameValidationError.value = '';
+    touchedFields.clear();
+
+    // 🔁 Reset state filtering if needed
+    filteredStates = List.from(indianStates);
+
+    update();
   }
 }
