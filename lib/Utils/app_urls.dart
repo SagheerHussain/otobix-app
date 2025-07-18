@@ -1,6 +1,6 @@
 class AppUrls {
-  // static const String baseUrl = "http://localhost:4000/api/";
-  static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
+  static const String baseUrl = "http://localhost:4000/api/";
+  // static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
 
   static const String sendOtp = "${baseUrl}send-otp";
 

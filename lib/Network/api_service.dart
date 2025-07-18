@@ -2,14 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = "http://localhost:4000/api/";
-  // static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
-
   static Future<http.Response> get({
     required String endpoint,
     Map<String, String>? headers,
   }) async {
-    final url = Uri.parse(baseUrl + endpoint);
+    final url = Uri.parse(endpoint);
     print("GET: $url");
 
     final defaultHeaders = {"Content-Type": "application/json", ...?headers};
@@ -22,7 +19,7 @@ class ApiService {
     required Map<String, dynamic> body,
     Map<String, String>? headers,
   }) async {
-    final url = Uri.parse(baseUrl + endpoint);
+    final url = Uri.parse(endpoint);
     print("POST: $url");
 
     final defaultHeaders = {"Content-Type": "application/json", ...?headers};
@@ -39,7 +36,7 @@ class ApiService {
     required Map<String, dynamic> body,
     Map<String, String>? headers,
   }) async {
-    final url = Uri.parse(baseUrl + endpoint);
+    final url = Uri.parse(endpoint);
     print("PUT: $url");
 
     final defaultHeaders = {"Content-Type": "application/json", ...?headers};
