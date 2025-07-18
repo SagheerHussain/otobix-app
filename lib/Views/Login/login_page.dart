@@ -32,7 +32,7 @@ class LoginPage extends StatelessWidget {
                     _buildCustomTextField(
                       icon: Icons.person,
                       label: 'User Name / User ID',
-                      controller: getxController.dealerNameController,
+                      controller: getxController.userNameController,
                       hintText: 'e.g. amitparekh007',
                       keyboardType: TextInputType.text,
                       isRequired: true,

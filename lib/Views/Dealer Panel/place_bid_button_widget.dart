@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:otobix/Widgets/bid_dialogue.dart';
+import 'package:otobix/Widgets/place_bid_button_for_live_bids_section.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
-import 'package:otobix/Widgets/oto_buy_widget.dart';
-import 'package:otobix/Widgets/upcoming_bid.dart';
+import 'package:otobix/Widgets/place_bid_button_for_ocb70_section.dart';
+import 'package:otobix/Widgets/place_bid_button_for_upcoming_section.dart';
 
 class PlaceBidButtonWidget extends StatelessWidget {
   const PlaceBidButtonWidget({
@@ -21,13 +21,13 @@ class PlaceBidButtonWidget extends StatelessWidget {
       text: 'Place Bid',
       onTap: () {
         if (type == 'upcoming') {
-          upcomingBidSheet(context);
+          placeBidButtonForUpcomingSection(context);
         } else if (type == 'live_bids') {
-          showExactBidSheet(context);
+          placeBidButtonForLiveBidsSection(context);
         } else if (type == 'ocb_70') {
-          showMakeOfferSheet(context);
+          placeBidButtonForOcb70Section(context);
         } else {
-          showExactBidSheet(context);
+          placeBidButtonForLiveBidsSection(context);
         }
       },
       isLoading: getxController.isLoading,

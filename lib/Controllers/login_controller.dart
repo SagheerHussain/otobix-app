@@ -15,9 +15,15 @@ import 'package:otobix/admin/rejected_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
 class LoginController extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+    clearFields();
+  }
+
   RxBool isLoading = false.obs;
   RxBool obsecureText = true.obs;
-  final dealerNameController = TextEditingController();
+  final userNameController = TextEditingController();
   final phoneNumberController = TextEditingController();
   final passwordController = TextEditingController();
   String? selectedEntityType;
@@ -78,33 +84,31 @@ class LoginController extends GetxController {
     ],
   };
 
- Future<void> loginUser() async {
-  isLoading.value = true;
-  try {
-    String dealerName = dealerNameController.text.trim();
-    String contactNumber = phoneNumberController.text.trim();
-    final requestBody = {
-      "userName": dealerName,
-      "phoneNumber": contactNumber,
-      "password": passwordController.text.trim(),
-    };
+  Future<void> loginUser() async {
+    isLoading.value = true;
 
-    print("Sending body: $requestBody");
+    try {
+      String dealerName = userNameController.text.trim();
+      String contactNumber = phoneNumberController.text.trim();
+      final requestBody = {
+        "userName": dealerName,
+        "phoneNumber": contactNumber,
+        "password": passwordController.text.trim(),
+      };
 
-    final response = await ApiService.post(
-      endpoint: AppUrls.login,
-      body: requestBody,
-    );
-
-    final data = jsonDecode(response.body);
-    print("Status Code: ${response.statusCode}");
-
-    if (response.statusCode == 200) {
-      final token = data['token'];
-      final user = data['user'];
-      final userType = user['userType'];
-      final userId = user['id'];
-      final approvalStatus = user['approvalStatus'];
+      print("Sending body: $requestBody");
+      final response = await ApiService.post(
+        endpoint: AppUrls.login,
+        body: requestBody,
+      );
+      final data = jsonDecode(response.body);
+      print("Status Code: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final token = data['token'];
+        final user = data['user'];
+        final userType = user['userType'];
+        final userId = user['id'];
+        final approvalStatus = user['approvalStatus'];
 
       print("userType: $userType");
       print("token: $token");
@@ -116,11 +120,25 @@ class LoginController extends GetxController {
 
       if (userType == 'admin') {
         await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
-        Get.to(() => AdminDashboard());
-      } else {
-        if (approvalStatus == 'Pending') {
-          Get.to(() => WaitingForApprovalPage(
-                documents: entityDocuments[selectedEntityType ?? 'Individual'] ??
+        print("Token saved in local: $token");
+        await SharedPrefsHelper.saveString(
+          SharedPrefsHelper.userKey,
+          jsonEncode(user),
+        );
+        await SharedPrefsHelper.saveString(
+          SharedPrefsHelper.userTypeKey,
+          userType,
+        );
+        await SharedPrefsHelper.saveString(SharedPrefsHelper.userIdKey, userId);
+        print("userId: $userId");
+        if (userType == 'admin') {
+          Get.to(() => AdminDashboard());
+        } else {
+          if (approvalStatus == 'Pending') {
+            Get.to(
+              () => WaitingForApprovalPage(
+                documents:
+                    entityDocuments[selectedEntityType ?? 'Individual'] ??
                     entityDocuments['Individual']!,
                 userRole: userType,
               ));
@@ -198,5 +216,13 @@ class LoginController extends GetxController {
         backgroundColor: Colors.red.shade100,
       );
     }
+  }
+
+  // Clear fields
+  void clearFields() {
+    userNameController.clear();
+    phoneNumberController.clear();
+    passwordController.clear();
+    obsecureText.value = true;
   }
 }

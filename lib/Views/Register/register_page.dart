@@ -11,7 +11,6 @@ class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
 
   final RegisterController getxController = Get.put(RegisterController());
-  final TextEditingController phoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +197,7 @@ class RegisterPage extends StatelessWidget {
         ),
         SizedBox(height: 5),
         TextField(
-          controller: phoneController,
+          controller: getxController.phoneController,
           keyboardType: TextInputType.phone,
           maxLength: 10,
           decoration: InputDecoration(
@@ -246,7 +245,10 @@ class RegisterPage extends StatelessWidget {
     text: 'Continue',
     isLoading: getxController.isLoading,
     // onTap: () => getxController.sendOTP(phoneNumber: phoneController.text),
-    onTap: () => getxController.dummySendOtp(phoneNumber: phoneController.text),
+    onTap:
+        () => getxController.dummySendOtp(
+          phoneNumber: getxController.phoneController.text,
+        ),
     height: 40,
     width: 150,
     backgroundColor: AppColors.green,
