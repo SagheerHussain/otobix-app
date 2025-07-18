@@ -186,9 +186,15 @@ class AccountController extends GetxController {
 
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'Profile updated successfully');
-        imageFile.value = null; // Reset to use new imageUrl
-        getUserProfile();
+        imageFile.value = null; 
+        // getUserProfile();
+        
         Get.back();
+        ToastWidget.show(
+          context: Get.context!,
+          message: 'Profile updated successfully',
+          type: ToastType.success,
+        );
       } else {
         Get.snackbar('Error', 'Failed to update profile');
       }

@@ -78,100 +78,91 @@ class LoginController extends GetxController {
     ],
   };
 
-  Future<void> loginUser() async {
-    isLoading.value = true;
+ Future<void> loginUser() async {
+  isLoading.value = true;
+  try {
+    String dealerName = dealerNameController.text.trim();
+    String contactNumber = phoneNumberController.text.trim();
+    final requestBody = {
+      "userName": dealerName,
+      "phoneNumber": contactNumber,
+      "password": passwordController.text.trim(),
+    };
 
-    try {
-      String dealerName = dealerNameController.text.trim();
-      String contactNumber = phoneNumberController.text.trim();
-      final requestBody = {
-        "userName": dealerName,
-        "phoneNumber": contactNumber,
-        "password": passwordController.text.trim(),
-      };
+    print("Sending body: $requestBody");
 
-      print("Sending body: $requestBody");
-      final response = await ApiService.post(
-        endpoint: AppUrls.login,
-        body: requestBody,
-      );
-      final data = jsonDecode(response.body);
-      print("Status Code: ${response.statusCode}");
-      if (response.statusCode == 200) {
-        final token = data['token'];
-        final user = data['user'];
-        final userType = user['userType'];
-        final  userId = user['id'];
-        final approvalStatus = user['approvalStatus'];
+    final response = await ApiService.post(
+      endpoint: AppUrls.login,
+      body: requestBody,
+    );
 
-        print("userType: $userType");
-        print("token: $token");
-        print("approvalStatus: $approvalStatus");
+    final data = jsonDecode(response.body);
+    print("Status Code: ${response.statusCode}");
 
+    if (response.statusCode == 200) {
+      final token = data['token'];
+      final user = data['user'];
+      final userType = user['userType'];
+      final userId = user['id'];
+      final approvalStatus = user['approvalStatus'];
+
+      print("userType: $userType");
+      print("token: $token");
+      print("approvalStatus: $approvalStatus");
+      await SharedPrefsHelper.saveString(SharedPrefsHelper.userKey, jsonEncode(user));
+      await SharedPrefsHelper.saveString(SharedPrefsHelper.userTypeKey, userType);
+      await SharedPrefsHelper.saveString(SharedPrefsHelper.userIdKey, userId);
+      print("userId: $userId");
+
+      if (userType == 'admin') {
         await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
-        print("Token saved in local: $token");
-        await SharedPrefsHelper.saveString(
-          SharedPrefsHelper.userKey,
-          jsonEncode(user),
-        );
-        await SharedPrefsHelper.saveString(
-          SharedPrefsHelper.userTypeKey,
-          userType,
-        );
-        await SharedPrefsHelper.saveString(
-          SharedPrefsHelper.userIdKey,
-          userId,
-        );
-        print("userId: $userId");
-        if (userType == 'admin') {
-          Get.to(() => AdminDashboard());
-        } else {
-          if (approvalStatus == 'Pending') {
-            Get.to(
-              () => WaitingForApprovalPage(
-                documents:
-                    entityDocuments[selectedEntityType ?? 'Individual'] ??
+        Get.to(() => AdminDashboard());
+      } else {
+        if (approvalStatus == 'Pending') {
+          Get.to(() => WaitingForApprovalPage(
+                documents: entityDocuments[selectedEntityType ?? 'Individual'] ??
                     entityDocuments['Individual']!,
                 userRole: userType,
-              ),
-            );
-          } else if (approvalStatus == 'Approved') {
-            if (userType == UserModel.customer) {
-              Get.to(() => CustomerHomepage());
-            } else if (userType == UserModel.salesManager) {
-              Get.to(() => SalesManagerHomepage());
-            } else if (userType == UserModel.dealer) {
-              Get.to(() => BottomNavigationPage());
-            }
-          } else if (approvalStatus == 'Rejected') {
-            Get.to(() => RejectedScreen(userId: user['id']));
-          } else {
-            ToastWidget.show(
-              context: Get.context!,
-              message: "Invalid approval status. Please contact admin.",
-              type: ToastType.error,
-            );
+              ));
+        } else if (approvalStatus == 'Approved') {
+          await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
+
+          if (userType == UserModel.customer) {
+            Get.to(() => CustomerHomepage());
+          } else if (userType == UserModel.salesManager) {
+            Get.to(() => SalesManagerHomepage());
+          } else if (userType == UserModel.dealer) {
+            Get.to(() => BottomNavigationPage());
           }
+        } else if (approvalStatus == 'Rejected') {
+          Get.to(() => RejectedScreen(userId: userId));
+        } else {
+          ToastWidget.show(
+            context: Get.context!,
+            message: "Invalid approval status. Please contact admin.",
+            type: ToastType.error,
+          );
         }
-      } else {
-        print("data: $data");
-        ToastWidget.show(
-          context: Get.context!,
-          message: data['message'] ?? "Invalid credentials",
-          type: ToastType.error,
-        );
       }
-    } catch (e) {
-      print("Error: $e");
+    } else {
+      print("data: $data");
       ToastWidget.show(
         context: Get.context!,
-        message: e.toString(),
+        message: data['message'] ?? "Invalid credentials",
         type: ToastType.error,
       );
-    } finally {
-      isLoading.value = false;
     }
+  } catch (e) {
+    print("Error: $e");
+    ToastWidget.show(
+      context: Get.context!,
+      message: e.toString(),
+      type: ToastType.error,
+    );
+  } finally {
+    isLoading.value = false;
   }
+}
 
   String? validatePassword(String password) {
     if (password.isEmpty) return "Password is required.";

@@ -14,6 +14,20 @@ class RegistrationFormController extends GetxController {
   void onInit() {
     super.onInit();
     filteredStates = List.from(indianStates);
+    passwordController.clear();
+    dealerNameController.clear();
+    dealerEmailController.clear();
+    dealershipNameController.clear();
+    primaryContactPersonController.clear();
+    primaryMobileController.clear();
+    secondaryContactPersonController.clear();
+    secondaryMobileController.clear();
+    addressControllers.clear();
+    selectedEntityType = null;
+    selectedState = null;
+    touchedFields.clear();
+   
+    formKey.currentState?.reset();
 
     // Ensure at least one address exists
     if (addressControllers.isEmpty) {
