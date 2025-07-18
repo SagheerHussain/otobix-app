@@ -452,13 +452,13 @@ class RegistrationFormPage extends StatelessWidget {
                 ),
                 if (formFieldState.hasError)
                   Padding(
-                    padding: const EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.only(left: 10, top: 2),
                     child: Text(
                       formFieldState.errorText ?? '',
                       style: TextStyle(
-                        color: AppColors.red,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
+                        color: AppColors.validationErrorRed,
+                        fontSize: 12,
+                        // fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -470,30 +470,30 @@ class RegistrationFormPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEntityTypeDropdown1(BuildContext context) {
-    return GetBuilder<RegistrationFormController>(
-      builder: (getxController) {
-        return DropdownWidget(
-          label: "Entity Type",
-          isRequired: true,
-          selectedValue: getxController.selectedEntityType,
-          hintText: "Select Entity Type",
-          prefixIcon: Icons.category,
-          items: getxController.entityTypes,
-          onChanged: (val) {
-            getxController.selectedEntityType = val;
-            getxController.update();
-          },
-          validator: (value) {
-            if (value == null || value.toString().trim().isEmpty) {
-              return 'Please select an entity type';
-            }
-            return null;
-          },
-        );
-      },
-    );
-  }
+  // Widget _buildEntityTypeDropdown1(BuildContext context) {
+  //   return GetBuilder<RegistrationFormController>(
+  //     builder: (getxController) {
+  //       return DropdownWidget(
+  //         label: "Entity Type",
+  //         isRequired: true,
+  //         selectedValue: getxController.selectedEntityType,
+  //         hintText: "Select Entity Type",
+  //         prefixIcon: Icons.category,
+  //         items: getxController.entityTypes,
+  //         onChanged: (val) {
+  //           getxController.selectedEntityType = val;
+  //           getxController.update();
+  //         },
+  //         validator: (value) {
+  //           if (value == null || value.toString().trim().isEmpty) {
+  //             return 'Please select an entity type';
+  //           }
+  //           return null;
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildCustomTextField({
     required String label,
@@ -616,9 +616,12 @@ class RegistrationFormPage extends StatelessWidget {
                     Text(
                       error,
                       style: TextStyle(
-                        color: isAvailable ? AppColors.green : AppColors.red,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
+                        color:
+                            isAvailable
+                                ? AppColors.green
+                                : AppColors.validationErrorRed,
+                        fontSize: 12,
+                        // fontWeight: FontWeight.w500,
                       ),
                     ),
                     isAvailable
