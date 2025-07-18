@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
-import 'package:otobix/admin/admin_home.dart';
+import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
 class SplashController extends GetxController {
@@ -15,8 +15,8 @@ class SplashController extends GetxController {
   }
 
   void checkToken() async {
-    token = await SharedPrefsHelper.getString("token");
-    userType = await SharedPrefsHelper.getString("userType");
+    token = await SharedPrefsHelper.getString(SharedPrefsHelper.tokenKey);
+    userType = await SharedPrefsHelper.getString(SharedPrefsHelper.userTypeKey);
 
     print("token: $token");
     print("userType: $userType");
@@ -24,7 +24,7 @@ class SplashController extends GetxController {
     Future.delayed(const Duration(seconds: 3), () {
       if (token != null) {
         if (userType == 'admin') {
-          Get.off(() => AdminHome());
+          Get.off(() => AdminDashboard());
         } else {
           Get.off(() => BottomNavigationPage());
         }

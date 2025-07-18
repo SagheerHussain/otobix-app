@@ -148,7 +148,7 @@ class _AccountPageState extends State<AccountPage> {
                     title: "Logout",
                     description: "Sign out of your account securely.",
                     onTap: () {
-                      Get.offAll(() => LoginPage());
+                      accountController.logout();
                     },
                   ),
                 ],

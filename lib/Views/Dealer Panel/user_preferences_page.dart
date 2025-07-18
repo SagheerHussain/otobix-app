@@ -354,7 +354,6 @@ class UserPreferencesPage extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
 
-                  // Max Price
                   Expanded(
                     child: TextField(
                       controller: getxController.maxPriceController.value,

@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
+
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
 import 'package:otobix/Views/Register/register_page.dart';
 import 'package:otobix/Views/Register/registration_form_page.dart';
+
 import 'package:otobix/Views/splash/splash_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
-void main() {
+void main() async {
   Get.config(enableLog: false);
-  SharedPrefsHelper.init();
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPrefsHelper.init();            
   runApp(const MyApp());
 }
 
@@ -36,6 +39,7 @@ class MyApp extends StatelessWidget {
       ),
 
       home: RegistrationFormPage(userRole: UserModel.dealer, phoneNumber: ''),
+
     );
   }
 }
