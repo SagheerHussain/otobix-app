@@ -18,6 +18,12 @@ class EditProfileScreen extends StatelessWidget {
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Get.back();
+            },
+          ),
           elevation: 0,
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
@@ -46,30 +52,25 @@ class EditProfileScreen extends StatelessWidget {
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    Obx(() {
-                      final imageUrl =
-                          controller
-                              .imageUrl
-                              .value; // make sure `user` is reactive
+                  Obx(() {
+  final imageUrl = controller.imageUrl.value;
+  final imageFile = controller.imageFile.value;
 
-                      return CircleAvatar(
-                        radius: 55,
-                        backgroundImage:
-                            // ignore: unnecessary_null_comparison
-                            imageUrl != null && imageUrl.isNotEmpty
-                                ? NetworkImage(
-                                  imageUrl.startsWith('http')
-                                      ? imageUrl
-                                      : imageUrl,
-                                )
-                                : null,
-                        child:
-                            // ignore: unnecessary_null_comparison
-                            imageUrl == null || imageUrl.isEmpty
-                                ? const Icon(Icons.person, size: 55)
-                                : null,
-                      );
-                    }),
+  return CircleAvatar(
+    radius: 55,
+    backgroundImage: imageFile != null
+        ? FileImage(imageFile) as ImageProvider
+        : (imageUrl.isNotEmpty
+            ? NetworkImage(
+                imageUrl.startsWith('http') ? imageUrl : imageUrl,
+              )
+            : null),
+    child: imageFile == null && imageUrl.isEmpty
+        ? const Icon(Icons.person, size: 55)
+        : null,
+  );
+}),
+
 
                     Positioned(
                       bottom: 0,

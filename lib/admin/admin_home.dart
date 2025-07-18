@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/admin/controller/admin_home_controller.dart';
+import 'package:shimmer/shimmer.dart';
 
 class AdminHome extends StatelessWidget {
   AdminHome({super.key});
@@ -30,7 +31,6 @@ class AdminHome extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
-                    // controller: controller.searchController,
                     decoration: InputDecoration(
                       hintText: "Search Users...",
                       prefixIcon: Icon(
@@ -61,6 +61,15 @@ class AdminHome extends StatelessWidget {
           Expanded(
             child: Obx(() {
               final users = controller.usersList;
+
+              if (controller.isLoading.value) {
+                return ListView.builder(
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return _buildShimmerCard();
+                  },
+                );
+              }
 
               if (users.isEmpty) {
                 return const Center(
@@ -369,4 +378,148 @@ class AdminHome extends StatelessWidget {
       },
     );
   }
+Widget _buildShimmerCard() {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
+    child: Container(
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Avatar, Name, Email, Location
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// Avatar shimmer
+              Container(
+                height: 56,
+                width: 56,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              /// Name, Email shimmer
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 14,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 12,
+                      width: 180,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              /// Location shimmer
+              Column(
+                children: [
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 12,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          /// Role + EntityType shimmer chips
+          Row(
+            children: [
+              Container(
+                height: 20,
+                width: 70,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                height: 20,
+                width: 90,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          /// Divider
+          Container(
+            height: 1,
+            color: Colors.grey.shade200,
+          ),
+
+          const SizedBox(height: 20),
+
+          /// Buttons shimmer
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 }

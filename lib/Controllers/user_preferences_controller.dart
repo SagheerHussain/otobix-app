@@ -98,16 +98,17 @@ class UserPreferencesController extends GetxController {
       <Map<String, dynamic>>[].obs;
 
   // 7. Location / City Preferences
-  final List<String> cityList = [
-    'Karachi',
-    'Lahore',
-    'Islamabad',
-    'Rawalpindi',
-    'Peshawar',
-    'Multan',
-    'Faisalabad',
-    'Quetta',
-  ];
+ final List<String> cityList = [
+  'Mumbai',
+  'Delhi',
+  'Bangalore',
+  'Hyderabad',
+  'Chennai',
+  'Kolkata',
+  'Pune',
+  'Ahmedabad',
+];
+
   final RxList<String> selectedCities = <String>[].obs;
 
   // 8. Verified Sellers Only
