@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/Home%20Tab/car_details_controller.dart';
+import 'package:otobix/Controllers/car_details_controller.dart';
 
 void showMakeOfferSheet(BuildContext context) {
   final CarDetailsController bidController = Get.put(CarDetailsController());
@@ -37,7 +37,6 @@ void showMakeOfferSheet(BuildContext context) {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   /// TOP ROW — TITLE + TIMER
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,8 +51,7 @@ void showMakeOfferSheet(BuildContext context) {
                       ),
                       Row(
                         children: [
-                          Icon(Icons.access_time,
-                              color: Colors.red, size: 16),
+                          Icon(Icons.access_time, color: Colors.red, size: 16),
                           SizedBox(width: 4),
                           Text(
                             "23:47:56",
@@ -62,9 +60,9 @@ void showMakeOfferSheet(BuildContext context) {
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
 
@@ -80,9 +78,7 @@ void showMakeOfferSheet(BuildContext context) {
                           decoration: BoxDecoration(
                             color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                            ),
+                            border: Border.all(color: Colors.grey.shade300),
                           ),
                           alignment: Alignment.center,
                           child: Text(
@@ -177,14 +173,16 @@ void showMakeOfferSheet(BuildContext context) {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Obx(() => Text(
-                                  "Rs ${bidController.bidAmount.value}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
-                                )),
+                            Obx(
+                              () => Text(
+                                "Rs ${bidController.bidAmount.value}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -209,33 +207,38 @@ void showMakeOfferSheet(BuildContext context) {
                               border: Border.all(color: Colors.red),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.remove,
-                                color: Colors.red, size: 20),
+                            child: Icon(
+                              Icons.remove,
+                              color: Colors.red,
+                              size: 20,
+                            ),
                           ),
                         ),
                         SizedBox(width: 30),
 
                         /// BID VALUE
-                        Obx(() => Column(
-                              children: [
-                                Text(
-                                  "Rs ${bidController.bidAmount.value}",
-                                  style: TextStyle(
-                                    color: Colors.blue.shade800,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                        Obx(
+                          () => Column(
+                            children: [
+                              Text(
+                                "Rs ${bidController.bidAmount.value}",
+                                style: TextStyle(
+                                  color: Colors.blue.shade800,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                SizedBox(height: 4),
-                                Text(
-                                  "*Bid increase by Rs ${bidController.isFirstClick ? 4000 : 1000}",
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 12,
-                                  ),
-                                )
-                              ],
-                            )),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                "*Bid increase by Rs ${bidController.isFirstClick ? 4000 : 1000}",
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         SizedBox(width: 30),
 
                         /// PLUS BUTTON
@@ -249,8 +252,11 @@ void showMakeOfferSheet(BuildContext context) {
                               border: Border.all(color: Colors.green),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.add,
-                                color: Colors.green, size: 20),
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.green,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ],
@@ -260,29 +266,31 @@ void showMakeOfferSheet(BuildContext context) {
                   SizedBox(height: 30),
 
                   /// NEW: MAKE YOUR OFFER NOW BUTTON
-                  Obx(() => SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                  Obx(
+                    () => SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          child: Text(
-                            "MAKE YOUR OFFER NOW ${bidController.bidAmount.value}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: Text(
+                          "MAKE YOUR OFFER NOW ${bidController.bidAmount.value}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.white,
                           ),
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/Home%20Tab/car_details_controller.dart';
+import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 class StartAutoBidButtonWidget extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:otobix/Models/Login%20Register/user_model.dart';
+import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_animations.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
@@ -127,18 +127,18 @@ class _WaitingForApprovalPageState extends State<WaitingForApprovalPage> {
     );
   }
 
-  String _buildTitleForRole(String role) {
-    switch (role.toLowerCase()) {
-      case UserModel.customer:
-        return 'Customer Approval Pending';
-      case UserModel.salesManager:
-        return 'Sales Manager Review';
-      case UserModel.dealer:
-        return 'Waiting for Approval';
-      default:
-        return 'Waiting for Approval';
-    }
-  }
+  // String _buildTitleForRole(String role) {
+  //   switch (role.toLowerCase()) {
+  //     case UserModel.customer:
+  //       return 'Customer Approval Pending';
+  //     case UserModel.salesManager:
+  //       return 'Sales Manager Review';
+  //     case UserModel.dealer:
+  //       return 'Waiting for Approval';
+  //     default:
+  //       return 'Waiting for Approval';
+  //   }
+  // }
 
   Widget _buildSubtitleForRole(String role) {
     switch (role.toLowerCase()) {

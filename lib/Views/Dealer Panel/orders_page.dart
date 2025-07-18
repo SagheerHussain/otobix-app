@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:otobix/Views/Orders%20Tab/in_negotiation_page.dart';
-import 'package:otobix/Views/Orders%20Tab/procured_page.dart';
-import 'package:otobix/Views/Orders%20Tab/rc_transfer_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/in_negotiation_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/procured_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/rc_transfer_page.dart';
 import 'package:otobix/Widgets/tab_bar_widget.dart';
 
 class OrdersPage extends StatelessWidget {

@@ -3,16 +3,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:otobix/Views/Home%20Tab/Home/Widgets/place_bid_button_widget.dart';
-import 'package:otobix/Views/Home%20Tab/Home/Widgets/start_auto_bid_widget.dart';
-import 'package:otobix/Views/Home%20Tab/car_images_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/place_bid_button_widget.dart';
+import 'package:otobix/Views/Dealer%20Panel/start_auto_bid_widget.dart';
+import 'package:otobix/Views/Dealer%20Panel/car_images_page.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:otobix/Models/Home%20Tab/car_model.dart';
+import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
-import 'package:otobix/Controllers/Home%20Tab/car_details_controller.dart';
+import 'package:otobix/Controllers/car_details_controller.dart';
 
 class CarDetailsPage extends StatelessWidget {
   final CarModel car;

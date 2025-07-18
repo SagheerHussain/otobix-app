@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otobix/Views/Login/login_page.dart';
-import 'package:otobix/Views/bottom_navigation_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/admin/admin_home.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 

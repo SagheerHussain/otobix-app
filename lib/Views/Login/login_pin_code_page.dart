@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/Login/login_controller.dart';
+import 'package:otobix/Controllers/login_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
-import 'package:otobix/Views/bottom_navigation_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 

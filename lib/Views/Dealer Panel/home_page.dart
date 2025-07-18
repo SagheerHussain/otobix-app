@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/Home%20Tab/home_controller.dart';
-import 'package:otobix/Controllers/Widgets/tab_bar_buttons_controller.dart';
+import 'package:otobix/Controllers/home_controller.dart';
+import 'package:otobix/Controllers/tab_bar_buttons_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/Home%20Tab/Home/Sections/live_bids_section.dart';
-import 'package:otobix/Views/Home%20Tab/Home/Sections/marketpalce_section.dart';
-import 'package:otobix/Views/Home%20Tab/Home/Sections/ocb_70_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/live_bids_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/marketpalce_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/ocb_70_section.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/tab_bar_buttons_widget.dart';
 

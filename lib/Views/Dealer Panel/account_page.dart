@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/Widgets/tab_bar_widget_controller.dart';
-import 'package:otobix/Controllers/account/account_controller.dart';
+import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
+import 'package:otobix/Controllers/account_controller.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/Account%20Tab/edit_account_page.dart';
-import 'package:otobix/Views/Account%20Tab/user_preferences_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 
 class AccountPage extends StatefulWidget {
@@ -47,6 +47,7 @@ class _AccountPageState extends State<AccountPage> {
                           return CircleAvatar(
                             radius: 55,
                             backgroundImage:
+                                // ignore: unnecessary_null_comparison
                                 imageUrl != null && imageUrl.isNotEmpty
                                     ? NetworkImage(
                                       imageUrl.startsWith('http')
@@ -55,6 +56,7 @@ class _AccountPageState extends State<AccountPage> {
                                     )
                                     : null,
                             child:
+                                // ignore: unnecessary_null_comparison
                                 imageUrl == null || imageUrl.isEmpty
                                     ? const Icon(Icons.person, size: 55)
                                     : null,
