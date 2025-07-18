@@ -10,6 +10,7 @@ class DropdownWidget extends StatelessWidget {
   final IconData prefixIcon;
   final List<String>? items;
   final ValueChanged<String?>? onChanged;
+  final bool giveSpaceToBottom;
 
   /// true → uses custom picker dialog
   /// false → uses DropdownButtonFormField
@@ -30,6 +31,7 @@ class DropdownWidget extends StatelessWidget {
     this.useCustomPicker = true,
     this.height = 40,
     this.dialogMaxWidth = 300,
+    this.giveSpaceToBottom = true,
     required String? Function(dynamic value) validator,
   });
 
@@ -137,7 +139,7 @@ class DropdownWidget extends StatelessWidget {
                 style: TextStyle(color: AppColors.black, fontSize: 12),
               ),
             ),
-        const SizedBox(height: 30),
+        if (giveSpaceToBottom) SizedBox(height: 30),
       ],
     );
   }
@@ -158,7 +160,7 @@ class DropdownWidget extends StatelessWidget {
                   TextSpan(
                     text: ' *',
                     style: TextStyle(
-                      color: Colors.red.withOpacity(.5),
+                      color: Colors.red,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),

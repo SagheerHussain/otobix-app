@@ -10,7 +10,7 @@ import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Views/Sales%20Manager%20Panel/sales_manager_homepage.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
-import 'package:otobix/admin/admin_home.dart';
+import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/admin/rejected_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
@@ -101,6 +101,7 @@ class LoginController extends GetxController {
         final token = data['token'];
         final user = data['user'];
         final userType = user['userType'];
+        final  userId = user['id'];
         final approvalStatus = user['approvalStatus'];
 
         print("userType: $userType");
@@ -108,6 +109,7 @@ class LoginController extends GetxController {
         print("approvalStatus: $approvalStatus");
 
         await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
+        print("Token saved in local: $token");
         await SharedPrefsHelper.saveString(
           SharedPrefsHelper.userKey,
           jsonEncode(user),
@@ -116,9 +118,13 @@ class LoginController extends GetxController {
           SharedPrefsHelper.userTypeKey,
           userType,
         );
-
+        await SharedPrefsHelper.saveString(
+          SharedPrefsHelper.userIdKey,
+          userId,
+        );
+        print("userId: $userId");
         if (userType == 'admin') {
-          Get.to(() => AdminHome());
+          Get.to(() => AdminDashboard());
         } else {
           if (approvalStatus == 'Pending') {
             Get.to(

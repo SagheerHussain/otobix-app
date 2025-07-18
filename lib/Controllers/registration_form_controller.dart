@@ -186,7 +186,14 @@ class RegistrationFormController extends GetxController {
       bool isFormValid = formKey.currentState!.validate();
 
       if (!isUsernameValid || !isFormValid) {
-        /// Mark all required fields as touched so errors show
+        // Show toast
+        ToastWidget.show(
+          context: Get.context!,
+          message: "Please fill all required fields",
+          type: ToastType.error,
+        );
+
+        // Mark all required fields as touched so errors show
         touchedFields.addAll([
           "State",
           "Dealer Name",
@@ -197,6 +204,7 @@ class RegistrationFormController extends GetxController {
           "Primary Contact Mobile No.",
           "Password",
         ]);
+
         update();
         return;
       }
@@ -288,11 +296,7 @@ class RegistrationFormController extends GetxController {
   Future<bool> validateUsername() async {
     String userName = dealerNameController.text.trim();
 
-    if (userName.isEmpty) {
-      usernameValidationError.value = "Username is required ";
-      return false;
-    }
-
+    // ✅ Only if valid format, then check API for availability
     try {
       final response = await ApiService.post(
         endpoint: AppUrls.checkUsernameExists(userName),
@@ -305,19 +309,19 @@ class RegistrationFormController extends GetxController {
         final bool isAvailable = data['available'] == true;
 
         if (isAvailable) {
-          usernameValidationError.value = "Username is available ";
+          usernameValidationError.value = "Username is available";
           return true;
         } else {
-          usernameValidationError.value = "Username already exists ";
+          usernameValidationError.value = "Username already exists";
           return false;
         }
       } else {
-        usernameValidationError.value = "Error checking username ";
+        usernameValidationError.value = "Error checking username";
         return false;
       }
     } catch (e) {
       debugPrint("Username validation error → $e");
-      usernameValidationError.value = "Error checking username ";
+      usernameValidationError.value = "Error checking username";
       return false;
     }
   }
