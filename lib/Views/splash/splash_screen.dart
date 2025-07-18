@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/splash/splash_controller.dart';
+import 'package:otobix/Controllers/splash_controller.dart';
 import 'package:otobix/Utils/app_images.dart' show AppImages;
 
 class SplashScreen extends StatelessWidget {
@@ -9,12 +9,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Image.asset(
-          AppImages.appLogo,
-          height: 100,
-        ),
-      ),
+      body: Center(child: Image.asset(AppImages.appLogo, height: 100)),
     );
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:otobix/Models/Login%20Register/user_model.dart';
+import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Login/login_page.dart';
-import 'package:otobix/Controllers/Register/register_controller.dart';
+import 'package:otobix/Controllers/register_controller.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 

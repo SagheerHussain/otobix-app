@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Models/Home%20Tab/car_model.dart';
+import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
@@ -40,7 +40,8 @@ class HomeController extends GetxController {
 
   final selectedSegmentNotifier = ValueNotifier<String>('live');
 
-  final segments = {'live': 'Live (23)', 'ocb70': 'OCB 70', 'ocb60': 'OCB 60'}.obs;
+  final segments =
+      {'live': 'Live (23)', 'ocb70': 'OCB 70', 'ocb60': 'OCB 60'}.obs;
 
   RxString selectedSegment = 'live'.obs;
 
@@ -218,5 +219,4 @@ class HomeController extends GetxController {
       imageUrls: [AppImages.renaultKwid1],
     ),
   ];
-
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:otobix/Controllers/My%20Cars%20Tab/my_cars_controller.dart';
+import 'package:otobix/Controllers/my_cars_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/My%20Cars%20Tab/live_bids_page.dart';
-import 'package:otobix/Views/My%20Cars%20Tab/ocb_nego_page.dart';
-import 'package:otobix/Views/My%20Cars%20Tab/wishlist_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/live_bids_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/ocb_nego_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/wishlist_page.dart';
 import 'package:otobix/Widgets/tab_bar_widget.dart';
 import 'package:get/get.dart';
 

@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
-import 'package:otobix/Views/Home%20Tab/car_details_page.dart';
-import 'package:otobix/Controllers/Home%20Tab/home_controller.dart';
+import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 
 class Ocb70Section extends StatelessWidget {
   Ocb70Section({super.key});

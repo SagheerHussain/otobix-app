@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otobix/Controllers/Login/login_controller.dart';
+import 'package:otobix/Controllers/login_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:get/get.dart';

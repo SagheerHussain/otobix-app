@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/Widgets/tab_bar_widget_controller.dart';
+import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 
 class TabBarWidget extends StatelessWidget {

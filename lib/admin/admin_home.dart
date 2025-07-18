@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Models/Login%20Register/user_model.dart';
+import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/admin/controller/admin_home_controller.dart';
 

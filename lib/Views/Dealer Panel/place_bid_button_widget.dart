@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otobix/Widgets/bid_dialogue.dart';
 import 'package:otobix/Widgets/button_widget.dart';
-import 'package:otobix/Controllers/Home%20Tab/car_details_controller.dart';
+import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Widgets/oto_buy_widget.dart';
 import 'package:otobix/Widgets/upcoming_bid.dart';
 

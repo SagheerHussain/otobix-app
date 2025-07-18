@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/Register/register_pin_code_controller.dart';
+import 'package:otobix/Controllers/register_pin_code_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';

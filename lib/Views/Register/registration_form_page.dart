@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/Register/registration_form_controller.dart';
-import 'package:otobix/Models/Login%20Register/user_model.dart';
+import 'package:otobix/Controllers/registration_form_controller.dart';
+import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_icons.dart';
 import 'package:otobix/Widgets/button_widget.dart';
@@ -316,7 +316,12 @@ class RegistrationFormPage extends StatelessWidget {
             getxController.selectedEntityType = val;
             getxController.update();
           },
-          validator: (value) {},
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Entity Type is required';
+            }
+            return null;
+          },
         );
       },
     );
@@ -469,97 +474,97 @@ class RegistrationFormPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCustomTextField1({
-    required String label,
-    required TextEditingController controller,
-    required String hintText,
-    required TextInputType keyboardType,
-    required IconData icon,
-    bool isRequired = false,
-    bool isPassword = false,
-    RxBool? obscureText,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          text: TextSpan(
-            text: label,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: AppColors.grey,
-            ),
-            children:
-                isRequired
-                    ? [
-                      TextSpan(
-                        text: ' *',
-                        style: TextStyle(
-                          color: AppColors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ]
-                    : [],
-          ),
-        ),
-        Obx(
-          () => TextFormField(
-            controller: controller,
-            keyboardType: keyboardType,
-            decoration: InputDecoration(
-              prefixIcon: Icon(
-                icon,
-                color: AppColors.grey.withValues(alpha: .5),
-                size: 15,
-              ),
-              prefixIconConstraints: BoxConstraints(
-                minWidth: 30,
-                minHeight: 20,
-              ),
-              suffixIcon:
-                  isPassword
-                      ? IconButton(
-                        icon: Icon(
-                          obscureText!.value
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: AppColors.grey.withValues(alpha: .5),
-                          size: 15,
-                        ),
-                        onPressed: () {
-                          obscureText.value = !obscureText.value;
-                        },
-                      )
-                      : null,
-              suffixIconConstraints:
-                  isPassword
-                      ? BoxConstraints(minWidth: 30, minHeight: 20)
-                      : null,
+  // Widget _buildCustomTextField1({
+  //   required String label,
+  //   required TextEditingController controller,
+  //   required String hintText,
+  //   required TextInputType keyboardType,
+  //   required IconData icon,
+  //   bool isRequired = false,
+  //   bool isPassword = false,
+  //   RxBool? obscureText,
+  // }) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       RichText(
+  //         text: TextSpan(
+  //           text: label,
+  //           style: TextStyle(
+  //             fontWeight: FontWeight.bold,
+  //             fontSize: 12,
+  //             color: AppColors.grey,
+  //           ),
+  //           children:
+  //               isRequired
+  //                   ? [
+  //                     TextSpan(
+  //                       text: ' *',
+  //                       style: TextStyle(
+  //                         color: AppColors.red,
+  //                         fontWeight: FontWeight.bold,
+  //                         fontSize: 12,
+  //                       ),
+  //                     ),
+  //                   ]
+  //                   : [],
+  //         ),
+  //       ),
+  //       Obx(
+  //         () => TextFormField(
+  //           controller: controller,
+  //           keyboardType: keyboardType,
+  //           decoration: InputDecoration(
+  //             prefixIcon: Icon(
+  //               icon,
+  //               color: AppColors.grey.withValues(alpha: .5),
+  //               size: 15,
+  //             ),
+  //             prefixIconConstraints: BoxConstraints(
+  //               minWidth: 30,
+  //               minHeight: 20,
+  //             ),
+  //             suffixIcon:
+  //                 isPassword
+  //                     ? IconButton(
+  //                       icon: Icon(
+  //                         obscureText!.value
+  //                             ? Icons.visibility_off
+  //                             : Icons.visibility,
+  //                         color: AppColors.grey.withValues(alpha: .5),
+  //                         size: 15,
+  //                       ),
+  //                       onPressed: () {
+  //                         obscureText.value = !obscureText.value;
+  //                       },
+  //                     )
+  //                     : null,
+  //             suffixIconConstraints:
+  //                 isPassword
+  //                     ? BoxConstraints(minWidth: 30, minHeight: 20)
+  //                     : null,
 
-              contentPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-              hintStyle: TextStyle(
-                color: AppColors.grey.withValues(alpha: .5),
-                fontSize: 12,
-              ),
-              hintText: hintText,
-            ),
-            obscureText: isPassword ? obscureText!.value : false,
+  //             contentPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+  //             hintStyle: TextStyle(
+  //               color: AppColors.grey.withValues(alpha: .5),
+  //               fontSize: 12,
+  //             ),
+  //             hintText: hintText,
+  //           ),
+  //           obscureText: isPassword ? obscureText!.value : false,
 
-            validator: (value) {
-              if (isRequired && (value == null || value.trim().isEmpty)) {
-                return 'This field is required';
-              }
-              return null;
-            },
-          ),
-        ),
-        const SizedBox(height: 30),
-      ],
-    );
-  }
+  //           validator: (value) {
+  //             if (isRequired && (value == null || value.trim().isEmpty)) {
+  //               return 'This field is required';
+  //             }
+  //             return null;
+  //           },
+  //         ),
+  //       ),
+  //       const SizedBox(height: 30),
+  //     ],
+  //   );
+  // }
 
   Widget _buildAddressFields() {
     return GetBuilder<RegistrationFormController>(

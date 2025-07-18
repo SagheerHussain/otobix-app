@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Models/Login%20Register/user_model.dart';
+import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Views/Sales%20Manager%20Panel/sales_manager_homepage.dart';
-import 'package:otobix/Views/bottom_navigation_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/admin_home.dart';
 import 'package:otobix/admin/rejected_screen.dart';

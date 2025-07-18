@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Utils/app_urls.dart';
-import 'package:otobix/Views/bottom_navigation_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;

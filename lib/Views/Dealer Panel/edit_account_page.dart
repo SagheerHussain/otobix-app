@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/account/account_controller.dart';
+import 'package:otobix/Controllers/account_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -28,8 +28,7 @@ class EditProfileScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                  controller.updateProfile();
-                
+                controller.updateProfile();
               },
               child: const Text(
                 'Save',
@@ -48,16 +47,27 @@ class EditProfileScreen extends StatelessWidget {
                   alignment: Alignment.bottomRight,
                   children: [
                     Obx(() {
-                      final imageUrl = controller.imageUrl.value; // make sure `user` is reactive
-                    
+                      final imageUrl =
+                          controller
+                              .imageUrl
+                              .value; // make sure `user` is reactive
+
                       return CircleAvatar(
                         radius: 55,
-                        backgroundImage: imageUrl != null && imageUrl.isNotEmpty
-                            ? NetworkImage(imageUrl.startsWith('http') ? imageUrl : imageUrl)
-                            : null,
-                        child: imageUrl == null || imageUrl.isEmpty
-                            ? const Icon(Icons.person, size: 55)
-                            : null,
+                        backgroundImage:
+                            // ignore: unnecessary_null_comparison
+                            imageUrl != null && imageUrl.isNotEmpty
+                                ? NetworkImage(
+                                  imageUrl.startsWith('http')
+                                      ? imageUrl
+                                      : imageUrl,
+                                )
+                                : null,
+                        child:
+                            // ignore: unnecessary_null_comparison
+                            imageUrl == null || imageUrl.isEmpty
+                                ? const Icon(Icons.person, size: 55)
+                                : null,
                       );
                     }),
 
@@ -94,10 +104,22 @@ class EditProfileScreen extends StatelessWidget {
                 if (controller.userRole.value == 'Dealer') ...[
                   _buildTextField('Dealership Name', controller.dealershipName),
                   _buildTextField('Entity Type', controller.entityType),
-                  _buildTextField('Primary Contact Person', controller.primaryContactPerson),
-                  _buildTextField('Primary Contact Number', controller.primaryContactNumber),
-                  _buildTextField('Secondary Contact Person', controller.secondaryContactPerson),
-                  _buildTextField('Secondary Contact Number', controller.secondaryContactNumber),
+                  _buildTextField(
+                    'Primary Contact Person',
+                    controller.primaryContactPerson,
+                  ),
+                  _buildTextField(
+                    'Primary Contact Number',
+                    controller.primaryContactNumber,
+                  ),
+                  _buildTextField(
+                    'Secondary Contact Person',
+                    controller.secondaryContactPerson,
+                  ),
+                  _buildTextField(
+                    'Secondary Contact Number',
+                    controller.secondaryContactNumber,
+                  ),
                 ],
 
                 if ([
@@ -135,7 +157,10 @@ class EditProfileScreen extends StatelessWidget {
             controller: controller,
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -151,8 +176,8 @@ class EditProfileScreen extends StatelessWidget {
               fillColor: Colors.grey.shade100,
               filled: true,
             ),
-            validator: (value) =>
-                value == null || value.isEmpty ? 'Required' : null,
+            validator:
+                (value) => value == null || value.isEmpty ? 'Required' : null,
           ),
         ],
       ),
@@ -176,7 +201,8 @@ class EditProfileScreen extends StatelessWidget {
           (addr) => _buildTextField(
             'Address ${controller.addressList.indexOf(addr) + 1}',
             TextEditingController(text: addr)..addListener(() {
-              controller.addressList[controller.addressList.indexOf(addr)] = addr;
+              controller.addressList[controller.addressList.indexOf(addr)] =
+                  addr;
             }),
           ),
         ),
