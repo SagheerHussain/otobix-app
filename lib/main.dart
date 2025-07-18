@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
 import 'package:otobix/Views/Register/register_page.dart';
+import 'package:otobix/Views/Register/registration_form_page.dart';
 import 'package:otobix/Views/splash/splash_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: RegisterPage(),
+      home: RegistrationFormPage(userRole: UserModel.dealer, phoneNumber: ''),
     );
   }
 }

@@ -228,6 +228,7 @@ class RegistrationFormPage extends StatelessWidget {
                 controller: fieldTextEditingController,
                 focusNode: fieldFocusNode,
                 decoration: InputDecoration(
+                  isDense: true,
                   hintText: "Select State",
                   hintStyle: TextStyle(
                     color: AppColors.grey.withValues(alpha: .5),
@@ -257,7 +258,10 @@ class RegistrationFormPage extends StatelessWidget {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: AppColors.green, width: 1.5),
                   ),
-                  // contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 0,
+                  ),
                 ),
                 style: TextStyle(fontSize: 12),
                 validator: (value) {
