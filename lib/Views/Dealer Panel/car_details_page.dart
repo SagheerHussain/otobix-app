@@ -515,7 +515,7 @@ class CarDetailsPage extends StatelessWidget {
                       print("Request for Auction pressed!");
                     },
                     isLoading: getxController.isLoading,
-                    height: 40,
+                    height: 35,
                     fontSize: 12,
                     elevation: 10,
                     backgroundColor: AppColors.blue,
@@ -530,7 +530,7 @@ class CarDetailsPage extends StatelessWidget {
                       type: type,
                       getxController: getxController,
                     ),
-                    StartAutoBidButtonWidget(),
+                    StartAutoBidButtonWidget(type: type),
                   ],
                 ),
               const SizedBox(height: 10),

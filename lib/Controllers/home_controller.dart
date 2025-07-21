@@ -10,6 +10,12 @@ class HomeController extends GetxController {
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
 
+  // Screen types
+  final String liveBidsSectionScreen = 'live_bids';
+  final String upcomingSectionScreen = 'upcoming';
+  final String ocb70SectionScreen = 'ocb70';
+  final String marketplaceSectionScreen = 'marketplace';
+
   // dummy add/remove cars to favorite
   final RxList<CarModel> favorites = <CarModel>[].obs;
 

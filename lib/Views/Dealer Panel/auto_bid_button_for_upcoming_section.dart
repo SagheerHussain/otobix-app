@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
+import 'package:intl/intl.dart';
 
-void placeBidButtonForUpcomingSection(BuildContext context) {
-  final CarDetailsController bidController = Get.put(CarDetailsController());
-  bidController.resetBidIncrement();
+// Auto Bid Sheet
+void autoBidButtonForUpcomingSection() {
+  final CarDetailsController getxController = Get.put(CarDetailsController());
+  getxController.resetBidIncrement();
+  // final TextEditingController bidAmountController = TextEditingController();
+
   showModalBottomSheet(
-    context: context,
+    context: Get.context!,
+    backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    backgroundColor: AppColors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (context) {
+    builder: (_) {
       return DraggableScrollableSheet(
         expand: false,
-        maxChildSize: 0.9,
         initialChildSize: 0.5,
         minChildSize: 0.5,
-        builder: (_, controller) {
+        maxChildSize: 0.9,
+        builder: (context, scrollController) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             decoration: BoxDecoration(
@@ -54,7 +54,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Pre-Bid",
+                      "Place Auto Bid",
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -67,7 +67,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                         SizedBox(width: 4),
                         Obx(
                           () => Text(
-                            bidController.remainingTime.value,
+                            getxController.remainingTime.value,
                             style: TextStyle(
                               color: AppColors.red,
                               fontSize: 12,
@@ -95,7 +95,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Bid Starts At",
+                            "Your Offer",
                             style: TextStyle(
                               color: AppColors.grey,
                               fontSize: 10,
@@ -103,7 +103,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rs 54,000",
+                            "Rs. 54,000",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -118,7 +118,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Your Offer",
+                            "Auto Bid Upto",
                             style: TextStyle(
                               color: AppColors.grey,
                               fontSize: 10,
@@ -127,7 +127,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                           SizedBox(height: 4),
                           Obx(
                             () => Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -149,7 +149,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                       // Minus
                       GestureDetector(
                         onTap: () {
-                          bidController.decreaseBid();
+                          getxController.decreaseBid();
                         },
                         child: Container(
                           padding: EdgeInsets.all(12),
@@ -170,7 +170,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                         () => Column(
                           children: [
                             Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -178,11 +178,13 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Text(
-                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - 54000)}",
-                              style: TextStyle(
-                                color: AppColors.grey,
-                                fontSize: 12,
+                            Obx(
+                              () => Text(
+                                "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - 54000)}",
+                                style: TextStyle(
+                                  color: AppColors.grey,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                           ],
@@ -192,7 +194,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                       // Plus
                       GestureDetector(
                         onTap: () {
-                          bidController.increaseBid();
+                          getxController.increaseBid();
                         },
                         child: Container(
                           padding: EdgeInsets.all(12),
@@ -216,8 +218,8 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                   children: [
                     Expanded(
                       child: ButtonWidget(
-                        text: "Set Pre-Bid",
-                        isLoading: bidController.isLoading,
+                        text: "Submit Auto Bid",
+                        isLoading: getxController.isLoading,
                         onTap: () {
                           Get.back();
                         },

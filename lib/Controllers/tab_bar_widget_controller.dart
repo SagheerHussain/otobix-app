@@ -10,7 +10,6 @@ class TabBarWidgetController extends GetxController
   final int tabLength;
 
   TabBarWidgetController({required this.tabLength});
-
   // dummy for now
   setSelectedTab(int index) {
     tabController.animateTo(index);

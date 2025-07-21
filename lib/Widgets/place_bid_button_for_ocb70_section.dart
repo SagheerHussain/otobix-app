@@ -19,8 +19,8 @@ void placeBidButtonForOcb70Section(BuildContext context) {
     builder: (context) {
       return DraggableScrollableSheet(
         expand: false,
-        maxChildSize: 0.45,
-        initialChildSize: 0.45,
+        maxChildSize: 0.5,
+        initialChildSize: 0.35,
         builder: (_, controller) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -79,98 +79,98 @@ void placeBidButtonForOcb70Section(BuildContext context) {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-                // Bids Box
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.grey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Starting Bid
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "One Click Price",
-                            style: TextStyle(
-                              color: AppColors.grey,
-                              fontSize: 10,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Rs 54,000",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: AppColors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(width: 1, height: 30, color: AppColors.grey),
-                      // Last Bid
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "Your Offer",
-                            style: TextStyle(
-                              color: AppColors.grey,
-                              fontSize: 10,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Obx(
-                            () => Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                                color: AppColors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
                 SizedBox(height: 30),
+                // Bids Box
+                // Container(
+                //   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                //   decoration: BoxDecoration(
+                //     border: Border.all(color: AppColors.grey),
+                //     borderRadius: BorderRadius.circular(12),
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       // Starting Bid
+                //       Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           Text(
+                //             "One Click Price",
+                //             style: TextStyle(
+                //               color: AppColors.grey,
+                //               fontSize: 10,
+                //             ),
+                //           ),
+                //           SizedBox(height: 4),
+                //           Text(
+                //             "Rs 54,000",
+                //             style: TextStyle(
+                //               fontWeight: FontWeight.w600,
+                //               fontSize: 12,
+                //               color: AppColors.black,
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //       Container(width: 1, height: 30, color: AppColors.grey),
+                //       // Last Bid
+                //       Column(
+                //         crossAxisAlignment: CrossAxisAlignment.end,
+                //         children: [
+                //           Text(
+                //             "Your Offer",
+                //             style: TextStyle(
+                //               color: AppColors.grey,
+                //               fontSize: 10,
+                //             ),
+                //           ),
+                //           SizedBox(height: 4),
+                //           Obx(
+                //             () => Text(
+                //               "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
+                //               style: TextStyle(
+                //                 fontWeight: FontWeight.w600,
+                //                 fontSize: 12,
+                //                 color: AppColors.black,
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // SizedBox(height: 30),
                 // Bid Controller
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Minus
-                      GestureDetector(
-                        onTap: () {
-                          bidController.decreaseBid();
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.red),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.remove,
-                            color: AppColors.red,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 30),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     bidController.decreaseBid();
+                      //   },
+                      //   child: Container(
+                      //     padding: EdgeInsets.all(12),
+                      //     decoration: BoxDecoration(
+                      //       border: Border.all(color: AppColors.red),
+                      //       shape: BoxShape.circle,
+                      //     ),
+                      //     child: Icon(
+                      //       Icons.remove,
+                      //       color: AppColors.red,
+                      //       size: 20,
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(width: 30),
                       // Bid Value
                       Obx(
                         () => Column(
                           children: [
                             Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
+                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -179,7 +179,7 @@ void placeBidButtonForOcb70Section(BuildContext context) {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value - 54000)}",
+                              "Buy now at",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 12,
@@ -188,25 +188,25 @@ void placeBidButtonForOcb70Section(BuildContext context) {
                           ],
                         ),
                       ),
-                      SizedBox(width: 30),
-                      // Plus
-                      GestureDetector(
-                        onTap: () {
-                          bidController.increaseBid();
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.green),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.add,
-                            color: AppColors.green,
-                            size: 20,
-                          ),
-                        ),
-                      ),
+                      // SizedBox(width: 30),
+                      // // Plus
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     bidController.increaseBid();
+                      //   },
+                      //   child: Container(
+                      //     padding: EdgeInsets.all(12),
+                      //     decoration: BoxDecoration(
+                      //       border: Border.all(color: AppColors.green),
+                      //       shape: BoxShape.circle,
+                      //     ),
+                      //     child: Icon(
+                      //       Icons.add,
+                      //       color: AppColors.green,
+                      //       size: 20,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

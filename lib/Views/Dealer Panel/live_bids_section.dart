@@ -27,7 +27,12 @@ class LiveBidsSection extends StatelessWidget {
                 // InkWell for car card
                 return InkWell(
                   onTap: () {
-                    Get.to(() => CarDetailsPage(car: car, type: 'live_bids'));
+                    Get.to(
+                      () => CarDetailsPage(
+                        car: car,
+                        type: getxController.liveBidsSectionScreen,
+                      ),
+                    );
                   },
                   child: Card(
                     elevation: 4,

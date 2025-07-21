@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
+import 'package:otobix/Widgets/offering_bid_sheet.dart';
 
 void placeBidButtonForLiveBidsSection(BuildContext context) {
   final CarDetailsController bidController = Get.put(CarDetailsController());
@@ -127,7 +128,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                           SizedBox(height: 4),
                           Obx(
                             () => Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
+                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -170,7 +171,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                         () => Column(
                           children: [
                             Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
+                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -179,7 +180,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value - 54000)}",
+                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - 54000)}",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 12,
@@ -220,6 +221,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                         isLoading: bidController.isLoading,
                         onTap: () {
                           Get.back();
+                          offeringBidSheet(context);
                         },
                         height: 35,
                         fontSize: 12,

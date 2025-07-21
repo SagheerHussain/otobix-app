@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Utils/app_urls.dart';
 
 class UserCommentController extends GetxController {
   /// loading indicator
@@ -17,7 +18,7 @@ class UserCommentController extends GetxController {
 
     try {
       final response = await ApiService.get(
-        endpoint: "user/user-status/$userId",
+        endpoint: "${AppUrls.baseUrl}user/user-status/$userId",
       );
 
       final data = jsonDecode(response.body);
@@ -30,7 +31,7 @@ class UserCommentController extends GetxController {
       } else {
         print("Failed to fetch comment: ${data['message']}");
         rejectionComment.value = "";
-        
+
         Get.snackbar(
           "Error",
           data['message'] ?? "Failed to fetch comment.",

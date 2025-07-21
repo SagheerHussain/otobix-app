@@ -33,10 +33,10 @@ class AccountController extends GetxController {
 
   RxList<String> addressList = <String>[].obs;
 
-  Rx<File?> imageFile = Rx<File?>(null);                 // for mobile
-  Rx<Uint8List?> imageBytes = Rx<Uint8List?>(null);      // for web
+  Rx<File?> imageFile = Rx<File?>(null); // for mobile
+  Rx<Uint8List?> imageBytes = Rx<Uint8List?>(null); // for web
   RxString imageName = ''.obs;
-  RxString imageUrl = ''.obs;                            // network image
+  RxString imageUrl = ''.obs; // network image
   RxString username = ''.obs;
   RxString useremail = ''.obs;
   RxBool isLoading = false.obs;
@@ -51,7 +51,9 @@ class AccountController extends GetxController {
     try {
       isLoading.value = true;
 
-      final token = await SharedPrefsHelper.getString(SharedPrefsHelper.tokenKey);
+      final token = await SharedPrefsHelper.getString(
+        SharedPrefsHelper.tokenKey,
+      );
       print('Token: $token');
 
       if (token == null) {
@@ -60,7 +62,7 @@ class AccountController extends GetxController {
       }
 
       final response = await ApiService.get(
-        endpoint: 'user/user-profile',
+        endpoint: '${AppUrls.baseUrl}user/user-profile',
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -93,7 +95,10 @@ class AccountController extends GetxController {
           addressList.value = List<String>.from(data['addressList']);
         }
 
-        SharedPrefsHelper.saveString(SharedPrefsHelper.userTypeKey, userRole.value);
+        SharedPrefsHelper.saveString(
+          SharedPrefsHelper.userTypeKey,
+          userRole.value,
+        );
       } else {
         print('Profile fetch failed: ${response.statusCode}');
         print(response.body);
@@ -116,7 +121,9 @@ class AccountController extends GetxController {
       }
     } else {
       final ImagePicker picker = ImagePicker();
-      final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
       if (pickedFile != null) {
         imageFile.value = File(pickedFile.path);
         imageUrl.value = '';
@@ -159,21 +166,25 @@ class AccountController extends GetxController {
 
       // Add image if selected
       if (kIsWeb && imageBytes.value != null) {
-        request.files.add(http.MultipartFile.fromBytes(
-          'image',
-          imageBytes.value!,
-          filename: imageName.value,
-          contentType: MediaType('image', 'jpeg'),
-        ));
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'image',
+            imageBytes.value!,
+            filename: imageName.value,
+            contentType: MediaType('image', 'jpeg'),
+          ),
+        );
       } else if (!kIsWeb && imageFile.value != null) {
         final file = imageFile.value!;
         final fileName = file.path.split('/').last;
-        request.files.add(await http.MultipartFile.fromPath(
-          'image',
-          file.path,
-          filename: fileName,
-          contentType: MediaType('image', 'png'),
-        ));
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'image',
+            file.path,
+            filename: fileName,
+            contentType: MediaType('image', 'png'),
+          ),
+        );
       } else if (imageUrl.value.isNotEmpty) {
         request.fields['image'] = imageUrl.value;
       }
@@ -186,9 +197,9 @@ class AccountController extends GetxController {
 
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'Profile updated successfully');
-        imageFile.value = null; 
+        imageFile.value = null;
         // getUserProfile();
-        
+
         Get.back();
         ToastWidget.show(
           context: Get.context!,
@@ -210,7 +221,9 @@ class AccountController extends GetxController {
     try {
       isLoading.value = true;
 
-      final userId = await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey);
+      final userId = await SharedPrefsHelper.getString(
+        SharedPrefsHelper.userIdKey,
+      );
       if (userId == null) {
         Get.snackbar('Error', 'User ID not found');
         return;

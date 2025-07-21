@@ -6,8 +6,8 @@ import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 
-class Ocb70Section extends StatelessWidget {
-  Ocb70Section({super.key});
+class UpcomingSection extends StatelessWidget {
+  UpcomingSection({super.key});
 
   final HomeController getxController = Get.put(HomeController());
 
@@ -30,7 +30,7 @@ class Ocb70Section extends StatelessWidget {
                     Get.to(
                       () => CarDetailsPage(
                         car: car,
-                        type: getxController.ocb70SectionScreen,
+                        type: getxController.upcomingSectionScreen,
                       ),
                     );
                   },

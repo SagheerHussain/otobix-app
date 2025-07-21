@@ -6,8 +6,8 @@ import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 
-class MarketpalceSection extends StatelessWidget {
-  MarketpalceSection({super.key});
+class MarketplaceSection extends StatelessWidget {
+  MarketplaceSection({super.key});
 
   final HomeController getxController = Get.put(HomeController());
 
@@ -26,7 +26,12 @@ class MarketpalceSection extends StatelessWidget {
                 final car = getxController.cars.reversed.toList()[index];
                 return InkWell(
                   onTap: () {
-                    Get.to(() => CarDetailsPage(car: car, type: 'marketplace'));
+                    Get.to(
+                      () => CarDetailsPage(
+                        car: car,
+                        type: getxController.marketplaceSectionScreen,
+                      ),
+                    );
                   },
                   child: Card(
                     elevation: 4,
@@ -36,34 +41,6 @@ class MarketpalceSection extends StatelessWidget {
                     ),
                     child: Stack(
                       children: [
-                        Obx(
-                          () => Positioned(
-                            top: 10,
-                            right: 10,
-                            child: InkWell(
-                              onTap:
-                                  () => getxController.changeFavoriteCars(car),
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  car.isFavorite.value
-                                      ? Icons.favorite
-                                      : Icons.favorite_outline,
-                                  color:
-                                      car.isFavorite.value
-                                          ? AppColors.red
-                                          : AppColors.grey,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
                         Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Column(
@@ -217,6 +194,34 @@ class MarketpalceSection extends StatelessWidget {
                                   )
                                   : const SizedBox.shrink(),
                             ],
+                          ),
+                        ),
+                        Obx(
+                          () => Positioned(
+                            top: 10,
+                            right: 10,
+                            child: InkWell(
+                              onTap:
+                                  () => getxController.changeFavoriteCars(car),
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  car.isFavorite.value
+                                      ? Icons.favorite
+                                      : Icons.favorite_outline,
+                                  color:
+                                      car.isFavorite.value
+                                          ? AppColors.red
+                                          : AppColors.grey,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],

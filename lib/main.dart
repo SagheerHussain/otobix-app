@@ -6,6 +6,10 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
+import 'package:otobix/Views/Dealer%20Panel/account_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/admin_approved_users_list_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/admin_rejected_users_list_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
 import 'package:otobix/Views/Login/login_page.dart';
@@ -14,7 +18,11 @@ import 'package:otobix/Views/Register/registration_form_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 
 import 'package:otobix/Views/splash/splash_screen.dart';
+import 'package:otobix/admin/admin_approved_rejected_users_page.dart';
+import 'package:otobix/admin/admin_dashboard.dart';
+import 'package:otobix/admin/admin_home.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
+import 'package:otobix/Utils/app_bindings.dart';
 
 void main() async {
   Get.config(enableLog: false);
@@ -30,6 +38,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      initialBinding: AppBindings(),
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: AppColors.white,

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/user_model.dart';
@@ -9,6 +8,7 @@ import 'package:otobix/Utils/app_urls.dart';
 class AdminHomeController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<UserModel> usersList = <UserModel>[].obs;
+  @override
   onInit() {
     super.onInit();
     fetchAllUsers();
@@ -18,15 +18,13 @@ class AdminHomeController extends GetxController {
     isLoading.value = true;
 
     try {
-      final response = await ApiService.get(endpoint: "user/all-users");
+      final response = await ApiService.get(endpoint: AppUrls.pendingUsersList);
 
       print("Status Code: ${response.statusCode}");
       print("Raw Response Body: ${response.body}");
 
       // Check for valid JSON response
-      if (response.statusCode == 200 &&
-          response.headers['content-type']?.contains('application/json') ==
-              true) {
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
         final List<dynamic> usersJson = data['users'] ?? [];

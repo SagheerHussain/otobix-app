@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
 import 'package:otobix/Controllers/account_controller.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
+import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
-import 'package:otobix/Views/Login/login_page.dart';
+import 'package:otobix/admin/admin_approved_rejected_users_page.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -95,6 +96,16 @@ class _AccountPageState extends State<AccountPage> {
                       Get.to(EditProfileScreen());
                     },
                   ),
+                  if (accountController.userRole.value == UserModel.admin)
+                    ProfileOption(
+                      icon: Icons.group,
+                      color: AppColors.blue,
+                      title: "Approved / Rejected Users",
+                      description: "Check approved / rejected users list.",
+                      onTap: () {
+                        Get.to(AdminApprovedRejectedUsersPage());
+                      },
+                    ),
 
                   ProfileOption(
                     icon: Icons.settings,
@@ -105,36 +116,38 @@ class _AccountPageState extends State<AccountPage> {
                       Get.to(UserPreferencesPage());
                     },
                   ),
-                  ProfileOption(
-                    icon: Icons.gavel,
-                    color: Colors.blue,
-                    title: "My Bids",
-                    description: "View all your active and past bids.",
-                    onTap: () {
-                      final navController =
-                          Get.find<BottomNavigationController>();
-                      navController.currentIndex.value = 1;
+                  if (accountController.userRole.value != UserModel.admin)
+                    ProfileOption(
+                      icon: Icons.gavel,
+                      color: Colors.blue,
+                      title: "My Bids",
+                      description: "View all your active and past bids.",
+                      onTap: () {
+                        final navController =
+                            Get.find<BottomNavigationController>();
+                        navController.currentIndex.value = 1;
 
-                      final tabBarWidgetController =
-                          Get.find<TabBarWidgetController>();
-                      tabBarWidgetController.setSelectedTab(0);
-                    },
-                  ),
-                  ProfileOption(
-                    icon: Icons.favorite_border,
-                    color: Colors.red,
-                    title: "Wishlist",
-                    description: "See cars you've saved for later.",
-                    onTap: () {
-                      final navController =
-                          Get.find<BottomNavigationController>();
-                      navController.currentIndex.value = 1;
+                        final tabBarWidgetController =
+                            Get.find<TabBarWidgetController>();
+                        tabBarWidgetController.setSelectedTab(0);
+                      },
+                    ),
+                  if (accountController.userRole.value != UserModel.admin)
+                    ProfileOption(
+                      icon: Icons.favorite_border,
+                      color: Colors.red,
+                      title: "Wishlist",
+                      description: "See cars you've saved for later.",
+                      onTap: () {
+                        final navController =
+                            Get.find<BottomNavigationController>();
+                        navController.currentIndex.value = 1;
 
-                      final tabBarWidgetController =
-                          Get.find<TabBarWidgetController>();
-                      tabBarWidgetController.setSelectedTab(2);
-                    },
-                  ),
+                        final tabBarWidgetController =
+                            Get.find<TabBarWidgetController>();
+                        tabBarWidgetController.setSelectedTab(2);
+                      },
+                    ),
                   ProfileOption(
                     icon: Icons.settings,
                     color: Colors.blue,

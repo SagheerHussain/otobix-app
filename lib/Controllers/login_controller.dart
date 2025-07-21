@@ -13,12 +13,14 @@ import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/admin/rejected_screen.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
+
 class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
     clearFields();
   }
+
   RxBool isLoading = false.obs;
   RxBool obsecureText = true.obs;
   final userNameController = TextEditingController();
@@ -108,9 +110,9 @@ class LoginController extends GetxController {
         print("token: $token");
         print("approvalStatus: $approvalStatus");
         if (approvalStatus == 'Approved') {
-         await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
+          await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
         }
-        
+
         print("Token saved in local: $token");
         await SharedPrefsHelper.saveString(
           SharedPrefsHelper.userKey,
@@ -122,7 +124,7 @@ class LoginController extends GetxController {
         );
         await SharedPrefsHelper.saveString(SharedPrefsHelper.userIdKey, userId);
         print("userId: $userId");
-        if (userType == 'admin') {
+        if (userType == UserModel.admin) {
           Get.to(() => AdminDashboard());
         } else {
           if (approvalStatus == 'Pending') {
@@ -171,6 +173,7 @@ class LoginController extends GetxController {
       isLoading.value = false;
     }
   }
+
   String? validatePassword(String password) {
     if (password.isEmpty) return "Password is required.";
     if (password.length < 8) {
@@ -187,6 +190,7 @@ class LoginController extends GetxController {
     }
     return null;
   }
+
   Future<void> logout() async {
     try {
       await ApiService.post(endpoint: "user/logout/", body: {});
@@ -204,6 +208,7 @@ class LoginController extends GetxController {
       );
     }
   }
+
   // Clear fields
   void clearFields() {
     userNameController.clear();
@@ -212,7 +217,6 @@ class LoginController extends GetxController {
     obsecureText.value = true;
   }
 }
-
 
 // import 'dart:convert';
 // import 'package:flutter/material.dart';

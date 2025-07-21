@@ -1,21 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Views/Dealer%20Panel/auto_bid_button_for_live_bids_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/auto_bid_button_for_ocb70_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/auto_bid_button_for_upcoming_section.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 
 class StartAutoBidButtonWidget extends StatelessWidget {
-  StartAutoBidButtonWidget({super.key});
+  StartAutoBidButtonWidget({super.key, required this.type});
+
+  final String type;
 
   final CarDetailsController getxController = Get.put(CarDetailsController());
+
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
     return ButtonWidget(
-      text: 'Start Auto Bid',
+      text:
+          type == homeController.liveBidsSectionScreen
+              ? 'Submit Auto Bid'
+              : type == homeController.upcomingSectionScreen
+              ? 'Auto Bid Upto'
+              : type == homeController.ocb70SectionScreen
+              ? 'Make Offer'
+              : type == homeController.marketplaceSectionScreen
+              ? 'Submit Auto Bid'
+              : 'Submit Auto Bid',
       onTap: () {
-        showAutoBidSheet();
+        if (type == homeController.liveBidsSectionScreen) {
+          autoBidButtonForLiveBidsSection();
+        } else if (type == homeController.upcomingSectionScreen) {
+          autoBidButtonForUpcomingSection();
+        } else if (type == homeController.ocb70SectionScreen) {
+          autoBidButtonForOcb70Section();
+        } else if (type == homeController.marketplaceSectionScreen) {
+          defaultAutoBidSheet();
+        } else {
+          defaultAutoBidSheet();
+        }
       },
       isLoading: getxController.isLoading,
       height: 30,
@@ -25,8 +52,8 @@ class StartAutoBidButtonWidget extends StatelessWidget {
     );
   }
 
-  // Auto Bid Sheet
-  void showAutoBidSheet() {
+  // Default Auto Bid Sheet
+  void defaultAutoBidSheet() {
     final CarDetailsController bidController = Get.put(CarDetailsController());
     bidController.resetBidIncrement();
     // final TextEditingController bidAmountController = TextEditingController();
@@ -119,7 +146,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Current Bid Amount",
+                              "Your Offer",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 10,
@@ -142,7 +169,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              "Your Bid Amount",
+                              "Auto Bid Upto",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 10,
@@ -151,7 +178,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
+                                "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 12,
@@ -194,7 +221,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                           () => Column(
                             children: [
                               Text(
-                               "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value)}",
+                                "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                                 style: TextStyle(
                                   color: AppColors.blue,
                                   fontSize: 15,
@@ -204,7 +231,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                               SizedBox(height: 4),
                               Obx(
                                 () => Text(
-                                  "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.bidAmount.value - 54000)}",
+                                  "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - 54000)}",
                                   style: TextStyle(
                                     color: AppColors.grey,
                                     fontSize: 12,
@@ -242,7 +269,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ButtonWidget(
-                          text: "Start Auto Bid",
+                          text: "Submit Auto Bid",
                           isLoading: bidController.isLoading,
                           onTap: () {
                             Get.back();

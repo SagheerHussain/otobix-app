@@ -12,24 +12,23 @@ class AdminDashboard extends StatefulWidget {
   @override
   State<AdminDashboard> createState() => _AdminDashboardState();
 }
-class _AdminDashboardState extends State<AdminDashboard> {
-  final BottomNavigationController getxController = Get.put(
-    BottomNavigationController(),
-  );
 
-  final List<Widget> pages = [
-    AdminHome(),
-    const AccountPage(),
-  ];
+class _AdminDashboardState extends State<AdminDashboard> {
+  // final BottomNavigationController getxController = Get.put(
+  //   BottomNavigationController(),
+  // );
+  RxInt currentIndex = 0.obs;
+
+  final List<Widget> pages = [AdminHome(), const AccountPage()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     body: Obx(() => pages[getxController.currentIndex.value]),
+      body: Obx(() => pages[currentIndex.value]),
       bottomNavigationBar: Obx(
         () => SalomonBottomBar(
-          currentIndex: getxController.currentIndex.value,
+          currentIndex: currentIndex.value,
           onTap: (index) {
-            getxController.currentIndex.value = index;
+            currentIndex.value = index;
           },
           items: [
             SalomonBottomBarItem(
@@ -41,7 +40,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               icon: Icon(CupertinoIcons.person),
               title: Text("Profile"),
               selectedColor: AppColors.blue,
-            ),           
+            ),
           ],
         ),
       ),
