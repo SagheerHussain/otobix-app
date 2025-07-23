@@ -258,6 +258,28 @@ class RegistrationFormPage extends StatelessWidget {
                           return null; // ✅ Valid
                         },
                       ),
+
+                      // _buildCustomTextField(
+                      //   icon: Icons.lock,
+                      //   label: "Confirm Password",
+                      //   controller: getxController.confirmPasswordController,
+                      //   hintText: "e.g. AmitParekh@123",
+                      //   keyboardType: TextInputType.visiblePassword,
+                      //   isRequired: true,
+                      //   isPassword: true,
+                      //   obscureText: getxController.obscurePassword,
+                      //   validator: (value) {
+                      //     if (value == null || value.trim().isEmpty) {
+                      //       return 'Password is required';
+                      //     }
+
+                      //     if (value != getxController.passwordController.text) {
+                      //       return 'Passwords do not match';
+                      //     }
+
+                      //     return null;
+                      //   },
+                      // ),
                       _buildAddressFields(),
                       const SizedBox(height: 20),
                       _buildSubmitButton(),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/user_model.dart';
+import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
+import 'package:otobix/Widgets/empty_data_widget.dart';
+import 'package:otobix/Widgets/search_bar_widget.dart';
+import 'package:otobix/Widgets/shimmer_widget.dart';
 import 'package:otobix/admin/controller/admin_home_controller.dart';
-import 'package:shimmer/shimmer.dart';
 
 class AdminHome extends StatelessWidget {
   AdminHome({super.key});
@@ -11,7 +14,6 @@ class AdminHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
@@ -19,73 +21,84 @@ class AdminHome extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 1,
-        foregroundColor: Colors.black87,
+        backgroundColor: AppColors.white,
+        elevation: 10,
+        foregroundColor: AppColors.black,
       ),
       body: Column(
         children: [
+          const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18.0),
             child: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search Users...",
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.grey.shade400,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 16,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    onChanged: (value) {},
+                Flexible(
+                  child: SearchBarWidget(
+                    controller: controller.searchController,
+                    hintText: 'Search users...',
+                    onChanged: (value) {
+                      controller.filterUsers();
+                    },
                   ),
                 ),
 
+                // Expanded(
+                //   child: TextField(
+                //     decoration: InputDecoration(
+                //       hintText: "Search Users...",
+                //       prefixIcon: Icon(
+                //         Icons.search,
+                //         color: Colors.grey.shade400,
+                //       ),
+                //       filled: true,
+                //       fillColor: Colors.white,
+                //       contentPadding: EdgeInsets.symmetric(
+                //         vertical: 12,
+                //         horizontal: 16,
+                //       ),
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(12),
+                //         borderSide: BorderSide.none,
+                //       ),
+                //     ),
+                //     onChanged: (value) {},
+                //   ),
+                // ),
                 const SizedBox(width: 12),
-                Image.asset(AppImages.filterIcon, height: 40, width: 40),
+                Image.asset(AppImages.filterIcon, height: 30, width: 30),
               ],
             ),
           ),
 
           Expanded(
             child: Obx(() {
-              final users = controller.usersList;
+              // final users = controller.usersList;
 
               if (controller.isLoading.value) {
                 return ListView.builder(
-                  itemCount: 5,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: 2,
                   itemBuilder: (context, index) {
                     return _buildShimmerCard();
                   },
                 );
               }
 
-              if (users.isEmpty) {
+              if (controller.filteredUsersList.isEmpty) {
                 return const Center(
-                  child: Text(
-                    "No pending users!",
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                  child: EmptyDataWidget(
+                    icon: Icons.person,
+                    message: "No users found!",
                   ),
                 );
               }
 
               return ListView.separated(
                 padding: const EdgeInsets.all(16),
-                itemCount: users.length,
+                itemCount: controller.filteredUsersList.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  final user = users[index];
+                  final user = controller.filteredUsersList[index];
                   return _buildUserCard(user, context);
                 },
               );
@@ -101,11 +114,12 @@ class AdminHome extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColors.green.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withOpacity(0.05),
+            color: AppColors.green.withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -381,143 +395,214 @@ class AdminHome extends StatelessWidget {
   }
 
   Widget _buildShimmerCard() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12.withOpacity(0.05),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Avatar, Name, Email, Location
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Avatar shimmer
-                Container(
-                  height: 56,
-                  width: 56,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 12),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.grey.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(15),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.black12.withValues(alpha: 0.05),
+        //     blurRadius: 15,
+        //     offset: const Offset(0, 8),
+        //   ),
+        // ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Row → Avatar, name, location
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const ShimmerWidget(width: 56, height: 56, borderRadius: 50),
+              const SizedBox(width: 12),
 
-                /// Name, Email shimmer
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 14,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        height: 12,
-                        width: 180,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                /// Location shimmer
-                Column(
+              /// Name & email shimmer
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 6),
-                    Container(
-                      height: 12,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
+                    ShimmerWidget(width: 120, height: 14),
+                    SizedBox(height: 8),
+                    ShimmerWidget(width: 100, height: 12),
                   ],
                 ),
-              ],
-            ),
+              ),
 
-            const SizedBox(height: 20),
+              /// Location shimmer
+              const SizedBox(width: 8),
+              const ShimmerWidget(width: 80, height: 14),
+            ],
+          ),
 
-            /// Role + EntityType shimmer chips
-            Row(
-              children: [
-                Container(
-                  height: 20,
-                  width: 70,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  height: 20,
-                  width: 90,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              ],
-            ),
+          const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
+          /// Role & Entity shimmer tags
+          Row(
+            children: const [
+              ShimmerWidget(width: 60, height: 20, borderRadius: 30),
+              SizedBox(width: 8),
+              ShimmerWidget(width: 70, height: 20, borderRadius: 30),
+            ],
+          ),
 
-            /// Divider
-            Container(height: 1, color: Colors.grey.shade200),
+          const SizedBox(height: 16),
+          Divider(color: Colors.grey.shade200, thickness: 1),
+          const SizedBox(height: 16),
 
-            const SizedBox(height: 20),
-
-            /// Buttons shimmer
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          /// Approve & Reject buttons shimmer
+          Row(
+            children: const [
+              Expanded(child: ShimmerWidget(height: 42, borderRadius: 12)),
+              SizedBox(width: 12),
+              Expanded(child: ShimmerWidget(height: 42, borderRadius: 12)),
+            ],
+          ),
+        ],
       ),
     );
   }
+
+  // Widget _buildShimmerCard1() {
+  //   return Shimmer.fromColors(
+  //     baseColor: Colors.grey.shade300,
+  //     highlightColor: Colors.grey.shade100,
+  //     child: Container(
+  //       padding: const EdgeInsets.all(16),
+  //       margin: const EdgeInsets.symmetric(vertical: 8),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(20),
+  //         boxShadow: [
+  //           BoxShadow(
+  //             color: Colors.black12.withOpacity(0.05),
+  //             blurRadius: 15,
+  //             offset: const Offset(0, 8),
+  //           ),
+  //         ],
+  //       ),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           /// Avatar, Name, Email, Location
+  //           Row(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               /// Avatar shimmer
+  //               Container(
+  //                 height: 56,
+  //                 width: 56,
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.white,
+  //                   shape: BoxShape.circle,
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 12),
+
+  //               /// Name, Email shimmer
+  //               Expanded(
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Container(
+  //                       height: 14,
+  //                       width: 120,
+  //                       decoration: BoxDecoration(
+  //                         color: Colors.white,
+  //                         borderRadius: BorderRadius.circular(4),
+  //                       ),
+  //                     ),
+  //                     const SizedBox(height: 8),
+  //                     Container(
+  //                       height: 12,
+  //                       width: 180,
+  //                       decoration: BoxDecoration(
+  //                         color: Colors.white,
+  //                         borderRadius: BorderRadius.circular(4),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+
+  //               /// Location shimmer
+  //               Column(
+  //                 children: [
+  //                   const SizedBox(height: 6),
+  //                   Container(
+  //                     height: 12,
+  //                     width: 80,
+  //                     decoration: BoxDecoration(
+  //                       color: Colors.white,
+  //                       borderRadius: BorderRadius.circular(4),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+
+  //           const SizedBox(height: 20),
+
+  //           /// Role + EntityType shimmer chips
+  //           Row(
+  //             children: [
+  //               Container(
+  //                 height: 20,
+  //                 width: 70,
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.white,
+  //                   borderRadius: BorderRadius.circular(30),
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 12),
+  //               Container(
+  //                 height: 20,
+  //                 width: 90,
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.white,
+  //                   borderRadius: BorderRadius.circular(30),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+
+  //           const SizedBox(height: 20),
+
+  //           /// Divider
+  //           Container(height: 1, color: Colors.grey.shade200),
+
+  //           const SizedBox(height: 20),
+
+  //           /// Buttons shimmer
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: Container(
+  //                   height: 40,
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.white,
+  //                     borderRadius: BorderRadius.circular(12),
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 12),
+  //               Expanded(
+  //                 child: Container(
+  //                   height: 40,
+  //                   decoration: BoxDecoration(
+  //                     color: Colors.white,
+  //                     borderRadius: BorderRadius.circular(12),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

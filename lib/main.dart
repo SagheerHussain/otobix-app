@@ -16,6 +16,7 @@ import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/register_page.dart';
 import 'package:otobix/Views/Register/registration_form_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
+import 'package:otobix/Views/Sales%20Manager%20Panel/sales_manager_homepage.dart';
 import 'package:otobix/Views/get_data_from_appsheet_page.dart';
 
 import 'package:otobix/Views/splash/splash_screen.dart';
@@ -54,7 +55,7 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
       ),
-      home: GetDataFromAppsheetPage(),
+      home: SplashScreen(),
       // home: CarDetailsPage(
       //   car: CarModel(
       //     imageUrl: AppImages.hyundaiCreta1,

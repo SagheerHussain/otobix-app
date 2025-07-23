@@ -9,13 +9,28 @@ import 'package:otobix/Widgets/toast_widget.dart';
 class AdminHomeController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<UserModel> usersList = <UserModel>[].obs;
+  RxList<UserModel> filteredUsersList = <UserModel>[].obs;
+
+  TextEditingController searchController = TextEditingController();
+
   @override
   onInit() {
     super.onInit();
-    fetchAllUsers();
+    fetchPendingUsersList();
+    filteredUsersList.value = usersList;
   }
 
-  Future<void> fetchAllUsers() async {
+  // search
+  void filterUsers() {
+    final query = searchController.text.toLowerCase();
+    filteredUsersList.value =
+        usersList.where((user) {
+          return user.userName.toLowerCase().contains(query) ||
+              user.email.toLowerCase().contains(query);
+        }).toList();
+  }
+
+  Future<void> fetchPendingUsersList() async {
     isLoading.value = true;
 
     try {
@@ -72,7 +87,7 @@ class AdminHomeController extends GetxController {
           type: ToastType.success,
         );
 
-        fetchAllUsers();
+        fetchPendingUsersList();
       } else {
         debugPrint("Failed to update user: ${response.body}");
         ToastWidget.show(
@@ -110,7 +125,7 @@ class AdminHomeController extends GetxController {
           type: ToastType.success,
         );
 
-        fetchAllUsers();
+        fetchPendingUsersList();
       } else {
         debugPrint("Failed to approve user: ${response.body}");
         ToastWidget.show(

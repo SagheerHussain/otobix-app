@@ -41,7 +41,8 @@ class _GetDataFromAppsheetPageState extends State<GetDataFromAppsheetPage> {
 
   @override
   Widget build(BuildContext context) {
-    fetchData();
+    debugPrint('build method called');
+    // fetchData();
     return Scaffold(
       appBar: AppBar(
         title: Text('Sheet Data', style: TextStyle(color: AppColors.white)),

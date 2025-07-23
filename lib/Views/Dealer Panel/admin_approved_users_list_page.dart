@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
+import 'package:otobix/Widgets/shimmer_widget.dart';
 import 'package:otobix/admin/controller/admin_approved_users_list_controller.dart';
 
 class AdminApprovedUsersListPage extends StatelessWidget {
@@ -17,7 +18,12 @@ class AdminApprovedUsersListPage extends StatelessWidget {
     return Scaffold(
       body: Obx(() {
         if (getxController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return ListView.separated(
+            padding: const EdgeInsets.all(15),
+            itemCount: 3,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (_, __) => _buildUserShimmerCard(),
+          );
         }
 
         // search users
@@ -279,6 +285,46 @@ class AdminApprovedUsersListPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Shimmer Card
+  Widget _buildUserShimmerCard() {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const ShimmerWidget(width: 50, height: 50, borderRadius: 50),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ShimmerWidget(width: 120, height: 14),
+                  SizedBox(height: 8),
+                  ShimmerWidget(width: 180, height: 12),
+                  SizedBox(height: 8),
+                  ShimmerWidget(width: 120, height: 14),
+                  SizedBox(height: 8),
+                  ShimmerWidget(width: 180, height: 12),
+                  SizedBox(height: 8),
+                  ShimmerWidget(width: 100, height: 12),
+                  SizedBox(height: 8),
+                  ShimmerWidget(width: 80, height: 12),
+                  SizedBox(height: 10),
+                  ShimmerWidget(width: 70, height: 20, borderRadius: 50),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            const ShimmerWidget(width: 70, height: 25, borderRadius: 50),
+          ],
+        ),
       ),
     );
   }

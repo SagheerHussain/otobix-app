@@ -79,6 +79,8 @@ class RegistrationFormController extends GetxController {
   final RxBool obscurePassword = true.obs;
 
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController dealerNameController = TextEditingController();
   final TextEditingController dealerEmailController = TextEditingController();
   final TextEditingController dealershipNameController =
