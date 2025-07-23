@@ -7,8 +7,8 @@ import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 
-class UpcomingSection extends StatelessWidget {
-  UpcomingSection({super.key});
+class OtoBuySection extends StatelessWidget {
+  OtoBuySection({super.key});
 
   final HomeController getxController = Get.put(HomeController());
 
@@ -18,7 +18,6 @@ class UpcomingSection extends StatelessWidget {
       body: Column(
         children: [
           SizedBox(height: 10),
-
           Obx(
             () =>
                 getxController.filteredCars.isEmpty
@@ -45,7 +44,7 @@ class UpcomingSection extends StatelessWidget {
                               Get.to(
                                 () => CarDetailsPage(
                                   car: car,
-                                  type: getxController.upcomingSectionScreen,
+                                  type: getxController.ocb70SectionScreen,
                                 ),
                               );
                             },
@@ -104,7 +103,7 @@ class UpcomingSection extends StatelessWidget {
                                                   ),
                                                   const SizedBox(height: 2),
                                                   Text(
-                                                    'Auction Starts at:',
+                                                    'One Click Price:',
 
                                                     style: const TextStyle(
                                                       fontSize: 10,

@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
-import 'package:otobix/Widgets/offering_bid_sheet.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 void placeBidButtonForLiveBidsSection(BuildContext context) {
   final CarDetailsController bidController = Get.put(CarDetailsController());
@@ -104,7 +104,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rs 54,000",
+                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount)}",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -128,7 +128,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                           SizedBox(height: 4),
                           Obx(
                             () => Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -171,7 +171,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                         () => Column(
                           children: [
                             Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -180,7 +180,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - 54000)}",
+                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount)}",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 12,
@@ -221,7 +221,27 @@ void placeBidButtonForLiveBidsSection(BuildContext context) {
                         isLoading: bidController.isLoading,
                         onTap: () {
                           Get.back();
-                          offeringBidSheet(context);
+                          // offeringBidSheet(context);
+                          ToastWidget.show(
+                            context: context,
+                            title: "You're Winning! 🏆",
+                            subtitle:
+                                "Great job! Currently, you're the highest bidder.",
+                            toastDuration: 5,
+                            type: ToastType.success,
+                          );
+
+                          // Get.dialog(
+                          //   CongratulationsDialogWidget(
+                          //     icon: Icons.gavel,
+                          //     iconSize: 25,
+                          //     title: "Bid Placed!",
+                          //     message:
+                          //         "Your bid has been successfully submitted.",
+                          //     buttonText: "View Details",
+                          //     onButtonTap: () => Get.back(),
+                          //   ),
+                          // );
                         },
                         height: 35,
                         fontSize: 12,

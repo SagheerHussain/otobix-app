@@ -16,6 +16,7 @@ import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/register_page.dart';
 import 'package:otobix/Views/Register/registration_form_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
+import 'package:otobix/Views/get_data_from_appsheet_page.dart';
 
 import 'package:otobix/Views/splash/splash_screen.dart';
 import 'package:otobix/admin/admin_approved_rejected_users_page.dart';
@@ -38,9 +39,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialBinding: AppBindings(),
+      // initialBinding: AppBindings(),
       theme: ThemeData(
         brightness: Brightness.light,
+        // fontFamily: 'Poppins',
         scaffoldBackgroundColor: AppColors.white,
         canvasColor: AppColors.white,
         dialogTheme: const DialogTheme(backgroundColor: AppColors.white),
@@ -52,8 +54,26 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
       ),
+      home: GetDataFromAppsheetPage(),
+      // home: CarDetailsPage(
+      //   car: CarModel(
+      //     imageUrl: AppImages.hyundaiCreta1,
+      //     name: 'Hyundai Creta',
+      //     price: 1600000,
+      //     year: 2022,
+      //     kmDriven: 8000,
+      //     fuelType: 'Diesel',
+      //     location: 'Bengaluru',
+      //     isInspected: true,
+      //     imageUrls: [
+      //       AppImages.hyundaiCreta1,
 
-      home: SplashScreen(),
+      //       AppImages.hyundaiCreta2,
+      //       AppImages.hyundaiCreta3,
+      //     ],
+      //   ),
+      //   type: 'live_bids',
+      // ),
     );
   }
 }

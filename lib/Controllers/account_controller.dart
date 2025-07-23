@@ -62,14 +62,14 @@ class AccountController extends GetxController {
       }
 
       final response = await ApiService.get(
-        endpoint: '${AppUrls.baseUrl}user/user-profile',
+        endpoint: AppUrls.getUserProfile,
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
 
-      print('API response: ${response.body}');
+      debugPrint('API response: ${response.body}');
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body)['profile'];
 
@@ -100,11 +100,11 @@ class AccountController extends GetxController {
           userRole.value,
         );
       } else {
-        print('Profile fetch failed: ${response.statusCode}');
-        print(response.body);
+        debugPrint('Profile fetch failed: ${response.statusCode}');
+        debugPrint(response.body);
       }
     } catch (e) {
-      print('Error in getUserProfile: $e');
+      debugPrint('Error in getUserProfile: $e');
     } finally {
       isLoading.value = false;
     }
@@ -133,7 +133,7 @@ class AccountController extends GetxController {
   }
 
   Future<void> updateProfile() async {
-    print('Update profile called');
+    debugPrint('Update profile called');
     try {
       isLoading.value = true;
 
@@ -192,8 +192,8 @@ class AccountController extends GetxController {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      print('Update response: ${response.statusCode}');
-      print(response.body);
+      debugPrint('Update response: ${response.statusCode}');
+      debugPrint(response.body);
 
       if (response.statusCode == 200) {
         Get.snackbar('Success', 'Profile updated successfully');
@@ -203,14 +203,14 @@ class AccountController extends GetxController {
         Get.back();
         ToastWidget.show(
           context: Get.context!,
-          message: 'Profile updated successfully',
+          title: 'Profile updated successfully',
           type: ToastType.success,
         );
       } else {
         Get.snackbar('Error', 'Failed to update profile');
       }
     } catch (e) {
-      print('Update Exception: $e');
+      debugPrint('Update Exception: $e');
       Get.snackbar('Error', 'Something went wrong');
     } finally {
       isLoading.value = false;
@@ -229,7 +229,7 @@ class AccountController extends GetxController {
         return;
       }
 
-      final endpoint = '${AppUrls.logout}/$userId';
+      final endpoint = AppUrls.logout(userId);
       final response = await ApiService.post(endpoint: endpoint, body: {});
       final data = jsonDecode(response.body);
 
@@ -241,7 +241,7 @@ class AccountController extends GetxController {
 
         ToastWidget.show(
           context: Get.context!,
-          message: 'Logout successful',
+          title: 'Logout successful',
           type: ToastType.success,
         );
 
@@ -250,7 +250,7 @@ class AccountController extends GetxController {
         Get.snackbar('Logout Failed', data['message'] ?? 'Server error');
       }
     } catch (e) {
-      print('Logout Exception: $e');
+      debugPrint('Logout Exception: $e');
       Get.snackbar('Error', 'Something went wrong');
     } finally {
       isLoading.value = false;

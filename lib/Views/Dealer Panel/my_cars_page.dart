@@ -27,6 +27,10 @@ class MyCarsPage extends StatelessWidget {
                 titles: ['Live Bids', 'Ocb Nego', 'Wishlist'],
                 counts: [3, 2, 5],
                 screens: [LiveBidsPage(), OcbNegoPage(), WishlistPage()],
+                titleSize: 10,
+                countSize: 8,
+                spaceFromSides: 10,
+                tabsHeight: 30,
               ),
             ),
           ],
@@ -36,29 +40,33 @@ class MyCarsPage extends StatelessWidget {
   }
 
   Widget _buildSearchBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextField(
-        controller: getxController.searchController,
-        keyboardType: TextInputType.text,
-        decoration: InputDecoration(
-          hintText: 'Search...',
-          hintStyle: TextStyle(
-            color: AppColors.grey.withValues(alpha: .5),
-            fontSize: 12,
-          ),
-          prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 20),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide(color: AppColors.black),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide(color: AppColors.green, width: 2),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 3,
-            horizontal: 10,
+    return SizedBox(
+      height: 35,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        child: TextFormField(
+          controller: getxController.searchController,
+          keyboardType: TextInputType.text,
+          style: TextStyle(fontSize: 12),
+          decoration: InputDecoration(
+            hintText: 'Search...',
+            hintStyle: TextStyle(
+              color: AppColors.grey.withValues(alpha: .5),
+              fontSize: 12,
+            ),
+            prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 20),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide(color: AppColors.black),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide(color: AppColors.green, width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 3,
+              horizontal: 10,
+            ),
           ),
         ),
       ),

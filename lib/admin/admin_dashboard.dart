@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/account_page.dart';
 import 'package:otobix/admin/admin_home.dart';

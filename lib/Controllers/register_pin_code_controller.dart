@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/registration_form_controller.dart';
+import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Register/registration_form_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class RegisterPinCodeController extends GetxController {
   // Verify OTP
@@ -15,23 +14,17 @@ class RegisterPinCodeController extends GetxController {
     required String userType,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse(AppUrls.verifyOtp),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"phoneNumber": phoneNumber, "otp": otp}),
+      final response = await ApiService.post(
+        endpoint: AppUrls.verifyOtp,
+        body: {"phoneNumber": phoneNumber, "otp": otp},
       );
       if (response.statusCode == 200) {
-        Get.to(
-          () => RegistrationFormPage(
-            userRole: "Dealer",
-            phoneNumber: phoneNumber,
-          ),
-        );
         ToastWidget.show(
           context: Get.context!,
-          message: "OTP Verified Successfully",
+          title: "OTP Verified Successfully",
           type: ToastType.success,
         );
+        Get.delete<RegistrationFormController>();
         Get.to(
           () => RegistrationFormPage(
             userRole: userType,
@@ -42,7 +35,7 @@ class RegisterPinCodeController extends GetxController {
         debugPrint(response.body);
         ToastWidget.show(
           context: Get.context!,
-          message: "Invalid OTP",
+          title: "Invalid OTP",
           type: ToastType.error,
         );
       }
@@ -50,7 +43,7 @@ class RegisterPinCodeController extends GetxController {
       debugPrint(e.toString());
       ToastWidget.show(
         context: Get.context!,
-        message: "Error Verifying OTP",
+        title: "Error Verifying OTP",
         type: ToastType.error,
       );
     }
@@ -64,7 +57,7 @@ class RegisterPinCodeController extends GetxController {
   }) async {
     ToastWidget.show(
       context: Get.context!,
-      message: "OTP Verified Successfully",
+      title: "OTP Verified Successfully",
       type: ToastType.success,
     );
     Get.delete<RegistrationFormController>();

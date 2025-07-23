@@ -36,7 +36,7 @@ class AdminRejectedUserListController extends GetxController {
         debugPrint("Error fetching rejected users: ${response.body}");
         ToastWidget.show(
           context: Get.context!,
-          message: "Error fetching rejected users: ${response.statusCode}",
+          title: "Error fetching rejected users: ${response.statusCode}",
           type: ToastType.error,
         );
       }
@@ -44,7 +44,7 @@ class AdminRejectedUserListController extends GetxController {
       debugPrint("Error fetching rejected users: $e");
       ToastWidget.show(
         context: Get.context!,
-        message: "Error fetching rejected users",
+        title: "Error fetching rejected users",
         type: ToastType.error,
       );
     } finally {

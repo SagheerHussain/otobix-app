@@ -18,7 +18,7 @@ class UserCommentController extends GetxController {
 
     try {
       final response = await ApiService.get(
-        endpoint: "${AppUrls.baseUrl}user/user-status/$userId",
+        endpoint: AppUrls.getUserStatus(userId),
       );
 
       final data = jsonDecode(response.body);
@@ -27,9 +27,9 @@ class UserCommentController extends GetxController {
         final comment = data['user']['rejectionComment'] as String?;
         rejectionComment.value = comment ?? "";
 
-        print("Fetched rejection comment: $comment");
+        debugPrint("Fetched rejection comment: $comment");
       } else {
-        print("Failed to fetch comment: ${data['message']}");
+        debugPrint("Failed to fetch comment: ${data['message']}");
         rejectionComment.value = "";
 
         Get.snackbar(
@@ -40,7 +40,7 @@ class UserCommentController extends GetxController {
         );
       }
     } catch (e) {
-      print("Error fetching comment: $e");
+      debugPrint("Error fetching comment: $e");
       rejectionComment.value = "";
       Get.snackbar(
         "Error",

@@ -20,20 +20,6 @@ class RegisterController extends GetxController {
     update();
   }
 
-  // Future<void> register() async {
-  //   isLoading.value = true;
-  //   try {} catch (e) {
-  //     debugPrint(e.toString());
-  //     ToastWidget.show(
-  //       context: Get.context!,
-  //       message: "Failed to register",
-  //       type: ToastType.error,
-  //     );
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
-
   Future<void> sendOTP({required String phoneNumber}) async {
     isLoading.value = true;
     try {
@@ -45,7 +31,7 @@ class RegisterController extends GetxController {
       if (selectedRole.value.isEmpty) {
         ToastWidget.show(
           context: Get.context!,
-          message: "Please select a role",
+          title: "Please select a role",
           type: ToastType.error,
         );
         return;
@@ -69,7 +55,7 @@ class RegisterController extends GetxController {
       if (!pakIndiaRegex.hasMatch(phoneNumber)) {
         ToastWidget.show(
           context: Get.context!,
-          message: "Enter a valid mobile number",
+          title: "Enter a valid mobile number",
           type: ToastType.error,
         );
         return;
@@ -83,14 +69,14 @@ class RegisterController extends GetxController {
       );
       ToastWidget.show(
         context: Get.context!,
-        message: "OTP Sent Successfully",
+        title: "OTP Sent Successfully",
         type: ToastType.success,
       );
     } catch (e) {
       debugPrint(e.toString());
       ToastWidget.show(
         context: Get.context!,
-        message: "Failed to send OTP",
+        title: "Failed to send OTP",
         type: ToastType.error,
       );
     }
@@ -103,7 +89,7 @@ class RegisterController extends GetxController {
       if (selectedRole.value.isEmpty) {
         ToastWidget.show(
           context: Get.context!,
-          message: "Please select a role",
+          title: "Please select a role",
           type: ToastType.error,
         );
         return;
@@ -118,7 +104,7 @@ class RegisterController extends GetxController {
       if (!pakIndiaRegex.hasMatch(phoneNumber)) {
         ToastWidget.show(
           context: Get.context!,
-          message: "Enter a valid mobile number",
+          title: "Enter a valid mobile number",
           type: ToastType.error,
         );
         return;
@@ -132,17 +118,17 @@ class RegisterController extends GetxController {
           ),
         );
       });
-      print("OTP Sent Successfully (Dummy) $phoneNumber $selectedRole");
+      debugPrint("OTP Sent Successfully (Dummy) $phoneNumber $selectedRole");
       ToastWidget.show(
         context: Get.context!,
-        message: "OTP Sent Successfully (Dummy)",
+        title: "OTP Sent Successfully (Dummy)",
         type: ToastType.success,
       );
     } catch (e) {
       debugPrint(e.toString());
       ToastWidget.show(
         context: Get.context!,
-        message: "Failed to send OTP",
+        title: "Failed to send OTP",
         type: ToastType.error,
       );
     } finally {

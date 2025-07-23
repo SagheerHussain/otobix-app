@@ -36,7 +36,7 @@ class AdminApprovedUsersListController extends GetxController {
         debugPrint("Error fetching approved users: ${response.body}");
         ToastWidget.show(
           context: Get.context!,
-          message: "Error fetching approved users: ${response.statusCode}",
+          title: "Error fetching approved users: ${response.statusCode}",
           type: ToastType.error,
         );
       }
@@ -44,7 +44,7 @@ class AdminApprovedUsersListController extends GetxController {
       debugPrint("Error fetching approved users: $e");
       ToastWidget.show(
         context: Get.context!,
-        message: "Error fetching approved users",
+        title: "Error fetching approved users",
         type: ToastType.error,
       );
     } finally {

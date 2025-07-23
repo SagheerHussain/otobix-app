@@ -123,7 +123,7 @@ class AdminHome extends StatelessWidget {
                 radius: 28,
                 backgroundColor: Colors.blue.shade50,
                 child: Text(
-                  user.userName!.substring(0, 1).toUpperCase(),
+                  user.userName.substring(0, 1).toUpperCase(),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -139,7 +139,7 @@ class AdminHome extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user.userName!,
+                      user.userName,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 16,

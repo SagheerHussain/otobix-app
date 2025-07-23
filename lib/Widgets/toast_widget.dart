@@ -8,8 +8,10 @@ enum ToastType { success, error, warning, info }
 class ToastWidget {
   static void show({
     required BuildContext context,
-    required String message,
+    required String title,
     required ToastType type,
+    String? subtitle,
+    int toastDuration = 3,
   }) {
     Color color;
     IconData icon;
@@ -35,20 +37,31 @@ class ToastWidget {
 
     DelightToastBar(
       position: DelightSnackbarPosition.top,
-      snackbarDuration: const Duration(seconds: 2),
+      snackbarDuration: Duration(seconds: toastDuration),
       autoDismiss: true,
       builder:
           (context) => ToastCard(
             color: color,
             leading: Icon(icon, size: 28, color: Colors.white),
             title: Text(
-              message,
+              title,
               style: const TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
                 color: Colors.white,
               ),
             ),
+            subtitle:
+                subtitle != null
+                    ? Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                        color: Colors.white,
+                      ),
+                    )
+                    : null,
           ),
     ).show(context);
   }

@@ -5,7 +5,6 @@ import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
-import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Views/Sales%20Manager%20Panel/sales_manager_homepage.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
@@ -93,27 +92,27 @@ class LoginController extends GetxController {
         "phoneNumber": contactNumber,
         "password": passwordController.text.trim(),
       };
-      print("Sending body: $requestBody");
+      debugPrint("Sending body: $requestBody");
       final response = await ApiService.post(
         endpoint: AppUrls.login,
         body: requestBody,
       );
       final data = jsonDecode(response.body);
-      print("Status Code: ${response.statusCode}");
+      debugPrint("Status Code: ${response.statusCode}");
       if (response.statusCode == 200) {
         final token = data['token'];
         final user = data['user'];
         final userType = user['userType'];
         final userId = user['id'];
         final approvalStatus = user['approvalStatus'];
-        print("userType: $userType");
-        print("token: $token");
-        print("approvalStatus: $approvalStatus");
+        debugPrint("userType: $userType");
+        debugPrint("token: $token");
+        debugPrint("approvalStatus: $approvalStatus");
         if (approvalStatus == 'Approved') {
           await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
         }
 
-        print("Token saved in local: $token");
+        debugPrint("Token saved in local: $token");
         await SharedPrefsHelper.saveString(
           SharedPrefsHelper.userKey,
           jsonEncode(user),
@@ -123,7 +122,7 @@ class LoginController extends GetxController {
           userType,
         );
         await SharedPrefsHelper.saveString(SharedPrefsHelper.userIdKey, userId);
-        print("userId: $userId");
+        debugPrint("userId: $userId");
         if (userType == UserModel.admin) {
           Get.to(() => AdminDashboard());
         } else {
@@ -149,24 +148,24 @@ class LoginController extends GetxController {
           } else {
             ToastWidget.show(
               context: Get.context!,
-              message: "Invalid approval status. Please contact admin.",
+              title: "Invalid approval status. Please contact admin.",
               type: ToastType.error,
             );
           }
         }
       } else {
-        print("data: $data");
+        debugPrint("data: $data");
         ToastWidget.show(
           context: Get.context!,
-          message: data['message'] ?? "Invalid credentials",
+          title: data['message'] ?? "Invalid credentials",
           type: ToastType.error,
         );
       }
     } catch (e) {
-      print("Error: $e");
+      debugPrint("Error: $e");
       ToastWidget.show(
         context: Get.context!,
-        message: e.toString(),
+        title: e.toString(),
         type: ToastType.error,
       );
     } finally {
@@ -191,23 +190,23 @@ class LoginController extends GetxController {
     return null;
   }
 
-  Future<void> logout() async {
-    try {
-      await ApiService.post(endpoint: "user/logout/", body: {});
-      await SharedPrefsHelper.remove(SharedPrefsHelper.tokenKey);
-      await SharedPrefsHelper.remove(SharedPrefsHelper.userKey);
-      await SharedPrefsHelper.remove(SharedPrefsHelper.userTypeKey);
-      Get.offAll(() => LoginPage());
-    } catch (e) {
-      print("Error: $e");
-      Get.snackbar(
-        "Error",
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade100,
-      );
-    }
-  }
+  // Future<void> logout(String userId) async {
+  //   try {
+  //     await ApiService.post(endpoint: AppUrls.logout(userId), body: {});
+  //     await SharedPrefsHelper.remove(SharedPrefsHelper.tokenKey);
+  //     await SharedPrefsHelper.remove(SharedPrefsHelper.userKey);
+  //     await SharedPrefsHelper.remove(SharedPrefsHelper.userTypeKey);
+  //     Get.offAll(() => LoginPage());
+  //   } catch (e) {
+  //     debugPrint("Error: $e");
+  //     Get.snackbar(
+  //       "Error",
+  //       e.toString(),
+  //       snackPosition: SnackPosition.BOTTOM,
+  //       backgroundColor: Colors.red.shade100,
+  //     );
+  //   }
+  // }
 
   // Clear fields
   void clearFields() {

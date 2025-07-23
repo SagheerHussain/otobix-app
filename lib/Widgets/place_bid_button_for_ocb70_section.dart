@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
+import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
 void placeBidButtonForOcb70Section(BuildContext context) {
   final CarDetailsController bidController = Get.put(CarDetailsController());
@@ -220,6 +221,18 @@ void placeBidButtonForOcb70Section(BuildContext context) {
                         isLoading: bidController.isLoading,
                         onTap: () {
                           Get.back();
+                          Get.dialog(
+                            CongratulationsDialogWidget(
+                              title: "🎉 You Bought the Car!",
+                              message:
+                                  "Congratulations on your successful purchase!",
+                              buttonText: "Check Details",
+                              onButtonTap: () {
+                                // handle navigation or close
+                                Get.back();
+                              },
+                            ),
+                          );
                         },
                         height: 35,
                         fontSize: 12,

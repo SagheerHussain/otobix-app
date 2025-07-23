@@ -1,9 +1,9 @@
 class UserModel {
   // Fields
   static const String dealer = 'Dealer';
-  static const String customer = 'customer';
-  static const String salesManager = 'sales manager';
-  static const String admin = 'admin';
+  static const String customer = 'Customer';
+  static const String salesManager = 'Sales Manager';
+  static const String admin = 'Admin';
 
   final String id;
   final String userRole;

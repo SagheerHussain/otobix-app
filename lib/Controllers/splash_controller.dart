@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/admin/admin_dashboard.dart';
@@ -18,12 +20,12 @@ class SplashController extends GetxController {
     token = await SharedPrefsHelper.getString(SharedPrefsHelper.tokenKey);
     userType = await SharedPrefsHelper.getString(SharedPrefsHelper.userTypeKey);
 
-    print("token: $token");
-    print("userType: $userType");
+    debugPrint("token: $token");
+    debugPrint("userType: $userType");
 
     Future.delayed(const Duration(seconds: 3), () {
       if (token != null) {
-        if (userType == 'admin') {
+        if (userType == UserModel.admin) {
           Get.off(() => AdminDashboard());
         } else {
           Get.off(() => BottomNavigationPage());

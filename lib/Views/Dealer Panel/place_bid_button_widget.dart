@@ -157,7 +157,7 @@ class PlaceBidButtonWidget extends StatelessWidget {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Rs 54,000",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -181,7 +181,7 @@ class PlaceBidButtonWidget extends StatelessWidget {
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                                "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 12,
@@ -224,7 +224,7 @@ class PlaceBidButtonWidget extends StatelessWidget {
                           () => Column(
                             children: [
                               Text(
-                                "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                                "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                                 style: TextStyle(
                                   color: AppColors.blue,
                                   fontSize: 15,
@@ -233,7 +233,7 @@ class PlaceBidButtonWidget extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - 54000)}",
+                                "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount)}",
                                 style: TextStyle(
                                   color: AppColors.grey,
                                   fontSize: 12,

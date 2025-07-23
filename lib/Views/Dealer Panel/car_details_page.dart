@@ -3,10 +3,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Views/Dealer%20Panel/place_bid_button_widget.dart';
 import 'package:otobix/Views/Dealer%20Panel/start_auto_bid_button_widget.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_images_page.dart';
 import 'package:otobix/Widgets/button_widget.dart';
+import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:otobix/Models/car_model.dart';
@@ -23,11 +25,24 @@ class CarDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final getxController = Get.put(CarDetailsController());
+    final homeController = Get.put(HomeController());
     final imageUrls = car.imageUrls ?? [car.imageUrl];
     getxController.setImageUrls(imageUrls);
     getxController.startCountdown(DateTime.now().add(const Duration(days: 1)));
 
     final pageController = PageController();
+
+    // Set current bid amount
+    getxController.currentHighestBidAmount = car.price.toInt();
+    // Set one click price amount
+    getxController.oneClickPriceAmount.value =
+        getxController.currentHighestBidAmount + 10000;
+    // Set your offer amount
+    type != homeController.ocb70SectionScreen
+        ? getxController.yourOfferAmount.value =
+            getxController.currentHighestBidAmount + 4000
+        : getxController.yourOfferAmount.value =
+            getxController.oneClickPriceAmount.value;
 
     return SafeArea(
       child: Scaffold(
@@ -61,7 +76,12 @@ class CarDetailsPage extends StatelessWidget {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  child: _buildBidButton(getxController, context, type),
+                  child: _buildBidButton(
+                    getxController,
+                    homeController,
+                    context,
+                    type,
+                  ),
                 ),
               ],
             );
@@ -208,20 +228,29 @@ class CarDetailsPage extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Text(car.name, style: const TextStyle(fontSize: 12)),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.price)}/-',
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.green,
-              fontWeight: FontWeight.bold,
+        Row(
+          children: [
+            Text(
+              'Highest Bid: ',
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.grey,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+            Text(
+              '${NumberFormat.decimalPattern('en_IN').format(car.price)}/-',
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         Row(
           children: [
-            const Icon(Icons.location_on, color: AppColors.grey, size: 12),
+            const Icon(Icons.location_on, color: AppColors.grey, size: 15),
             Text(car.location, style: const TextStyle(fontSize: 12)),
           ],
         ),
@@ -457,6 +486,7 @@ class CarDetailsPage extends StatelessWidget {
 
   Widget _buildBidButton(
     CarDetailsController getxController,
+    HomeController homeController,
     BuildContext context,
     String type,
   ) {
@@ -505,14 +535,23 @@ class CarDetailsPage extends StatelessWidget {
               const SizedBox(height: 20),
 
               /// LOGIC: check if type is marketplace
-              if (type == 'marketplace')
+              if (type == homeController.marketplaceSectionScreen)
                 SizedBox(
                   width: double.infinity,
                   child: ButtonWidget(
                     text: 'Request for Auction',
                     onTap: () {
-                      // Add your auction request logic here
-                      print("Request for Auction pressed!");
+                      Get.dialog(
+                        CongratulationsDialogWidget(
+                          icon: Icons.assignment_turned_in_outlined,
+                          iconSize: 25,
+                          title: "Request Sent!",
+                          message:
+                              "Your request to list this car in auction has been submitted.",
+                          buttonText: "OK",
+                          onButtonTap: () => Get.back(),
+                        ),
+                      );
                     },
                     isLoading: getxController.isLoading,
                     height: 35,

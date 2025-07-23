@@ -5,7 +5,7 @@ import 'package:otobix/Controllers/tab_bar_buttons_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/live_bids_section.dart';
 import 'package:otobix/Views/Dealer%20Panel/marketplace_section.dart';
-import 'package:otobix/Views/Dealer%20Panel/ocb_70_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/oto_buy_section.dart';
 import 'package:otobix/Views/Dealer%20Panel/upcoming_section.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/tab_bar_buttons_widget.dart';
@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: AppColors.white,
         body: Stack(
           children: [
-            // TabBar Screens
+            // TabBar Screens / Sections
             Padding(
               padding: const EdgeInsets.only(top: 150, left: 15, right: 15),
               child: TabBarView(
@@ -31,7 +31,7 @@ class HomePage extends StatelessWidget {
                 children: [
                   LiveBidsSection(),
                   UpcomingSection(),
-                  Ocb70Section(),
+                  OtoBuySection(),
                   MarketplaceSection(),
                 ],
               ),
@@ -58,21 +58,26 @@ class HomePage extends StatelessWidget {
 
                     // Search bar + city filter
                     _buildSearchBar(context),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 15),
 
                     // TabBar Buttons
                     TabBarButtonsWidget(
-                      titles: ['Live', 'Upcoming', 'OCB 70', 'Marketplace'],
-                      counts: [getxController.liveCarsCount.value, 0, 0, 0],
+                      titles: ['Live', 'Upcoming', 'OtoBuy', 'Marketplace'],
+                      counts: [
+                        getxController.liveCarsCount.value,
+                        getxController.upcomingCarsCount.value,
+                        getxController.otoBuyCarsCount.value,
+                        getxController.marketplaceCarsCount.value,
+                      ],
                       controller: tabBarController.tabController,
                       selectedIndex: tabBarController.selectedIndex,
-                      titleSize: 11,
-                      countSize: 9,
+                      titleSize: 9,
+                      countSize: 6,
                       tabsHeight: 30,
                       spaceFromSides: 15,
                     ),
 
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 15),
 
                     // Filter and Sort buttons
                     _buildFilterAndSortButtons(),
@@ -88,69 +93,236 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildSearchBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextField(
-        controller: getxController.searchController,
-        keyboardType: TextInputType.text,
-        decoration: InputDecoration(
-          hintText: 'Search...',
-          hintStyle: TextStyle(
-            color: AppColors.grey.withValues(alpha: .5),
-            fontSize: 12,
-          ),
-          prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 20),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide(color: AppColors.black),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide(color: AppColors.green, width: 2),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 3,
-            horizontal: 10,
-          ),
-          suffixIcon: Obx(
-            () => Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  alignment: Alignment.centerRight,
-                  value: getxController.selectedCity.value,
-
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                    size: 20,
+    return SizedBox(
+      height: 35,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        child: TextFormField(
+          controller: getxController.searchController,
+          keyboardType: TextInputType.text,
+          style: TextStyle(fontSize: 12),
+          decoration: InputDecoration(
+            hintText: 'Search...',
+            hintStyle: TextStyle(
+              color: AppColors.grey.withValues(alpha: .5),
+              fontSize: 12,
+            ),
+            prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 20),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide(color: AppColors.black),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide(color: AppColors.green, width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 3,
+              horizontal: 10,
+            ),
+            suffixIcon: Obx(
+              () => Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: GestureDetector(
+                  onTap: () => _buildStateSelector(context),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        getxController.selectedCity.value,
+                        style: TextStyle(fontSize: 10, color: Colors.black),
+                      ),
+                      const Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
+                    ],
                   ),
-                  onChanged: (value) {
-                    if (value != null) {
-                      getxController.selectedCity.value = value;
-                    }
-                  },
-                  items:
-                      getxController.cities
-                          .map(
-                            (city) => DropdownMenuItem<String>(
-                              value: city,
-                              child: Text(
-                                city,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
                 ),
               ),
             ),
+
+            // suffixIcon: Obx(
+            //   () => Padding(
+            //     padding: const EdgeInsets.only(right: 20),
+            //     child: DropdownButtonHideUnderline(
+            //       child: DropdownButton<String>(
+            //         alignment: Alignment.centerRight,
+            //         value: getxController.selectedCity.value,
+
+            //         icon: const Icon(
+            //           Icons.keyboard_arrow_down,
+            //           color: Colors.grey,
+            //           size: 20,
+            //         ),
+            //         onChanged: (value) {
+            //           if (value != null) {
+            //             getxController.selectedCity.value = value;
+            //           }
+            //         },
+            //         items:
+            //             getxController.cities
+            //                 .map(
+            //                   (city) => DropdownMenuItem<String>(
+            //                     value: city,
+            //                     child: Text(
+            //                       city,
+            //                       style: TextStyle(
+            //                         fontSize: 10,
+            //                         color: Colors.black,
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 )
+            //                 .toList(),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ),
+          onChanged: (value) {
+            getxController.filteredCars.value =
+                getxController.cars
+                    .where(
+                      (car) =>
+                          car.name.toLowerCase().contains(value.toLowerCase()),
+                    )
+                    .toList();
+          },
         ),
       ),
+    );
+  }
+
+  void _buildStateSelector(BuildContext context) {
+    final filteredStates = getxController.cities.obs;
+    getxController.searchStateController.clear();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Important for full height
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.8,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            return Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: const Text(
+                      'Select State',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  // Search Field
+                  SizedBox(
+                    height: 35,
+                    child: TextFormField(
+                      controller: getxController.searchStateController,
+                      keyboardType: TextInputType.text,
+                      style: const TextStyle(fontSize: 12),
+                      decoration: InputDecoration(
+                        hintText: 'Search states...',
+                        hintStyle: TextStyle(
+                          color: AppColors.grey.withValues(alpha: .5),
+                          fontSize: 12,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: AppColors.grey,
+                          size: 20,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(100),
+                          borderSide: const BorderSide(color: AppColors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(100),
+                          borderSide: const BorderSide(
+                            color: AppColors.green,
+                            width: 2,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 3,
+                          horizontal: 10,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        filteredStates.value =
+                            getxController.cities
+                                .where(
+                                  (city) => city.toLowerCase().contains(
+                                    value.toLowerCase(),
+                                  ),
+                                )
+                                .toList();
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // State List
+                  Obx(
+                    () => Expanded(
+                      child: ListView.separated(
+                        controller: scrollController,
+                        itemCount: filteredStates.length,
+                        separatorBuilder: (_, __) => SizedBox(height: 10),
+                        itemBuilder: (_, index) {
+                          final city = filteredStates[index];
+                          return InkWell(
+                            onTap: () {
+                              getxController.selectedCity.value = city;
+                              Navigator.pop(context);
+                            },
+                            borderRadius: BorderRadius.circular(100),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 25,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: AppColors.grey.withValues(alpha: .1),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(city, style: TextStyle(fontSize: 12)),
+                                  Icon(
+                                    Icons.location_on,
+                                    size: 15,
+                                    color: AppColors.green,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

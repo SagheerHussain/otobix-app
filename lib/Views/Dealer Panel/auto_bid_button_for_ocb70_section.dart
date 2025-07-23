@@ -4,6 +4,8 @@ import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 // Auto Bid Sheet
 void autoBidButtonForOcb70Section() {
@@ -102,7 +104,7 @@ void autoBidButtonForOcb70Section() {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rs. 54,000",
+                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.oneClickPriceAmount.value)}",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -117,21 +119,19 @@ void autoBidButtonForOcb70Section() {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Your Offer",
+                            "Current Highest Bid",
                             style: TextStyle(
                               color: AppColors.grey,
                               fontSize: 10,
                             ),
                           ),
                           SizedBox(height: 4),
-                          Obx(
-                            () => Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value)}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                                color: AppColors.black,
-                              ),
+                          Text(
+                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount)}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                              color: AppColors.black,
                             ),
                           ),
                         ],
@@ -149,8 +149,18 @@ void autoBidButtonForOcb70Section() {
                       GestureDetector(
                         onTap: () {
                           int decrement = 1000;
-
-                          getxController.yourOfferAmount.value -= decrement;
+                          if (getxController.yourOfferAmount.value -
+                                  decrement <=
+                              getxController.currentHighestBidAmount) {
+                            ToastWidget.show(
+                              title:
+                                  "You can't bid less than the highest bid amount",
+                              context: Get.context!,
+                              type: ToastType.error,
+                            );
+                          } else {
+                            getxController.yourOfferAmount.value -= decrement;
+                          }
                         },
                         child: Container(
                           padding: EdgeInsets.all(12),
@@ -181,7 +191,7 @@ void autoBidButtonForOcb70Section() {
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Bid decrease by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - 54000)}",
+                                "Bid increased by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount)}",
                                 style: TextStyle(
                                   color: AppColors.grey,
                                   fontSize: 12,
@@ -198,7 +208,7 @@ void autoBidButtonForOcb70Section() {
                           int increment = 1000;
                           if (getxController.yourOfferAmount.value +
                                   increment <=
-                              getxController.currentBidAmount) {
+                              getxController.oneClickPriceAmount.value) {
                             getxController.yourOfferAmount.value += increment;
                           }
                         },
@@ -228,6 +238,21 @@ void autoBidButtonForOcb70Section() {
                         isLoading: getxController.isLoading,
                         onTap: () {
                           Get.back();
+                          Get.dialog(
+                            CongratulationsDialogWidget(
+                              icon: Icons.emoji_events,
+                              iconColor: AppColors.yellow,
+                              iconSize: 25,
+                              title: "Offer Placed!",
+                              message:
+                                  "Your offer has been successfully placed.",
+                              buttonText: "OK",
+                              onButtonTap: () {
+                                // handle navigation or close
+                                Get.back();
+                              },
+                            ),
+                          );
                         },
                         height: 35,
                         fontSize: 12,

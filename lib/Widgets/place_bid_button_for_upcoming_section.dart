@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
+import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
 void placeBidButtonForUpcomingSection(BuildContext context) {
   final CarDetailsController bidController = Get.put(CarDetailsController());
@@ -103,7 +104,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rs 54,000",
+                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount)}",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -127,7 +128,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                           SizedBox(height: 4),
                           Obx(
                             () => Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -170,7 +171,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                         () => Column(
                           children: [
                             Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -179,7 +180,7 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - 54000)}",
+                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount)}",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 12,
@@ -220,6 +221,18 @@ void placeBidButtonForUpcomingSection(BuildContext context) {
                         isLoading: bidController.isLoading,
                         onTap: () {
                           Get.back();
+                          Get.dialog(
+                            CongratulationsDialogWidget(
+                              icon: Icons.timer_outlined,
+                              iconColor: AppColors.grey,
+                              iconSize: 25,
+                              title: "Pre-Bid Set!",
+                              message:
+                                  "Your pre-bid has been successfully recorded.",
+                              buttonText: "OK",
+                              onButtonTap: () => Get.back(),
+                            ),
+                          );
                         },
                         height: 35,
                         fontSize: 12,

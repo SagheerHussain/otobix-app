@@ -11,7 +11,6 @@ import 'package:otobix/Controllers/register_pin_code_controller.dart';
 import 'package:otobix/Controllers/registration_form_controller.dart';
 import 'package:otobix/Controllers/splash_controller.dart';
 import 'package:otobix/Controllers/tab_bar_buttons_controller.dart';
-import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
 import 'package:otobix/Controllers/user_preferences_controller.dart';
 import 'package:otobix/admin/controller/admin_approved_users_list_controller.dart';
 import 'package:otobix/admin/controller/admin_rejected_users_list_controller.dart';

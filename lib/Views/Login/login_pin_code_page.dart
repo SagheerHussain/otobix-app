@@ -110,7 +110,7 @@ class LoginPinCodePage extends StatelessWidget {
     onCompleted: (value) {
       ToastWidget.show(
         context: parentContext,
-        message: "OTP Verified Successfully",
+        title: "OTP Verified Successfully",
         type: ToastType.success,
       );
       Get.to(() => BottomNavigationPage());

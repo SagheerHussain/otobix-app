@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class LoginPinCodeController extends GetxController {
   // Send OTP
@@ -13,23 +12,23 @@ class LoginPinCodeController extends GetxController {
     required String otp,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse(AppUrls.verifyOtp),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"phoneNumber": phoneNumber, "otp": otp}),
+      final response = await ApiService.post(
+        endpoint: AppUrls.verifyOtp,
+        body: {"phoneNumber": phoneNumber, "otp": otp},
       );
+
       if (response.statusCode == 200) {
         Get.to(() => BottomNavigationPage());
         ToastWidget.show(
           context: Get.context!,
-          message: "OTP Verified Successfully",
+          title: "OTP Verified Successfully",
           type: ToastType.success,
         );
       } else {
         debugPrint(response.body);
         ToastWidget.show(
           context: Get.context!,
-          message: "Invalid OTP",
+          title: "Invalid OTP",
           type: ToastType.error,
         );
       }
@@ -37,7 +36,7 @@ class LoginPinCodeController extends GetxController {
       debugPrint(e.toString());
       ToastWidget.show(
         context: Get.context!,
-        message: "Invalid OTP",
+        title: "Invalid OTP",
         type: ToastType.error,
       );
     }

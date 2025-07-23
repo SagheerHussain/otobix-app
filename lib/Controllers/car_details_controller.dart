@@ -10,19 +10,20 @@ class CarDetailsController extends GetxController {
   final remainingTime = ''.obs;
   Timer? _timer;
 
+  int currentHighestBidAmount = 54000;
   RxInt yourOfferAmount = 54000.obs;
-  final int currentBidAmount = 54000;
+  RxInt oneClickPriceAmount = 0.obs;
 
   /// NEW: keep track of first click
   bool isFirstClick = true;
 
   ////////////////////////////////////////////////
   // Offering your bid progress
-  Timer? _offeringYourBidTimer;
+  Timer? offeringYourBidTimer;
   RxDouble offeringYourBidProgress = 1.0.obs;
   RxInt offeringYourBidCountdown = 30.obs;
   void startOfferingBidTimer({required int seconds}) {
-    _offeringYourBidTimer?.cancel();
+    offeringYourBidTimer?.cancel();
     offeringYourBidProgress.value = 1.0;
     offeringYourBidCountdown.value = seconds;
 
@@ -30,14 +31,14 @@ class CarDetailsController extends GetxController {
     int ticks = 0;
     int totalTicks = seconds * 10;
 
-    _offeringYourBidTimer = Timer.periodic(tickInterval, (timer) {
+    offeringYourBidTimer = Timer.periodic(tickInterval, (timer) {
       ticks++;
       offeringYourBidProgress.value = 1.0 - (ticks / totalTicks);
       offeringYourBidCountdown.value = seconds - (ticks ~/ 10);
 
       if (ticks >= totalTicks) {
         timer.cancel();
-        _offeringYourBidTimer = null;
+        offeringYourBidTimer = null;
         Get.back(); // auto close bottom sheet
         Future.delayed(Duration(milliseconds: 300), () {
           showWinDialog(); // Call your dialog
@@ -47,8 +48,8 @@ class CarDetailsController extends GetxController {
   }
 
   void cancelOfferingBid() {
-    _offeringYourBidTimer?.cancel();
-    _offeringYourBidTimer = null;
+    offeringYourBidTimer?.cancel();
+    offeringYourBidTimer = null;
     Get.back(); // auto close bottom sheet
   }
 
@@ -56,7 +57,7 @@ class CarDetailsController extends GetxController {
 
   /// increase bid logic
   void increaseBid() {
-    int increment = isFirstClick ? 4000 : 1000;
+    int increment = isFirstClick ? 1000 : 1000;
     yourOfferAmount.value += increment;
 
     // After first click, switch to 1000 increment
@@ -67,7 +68,7 @@ class CarDetailsController extends GetxController {
 
   void decreaseBid() {
     int decrement = isFirstClick ? 4000 : 1000;
-    if (yourOfferAmount.value - decrement >= currentBidAmount) {
+    if (yourOfferAmount.value - decrement >= currentHighestBidAmount) {
       yourOfferAmount.value -= decrement;
     }
   }

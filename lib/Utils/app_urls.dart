@@ -1,14 +1,14 @@
 class AppUrls {
   // static const String baseUrl = "http://localhost:4000/api/";
   static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
+  // static const String baseUrl =
+  //     "http://192.168.100.180:4000/api/"; // For Mobile Testing
 
   static const String sendOtp = "${baseUrl}send-otp";
 
   static const String verifyOtp = "${baseUrl}verify-otp";
 
   static const String login = "${baseUrl}user/login";
-
-  static const String logout = "${baseUrl}user/logout";
 
   static const String register = "${baseUrl}user/register";
 
@@ -20,10 +20,20 @@ class AppUrls {
 
   static const String rejectedUsersList = "${baseUrl}user/rejected-users-list";
 
-  static const String userProfile = "${baseUrl}user/user-profile";
+  static const String usersLength = "${baseUrl}user/users-length";
 
   static const String updateProfile = "${baseUrl}user/update-profile";
 
+  static const String getUserProfile = "${baseUrl}user/user-profile";
+
   static String checkUsernameExists(String username) =>
       "${baseUrl}user/check-username?username=$username";
+
+  static String updateUserStatus(String userId) =>
+      "${baseUrl}user/update-user-status/$userId";
+
+  static String getUserStatus(String userId) =>
+      "${baseUrl}user/user-status/$userId";
+
+  static String logout(String userId) => "${baseUrl}user/logout/$userId";
 }

@@ -4,6 +4,7 @@ import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
 // Auto Bid Sheet
 void autoBidButtonForUpcomingSection() {
@@ -95,7 +96,7 @@ void autoBidButtonForUpcomingSection() {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Your Offer",
+                            "Current Pre-Bid",
                             style: TextStyle(
                               color: AppColors.grey,
                               fontSize: 10,
@@ -103,7 +104,7 @@ void autoBidButtonForUpcomingSection() {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rs. 54,000",
+                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount)}",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -180,7 +181,7 @@ void autoBidButtonForUpcomingSection() {
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - 54000)}",
+                                "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount)}",
                                 style: TextStyle(
                                   color: AppColors.grey,
                                   fontSize: 12,
@@ -222,6 +223,17 @@ void autoBidButtonForUpcomingSection() {
                         isLoading: getxController.isLoading,
                         onTap: () {
                           Get.back();
+                          Get.dialog(
+                            CongratulationsDialogWidget(
+                              icon: Icons.done_all,
+                              iconSize: 25,
+                              title: "Auto Bid Submitted!",
+                              message:
+                                  "Your auto bid has been set successfully.",
+                              buttonText: "OK",
+                              onButtonTap: () => Get.back(),
+                            ),
+                          );
                         },
                         height: 35,
                         fontSize: 12,

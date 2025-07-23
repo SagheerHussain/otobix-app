@@ -9,6 +9,7 @@ class HomeController extends GetxController {
   TextEditingController searchController = TextEditingController();
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
+  TextEditingController searchStateController = TextEditingController();
 
   // Screen types
   final String liveBidsSectionScreen = 'live_bids';
@@ -28,14 +29,14 @@ class HomeController extends GetxController {
       favorites.add(car);
       ToastWidget.show(
         context: Get.context!,
-        message: 'Added to wishlist',
+        title: 'Added to wishlist',
         type: ToastType.success,
       );
     } else {
       favorites.remove(car);
       ToastWidget.show(
         context: Get.context!,
-        message: 'Removed from wishlist',
+        title: 'Removed from wishlist',
         type: ToastType.error,
       );
     }
@@ -43,11 +44,14 @@ class HomeController extends GetxController {
 
   // single instance of ValueNotifier
   RxInt liveCarsCount = 23.obs;
+  RxInt upcomingCarsCount = 8.obs;
+  RxInt otoBuyCarsCount = 70.obs;
+  RxInt marketplaceCarsCount = 5.obs;
 
   final selectedSegmentNotifier = ValueNotifier<String>('live');
 
-  final segments =
-      {'live': 'Live (23)', 'ocb70': 'OCB 70', 'ocb60': 'OCB 60'}.obs;
+  // final segments =
+  //     {'live': 'Live (23)', 'ocb': 'OCB (10)', 'marketplace': 'Marketplace (5)'}.obs;
 
   RxString selectedSegment = 'live'.obs;
 
@@ -58,7 +62,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
+    filteredCars.value = cars;
     // Listen to changes in ValueNotifier
     selectedSegmentNotifier.addListener(() {
       selectedSegment.value = selectedSegmentNotifier.value;
@@ -96,6 +100,8 @@ class HomeController extends GetxController {
     'i20': ['Sportz', 'Asta'],
     'Creta': ['EX', 'SX'],
   };
+
+  final RxList<CarModel> filteredCars = <CarModel>[].obs;
 
   final List<CarModel> cars = [
     CarModel(

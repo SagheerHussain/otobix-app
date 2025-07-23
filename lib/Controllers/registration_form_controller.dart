@@ -27,7 +27,7 @@ class RegistrationFormController extends GetxController {
     selectedEntityType = null;
     selectedState = null;
     touchedFields.clear();
-   
+
     formKey.currentState?.reset();
 
     // Ensure at least one address exists
@@ -204,7 +204,7 @@ class RegistrationFormController extends GetxController {
         // Show toast
         ToastWidget.show(
           context: Get.context!,
-          message: "Please fill all required fields",
+          title: "Please fill all required fields",
           type: ToastType.error,
         );
 
@@ -265,14 +265,14 @@ class RegistrationFormController extends GetxController {
       if (response.statusCode == 201) {
         ToastWidget.show(
           context: Get.context!,
-          message: "registered successfully!",
+          title: "registered successfully!",
           type: ToastType.success,
         );
         Get.to(() => LoginPage());
       } else {
         ToastWidget.show(
           context: Get.context!,
-          message: "Failed to register user",
+          title: "Failed to register user",
           type: ToastType.error,
         );
       }
@@ -281,7 +281,7 @@ class RegistrationFormController extends GetxController {
       debugPrint("Stacktrace → $stacktrace");
       ToastWidget.show(
         context: Get.context!,
-        message: e.toString(),
+        title: e.toString(),
         type: ToastType.error,
       );
     } finally {
