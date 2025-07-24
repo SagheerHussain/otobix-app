@@ -12,6 +12,7 @@ class AdminHomeController extends GetxController {
   RxList<UserModel> filteredUsersList = <UserModel>[].obs;
 
   TextEditingController searchController = TextEditingController();
+  RxString selectedRole = 'All'.obs;
 
   @override
   onInit() {

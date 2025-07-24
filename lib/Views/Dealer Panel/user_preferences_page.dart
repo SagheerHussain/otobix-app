@@ -118,7 +118,7 @@ class UserPreferencesPage extends StatelessWidget {
                           sectionTitles[index],
                           style: const TextStyle(
                             fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                            // fontWeight: FontWeight.bold,
                             color: CupertinoColors.inactiveGray,
                           ),
                         ),

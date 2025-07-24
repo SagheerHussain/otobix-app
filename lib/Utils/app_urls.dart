@@ -36,4 +36,6 @@ class AppUrls {
       "${baseUrl}user/user-status/$userId";
 
   static String logout(String userId) => "${baseUrl}user/logout/$userId";
+
+  static String getCarDetails(String carId) => "${baseUrl}car/details/$carId";
 }

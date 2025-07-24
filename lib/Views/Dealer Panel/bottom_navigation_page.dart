@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:otobix/Views/Dealer%20Panel/home_page.dart';
@@ -12,28 +13,28 @@ import 'package:otobix/Views/Dealer%20Panel/account_page.dart';
 class BottomNavigationPage extends StatelessWidget {
   BottomNavigationPage({super.key});
 
-  // final BottomNavigationController getxController = Get.put(
-  //   BottomNavigationController(),
-  // );
+  final BottomNavigationController getxController = Get.put(
+    BottomNavigationController(),
+  );
 
-  final RxInt currentIndex = 0.obs;
-  final List<Widget> pages = [
-    HomePage(),
-    MyCarsPage(),
-    OrdersPage(),
-    AddOnsPage(),
-    AccountPage(),
-  ];
+  // final RxInt currentIndex = 0.obs;
+  // final List<Widget> pages = [
+  //   HomePage(),
+  //   MyCarsPage(),
+  //   OrdersPage(),
+  //   AddOnsPage(),
+  //   AccountPage(),
+  // ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() => pages[currentIndex.value]),
+      body: Obx(() => getxController.pages[getxController.currentIndex.value]),
       bottomNavigationBar: Obx(
         () => SalomonBottomBar(
-          currentIndex: currentIndex.value,
+          currentIndex: getxController.currentIndex.value,
           onTap: (index) {
-            currentIndex.value = index;
+            getxController.currentIndex.value = index;
           },
           items: [
             /// Home

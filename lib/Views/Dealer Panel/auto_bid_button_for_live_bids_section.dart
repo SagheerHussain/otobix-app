@@ -225,7 +225,7 @@ void autoBidButtonForLiveBidsSection() {
                           Get.back();
                           Get.dialog(
                             CongratulationsDialogWidget(
-                              icon: Icons.done_all,
+                              icon: Icons.gavel,
                               iconSize: 25,
                               title: "Auto Bid Submitted!",
                               message:

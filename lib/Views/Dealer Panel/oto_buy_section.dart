@@ -35,9 +35,7 @@ class OtoBuySection extends StatelessWidget {
                         itemCount: getxController.filteredCars.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 16),
                         itemBuilder: (context, index) {
-                          final car =
-                              getxController.filteredCars.reversed
-                                  .toList()[index];
+                          final car = getxController.filteredCars[index];
                           // InkWell for car card
                           return InkWell(
                             onTap: () {

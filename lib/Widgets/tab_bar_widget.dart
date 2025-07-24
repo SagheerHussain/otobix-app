@@ -113,7 +113,11 @@ class TabItem extends StatelessWidget {
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(color: badgeBg, shape: BoxShape.circle),
               child: Text(
-                count > 99 ? '99+' : count.toString(),
+                count > 99
+                    ? '99+'
+                    : count < 10
+                    ? '0${count.toString()}'
+                    : count.toString(),
                 style: TextStyle(color: badgeTextColor, fontSize: countSize),
               ),
             ),

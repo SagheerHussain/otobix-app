@@ -127,8 +127,9 @@ class _AccountPageState extends State<AccountPage> {
                             Get.find<BottomNavigationController>();
                         navController.currentIndex.value = 1;
 
-                        final tabBarWidgetController =
-                            Get.find<TabBarWidgetController>();
+                        final tabBarWidgetController = Get.put(
+                          TabBarWidgetController(tabLength: 3),
+                        );
                         tabBarWidgetController.setSelectedTab(0);
                       },
                     ),
@@ -143,18 +144,19 @@ class _AccountPageState extends State<AccountPage> {
                             Get.find<BottomNavigationController>();
                         navController.currentIndex.value = 1;
 
-                        final tabBarWidgetController =
-                            Get.find<TabBarWidgetController>();
+                        final tabBarWidgetController = Get.put(
+                          TabBarWidgetController(tabLength: 3),
+                        );
                         tabBarWidgetController.setSelectedTab(2);
                       },
                     ),
-                  ProfileOption(
-                    icon: Icons.settings,
-                    color: Colors.blue,
-                    title: "Settings",
-                    description: "Manage your app preferences and account.",
-                    onTap: () {},
-                  ),
+                  // ProfileOption(
+                  //   icon: Icons.settings,
+                  //   color: Colors.blue,
+                  //   title: "Settings",
+                  //   description: "Manage your app preferences and account.",
+                  //   onTap: () {},
+                  // ),
                   ProfileOption(
                     icon: Icons.logout,
                     color: Colors.red,

@@ -52,34 +52,6 @@ class WishlistPage extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  Obx(
-                    () => Positioned(
-                      top: 10,
-                      right: 10,
-                      child: InkWell(
-                        onTap: () => getxController.changeFavoriteCars(car),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            car.isFavorite.value
-                                ? Icons.favorite
-                                : Icons.favorite_outline,
-                            color:
-                                car.isFavorite.value
-                                    ? AppColors.red
-                                    : AppColors.grey,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
@@ -231,6 +203,34 @@ class WishlistPage extends StatelessWidget {
                             )
                             : const SizedBox.shrink(),
                       ],
+                    ),
+                  ),
+
+                  Obx(
+                    () => Positioned(
+                      top: 10,
+                      right: 10,
+                      child: InkWell(
+                        onTap: () => getxController.changeFavoriteCars(car),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            car.isFavorite.value
+                                ? Icons.favorite
+                                : Icons.favorite_outline,
+                            color:
+                                car.isFavorite.value
+                                    ? AppColors.red
+                                    : AppColors.grey,
+                            size: 20,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
