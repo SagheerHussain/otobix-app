@@ -37,15 +37,15 @@ class PlaceBidButtonWidget extends StatelessWidget {
               : 'Place Bid',
       onTap: () {
         if (type == homeController.liveBidsSectionScreen) {
-          placeBidButtonForLiveBidsSection(context);
+          placeBidButtonForLiveBidsSection(context, getxController.carId);
         } else if (type == homeController.upcomingSectionScreen) {
-          placeBidButtonForUpcomingSection(context);
+          placeBidButtonForUpcomingSection(context, getxController.carId);
         } else if (type == homeController.ocb70SectionScreen) {
-          placeBidButtonForOcb70Section(context);
+          placeBidButtonForOcb70Section(context, getxController.carId);
         } else if (type == homeController.marketplaceSectionScreen) {
-          defaultPlaceBidButton(context);
+          defaultPlaceBidButton(context, getxController.carId);
         } else {
-          defaultPlaceBidButton(context);
+          defaultPlaceBidButton(context, getxController.carId);
         }
       },
       isLoading: getxController.isLoading,
@@ -55,8 +55,10 @@ class PlaceBidButtonWidget extends StatelessWidget {
     );
   }
 
-  void defaultPlaceBidButton(BuildContext context) {
-    final CarDetailsController bidController = Get.put(CarDetailsController());
+  void defaultPlaceBidButton(BuildContext context, String carId) {
+    final CarDetailsController bidController = Get.put(
+      CarDetailsController(carId),
+    );
     bidController.resetBidIncrement();
     showModalBottomSheet(
       context: context,

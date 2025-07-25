@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Models/car_model2.dart';
+import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Widgets/offering_bid_sheet.dart';
 
 class CarDetailsController extends GetxController {
   final currentIndex = 0.obs;
   final imageUrls = <String>[].obs;
-  final isLoading = false.obs;
+  RxBool isLoading = false.obs;
 
   final remainingTime = ''.obs;
   Timer? _timer;
@@ -16,6 +21,46 @@ class CarDetailsController extends GetxController {
 
   /// NEW: keep track of first click
   bool isFirstClick = true;
+
+  CarModel2? carDetails;
+
+  final String carId;
+
+  CarDetailsController(this.carId);
+
+  @override
+  void onInit() async {
+    super.onInit();
+    await fetchCarDetails(carId: carId);
+    // await fetchCarDetails(carId: '68821747968635d593293346');
+    debugPrint(carDetails?.toJson().toString() ?? 'null');
+  }
+
+  Future<void> fetchCarDetails({required String carId}) async {
+    // final carId = '68821747968635d593293346';
+    isLoading.value = true;
+    try {
+      final url = AppUrls.getCarDetails(carId);
+      final response = await ApiService.get(endpoint: url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        carDetails = CarModel2.fromJson(
+          data['carDetails'],
+          data['carDetails']['_id'],
+        );
+        debugPrint('Car Details Fetched Successfully');
+      } else {
+        debugPrint('Failed to load data ${response.body}');
+        carDetails = null;
+      }
+    } catch (error) {
+      debugPrint('Failed to load data: $error');
+      carDetails = null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   ////////////////////////////////////////////////
   // Offering your bid progress

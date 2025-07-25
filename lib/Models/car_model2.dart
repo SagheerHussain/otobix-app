@@ -2,218 +2,218 @@ import 'package:otobix/Utils/global_functions.dart';
 
 class CarModel2 {
   final String? id;
-  final DateTime? timestamp;
-  final String? emailAddress;
-  final String? appointmentId;
-  final String? city;
-  final String? registrationType;
-  final String? rcBookAvailability;
-  final String? rcCondition;
-  final String? registrationNumber;
-  final DateTime? registrationDate;
-  final DateTime? fitnessTill;
-  final String? toBeScrapped;
-  final String? registrationState;
-  final String? registeredRto;
-  final int? ownerSerialNumber;
-  final String? make;
-  final String? model;
-  final String? variant;
-  final String? engineNumber;
-  final String? chassisNumber;
-  final String? registeredOwner;
-  final String? registeredAddressAsPerRc;
-  final DateTime? yearMonthOfManufacture;
-  final String? fuelType;
-  final int? cubicCapacity;
-  final String? hypothecationDetails;
-  final String? mismatchInRc;
-  final String? roadTaxValidity;
-  final String? insurance;
-  final String? duplicateKey;
-  final String? rtoNoc;
-  final String? rtoForm282Nos;
-  final String? partyPeshi;
-  final String? additionalDetails;
-  final String? rcTaxToken;
-  final String? insuranceCopy;
-  final String? bonnet;
-  final String? frontWindshield;
-  final String? roof;
-  final String? frontBumper;
-  final String? lhsHeadlamp;
-  final String? lhsFoglamp;
-  final String? rhsHeadlamp;
-  final String? rhsFoglamp;
-  final String? lhsFender;
-  final String? lhsOrvm;
-  final String? lhsAPillar;
-  final String? lhsBPillar;
-  final String? lhsCPillar;
-  final String? lhsFrontAlloy;
-  final String? lhsFrontTyre;
-  final String? lhsRearAlloy;
-  final String? lhsRearTyre;
-  final String? lhsFrontDoor;
-  final String? lhsRearDoor;
-  final String? lhsRunningBorder;
-  final String? carModel2LhsQuarterPanel;
-  final String? rearBumper;
-  final String? lhsTailLamp;
-  final String? rhsTailLamp;
-  final String? rearWindshield;
-  final String? bootDoor;
-  final String? spareTyre;
-  final String? bootFloor;
-  final String? rhsRearAlloy;
-  final String? rhsRearTyre;
-  final String? rhsFrontAlloy;
-  final String? rhsFrontTyre;
-  final String? rhsQuarterPanel;
-  final String? rhsAPillar;
-  final String? rhsBPillar;
-  final String? rhsCPillar;
-  final String? rhsRunningBorder;
-  final String? rhsRearDoor;
-  final String? rhsFrontDoor;
-  final String? rhsOrvm;
-  final String? rhsFender;
-  final String? frontMain;
-  final String? carModel2Bonnet1;
-  final String? carModel2FrontBumper1;
-  final String? lhsHeadlamp1;
-  final String? rhsHeadlamp1;
-  final String? lhsFrontAt45Degree;
-  final String? carModel2LhsFender1;
-  final String? lhsFrontTyre1;
-  final String? lhsRunningBorder1;
-  final String? lhsOrvm1;
-  final String? carModel2LhsFrontDoor1;
-  final String? carModel2LhsRearDoor1;
-  final String? lhsRearTyre1;
-  final String? lhsQuarterPanel;
-  final String? rearMain;
-  final String? rearWithBootDoorOpen;
-  final String? carModel2RearBumper1;
-  final String? spareTyre1;
-  final String? bootFloor1;
-  final String? rhsRear45Degree;
-  final String? carModel2RhsQuarterPanel1;
-  final String? rhsRearTyre1;
-  final String? carModel2RhsRearDoor1;
-  final String? carModel2RhsFrontDoor1;
-  final String? rhsRunningBorder1;
-  final String? rhsFrontTyre1;
-  final String? rhsOrvm1;
-  final String? carModel2RhsFender1;
-  final String? upperCrossMember;
-  final String? radiatorSupport;
-  final String? headlightSupport;
-  final String? lowerCrossMember;
-  final String? lhsApron;
-  final String? rhsApron;
-  final String? firewall;
-  final String? cowlTop;
-  final String? engine;
-  final String? battery;
-  final String? coolant;
-  final String? engineOilLevelDipstick;
-  final String? engineOil;
-  final String? engineMount;
-  final String? enginePermisableBlowBy;
-  final String? exhaustSmoke;
-  final String? clutch;
-  final String? gearShift;
-  final String? commentsOnEngineOil;
-  final String? commentsOnTransmission;
-  final String? commentsOnOthers;
-  final String? engineBay;
-  final String? apronLhsRhs;
-  final String? battery1;
-  final String? additionalImages;
-  final String? engineSound;
-  final String? exhaustSmoke1;
-  final String? steering;
-  final String? brakes;
-  final String? suspension;
-  final int? odometerReadingInKms;
-  final String? fuelLevel;
-  final String? abs;
-  final String? electricals;
-  final String? rearWiperWasher;
-  final String? rearDefogger;
-  final String? musicSystem;
-  final String? stereo;
-  final String? inbuiltSpeaker;
-  final String? externalSpeaker;
-  final String? steeringMountedAudioControl;
-  final String? noOfPowerWindows;
-  final String? powerWindowConditionRhsFront;
-  final String? powerWindowConditionLhsFront;
-  final String? powerWindowConditionRhsRear;
-  final String? powerWindowConditionLhsRear;
-  final int? noOfAirBags016;
-  final String? airbagFeaturesDriverSide;
-  final String? airbagFeaturesCoDriverSide;
-  final String? airbagFeaturesLhsAPillarCurtain;
-  final String? airbagFeaturesLhsBPillarCurtain;
-  final String? airbagFeaturesLhsCPillarCurtain;
-  final String? airbagFeaturesRhsAPillarCurtain;
-  final String? airbagFeaturesRhsBPillarCurtain;
-  final String? airbagFeaturesRhsCPillarCurtain;
-  final String? sunroof;
-  final String? leatherSeats;
-  final String? fabricSeats;
-  final String? commentsOnElectricals;
-  final String? meterConsoleWithEngineOn;
-  final String? frontSeatsFromDriverSideDoorOpen;
-  final String? rearSeatsFromRightSideDoorOpen;
-  final String? dashboardFromRearSeat;
-  final String? reverseCamera;
-  final String? airConditioningManual;
-  final String? airConditioningClimateControl;
-  final String? approvedBy;
-  final DateTime? approvalDate;
-  final DateTime? approvalTime;
-  final String? approvalStatus;
-  final int? contactNumber;
-  final DateTime? newArrivalMessage;
-  final String? budgetCar;
-  final String? status;
-  final String? rcToken1;
-  final String? rcToken2;
-  final String? rcToken3;
-  final String? rcToken4;
-  final String? insuranceCopy1;
-  final String? apronLhs;
-  final String? apronRhs;
-  final String? additionalImages1Engine;
-  final String? additionalImages2Engine;
-  final String? airbags2;
-  final String? lhsFender1;
-  final String? lhsFender2;
-  final String? lhsFrontDoor1;
-  final String? lhsFrontDoor2;
-  final String? lhsRearDoor1;
-  final String? lhsRearDoor2;
-  final String? lhsQuarterPanel1;
-  final String? rhsQuarterPanel1;
-  final String? rhsRearDoor1;
-  final String? rhsRearDoor2;
-  final String? rhsRearDoor3;
-  final String? rhsFrontDoor1;
-  final String? rhsFrontDoor2;
-  final String? rhsFrontDoor3;
-  final String? rhsFender1;
-  final String? inspectionId;
-  final String? bonnet1;
-  final String? bonnet2;
-  final String? frontBumper1;
-  final String? rearBumper1;
-  final int? priceDiscovery;
-  final String? priceDiscoveryBy;
-  final String? retailAssociate;
-  final int? kmRangeLevel;
+  final DateTime timestamp;
+  final String emailAddress;
+  final String appointmentId;
+  final String city;
+  final String registrationType;
+  final String rcBookAvailability;
+  final String rcCondition;
+  final String registrationNumber;
+  final DateTime registrationDate;
+  final DateTime fitnessTill;
+  final String toBeScrapped;
+  final String registrationState;
+  final String registeredRto;
+  final int ownerSerialNumber;
+  final String make;
+  final String model;
+  final String variant;
+  final String engineNumber;
+  final String chassisNumber;
+  final String registeredOwner;
+  final String registeredAddressAsPerRc;
+  final DateTime yearMonthOfManufacture;
+  final String fuelType;
+  final int cubicCapacity;
+  final String hypothecationDetails;
+  final String mismatchInRc;
+  final String roadTaxValidity;
+  final String insurance;
+  final String duplicateKey;
+  final String rtoNoc;
+  final String rtoForm282Nos;
+  final String partyPeshi;
+  final String additionalDetails;
+  final String rcTaxToken;
+  final String insuranceCopy;
+  final String bonnet;
+  final String frontWindshield;
+  final String roof;
+  final String frontBumper;
+  final String lhsHeadlamp;
+  final String lhsFoglamp;
+  final String rhsHeadlamp;
+  final String rhsFoglamp;
+  final String lhsFender;
+  final String lhsOrvm;
+  final String lhsAPillar;
+  final String lhsBPillar;
+  final String lhsCPillar;
+  final String lhsFrontAlloy;
+  final String lhsFrontTyre;
+  final String lhsRearAlloy;
+  final String lhsRearTyre;
+  final String lhsFrontDoor;
+  final String lhsRearDoor;
+  final String lhsRunningBorder;
+  final String carModel2LhsQuarterPanel;
+  final String rearBumper;
+  final String lhsTailLamp;
+  final String rhsTailLamp;
+  final String rearWindshield;
+  final String bootDoor;
+  final String spareTyre;
+  final String bootFloor;
+  final String rhsRearAlloy;
+  final String rhsRearTyre;
+  final String rhsFrontAlloy;
+  final String rhsFrontTyre;
+  final String rhsQuarterPanel;
+  final String rhsAPillar;
+  final String rhsBPillar;
+  final String rhsCPillar;
+  final String rhsRunningBorder;
+  final String rhsRearDoor;
+  final String rhsFrontDoor;
+  final String rhsOrvm;
+  final String rhsFender;
+  final String frontMain;
+  final String carModel2Bonnet1;
+  final String carModel2FrontBumper1;
+  final String lhsHeadlamp1;
+  final String rhsHeadlamp1;
+  final String lhsFrontAt45Degree;
+  final String carModel2LhsFender1;
+  final String lhsFrontTyre1;
+  final String lhsRunningBorder1;
+  final String lhsOrvm1;
+  final String carModel2LhsFrontDoor1;
+  final String carModel2LhsRearDoor1;
+  final String lhsRearTyre1;
+  final String lhsQuarterPanel;
+  final String rearMain;
+  final String rearWithBootDoorOpen;
+  final String carModel2RearBumper1;
+  final String spareTyre1;
+  final String bootFloor1;
+  final String rhsRear45Degree;
+  final String carModel2RhsQuarterPanel1;
+  final String rhsRearTyre1;
+  final String carModel2RhsRearDoor1;
+  final String carModel2RhsFrontDoor1;
+  final String rhsRunningBorder1;
+  final String rhsFrontTyre1;
+  final String rhsOrvm1;
+  final String carModel2RhsFender1;
+  final String upperCrossMember;
+  final String radiatorSupport;
+  final String headlightSupport;
+  final String lowerCrossMember;
+  final String lhsApron;
+  final String rhsApron;
+  final String firewall;
+  final String cowlTop;
+  final String engine;
+  final String battery;
+  final String coolant;
+  final String engineOilLevelDipstick;
+  final String engineOil;
+  final String engineMount;
+  final String enginePermisableBlowBy;
+  final String exhaustSmoke;
+  final String clutch;
+  final String gearShift;
+  final String commentsOnEngineOil;
+  final String commentsOnTransmission;
+  final String commentsOnOthers;
+  final String engineBay;
+  final String apronLhsRhs;
+  final String battery1;
+  final String additionalImages;
+  final String engineSound;
+  final String exhaustSmoke1;
+  final String steering;
+  final String brakes;
+  final String suspension;
+  final int odometerReadingInKms;
+  final String fuelLevel;
+  final String abs;
+  final String electricals;
+  final String rearWiperWasher;
+  final String rearDefogger;
+  final String musicSystem;
+  final String stereo;
+  final String inbuiltSpeaker;
+  final String externalSpeaker;
+  final String steeringMountedAudioControl;
+  final String noOfPowerWindows;
+  final String powerWindowConditionRhsFront;
+  final String powerWindowConditionLhsFront;
+  final String powerWindowConditionRhsRear;
+  final String powerWindowConditionLhsRear;
+  final int noOfAirBags016;
+  final String airbagFeaturesDriverSide;
+  final String airbagFeaturesCoDriverSide;
+  final String airbagFeaturesLhsAPillarCurtain;
+  final String airbagFeaturesLhsBPillarCurtain;
+  final String airbagFeaturesLhsCPillarCurtain;
+  final String airbagFeaturesRhsAPillarCurtain;
+  final String airbagFeaturesRhsBPillarCurtain;
+  final String airbagFeaturesRhsCPillarCurtain;
+  final String sunroof;
+  final String leatherSeats;
+  final String fabricSeats;
+  final String commentsOnElectricals;
+  final String meterConsoleWithEngineOn;
+  final String frontSeatsFromDriverSideDoorOpen;
+  final String rearSeatsFromRightSideDoorOpen;
+  final String dashboardFromRearSeat;
+  final String reverseCamera;
+  final String airConditioningManual;
+  final String airConditioningClimateControl;
+  final String approvedBy;
+  final DateTime approvalDate;
+  final DateTime approvalTime;
+  final String approvalStatus;
+  final int contactNumber;
+  final DateTime newArrivalMessage;
+  final String budgetCar;
+  final String status;
+  final String rcToken1;
+  final String rcToken2;
+  final String rcToken3;
+  final String rcToken4;
+  final String insuranceCopy1;
+  final String apronLhs;
+  final String apronRhs;
+  final String additionalImages1Engine;
+  final String additionalImages2Engine;
+  final String airbags2;
+  final String lhsFender1;
+  final String lhsFender2;
+  final String lhsFrontDoor1;
+  final String lhsFrontDoor2;
+  final String lhsRearDoor1;
+  final String lhsRearDoor2;
+  final String lhsQuarterPanel1;
+  final String rhsQuarterPanel1;
+  final String rhsRearDoor1;
+  final String rhsRearDoor2;
+  final String rhsRearDoor3;
+  final String rhsFrontDoor1;
+  final String rhsFrontDoor2;
+  final String rhsFrontDoor3;
+  final String rhsFender1;
+  final String inspectionId;
+  final String bonnet1;
+  final String bonnet2;
+  final String frontBumper1;
+  final String rearBumper1;
+  final int priceDiscovery;
+  final String priceDiscoveryBy;
+  final String retailAssociate;
+  final int kmRangeLevel;
 
   CarModel2({
     required this.id,
@@ -431,246 +431,257 @@ class CarModel2 {
     required this.kmRangeLevel,
   });
 
-  factory CarModel2.fromJson(Map<String, dynamic> json) {
+  factory CarModel2.fromJson(Map<String, dynamic> json, String id) {
     return CarModel2(
-      id: json["_id"],
-      timestamp: GlobalFunctions.parse<DateTime>(json['Timestamp']),
-      emailAddress: json["Email Address"],
-      appointmentId: json["Appointment ID"],
-      city: json["City"],
-      registrationType: json["Registration Type"],
-      rcBookAvailability: json["RC Book Availability"],
-      rcCondition: json["RC Condition"],
-      registrationNumber: json["Registration Number"],
-      registrationDate: GlobalFunctions.parse<DateTime>(
-        json["Registration Date"],
-      ),
-      fitnessTill: GlobalFunctions.parse<DateTime>(json["Fitness Till "]),
-      toBeScrapped: json["To be Scrapped"],
-      registrationState: json["Registration State"],
-      registeredRto: json["Registered RTO"],
-      ownerSerialNumber: GlobalFunctions.parse<int>(
-        json["Owner Serial Number"],
-      ),
-      make: json["Make"],
-      model: json["Model"],
-      variant: json["Variant"],
-      engineNumber: json["Engine Number"],
-      chassisNumber: json["Chassis Number"],
-      registeredOwner: json["Registered Owner"],
-      registeredAddressAsPerRc: json["Registered address as per RC"],
-      yearMonthOfManufacture: GlobalFunctions.parse<DateTime>(
-        json["Year Month of Manufacture"],
-      ),
-      fuelType: json["Fuel Type"],
-      cubicCapacity: GlobalFunctions.parse<int>(json["Cubic Capacity"]),
-      hypothecationDetails: json["Hypothecation Details"],
-      mismatchInRc: json["Mismatch in RC"],
-      roadTaxValidity: json["Road Tax Validity"],
-      insurance: json["Insurance"],
-      duplicateKey: json["Duplicate Key"],
-      rtoNoc: json["RTO NOC"],
-      rtoForm282Nos: json["RTO Form 28 (2 Nos)"],
-      partyPeshi: json["Party Peshi"],
-      additionalDetails: json["Additional Details"],
-      rcTaxToken: json["RC Tax Token"],
-      insuranceCopy: json["Insurance Copy"],
-      bonnet: json["Bonnet"],
-      frontWindshield: json["Front Windshield"],
-      roof: json["Roof"],
-      frontBumper: json["Front Bumper"],
-      lhsHeadlamp: json["LHS Headlamp"],
-      lhsFoglamp: json["LHS Foglamp"],
-      rhsHeadlamp: json["RHS Headlamp"],
-      rhsFoglamp: json["RHS Foglamp"],
-      lhsFender: json["LHS Fender"],
-      lhsOrvm: json["LHS ORVM"],
-      lhsAPillar: json["LHS A Pillar"],
-      lhsBPillar: json["LHS B Pillar"],
-      lhsCPillar: json["LHS C Pillar"],
-      lhsFrontAlloy: json["LHS Front Alloy"],
-      lhsFrontTyre: json["LHS Front Tyre"],
-      lhsRearAlloy: json["LHS Rear Alloy"],
-      lhsRearTyre: json["LHS Rear Tyre"],
-      lhsFrontDoor: json["LHS Front Door"],
-      lhsRearDoor: json["LHS Rear Door"],
-      lhsRunningBorder: json["LHS Running Border"],
-      carModel2LhsQuarterPanel: json["LHS Quarter Panel "],
-      rearBumper: json["Rear Bumper"],
-      lhsTailLamp: json["LHS Tail Lamp"],
-      rhsTailLamp: json["RHS Tail Lamp"],
-      rearWindshield: json["Rear Windshield"],
-      bootDoor: json["Boot Door"],
-      spareTyre: json["Spare Tyre"],
-      bootFloor: json["Boot Floor"],
-      rhsRearAlloy: json["RHS Rear Alloy"],
-      rhsRearTyre: json["RHS Rear Tyre"],
-      rhsFrontAlloy: json["RHS Front Alloy"],
-      rhsFrontTyre: json["RHS Front Tyre"],
-      rhsQuarterPanel: json["RHS Quarter Panel"],
-      rhsAPillar: json["RHS A Pillar"],
-      rhsBPillar: json["RHS B Pillar"],
-      rhsCPillar: json["RHS C Pillar"],
-      rhsRunningBorder: json["RHS Running Border"],
-      rhsRearDoor: json["RHS Rear Door"],
-      rhsFrontDoor: json["RHS Front Door"],
-      rhsOrvm: json["RHS ORVM"],
-      rhsFender: json["RHS Fender"],
-      frontMain: json["Front Main"],
-      carModel2Bonnet1: json["Bonnet_1"],
-      carModel2FrontBumper1: json["Front Bumper_1"],
-      lhsHeadlamp1: json["LHS Headlamp_1"],
-      rhsHeadlamp1: json["RHS Headlamp_1"],
-      lhsFrontAt45Degree: json["LHS Front at (45 Degree)"],
-      carModel2LhsFender1: json["LHS Fender_1"],
-      lhsFrontTyre1: json["LHS Front Tyre_1"],
-      lhsRunningBorder1: json["LHS Running Border_1"],
-      lhsOrvm1: json["LHS ORVM_1"],
-      carModel2LhsFrontDoor1: json["LHS Front Door_1"],
-      carModel2LhsRearDoor1: json["LHS Rear Door_1"],
-      lhsRearTyre1: json["LHS Rear Tyre_1"],
-      lhsQuarterPanel: json["LHS Quarter Panel"],
-      rearMain: json["Rear Main"],
-      rearWithBootDoorOpen: json["Rear with Boot Door Open"],
-      carModel2RearBumper1: json["Rear Bumper_1"],
-      spareTyre1: json["Spare Tyre_1"],
-      bootFloor1: json["Boot Floor_1"],
-      rhsRear45Degree: json["RHS Rear (45 Degree)"],
-      carModel2RhsQuarterPanel1: json["RHS Quarter Panel_1"],
-      rhsRearTyre1: json["RHS Rear Tyre_1"],
-      carModel2RhsRearDoor1: json["RHS Rear Door_1"],
-      carModel2RhsFrontDoor1: json["RHS Front Door_1"],
-      rhsRunningBorder1: json["RHS Running Border_1"],
-      rhsFrontTyre1: json["RHS Front Tyre_1"],
-      rhsOrvm1: json["RHS ORVM_1"],
-      carModel2RhsFender1: json["RHS Fender_1"],
-      upperCrossMember: json["Upper Cross Member"],
-      radiatorSupport: json["Radiator Support"],
-      headlightSupport: json["Headlight Support"],
-      lowerCrossMember: json["Lower Cross Member"],
-      lhsApron: json["LHS Apron"],
-      rhsApron: json["RHS Apron"],
-      firewall: json["Firewall"],
-      cowlTop: json["Cowl Top"],
-      engine: json["Engine"],
-      battery: json["Battery"],
-      coolant: json["Coolant"],
-      engineOilLevelDipstick: json["Engine Oil Level Dipstick"],
-      engineOil: json["Engine Oil"],
-      engineMount: json["Engine Mount"],
-      enginePermisableBlowBy: json["Engine Permisable Blow By"],
-      exhaustSmoke: json["Exhaust Smoke"],
-      clutch: json["Clutch"],
-      gearShift: json["Gear Shift"],
-      commentsOnEngineOil: json["Comments on Engine Oil :"],
-      commentsOnTransmission: json["Comments on Transmission :"],
-      commentsOnOthers: json["Comments on Others : "],
-      engineBay: json["Engine Bay"],
-      apronLhsRhs: json["Apron (LHS RHS)"],
-      battery1: json["Battery_1"],
-      additionalImages: json["Additional Images"],
-      engineSound: json["Engine Sound"],
-      exhaustSmoke1: json["Exhaust Smoke_1"],
-      steering: json["Steering"],
-      brakes: json["Brakes"],
-      suspension: json["Suspension"],
-      odometerReadingInKms: GlobalFunctions.parse<int>(
-        json["Odometer Reading ( in kms )"],
-      ),
-      fuelLevel: json["Fuel Level"],
-      abs: json["ABS"],
-      electricals: json["Electricals"],
-      rearWiperWasher: json["Rear Wiper Washer"],
-      rearDefogger: json["Rear Defogger"],
-      musicSystem: json["Music System"],
-      stereo: json["Stereo"],
-      inbuiltSpeaker: json["Inbuilt Speaker"],
-      externalSpeaker: json["External Speaker"],
-      steeringMountedAudioControl: json["Steering Mounted Audio Control"],
-      noOfPowerWindows: json["No. Of Power Windows"],
-      powerWindowConditionRhsFront: json["Power Window Condition RHS Front"],
-      powerWindowConditionLhsFront: json["Power Window Condition LHS Front"],
-      powerWindowConditionRhsRear: json["Power Window Condition RHS Rear"],
-      powerWindowConditionLhsRear: json["Power Window Condition LHS Rear"],
-      noOfAirBags016: GlobalFunctions.parse<int>(
-        json["No. of Air Bags ( 0 - 16 )"],
-      ),
-      airbagFeaturesDriverSide: json["Airbag Features  Driver Side"],
-      airbagFeaturesCoDriverSide: json["Airbag Features  Co-Driver Side"],
+      id: id,
+      timestamp:
+          GlobalFunctions.parse<DateTime>(json['Timestamp']) ?? DateTime.now(),
+      emailAddress: json["Email Address"] ?? 'N/A',
+      appointmentId: json["Appointment ID"] ?? 'N/A',
+      city: json["City"] ?? 'N/A',
+      registrationType: json["Registration Type"] ?? 'N/A',
+      rcBookAvailability: json["RC Book Availability"] ?? 'N/A',
+      rcCondition: json["RC Condition"] ?? 'N/A',
+      registrationNumber: json["Registration Number"] ?? 'N/A',
+      registrationDate:
+          GlobalFunctions.parse<DateTime>(json["Registration Date"]) ??
+          DateTime.now(),
+      fitnessTill:
+          GlobalFunctions.parse<DateTime>(json["Fitness Till "]) ??
+          DateTime.now(),
+      toBeScrapped: json["To be Scrapped"] ?? 'N/A',
+      registrationState: json["Registration State"] ?? 'N/A',
+      registeredRto: json["Registered RTO"] ?? 'N/A',
+      ownerSerialNumber:
+          GlobalFunctions.parse<int>(json["Owner Serial Number"]) ?? 0,
+      make: json["Make"] ?? 'N/A',
+      model: json["Model"] ?? 'N/A',
+      variant: json["Variant"] ?? 'N/A',
+      engineNumber: json["Engine Number"] ?? 'N/A',
+      chassisNumber: json["Chassis Number"] ?? 'N/A',
+      registeredOwner: json["Registered Owner"] ?? 'N/A',
+      registeredAddressAsPerRc: json["Registered address as per RC"] ?? 'N/A',
+      yearMonthOfManufacture:
+          GlobalFunctions.parse<DateTime>(json["Year Month of Manufacture"]) ??
+          DateTime.now(),
+      fuelType: json["Fuel Type"] ?? 'N/A',
+      cubicCapacity: GlobalFunctions.parse<int>(json["Cubic Capacity"]) ?? 0,
+      hypothecationDetails: json["Hypothecation Details"] ?? 'N/A',
+      mismatchInRc: json["Mismatch in RC"] ?? 'N/A',
+      roadTaxValidity: json["Road Tax Validity"] ?? 'N/A',
+      insurance: json["Insurance"] ?? 'N/A',
+      duplicateKey: json["Duplicate Key"] ?? 'N/A',
+      rtoNoc: json["RTO NOC"] ?? 'N/A',
+      rtoForm282Nos: json["RTO Form 28 (2 Nos)"] ?? 'N/A',
+      partyPeshi: json["Party Peshi"] ?? 'N/A',
+      additionalDetails: json["Additional Details"] ?? 'N/A',
+      rcTaxToken: json["RC Tax Token"] ?? 'N/A',
+      insuranceCopy: json["Insurance Copy"] ?? 'N/A',
+      bonnet: json["Bonnet"] ?? 'N/A',
+      frontWindshield: json["Front Windshield"] ?? 'N/A',
+      roof: json["Roof"] ?? 'N/A',
+      frontBumper: json["Front Bumper"] ?? 'N/A',
+      lhsHeadlamp: json["LHS Headlamp"] ?? 'N/A',
+      lhsFoglamp: json["LHS Foglamp"] ?? 'N/A',
+      rhsHeadlamp: json["RHS Headlamp"] ?? 'N/A',
+      rhsFoglamp: json["RHS Foglamp"] ?? 'N/A',
+      lhsFender: json["LHS Fender"] ?? 'N/A',
+      lhsOrvm: json["LHS ORVM"] ?? 'N/A',
+      lhsAPillar: json["LHS A Pillar"] ?? 'N/A',
+      lhsBPillar: json["LHS B Pillar"] ?? 'N/A',
+      lhsCPillar: json["LHS C Pillar"] ?? 'N/A',
+      lhsFrontAlloy: json["LHS Front Alloy"] ?? 'N/A',
+      lhsFrontTyre: json["LHS Front Tyre"] ?? 'N/A',
+      lhsRearAlloy: json["LHS Rear Alloy"] ?? 'N/A',
+      lhsRearTyre: json["LHS Rear Tyre"] ?? 'N/A',
+      lhsFrontDoor: json["LHS Front Door"] ?? 'N/A',
+      lhsRearDoor: json["LHS Rear Door"] ?? 'N/A',
+      lhsRunningBorder: json["LHS Running Border"] ?? 'N/A',
+      carModel2LhsQuarterPanel: json["LHS Quarter Panel "] ?? 'N/A',
+      rearBumper: json["Rear Bumper"] ?? 'N/A',
+      lhsTailLamp: json["LHS Tail Lamp"] ?? 'N/A',
+      rhsTailLamp: json["RHS Tail Lamp"] ?? 'N/A',
+      rearWindshield: json["Rear Windshield"] ?? 'N/A',
+      bootDoor: json["Boot Door"] ?? 'N/A',
+      spareTyre: json["Spare Tyre"] ?? 'N/A',
+      bootFloor: json["Boot Floor"] ?? 'N/A',
+      rhsRearAlloy: json["RHS Rear Alloy"] ?? 'N/A',
+      rhsRearTyre: json["RHS Rear Tyre"] ?? 'N/A',
+      rhsFrontAlloy: json["RHS Front Alloy"] ?? 'N/A',
+      rhsFrontTyre: json["RHS Front Tyre"] ?? 'N/A',
+      rhsQuarterPanel: json["RHS Quarter Panel"] ?? 'N/A',
+      rhsAPillar: json["RHS A Pillar"] ?? 'N/A',
+      rhsBPillar: json["RHS B Pillar"] ?? 'N/A',
+      rhsCPillar: json["RHS C Pillar"] ?? 'N/A',
+      rhsRunningBorder: json["RHS Running Border"] ?? 'N/A',
+      rhsRearDoor: json["RHS Rear Door"] ?? 'N/A',
+      rhsFrontDoor: json["RHS Front Door"] ?? 'N/A',
+      rhsOrvm: json["RHS ORVM"] ?? 'N/A',
+      rhsFender: json["RHS Fender"] ?? 'N/A',
+      frontMain: json["Front Main"] ?? 'N/A',
+      carModel2Bonnet1: json["Bonnet_1"] ?? 'N/A',
+      carModel2FrontBumper1: json["Front Bumper_1"] ?? 'N/A',
+      lhsHeadlamp1: json["LHS Headlamp_1"] ?? 'N/A',
+      rhsHeadlamp1: json["RHS Headlamp_1"] ?? 'N/A',
+      lhsFrontAt45Degree: json["LHS Front at (45 Degree)"] ?? 'N/A',
+      carModel2LhsFender1: json["LHS Fender_1"] ?? 'N/A',
+      lhsFrontTyre1: json["LHS Front Tyre_1"] ?? 'N/A',
+      lhsRunningBorder1: json["LHS Running Border_1"] ?? 'N/A',
+      lhsOrvm1: json["LHS ORVM_1"] ?? 'N/A',
+      carModel2LhsFrontDoor1: json["LHS Front Door_1"] ?? 'N/A',
+      carModel2LhsRearDoor1: json["LHS Rear Door_1"] ?? 'N/A',
+      lhsRearTyre1: json["LHS Rear Tyre_1"] ?? 'N/A',
+      lhsQuarterPanel: json["LHS Quarter Panel"] ?? 'N/A',
+      rearMain: json["Rear Main"] ?? 'N/A',
+      rearWithBootDoorOpen: json["Rear with Boot Door Open"] ?? 'N/A',
+      carModel2RearBumper1: json["Rear Bumper_1"] ?? 'N/A',
+      spareTyre1: json["Spare Tyre_1"] ?? 'N/A',
+      bootFloor1: json["Boot Floor_1"] ?? 'N/A',
+      rhsRear45Degree: json["RHS Rear (45 Degree)"] ?? 'N/A',
+      carModel2RhsQuarterPanel1: json["RHS Quarter Panel_1"] ?? 'N/A',
+      rhsRearTyre1: json["RHS Rear Tyre_1"] ?? 'N/A',
+      carModel2RhsRearDoor1: json["RHS Rear Door_1"] ?? 'N/A',
+      carModel2RhsFrontDoor1: json["RHS Front Door_1"] ?? 'N/A',
+      rhsRunningBorder1: json["RHS Running Border_1"] ?? 'N/A',
+      rhsFrontTyre1: json["RHS Front Tyre_1"] ?? 'N/A',
+      rhsOrvm1: json["RHS ORVM_1"] ?? 'N/A',
+      carModel2RhsFender1: json["RHS Fender_1"] ?? 'N/A',
+      upperCrossMember: json["Upper Cross Member"] ?? 'N/A',
+      radiatorSupport: json["Radiator Support"] ?? 'N/A',
+      headlightSupport: json["Headlight Support"] ?? 'N/A',
+      lowerCrossMember: json["Lower Cross Member"] ?? 'N/A',
+      lhsApron: json["LHS Apron"] ?? 'N/A',
+      rhsApron: json["RHS Apron"] ?? 'N/A',
+      firewall: json["Firewall"] ?? 'N/A',
+      cowlTop: json["Cowl Top"] ?? 'N/A',
+      engine: json["Engine"] ?? 'N/A',
+      battery: json["Battery"] ?? 'N/A',
+      coolant: json["Coolant"] ?? 'N/A',
+      engineOilLevelDipstick: json["Engine Oil Level Dipstick"] ?? 'N/A',
+      engineOil: json["Engine Oil"] ?? 'N/A',
+      engineMount: json["Engine Mount"] ?? 'N/A',
+      enginePermisableBlowBy: json["Engine Permisable Blow By"] ?? 'N/A',
+      exhaustSmoke: json["Exhaust Smoke"] ?? 'N/A',
+      clutch: json["Clutch"] ?? 'N/A',
+      gearShift: json["Gear Shift"] ?? 'N/A',
+      commentsOnEngineOil: json["Comments on Engine Oil :"] ?? 'N/A',
+      commentsOnTransmission: json["Comments on Transmission :"] ?? 'N/A',
+      commentsOnOthers: json["Comments on Others : "] ?? 'N/A',
+      engineBay: json["Engine Bay"] ?? 'N/A',
+      apronLhsRhs: json["Apron (LHS RHS)"] ?? 'N/A',
+      battery1: json["Battery_1"] ?? 'N/A',
+      additionalImages: json["Additional Images"] ?? 'N/A',
+      engineSound: json["Engine Sound"] ?? 'N/A',
+      exhaustSmoke1: json["Exhaust Smoke_1"] ?? 'N/A',
+      steering: json["Steering"] ?? 'N/A',
+      brakes: json["Brakes"] ?? 'N/A',
+      suspension: json["Suspension"] ?? 'N/A',
+      odometerReadingInKms:
+          GlobalFunctions.parse<int>(json["Odometer Reading ( in kms )"]) ?? 0,
+      fuelLevel: json["Fuel Level"] ?? 'N/A',
+      abs: json["ABS"] ?? 'N/A',
+      electricals: json["Electricals"] ?? 'N/A',
+      rearWiperWasher: json["Rear Wiper Washer"] ?? 'N/A',
+      rearDefogger: json["Rear Defogger"] ?? 'N/A',
+      musicSystem: json["Music System"] ?? 'N/A',
+      stereo: json["Stereo"] ?? 'N/A',
+      inbuiltSpeaker: json["Inbuilt Speaker"] ?? 'N/A',
+      externalSpeaker: json["External Speaker"] ?? 'N/A',
+      steeringMountedAudioControl:
+          json["Steering Mounted Audio Control"] ?? 'N/A',
+      noOfPowerWindows: json["No. Of Power Windows"] ?? 'N/A',
+      powerWindowConditionRhsFront:
+          json["Power Window Condition RHS Front"] ?? 'N/A',
+      powerWindowConditionLhsFront:
+          json["Power Window Condition LHS Front"] ?? 'N/A',
+      powerWindowConditionRhsRear:
+          json["Power Window Condition RHS Rear"] ?? 'N/A',
+      powerWindowConditionLhsRear:
+          json["Power Window Condition LHS Rear"] ?? 'N/A',
+      noOfAirBags016:
+          GlobalFunctions.parse<int>(json["No. of Air Bags ( 0 - 16 )"]) ?? 0,
+      airbagFeaturesDriverSide: json["Airbag Features  Driver Side"] ?? 'N/A',
+      airbagFeaturesCoDriverSide:
+          json["Airbag Features  Co-Driver Side"] ?? 'N/A',
       airbagFeaturesLhsAPillarCurtain:
-          json["Airbag Features  LHS A Pillar Curtain"],
+          json["Airbag Features  LHS A Pillar Curtain"] ?? 'N/A',
       airbagFeaturesLhsBPillarCurtain:
-          json["Airbag Features  LHS B Pillar Curtain"],
+          json["Airbag Features  LHS B Pillar Curtain"] ?? 'N/A',
       airbagFeaturesLhsCPillarCurtain:
-          json["Airbag Features  LHS C Pillar Curtain"],
+          json["Airbag Features  LHS C Pillar Curtain"] ?? 'N/A',
       airbagFeaturesRhsAPillarCurtain:
-          json["Airbag Features  RHS A Pillar Curtain"],
+          json["Airbag Features  RHS A Pillar Curtain"] ?? 'N/A',
       airbagFeaturesRhsBPillarCurtain:
-          json["Airbag Features  RHS B Pillar Curtain"],
+          json["Airbag Features  RHS B Pillar Curtain"] ?? 'N/A',
       airbagFeaturesRhsCPillarCurtain:
-          json["Airbag Features  RHS C Pillar Curtain"],
-      sunroof: json["Sunroof"],
-      leatherSeats: json["Leather Seats"],
-      fabricSeats: json["Fabric Seats"],
-      commentsOnElectricals: json["Comments on Electricals :"],
-      meterConsoleWithEngineOn: json["Meter Console with (Engine ON)"],
+          json["Airbag Features  RHS C Pillar Curtain"] ?? 'N/A',
+      sunroof: json["Sunroof"] ?? 'N/A',
+      leatherSeats: json["Leather Seats"] ?? 'N/A',
+      fabricSeats: json["Fabric Seats"] ?? 'N/A',
+      commentsOnElectricals: json["Comments on Electricals :"] ?? 'N/A',
+      meterConsoleWithEngineOn: json["Meter Console with (Engine ON)"] ?? 'N/A',
       frontSeatsFromDriverSideDoorOpen:
-          json["Front Seats from Driver side (Door open)"],
+          json["Front Seats from Driver side (Door open)"] ?? 'N/A',
       rearSeatsFromRightSideDoorOpen:
-          json["Rear Seats from Right side (Door open)"],
-      dashboardFromRearSeat: json["Dashboard from rear Seat"],
-      reverseCamera: json["Reverse Camera"],
-      airConditioningManual: json["Air Conditioning Manual"],
-      airConditioningClimateControl: json["Air Conditioning Climate Control"],
-      approvedBy: json["Approved By"],
-      approvalDate: GlobalFunctions.parse<DateTime>(json["Approval Date"]),
-      approvalTime: GlobalFunctions.parse<DateTime>(json["Approval Time"]),
-      approvalStatus: json["Approval Status"],
-      contactNumber: GlobalFunctions.parse<int>(json["Contact Number"]),
-      newArrivalMessage: GlobalFunctions.parse<DateTime>(
-        json["New Arrival Message"] ?? "",
-      ),
-      budgetCar: json["Budget Car"],
-      status: json["Status"],
-      rcToken1: json["RCToken1"],
-      rcToken2: json["RCToken2"],
-      rcToken3: json["RCToken3"],
-      rcToken4: json["RCToken4"],
-      insuranceCopy1: json["Insurance Copy 1"],
-      apronLhs: json["Apron (LHS)"],
-      apronRhs: json["Apron (RHS)"],
-      additionalImages1Engine: json["Additional Images 1 (Engine)"],
-      additionalImages2Engine: json["Additional Images 2 (Engine)"],
-      airbags2: json["Airbags 2"],
-      lhsFender1: json["LHS Fender 1"],
-      lhsFender2: json["LHS Fender 2"],
-      lhsFrontDoor1: json["LHS Front Door 1"],
-      lhsFrontDoor2: json["LHS Front Door 2"],
-      lhsRearDoor1: json["LHS Rear Door 1"],
-      lhsRearDoor2: json["LHS Rear Door 2"],
-      lhsQuarterPanel1: json["LHS Quarter Panel 1"],
-      rhsQuarterPanel1: json["RHS Quarter Panel 1"],
-      rhsRearDoor1: json["RHS Rear Door 1"],
-      rhsRearDoor2: json["RHS Rear Door 2"],
-      rhsRearDoor3: json["RHS Rear Door 3"],
-      rhsFrontDoor1: json["RHS Front Door 1"],
-      rhsFrontDoor2: json["RHS Front Door 2"],
-      rhsFrontDoor3: json["RHS Front Door 3"],
-      rhsFender1: json["RHS Fender 1"],
-      inspectionId: json["Inspection ID"],
-      bonnet1: json["Bonnet 1"],
-      bonnet2: json["Bonnet 2"],
-      frontBumper1: json["Front Bumper 1"],
-      rearBumper1: json["Rear Bumper 1"],
-      priceDiscovery: GlobalFunctions.parse<int>(json["Price Discovery"]),
-      priceDiscoveryBy: json["Price Discovery By"],
-      retailAssociate: json["Retail Associate"],
-      kmRangeLevel: GlobalFunctions.parse<int>(json["KM Range Level"]),
+          json["Rear Seats from Right side (Door open)"] ?? 'N/A',
+      dashboardFromRearSeat: json["Dashboard from rear Seat"] ?? 'N/A',
+      reverseCamera: json["Reverse Camera"] ?? 'N/A',
+      airConditioningManual: json["Air Conditioning Manual"] ?? 'N/A',
+      airConditioningClimateControl:
+          json["Air Conditioning Climate Control"] ?? 'N/A',
+      approvedBy: json["Approved By"] ?? 'N/A',
+      approvalDate:
+          GlobalFunctions.parse<DateTime>(json["Approval Date"]) ??
+          DateTime.now(),
+      approvalTime:
+          GlobalFunctions.parse<DateTime>(json["Approval Time"]) ??
+          DateTime.now(),
+      approvalStatus: json["Approval Status"] ?? 'N/A',
+      contactNumber: GlobalFunctions.parse<int>(json["Contact Number"]) ?? 0,
+      newArrivalMessage:
+          GlobalFunctions.parse<DateTime>(json["New Arrival Message"] ?? "") ??
+          DateTime.now(),
+      budgetCar: json["Budget Car"] ?? 'N/A',
+      status: json["Status"] ?? 'N/A',
+      rcToken1: json["RCToken1"] ?? 'N/A',
+      rcToken2: json["RCToken2"] ?? 'N/A',
+      rcToken3: json["RCToken3"] ?? 'N/A',
+      rcToken4: json["RCToken4"] ?? 'N/A',
+      insuranceCopy1: json["Insurance Copy 1"] ?? 'N/A',
+      apronLhs: json["Apron (LHS)"] ?? 'N/A',
+      apronRhs: json["Apron (RHS)"] ?? 'N/A',
+      additionalImages1Engine: json["Additional Images 1 (Engine)"] ?? 'N/A',
+      additionalImages2Engine: json["Additional Images 2 (Engine)"] ?? 'N/A',
+      airbags2: json["Airbags 2"] ?? 'N/A',
+      lhsFender1: json["LHS Fender 1"] ?? 'N/A',
+      lhsFender2: json["LHS Fender 2"] ?? 'N/A',
+      lhsFrontDoor1: json["LHS Front Door 1"] ?? 'N/A',
+      lhsFrontDoor2: json["LHS Front Door 2"] ?? 'N/A',
+      lhsRearDoor1: json["LHS Rear Door 1"] ?? 'N/A',
+      lhsRearDoor2: json["LHS Rear Door 2"] ?? 'N/A',
+      lhsQuarterPanel1: json["LHS Quarter Panel 1"] ?? 'N/A',
+      rhsQuarterPanel1: json["RHS Quarter Panel 1"] ?? 'N/A',
+      rhsRearDoor1: json["RHS Rear Door 1"] ?? 'N/A',
+      rhsRearDoor2: json["RHS Rear Door 2"] ?? 'N/A',
+      rhsRearDoor3: json["RHS Rear Door 3"] ?? 'N/A',
+      rhsFrontDoor1: json["RHS Front Door 1"] ?? 'N/A',
+      rhsFrontDoor2: json["RHS Front Door 2"] ?? 'N/A',
+      rhsFrontDoor3: json["RHS Front Door 3"] ?? 'N/A',
+      rhsFender1: json["RHS Fender 1"] ?? 'N/A',
+      inspectionId: json["Inspection ID"] ?? 'N/A',
+      bonnet1: json["Bonnet 1"] ?? 'N/A',
+      bonnet2: json["Bonnet 2"] ?? 'N/A',
+      frontBumper1: json["Front Bumper 1"] ?? 'N/A',
+      rearBumper1: json["Rear Bumper 1"] ?? 'N/A',
+      priceDiscovery: GlobalFunctions.parse<int>(json["Price Discovery"]) ?? 0,
+      priceDiscoveryBy: json["Price Discovery By"] ?? 'N/A',
+      retailAssociate: json["Retail Associate"] ?? 'N/A',
+      kmRangeLevel: GlobalFunctions.parse<int>(json["KM Range Level"]) ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    "_id": id,
+    // "_id": id,
     "Timestamp": timestamp,
     "Email Address": emailAddress,
     "Appointment ID": appointmentId,

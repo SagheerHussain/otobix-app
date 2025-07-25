@@ -6,8 +6,10 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
-void placeBidButtonForLiveBidsSection(BuildContext context) {
-  final CarDetailsController bidController = Get.put(CarDetailsController());
+void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
+  final CarDetailsController bidController = Get.put(
+    CarDetailsController(carId),
+  );
   bidController.resetBidIncrement();
   showModalBottomSheet(
     context: context,

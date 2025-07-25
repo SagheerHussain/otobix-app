@@ -54,6 +54,8 @@ dependencies:
   shimmer: ^3.0.0
   image_picker: ^1.1.2
   confetti: ^0.8.0
+  accordion: ^2.6.0
+  flutter_layout_grid: ^2.0.8
 
 flutter_icons:
   android: true

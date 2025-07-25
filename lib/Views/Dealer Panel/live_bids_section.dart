@@ -41,6 +41,7 @@ class LiveBidsSection extends StatelessWidget {
                             onTap: () {
                               Get.to(
                                 () => CarDetailsPage(
+                                  carId: car.id!,
                                   car: car,
                                   type: getxController.liveBidsSectionScreen,
                                 ),

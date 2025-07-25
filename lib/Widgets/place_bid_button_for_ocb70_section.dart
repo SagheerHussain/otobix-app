@@ -6,8 +6,10 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
-void placeBidButtonForOcb70Section(BuildContext context) {
-  final CarDetailsController bidController = Get.put(CarDetailsController());
+void placeBidButtonForOcb70Section(BuildContext context, String carId) {
+  final CarDetailsController bidController = Get.put(
+    CarDetailsController(carId),
+  );
   bidController.resetBidIncrement();
 
   showModalBottomSheet(

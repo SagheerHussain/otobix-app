@@ -1,4 +1,5 @@
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:otobix/Utils/app_images.dart';
 
 class CarModel {
   String? id;
@@ -34,9 +35,10 @@ class CarModel {
   }) {
     return CarModel(
       id: id,
-      imageUrl: data['imageUrl'] as String,
+      // imageUrl: data['imageUrl'] as String,
+      imageUrl: AppImages.tataNexon1,
       name: data['name'] as String,
-      price: data['price'] as double,
+      price: (data['price'] as num).toDouble(),
       year: data['year'] as int,
       kmDriven: data['kmDriven'] as int,
       fuelType: data['fuelType'] as String,

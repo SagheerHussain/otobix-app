@@ -35,14 +35,17 @@ class OcbNegoPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: getxController.cars.length - 8,
+        itemCount: getxController.carsList.length - 8,
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
-          final car = getxController.cars.reversed.toList()[index];
+          final car = getxController.carsList.reversed.toList()[index];
           // InkWell for car card
           return InkWell(
             onTap: () {
-              Get.to(() => CarDetailsPage(car: car, type: 'ocb_nego'));
+              Get.to(
+                () =>
+                    CarDetailsPage(carId: car.id!, car: car, type: 'ocb_nego'),
+              );
             },
             child: Card(
               elevation: 4,

@@ -183,7 +183,7 @@ class HomePage extends StatelessWidget {
           ),
           onChanged: (value) {
             getxController.filteredCars.value =
-                getxController.cars
+                getxController.carsList
                     .where(
                       (car) =>
                           car.name.toLowerCase().contains(value.toLowerCase()),

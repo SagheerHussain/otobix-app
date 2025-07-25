@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class GlobalFunctions {
   static T? parse<T>(dynamic value) {
     if (value == null) return null;
@@ -53,6 +55,45 @@ class GlobalFunctions {
       return value as T;
     } catch (_) {
       return null;
+    }
+  }
+
+  static const String year = 'year';
+  static const String month = 'month';
+  static const String monthName = 'monthname';
+  static const String day = 'day';
+  static const String weekday = 'weekday';
+  static const String time = 'time';
+  static const String dateTime = 'datetime';
+  static const String fullDate = 'fulldate';
+  static const String date = 'date';
+  static const String monthYear = 'monthyear';
+  static const String dayMonth = 'daymonth';
+
+  static String getFormattedDate(DateTime date, String type) {
+    switch (type.toLowerCase()) {
+      case year:
+        return DateFormat('yyyy').format(date);
+      case month:
+        return DateFormat('MM').format(date);
+      case monthName:
+        return DateFormat('MMMM').format(date);
+      case day:
+        return DateFormat('dd').format(date);
+      case weekday:
+        return DateFormat('EEEE').format(date);
+      case time:
+        return DateFormat('hh:mm a').format(date);
+      case dateTime:
+        return DateFormat('dd-MM-yyyy hh:mm a').format(date);
+      case fullDate:
+        return DateFormat('dd-MM-yyyy').format(date);
+      case monthYear:
+        return DateFormat('MM-yyyy').format(date);
+      case dayMonth:
+        return DateFormat('dd-MM').format(date);
+      default:
+        return DateFormat('dd-MM-yyyy').format(date); // fallback
     }
   }
 }

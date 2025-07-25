@@ -38,4 +38,6 @@ class AppUrls {
   static String logout(String userId) => "${baseUrl}user/logout/$userId";
 
   static String getCarDetails(String carId) => "${baseUrl}car/details/$carId";
+
+  static const String getCarsList = "${baseUrl}car/cars-list";
 }

@@ -8,8 +8,10 @@ import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 // Auto Bid Sheet
-void autoBidButtonForOcb70Section() {
-  final CarDetailsController getxController = Get.put(CarDetailsController());
+void autoBidButtonForOcb70Section(String carId) {
+  final CarDetailsController getxController = Get.put(
+    CarDetailsController(carId),
+  );
   getxController.resetBidIncrement();
 
   showModalBottomSheet(

@@ -10,16 +10,23 @@ import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 
 class StartAutoBidButtonWidget extends StatelessWidget {
-  StartAutoBidButtonWidget({super.key, required this.type});
+  StartAutoBidButtonWidget({
+    super.key,
+    required this.type,
+    required this.carId,
+  });
 
   final String type;
 
-  final CarDetailsController getxController = Get.put(CarDetailsController());
+  final String carId;
 
   final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
+    final CarDetailsController getxController = Get.put(
+      CarDetailsController(carId),
+    );
     return ButtonWidget(
       text:
           type == homeController.liveBidsSectionScreen
@@ -33,15 +40,15 @@ class StartAutoBidButtonWidget extends StatelessWidget {
               : 'Submit Auto Bid',
       onTap: () {
         if (type == homeController.liveBidsSectionScreen) {
-          autoBidButtonForLiveBidsSection();
+          autoBidButtonForLiveBidsSection(carId);
         } else if (type == homeController.upcomingSectionScreen) {
-          autoBidButtonForUpcomingSection();
+          autoBidButtonForUpcomingSection(carId);
         } else if (type == homeController.ocb70SectionScreen) {
-          autoBidButtonForOcb70Section();
+          autoBidButtonForOcb70Section(carId);
         } else if (type == homeController.marketplaceSectionScreen) {
-          defaultAutoBidSheet();
+          defaultAutoBidSheet(carId);
         } else {
-          defaultAutoBidSheet();
+          defaultAutoBidSheet(carId);
         }
       },
       isLoading: getxController.isLoading,
@@ -53,8 +60,10 @@ class StartAutoBidButtonWidget extends StatelessWidget {
   }
 
   // Default Auto Bid Sheet
-  void defaultAutoBidSheet() {
-    final CarDetailsController bidController = Get.put(CarDetailsController());
+  void defaultAutoBidSheet(String carId) {
+    final CarDetailsController bidController = Get.put(
+      CarDetailsController(carId),
+    );
     bidController.resetBidIncrement();
     // final TextEditingController bidAmountController = TextEditingController();
 
@@ -118,7 +127,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                           SizedBox(width: 4),
                           Obx(
                             () => Text(
-                              getxController.remainingTime.value,
+                              bidController.remainingTime.value,
                               style: TextStyle(
                                 color: AppColors.red,
                                 fontSize: 12,

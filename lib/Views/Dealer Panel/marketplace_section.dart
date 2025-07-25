@@ -42,6 +42,7 @@ class MarketplaceSection extends StatelessWidget {
                             onTap: () {
                               Get.to(
                                 () => CarDetailsPage(
+                                  carId: car.id!,
                                   car: car,
                                   type: getxController.marketplaceSectionScreen,
                                 ),

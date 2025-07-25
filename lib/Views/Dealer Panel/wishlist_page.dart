@@ -35,14 +35,14 @@ class WishlistPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: getxController.cars.length - 5,
+        itemCount: getxController.carsList.length - 5,
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
-          final car = getxController.cars[index];
+          final car = getxController.carsList[index];
           // InkWell for car card
           return InkWell(
             onTap: () {
-              Get.to(() => CarDetailsPage(car: car, type: 'wishlist'));
+              Get.to(() => CarDetailsPage(carId: car.id!, car: car, type: 'wishlist'));
             },
             child: Card(
               elevation: 4,

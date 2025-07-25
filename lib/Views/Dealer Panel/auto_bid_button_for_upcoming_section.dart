@@ -7,8 +7,10 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
 // Auto Bid Sheet
-void autoBidButtonForUpcomingSection() {
-  final CarDetailsController getxController = Get.put(CarDetailsController());
+void autoBidButtonForUpcomingSection(String carId) {
+  final CarDetailsController getxController = Get.put(
+    CarDetailsController(carId),
+  );
   getxController.resetBidIncrement();
   // final TextEditingController bidAmountController = TextEditingController();
 

@@ -6,8 +6,10 @@ import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 
-Future<void> offeringBidSheet(BuildContext context) async {
-  final CarDetailsController bidController = Get.put(CarDetailsController());
+Future<void> offeringBidSheet(BuildContext context, String carId) async {
+  final CarDetailsController bidController = Get.put(
+    CarDetailsController(carId),
+  );
   bidController.resetBidIncrement();
 
   // reset offering your bid increment

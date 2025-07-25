@@ -1,11 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
+import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
+import '../Network/api_service.dart';
+
 class HomeController extends GetxController {
+  List<CarModel> carsList = [];
+  RxBool isLoading = false.obs;
+
   TextEditingController searchController = TextEditingController();
   TextEditingController minPriceController = TextEditingController();
   TextEditingController maxPriceController = TextEditingController();
@@ -62,7 +71,8 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    filteredCars.value = cars;
+    fetchCarsList();
+    // filteredCars.value = carsList;
     // Listen to changes in ValueNotifier
     selectedSegmentNotifier.addListener(() {
       selectedSegment.value = selectedSegmentNotifier.value;
@@ -102,8 +112,34 @@ class HomeController extends GetxController {
   };
 
   final RxList<CarModel> filteredCars = <CarModel>[].obs;
+  Future<void> fetchCarsList() async {
+    isLoading.value = true;
+    try {
+      final url = AppUrls.getCarsList;
+      final response = await ApiService.get(endpoint: url);
 
-  final List<CarModel> cars = [
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        carsList = List<CarModel>.from(
+          (data as List).map(
+            (car) => CarModel.fromJson(data: car, id: car['id']),
+          ),
+        );
+        filteredCars.value = carsList;
+        debugPrint('Cars List Fetched Successfully');
+      } else {
+        filteredCars.value = [];
+        debugPrint('Failed to fetch data ${response.body}');
+      }
+    } catch (error) {
+      debugPrint('Failed to fetch data: $error');
+      filteredCars.value = [];
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  final List<CarModel> carsList1 = [
     CarModel(
       imageUrl: AppImages.tataNexon1,
       name: 'Tata Nexon',

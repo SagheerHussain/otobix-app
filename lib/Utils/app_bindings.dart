@@ -21,7 +21,7 @@ class AppBindings extends Bindings {
     // Get.put(FirstController());
     Get.lazyPut(() => AccountController());
     Get.lazyPut(() => BottomNavigationController());
-    Get.lazyPut(() => CarDetailsController());
+    Get.lazyPut(() => CarDetailsController(''));
     Get.lazyPut(() => HomeController());
     Get.lazyPut(() => LoginController());
     Get.lazyPut(() => LoginPinCodeController());
