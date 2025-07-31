@@ -6,8 +6,8 @@ class AppImages {
   static const String carAlternateImage =
       'lib/assets/images/carAlternateImage.jpg';
   static const String addOnsHeaderImage = 'lib/assets/images/addOnsHeader.png';
-static const String filterIcon = 'lib/assets/images/sort.png';
-static const String rejectedIcon = 'lib/assets/animations/Rejected.json';
+  static const String filterIcon = 'lib/assets/images/sort.png';
+  static const String rejectedIcon = 'lib/assets/animations/Rejected.json';
   // Temporary car images
   static const String hondaCity1 = 'lib/assets/images/hondaCity1.jpg';
   static const String hyundaiCreta1 = 'lib/assets/images/hyundaiCreta1.jpg';
@@ -34,4 +34,11 @@ static const String rejectedIcon = 'lib/assets/animations/Rejected.json';
   static const String tataNexon1 = 'lib/assets/images/tataNexon1.jpg';
   static const String tataNexon2 = 'lib/assets/images/tataNexon2.jpg';
   static const String tataNexon3 = 'lib/assets/images/tataNexon3.jpg';
+
+  static const String hondaDashboardView =
+      'lib/assets/images/hondaDashboard.jpg';
+  static const String hondaFrontSeatsView =
+      'lib/assets/images/hondaFrontSeats.jpg';
+  static const String hondaRearSeatsView =
+      'lib/assets/images/hondaRearSeats.jpg';
 }

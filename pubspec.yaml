@@ -56,6 +56,7 @@ dependencies:
   confetti: ^0.8.0
   accordion: ^2.6.0
   flutter_layout_grid: ^2.0.8
+  cached_network_image: ^3.4.1
 
 flutter_icons:
   android: true

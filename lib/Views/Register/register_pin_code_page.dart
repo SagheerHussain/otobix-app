@@ -31,34 +31,36 @@ class RegisterPinCodePage extends StatelessWidget {
         backgroundColor: AppColors.white,
         elevation: 4,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            _buildAppLogo(),
-            SizedBox(height: 10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildOtpMessageText(),
-                SizedBox(height: 30),
-                _buildPinCodeTextField(context),
-                SizedBox(height: 20),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     pinCodeFieldsController.verifyOtp(
-                //       phoneNumber: phoneNumber,
-                //       otp: value,
-                //     );
-                //   },
-                //   style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                //   child: Text("Verify", style: TextStyle(color: Colors.white)),
-                // ),
-              ],
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              _buildAppLogo(),
+              SizedBox(height: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildOtpMessageText(),
+                  SizedBox(height: 30),
+                  _buildPinCodeTextField(context),
+                  SizedBox(height: 20),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     pinCodeFieldsController.verifyOtp(
+                  //       phoneNumber: phoneNumber,
+                  //       otp: value,
+                  //     );
+                  //   },
+                  //   style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  //   child: Text("Verify", style: TextStyle(color: Colors.white)),
+                  // ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

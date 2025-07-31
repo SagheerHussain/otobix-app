@@ -40,28 +40,31 @@ class ToastWidget {
       snackbarDuration: Duration(seconds: toastDuration),
       autoDismiss: true,
       builder:
-          (context) => ToastCard(
-            color: color,
-            leading: Icon(icon, size: 28, color: Colors.white),
-            title: Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                color: Colors.white,
+          (context) => Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: ToastCard(
+              color: color,
+              leading: Icon(icon, size: 28, color: Colors.white),
+              title: Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
               ),
+              subtitle:
+                  subtitle != null
+                      ? Text(
+                        subtitle,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                      )
+                      : null,
             ),
-            subtitle:
-                subtitle != null
-                    ? Text(
-                      subtitle,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    )
-                    : null,
           ),
     ).show(context);
   }

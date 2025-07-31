@@ -46,8 +46,8 @@ class CarDetailsController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         carDetails = CarModel2.fromJson(
-          data['carDetails'],
-          data['carDetails']['_id'],
+          json: data['carDetails'],
+          documentId: data['carDetails']['_id'],
         );
         debugPrint('Car Details Fetched Successfully');
       } else {

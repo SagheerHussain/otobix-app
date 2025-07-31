@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 class GlobalFunctions {
+  // Parse dynamic value to specific type
   static T? parse<T>(dynamic value) {
     if (value == null) return null;
 
@@ -58,6 +59,26 @@ class GlobalFunctions {
     }
   }
 
+  // Parse lists
+  static List<T> parseList<T>({
+    required Type parsedListType,
+    required List<dynamic> incomingList,
+  }) {
+    if (parsedListType == String) {
+      return incomingList.map((e) => e.toString() as T).toList();
+    }
+    if (parsedListType == int) {
+      return incomingList.map((e) => int.tryParse(e.toString()) as T).toList();
+    }
+    if (parsedListType == double) {
+      return incomingList
+          .map((e) => double.tryParse(e.toString()) as T)
+          .toList();
+    }
+    throw UnsupportedError('Unsupported type: $parsedListType');
+  }
+
+  // Parse Date to a specific Format
   static const String year = 'year';
   static const String month = 'month';
   static const String monthName = 'monthname';
@@ -70,7 +91,10 @@ class GlobalFunctions {
   static const String monthYear = 'monthyear';
   static const String dayMonth = 'daymonth';
 
-  static String getFormattedDate(DateTime date, String type) {
+  static String getFormattedDate({
+    required DateTime date,
+    required String type,
+  }) {
     switch (type.toLowerCase()) {
       case year:
         return DateFormat('yyyy').format(date);

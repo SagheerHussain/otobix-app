@@ -3,9 +3,14 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Widgets/button_widget.dart';
+import 'package:otobix/Widgets/dropdown_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
+import 'package:otobix/admin/admin_home.dart';
 import 'package:otobix/admin/controller/admin_approved_users_list_controller.dart';
+import 'package:otobix/admin/controller/admin_home_controller.dart';
+import 'package:otobix/admin/controller/admin_rejected_users_list_controller.dart';
 
 class AdminApprovedUsersListPage extends StatelessWidget {
   final RxString searchQuery;
@@ -176,8 +181,8 @@ class AdminApprovedUsersListPage extends StatelessWidget {
         return DraggableScrollableSheet(
           expand: false,
           maxChildSize: 0.95,
-          minChildSize: 0.4,
-          initialChildSize: 0.7,
+          minChildSize: 0.7,
+          initialChildSize: 0.8,
           builder: (_, scrollController) {
             return SingleChildScrollView(
               controller: scrollController,
@@ -224,6 +229,10 @@ class AdminApprovedUsersListPage extends StatelessWidget {
                   const Divider(height: 30),
 
                   _infoTile("Role", user.userRole),
+                  if (user.userName.isNotEmpty)
+                    _infoTile("User Name", user.userName),
+                  if (user.password.isNotEmpty)
+                    _infoTile("Password", user.password),
                   _infoTile("Phone", user.phoneNumber),
                   _infoTile("Location", user.location),
                   if (user.dealershipName != null &&
@@ -253,6 +262,24 @@ class AdminApprovedUsersListPage extends StatelessWidget {
                     ),
                   if (user.addressList.isNotEmpty)
                     _infoTile("Addresses", user.addressList.join(", ")),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ButtonWidget(
+                        text: "Edit Profile",
+                        isLoading: false.obs,
+                        height: 35,
+                        fontSize: 12,
+                        onTap: () {
+                          Get.back(); // Close the bottom sheet
+                          Future.delayed(Duration(milliseconds: 200), () {
+                            _showEditDialog(user); // Then show the dialog
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             );
@@ -325,6 +352,217 @@ class AdminApprovedUsersListPage extends StatelessWidget {
             const ShimmerWidget(width: 70, height: 25, borderRadius: 50),
           ],
         ),
+      ),
+    );
+  }
+
+  // Show Edit Profile Dialog
+  void _showEditDialog(UserModel user) {
+    final passwordController = TextEditingController(text: user.password);
+    final statusOptions = [
+      UserModel.userStatusPending,
+      UserModel.userStatusApproved,
+      UserModel.userStatusRejected,
+    ];
+    final selectedStatus = RxString(user.approvalStatus);
+
+    showDialog(
+      context: Get.context!,
+      builder: (_) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            "Edit User Profile",
+            style: TextStyle(
+              fontSize: 15,
+              color: AppColors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "User ID: ${user.userName}",
+                  style: TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _labeledField("Password", passwordController),
+                const SizedBox(height: 10),
+                const Text(
+                  "Status",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: AppColors.grey,
+                  ),
+                ),
+                const SizedBox(height: 5),
+
+                Obx(
+                  () => DropdownButtonFormField<String>(
+                    value: selectedStatus.value,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 10,
+                      ),
+                    ),
+                    items:
+                        statusOptions.map((status) {
+                          return DropdownMenuItem<String>(
+                            value: status,
+                            child: Text(status),
+                          );
+                        }).toList(),
+                    onChanged: (value) {
+                      if (value != null) selectedStatus.value = value;
+                    },
+                    style: TextStyle(fontSize: 13, color: AppColors.black),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: ButtonWidget(
+                        text: "Cancel",
+                        isLoading: false.obs,
+                        height: 30,
+                        elevation: 3,
+                        fontSize: 12,
+                        backgroundColor: AppColors.red,
+                        onTap: () {
+                          Get.back(); // Close the bottom sheet
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: ButtonWidget(
+                        text: "Update",
+                        isLoading: false.obs,
+                        height: 30,
+                        elevation: 3,
+                        fontSize: 12,
+                        onTap: () async {
+                          if (getxController.formKey.currentState!.validate()) {
+                            await getxController.updateUserThroughAdmin(
+                              userId: user.id,
+                              status: selectedStatus.value,
+                              password: passwordController.text,
+                            );
+                            Get.back(); // Close the dialog
+                            await getxController.fetchApprovedUsersList();
+
+                            //Temp for now
+                            await Get.find<AdminRejectedUserListController>()
+                                .fetchRejectedUsersList();
+                            await Get.find<AdminHomeController>()
+                                .fetchPendingUsersList();
+                            //////////////
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _labeledField(String label, TextEditingController controller) {
+    return Form(
+      key: getxController.formKey,
+      autovalidateMode: AutovalidateMode.always,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: AppColors.grey,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Obx(
+            () => TextFormField(
+              controller: controller,
+              obscureText: getxController.obscurePasswordText.value,
+              decoration: InputDecoration(
+                isDense: true,
+                border: OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                errorMaxLines: 3,
+                suffixIcon: GestureDetector(
+                  child: Icon(
+                    getxController.obscurePasswordText.value
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: AppColors.grey,
+                    size: 15,
+                  ),
+                  onTap: () {
+                    getxController.obscurePasswordText.value =
+                        !getxController.obscurePasswordText.value;
+                  },
+                ),
+                suffixIconConstraints: const BoxConstraints(
+                  minWidth: 40,
+                  minHeight: 20,
+                ),
+              ),
+              style: const TextStyle(fontSize: 13),
+
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Password is required';
+                }
+
+                if (value.length < 8) {
+                  return 'Password must be 8 characters long';
+                }
+
+                if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                  return 'Password must include one uppercase letter';
+                }
+
+                if (!RegExp(r'[a-z]').hasMatch(value)) {
+                  return 'Password must include one lowercase letter';
+                }
+
+                if (!RegExp(r'[0-9]').hasMatch(value)) {
+                  return 'Password must include one number';
+                }
+
+                if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                  return 'Password must include one special character';
+                }
+
+                return null; // ✅ Valid
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

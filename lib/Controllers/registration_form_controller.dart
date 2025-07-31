@@ -261,8 +261,8 @@ class RegistrationFormController extends GetxController {
         body: userModel.toJson(),
       );
 
-      debugPrint("Status Code → ${response.statusCode}");
-      debugPrint("Response → ${response.body}");
+      // debugPrint("Status Code → ${response.statusCode}");
+      // debugPrint("Response → ${response.body}");
 
       if (response.statusCode == 201) {
         ToastWidget.show(
@@ -271,6 +271,20 @@ class RegistrationFormController extends GetxController {
           type: ToastType.success,
         );
         Get.to(() => LoginPage());
+      } else if (response.statusCode == 400) {
+        Map<String, dynamic> responseBody = json.decode(response.body);
+        String errorMessage = responseBody['message'];
+
+        ToastWidget.show(
+          context: Get.context!,
+          title:
+              errorMessage == "Phone Number already exists."
+                  ? "This phone number is already in use."
+                  : errorMessage == "Email already exists."
+                  ? "This email is already registered."
+                  : "User already exists.",
+          type: ToastType.error,
+        );
       } else {
         ToastWidget.show(
           context: Get.context!,

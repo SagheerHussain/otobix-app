@@ -8,7 +8,12 @@ import 'package:otobix/Widgets/toast_widget.dart';
 
 class AdminApprovedUsersListController extends GetxController {
   RxBool isLoading = false.obs;
+  RxBool isLoadingUpdateUserThroughAdmin = false.obs;
   RxList<UserModel> approvedUsersList = <UserModel>[].obs;
+
+  final formKey = GlobalKey<FormState>();
+
+  final obscurePasswordText = true.obs;
 
   @override
   onInit() {
@@ -16,6 +21,7 @@ class AdminApprovedUsersListController extends GetxController {
     fetchApprovedUsersList();
   }
 
+  // Fetch Approved Users List
   Future<void> fetchApprovedUsersList() async {
     isLoading.value = true;
 
@@ -49,6 +55,53 @@ class AdminApprovedUsersListController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  // Update User Through Admin
+  Future<void> updateUserThroughAdmin({
+    required String userId,
+    required String status,
+    required String password,
+  }) async {
+    isLoadingUpdateUserThroughAdmin.value = true;
+
+    try {
+      final response = await ApiService.put(
+        endpoint: AppUrls.updateUserThroughAdmin(userId),
+        body: {'password': password, 'approvalStatus': status},
+      );
+
+      // Check for valid JSON response
+      if (response.statusCode == 200) {
+        ToastWidget.show(
+          context: Get.context!,
+          title: "User updated successfully",
+          type: ToastType.success,
+        );
+      } else if (response.statusCode == 404) {
+        ToastWidget.show(
+          context: Get.context!,
+          title: "User not found",
+          type: ToastType.error,
+        );
+      } else {
+        debugPrint("Error updating user: ${response.body}");
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Error updating user.",
+          type: ToastType.error,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error updating user: $e");
+      ToastWidget.show(
+        context: Get.context!,
+        title: "Error updating user.",
+        type: ToastType.error,
+      );
+    } finally {
+      isLoadingUpdateUserThroughAdmin.value = false;
     }
   }
 }

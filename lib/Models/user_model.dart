@@ -5,6 +5,10 @@ class UserModel {
   static const String salesManager = 'Sales Manager';
   static const String admin = 'Admin';
 
+  static const String userStatusPending = 'Pending';
+  static const String userStatusApproved = 'Approved';
+  static const String userStatusRejected = 'Rejected';
+
   final String id;
   final String userRole;
   final String location;

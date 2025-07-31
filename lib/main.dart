@@ -58,6 +58,7 @@ class MyApp extends StatelessWidget {
 
       home: SplashScreen(),
       // home: CarDetailsPage(
+      //   carId: '68821747968635d593293346',
       //   car: CarModel(
       //     imageUrl: AppImages.hyundaiCreta1,
       //     name: 'Hyundai Creta',

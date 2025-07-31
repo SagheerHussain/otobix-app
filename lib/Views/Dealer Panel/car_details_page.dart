@@ -1,7 +1,5 @@
 import 'dart:ui';
-
-import 'package:accordion/accordion.dart';
-import 'package:accordion/accordion_section.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:get/get.dart';
@@ -23,7 +21,7 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 
-class CarDetailsPage extends StatelessWidget {
+class CarDetailsPage extends StatefulWidget {
   final String carId;
   final CarModel car;
   final String type;
@@ -36,22 +34,37 @@ class CarDetailsPage extends StatelessWidget {
   });
 
   @override
+  State<CarDetailsPage> createState() => _CarDetailsPageState();
+}
+
+class _CarDetailsPageState extends State<CarDetailsPage> {
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   final getxController = Get.put(CarDetailsController(widget.carId));
+  //   getxController.fetchCarDetails(carId: widget.carId);
+  //   // await fetchCarDetails(carId: '68821747968635d593293346');
+  //   debugPrint(getxController.carDetails?.toJson().toString() ?? 'null');
+  // }
+
+  @override
   Widget build(BuildContext context) {
-    final getxController = Get.put(CarDetailsController(carId));
+    final getxController = Get.put(CarDetailsController(widget.carId));
     final homeController = Get.put(HomeController());
-    final imageUrls = car.imageUrls ?? [car.imageUrl];
+    final imageUrls = widget.car.imageUrls ?? [widget.car.imageUrl];
     getxController.setImageUrls(imageUrls);
     getxController.startCountdown(DateTime.now().add(const Duration(days: 1)));
 
     final pageController = PageController();
 
     // Set current bid amount
-    getxController.currentHighestBidAmount = car.price.toInt();
+    getxController.currentHighestBidAmount = widget.car.price.toInt();
     // Set one click price amount
     getxController.oneClickPriceAmount.value =
         getxController.currentHighestBidAmount + 10000;
     // Set your offer amount
-    type != homeController.ocb70SectionScreen
+    widget.type != homeController.ocb70SectionScreen
         ? getxController.yourOfferAmount.value =
             getxController.currentHighestBidAmount + 4000
         : getxController.yourOfferAmount.value =
@@ -98,7 +111,7 @@ class CarDetailsPage extends StatelessWidget {
                               getxController,
                               homeController,
                               context,
-                              type,
+                              widget.type,
                             ),
                           ),
                         ],
@@ -121,8 +134,18 @@ class CarDetailsPage extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
+            final List<String> imageLabels = [
+              'Front View',
+              'Rear View',
+              'Left Front 45°',
+              'Right Rear 45°',
+              'Left Fender',
+              'Right Fender',
+            ];
+
             Get.to(
               () => CarImagesPage(
+                imageLabels: imageLabels,
                 imageUrls: imageUrls,
                 initialIndex: getxController.currentIndex.value,
               ),
@@ -136,7 +159,7 @@ class CarDetailsPage extends StatelessWidget {
               onPageChanged: (index) => getxController.updateIndex(index),
               builder: (context, index) {
                 return PhotoViewGalleryPageOptions(
-                  imageProvider: AssetImage(imageUrls[index]),
+                  imageProvider: CachedNetworkImageProvider(imageUrls[index]),
                   minScale: PhotoViewComputedScale.contained,
                   maxScale: PhotoViewComputedScale.covered * 2,
                   heroAttributes: PhotoViewHeroAttributes(
@@ -144,7 +167,7 @@ class CarDetailsPage extends StatelessWidget {
                     transitionOnUserGestures: true,
                   ),
                   errorBuilder: (context, error, stackTrace) {
-                    return const Center(
+                    return Center(
                       child: Image(
                         image: AssetImage(AppImages.carAlternateImage),
                       ),
@@ -152,6 +175,13 @@ class CarDetailsPage extends StatelessWidget {
                   },
                 );
               },
+              loadingBuilder:
+                  (context, event) => const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.green,
+                      strokeWidth: 2,
+                    ),
+                  ),
               scrollPhysics: const BouncingScrollPhysics(),
               backgroundDecoration: const BoxDecoration(color: AppColors.white),
             ),
@@ -164,7 +194,7 @@ class CarDetailsPage extends StatelessWidget {
             () => Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.black.withOpacity(0.6),
+                color: AppColors.black.withValues(alpha: .6),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -232,16 +262,24 @@ class CarDetailsPage extends StatelessWidget {
           const SizedBox(height: 20),
           _buildBasicDetails(carDetails: carDetails),
           const SizedBox(height: 10),
-          _buildRcAndLegalDocuments(carDetails: carDetails),
+          _buildExteriorCondition(carDetails: carDetails),
           const SizedBox(height: 5),
           _buildEngineMechanicalInfo(carDetails: carDetails),
           const SizedBox(height: 5),
-          _buildSafetyAndAirbags(carDetails: carDetails),
-          const SizedBox(height: 10),
           _buildInteriorFeatures(carDetails: carDetails),
           const SizedBox(height: 5),
-          _buildExteriorCondition(carDetails: carDetails),
+          _buildRcAndLegalDocuments(carDetails: carDetails),
+          const SizedBox(height: 5),
+          _buildSafetyAndAirbags(carDetails: carDetails),
+          const SizedBox(height: 15),
+          // _buildExteriorImages(),
+          // const SizedBox(height: 10),
+          _buildStructuralAndUnderbody(carDetails: carDetails),
+          const SizedBox(height: 5),
+          _buildDashboardAndSeating(carDetails: carDetails),
           const SizedBox(height: 10),
+          _buildAdminAndApprovalInfo(carDetails: carDetails),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -268,7 +306,7 @@ class CarDetailsPage extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              '${NumberFormat.decimalPattern('en_IN').format(car.price)}/-',
+              '${NumberFormat.decimalPattern('en_IN').format(widget.car.price)}/-',
               style: const TextStyle(
                 fontSize: 14,
                 color: AppColors.green,
@@ -321,8 +359,8 @@ class CarDetailsPage extends StatelessWidget {
               item(
                 icon: Icons.event,
                 text: GlobalFunctions.getFormattedDate(
-                  carDetails.yearMonthOfManufacture,
-                  GlobalFunctions.year,
+                  date: carDetails.yearMonthOfManufacture,
+                  type: GlobalFunctions.year,
                 ),
               ),
             ],
@@ -361,15 +399,15 @@ class CarDetailsPage extends StatelessWidget {
         _buildDetailRowForOtherDetails(
           'Registration Date',
           GlobalFunctions.getFormattedDate(
-            carDetails.registrationDate,
-            GlobalFunctions.date,
+            date: carDetails.registrationDate,
+            type: GlobalFunctions.date,
           ),
         ),
         _buildDetailRowForOtherDetails(
           'Manufacture Year',
           GlobalFunctions.getFormattedDate(
-            carDetails.yearMonthOfManufacture,
-            GlobalFunctions.year,
+            date: carDetails.yearMonthOfManufacture,
+            type: GlobalFunctions.year,
           ),
         ),
         _buildDetailRowForOtherDetails(
@@ -444,7 +482,7 @@ class CarDetailsPage extends StatelessWidget {
           buildRow('To Be Scrapped', carDetails.toBeScrapped),
           buildRow('Road Tax Validity', carDetails.roadTaxValidity),
           buildRow('RTO NOC', carDetails.rtoNoc),
-          buildRow('RTO Form 28 (2 Nos)', carDetails.rtoForm282Nos),
+          buildRow('RTO Form 28 (2 Nos)', carDetails.rtoForm28),
           buildRow('Hypothecation Details', carDetails.hypothecationDetails),
           buildRow('Mismatch In RC', carDetails.mismatchInRc),
           buildRow('Duplicate Key', carDetails.duplicateKey),
@@ -704,7 +742,7 @@ class CarDetailsPage extends StatelessWidget {
           _buildDetailRowForInspectionReport(
             Icons.date_range,
             'No. of Airbags',
-            carDetails.noOfAirBags016.toString(),
+            carDetails.noOfAirBags.toString(),
           ),
           Divider(color: AppColors.grey.withValues(alpha: 0.1)),
           const SizedBox(height: 5),
@@ -976,7 +1014,7 @@ class CarDetailsPage extends StatelessWidget {
           buildExteriorItem('LHS Front Door', carDetails.lhsFrontDoor),
           buildExteriorItem('LHS Rear Door', carDetails.lhsRearDoor),
           buildExteriorItem('LHS Running Border', carDetails.lhsRunningBorder),
-          buildExteriorItem('LHS Quarter Panel', carDetails.lhsQuarterPanel),
+          // buildExteriorItem('LHS Quarter Panel', carDetails.lhsQuarterPanel),
           buildExteriorItem('Rear Bumper', carDetails.rearBumper),
           buildExteriorItem('LHS Tail Lamp', carDetails.lhsTailLamp),
           buildExteriorItem('RHS Tail Lamp', carDetails.rhsTailLamp),
@@ -1079,7 +1117,7 @@ class CarDetailsPage extends StatelessWidget {
                   ),
                 )
               else
-                /// Show normal two buttons
+                /// Show two buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -1156,6 +1194,460 @@ class CarDetailsPage extends StatelessWidget {
             const ShimmerWidget(height: 12, width: double.infinity),
             const SizedBox(height: 20),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStructuralAndUnderbody({required CarModel2 carDetails}) {
+    Widget item({
+      required IconData icon,
+      required String label,
+      required Widget trailing,
+    }) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: Colors.black54),
+            const SizedBox(width: 10),
+            Expanded(child: Text(label, style: const TextStyle(fontSize: 13))),
+            trailing,
+          ],
+        ),
+      );
+    }
+
+    Widget structuralFieldValue(String? value) {
+      final status = value?.toLowerCase();
+
+      if (status == 'available' || status == 'okay') {
+        return Icon(Icons.check_circle, color: AppColors.green, size: 20);
+      } else if (status == 'not applicable' || status == 'not available') {
+        return Icon(Icons.cancel, color: AppColors.red, size: 20);
+      } else {
+        return Text(value.toString(), style: const TextStyle(fontSize: 13));
+      }
+    }
+
+    return AccordionWidget(
+      title: 'Structural & Underbody',
+      icon: Icons.car_repair,
+      contentSize: 300,
+      content: Column(
+        children: [
+          item(
+            icon: Icons.directions_car_outlined, // structure/frame
+            label: 'Upper Cross Member',
+            trailing: structuralFieldValue(carDetails.upperCrossMember),
+          ),
+          item(
+            icon: Icons.directions_car_filled, // lower structure/frame
+            label: 'Lower Cross Member',
+            trailing: structuralFieldValue(carDetails.lowerCrossMember),
+          ),
+          item(
+            icon: Icons.ac_unit, // radiator/cooling
+            label: 'Radiator Support',
+            trailing: structuralFieldValue(carDetails.radiatorSupport),
+          ),
+          item(
+            icon: Icons.lightbulb_outline, // headlight indicator
+            label: 'Headlight Support',
+            trailing: structuralFieldValue(carDetails.headlightSupport),
+          ),
+          item(
+            icon: Icons.swap_horizontal_circle_outlined, // left-hand structure
+            label: 'LHS Apron',
+            trailing: structuralFieldValue(carDetails.lhsApron),
+          ),
+          item(
+            icon: Icons.swap_horizontal_circle, // right-hand structure
+            label: 'RHS Apron',
+            trailing: structuralFieldValue(carDetails.rhsApron),
+          ),
+          item(
+            icon: Icons.shield_outlined, // firewall protection metaphor
+            label: 'Firewall',
+            trailing: structuralFieldValue(carDetails.firewall),
+          ),
+          item(
+            icon: Icons.view_day, // dashboard-top style, metaphor for cowl top
+            label: 'Cowl Top',
+            trailing: structuralFieldValue(carDetails.cowlTop),
+          ),
+          item(
+            icon: Icons.inventory_2_outlined, // flat structure, boot floor
+            label: 'Boot Floor',
+            trailing: structuralFieldValue(carDetails.bootFloor),
+          ),
+          // item(
+          //   icon: Icons.inventory_2, // second boot floor
+          //   label: 'Boot Floor 1',
+          //   trailing: structuralFieldValue(carDetails.bootFloor1),
+          // ),
+          item(
+            icon: Icons.circle_outlined, // spare tyre
+            label: 'Spare Tyre',
+            trailing: structuralFieldValue(carDetails.spareTyre),
+          ),
+          // item(
+          //   icon: Icons.circle, // secondary spare tyre
+          //   label: 'Spare Tyre 1',
+          //   trailing: structuralFieldValue(carDetails.spareTyre1),
+          // ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDashboardAndSeating({required CarModel2 carDetails}) {
+    final imageItems = [
+      {
+        'label': 'Dashboard View',
+        'path': carDetails.dashboardFromRearSeat[0],
+        // 'path': AppImages.hondaDashboardView,
+      },
+      {
+        'label': 'Front Seats View',
+        'path': carDetails.frontSeatsFromDriverSideDoorOpen[0],
+        // 'path': AppImages.hondaFrontSeatsView,
+      },
+      {
+        'label': 'Rear Seats View',
+        'path': carDetails.rearSeatsFromRightSideDoorOpen[0],
+        // 'path': AppImages.hondaRearSeatsView,
+      },
+    ];
+
+    Widget item({
+      required IconData icon,
+      required String label,
+      required Widget trailing,
+    }) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: Colors.black54),
+            const SizedBox(width: 10),
+            Expanded(child: Text(label, style: const TextStyle(fontSize: 13))),
+            trailing,
+          ],
+        ),
+      );
+    }
+
+    Widget seatFieldValue(String? value) {
+      final status = value?.toLowerCase();
+
+      if (status == 'available' || status == 'okay') {
+        return Icon(Icons.check_circle, color: AppColors.green, size: 20);
+      } else if (status == 'not applicable' || status == 'not available') {
+        return Icon(Icons.cancel, color: AppColors.red, size: 20);
+      } else {
+        return Text(value.toString(), style: const TextStyle(fontSize: 13));
+      }
+    }
+
+    Widget imageCard({
+      required String label,
+      required String imageUrl,
+      required int imageIndex,
+    }) {
+      return InkWell(
+        onTap: () {
+          final List<String> imageLabels = [
+            'Dashboard View',
+            'Front Seats View',
+            'Rear Seats View',
+          ];
+
+          final List<String> dashboardAndSeatingImages = [
+            carDetails.dashboardFromRearSeat[0],
+            carDetails.frontSeatsFromDriverSideDoorOpen[0],
+            carDetails.rearSeatsFromRightSideDoorOpen[0],
+            // AppImages.hondaDashboardView,
+            // AppImages.hondaFrontSeatsView,
+            // AppImages.hondaRearSeatsView,
+          ];
+          Get.to(
+            () => CarImagesPage(
+              imageLabels: imageLabels,
+              imageUrls: dashboardAndSeatingImages,
+              initialIndex: imageIndex,
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(5),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: AppColors.grey.withValues(alpha: .5)),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Column(
+              children: [
+                Expanded(
+                  child:
+                      imageUrl.isNotEmpty
+                          ? CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            placeholder:
+                                (context, url) => const Center(
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.green,
+                                      strokeWidth: 1,
+                                    ),
+                                  ),
+                                ),
+                            errorWidget:
+                                (context, url, error) => const Icon(
+                                  Icons.image_not_supported,
+                                  size: 40,
+                                  color: AppColors.grey,
+                                ),
+                            //   loadingBuilder: (context, child, loadingProgress) {
+                            //     if (loadingProgress == null) {
+                            //       return child;
+                            //     }
+                            //     return Center(
+                            //       child: SizedBox(
+                            //         height: 20,
+                            //         width: 20,
+                            //         child: CircularProgressIndicator(
+                            //         value:
+                            //             loadingProgress.expectedTotalBytes !=
+                            //                     null
+                            //                 ? loadingProgress
+                            //                         .cumulativeBytesLoaded /
+                            //                     loadingProgress
+                            //                         .expectedTotalBytes!
+                            //                 : null,
+
+                            //         color: AppColors.green,
+                            //         strokeWidth: 1,
+                            //       ),
+                            //     ),
+                            //   );
+                            // },
+                            // errorBuilder: (context, error, stackTrace) {
+                            //   return Icon(
+                            //     Icons.image_not_supported,
+                            //     size: 40,
+                            //     color: AppColors.grey,
+                            //   );
+                            // },
+                          )
+                          : Container(
+                            color: AppColors.grey.withValues(alpha: .2),
+                            child: Icon(
+                              Icons.image_not_supported,
+                              size: 40,
+                              color: AppColors.grey,
+                            ),
+                          ),
+                ),
+                Container(
+                  width: double.infinity,
+                  color: AppColors.grey.withValues(alpha: .5),
+                  padding: EdgeInsets.symmetric(vertical: 6),
+
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.white, fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return AccordionWidget(
+      title: 'Dashboard & Seating',
+      icon: Icons.event_seat_outlined,
+      // contentSize: 370,
+      content: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            item(
+              icon: Icons.chair_alt,
+              label: 'Fabric Seats',
+              trailing: seatFieldValue(carDetails.fabricSeats),
+            ),
+            item(
+              icon: Icons.chair_outlined,
+              label: 'Leather Seats',
+              trailing: seatFieldValue(carDetails.leatherSeats),
+            ),
+
+            SizedBox(height: 10),
+            Divider(color: AppColors.green.withValues(alpha: .3)),
+            SizedBox(height: 10),
+
+            /// Photo Grid
+            GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: imageItems.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.1,
+              ),
+              itemBuilder: (context, index) {
+                final item = imageItems[index];
+                // return Text(item['label']!);
+                return imageCard(
+                  label: item['label']!,
+                  imageUrl: item['path']!,
+                  imageIndex: index,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdminAndApprovalInfo({required CarModel2 carDetails}) {
+    Widget item({
+      required IconData icon,
+      required Color color,
+      required String label,
+      required String value,
+    }) {
+      return Container(
+        padding: EdgeInsets.only(left: 20, bottom: 15),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 25),
+            SizedBox(width: 15),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  value.isNotEmpty ? value : 'N/A',
+                  style: TextStyle(fontSize: 13),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(color: AppColors.green),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.admin_panel_settings,
+                size: 20,
+                color: AppColors.blue.withValues(alpha: 0.7),
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Admin & Approval Info',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.blue,
+                ),
+              ),
+            ],
+          ),
+          Divider(color: AppColors.grey.withValues(alpha: 0.5)),
+          SizedBox(height: 5),
+          Column(
+            children: [
+              item(
+                icon: Icons.verified_user,
+                color: Colors.blue,
+                label: 'Approved By',
+                value:
+                    carDetails.approvedBy.isNotEmpty
+                        ? carDetails.approvedBy
+                        : 'N/A',
+              ),
+              item(
+                icon: Icons.date_range,
+                color: Colors.green,
+                label: 'Approval Date',
+                value: carDetails.approvalDate.toString().split(' ').first,
+              ),
+              item(
+                icon: Icons.access_time_filled,
+                color: Colors.orange,
+                label: 'Approval Time',
+                value: GlobalFunctions.getFormattedDate(
+                  date: carDetails.approvalTime,
+                  type: GlobalFunctions.time,
+                ),
+              ),
+              item(
+                icon: Icons.check_circle_outline,
+                color: Colors.purple,
+                label: 'Approval Status',
+                value: carDetails.approvalStatus,
+              ),
+              Divider(),
+              SizedBox(height: 5),
+              item(
+                icon: Icons.price_change,
+                color: Colors.indigo,
+                label: 'Price Discovery',
+                value:
+                    'Rs. ${NumberFormat.decimalPattern().format(carDetails.priceDiscovery)}/-',
+              ),
+              item(
+                icon: Icons.account_circle_outlined,
+                color: Colors.teal,
+                label: 'Price Discovery By',
+                value: carDetails.priceDiscoveryBy,
+              ),
+              item(
+                icon: Icons.person_pin_circle_outlined,
+                color: Colors.deepOrange,
+                label: 'Retail Associate',
+                value: carDetails.retailAssociate,
+              ),
+              Divider(),
+              SizedBox(height: 5),
+              item(
+                icon: Icons.phone_outlined,
+                color: Colors.black87,
+                label: 'Contact Number',
+                value: carDetails.contactNumber.toString(),
+              ),
+            ],
+          ),
         ],
       ),
     );

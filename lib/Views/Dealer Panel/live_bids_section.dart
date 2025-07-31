@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -6,11 +7,13 @@ import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
+import 'package:otobix/Widgets/shimmer_widget.dart';
 
 class LiveBidsSection extends StatelessWidget {
   LiveBidsSection({super.key});
 
-  final HomeController getxController = Get.put(HomeController());
+  // final HomeController getxController = Get.put(HomeController());
+  final HomeController getxController = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -18,241 +21,302 @@ class LiveBidsSection extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 10),
-          Obx(
-            () =>
-                getxController.filteredCars.isEmpty
-                    ? Expanded(
-                      child: Center(
-                        child: const EmptyDataWidget(
-                          icon: Icons.car_rental,
-                          message: 'No Cars Found',
+
+          Obx(() {
+            if (getxController.isLoading.value) {
+              return _buildLoadingWidget();
+            } else if (getxController.filteredCars.isEmpty) {
+              return Expanded(
+                child: Center(
+                  child: const EmptyDataWidget(
+                    icon: Icons.car_rental,
+                    message: 'No Cars Found',
+                  ),
+                ),
+              );
+            } else {
+              return _buildCarsList();
+            }
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCarsList() {
+    return Expanded(
+      child: ListView.separated(
+        // padding: const EdgeInsets.symmetric(horizontal: 10),
+        itemCount: getxController.filteredCars.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 15),
+        itemBuilder: (context, index) {
+          final car = getxController.filteredCars[index];
+
+          return InkWell(
+            onTap: () {
+              Get.to(
+                () => CarDetailsPage(
+                  carId: car.id!,
+                  car: car,
+                  type: getxController.liveBidsSectionScreen,
+                ),
+              );
+            },
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Car image
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(12),
+                        ),
+
+                        child: CachedNetworkImage(
+                          imageUrl: car.imageUrl,
+                          height: 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          placeholder:
+                              (context, url) => Container(
+                                height: 160,
+                                width: double.infinity,
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.green,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                          errorWidget: (context, error, stackTrace) {
+                            return Image.asset(
+                              AppImages.carAlternateImage,
+                              height: 160,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            );
+                          },
                         ),
                       ),
-                    )
-                    : Expanded(
-                      child: ListView.separated(
-                        // padding: const EdgeInsets.symmetric(horizontal: 10),
-                        itemCount: getxController.filteredCars.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 15),
-                        itemBuilder: (context, index) {
-                          final car = getxController.filteredCars[index];
-
-                          return InkWell(
-                            onTap: () {
-                              Get.to(
-                                () => CarDetailsPage(
-                                  carId: car.id!,
-                                  car: car,
-                                  type: getxController.liveBidsSectionScreen,
-                                ),
-                              );
-                            },
-                            child: Card(
-                              elevation: 4,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Car image
-                                  Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            const BorderRadius.vertical(
-                                              top: Radius.circular(12),
-                                            ),
-                                        child: Image.asset(
-                                          car.imageUrl,
-                                          height: 160,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (
-                                            context,
-                                            error,
-                                            stackTrace,
-                                          ) {
-                                            return Image.asset(
-                                              AppImages.carAlternateImage,
-                                              height: 160,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 10,
-                                        right: 10,
-                                        child: Obx(
-                                          () => InkWell(
-                                            onTap:
-                                                () => getxController
-                                                    .changeFavoriteCars(car),
-                                            borderRadius: BorderRadius.circular(
-                                              20,
-                                            ),
-                                            child: Container(
-                                              padding: const EdgeInsets.all(6),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.white
-                                                    .withValues(alpha: .8),
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black12,
-                                                    blurRadius: 4,
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Icon(
-                                                car.isFavorite.value
-                                                    ? Icons.favorite
-                                                    : Icons.favorite_outline,
-                                                color:
-                                                    car.isFavorite.value
-                                                        ? AppColors.red
-                                                        : AppColors.grey,
-                                                size: 20,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: Obx(
+                          () => InkWell(
+                            onTap: () => getxController.changeFavoriteCars(car),
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: AppColors.white.withValues(alpha: .8),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 4,
                                   ),
+                                ],
+                              ),
+                              child: Icon(
+                                car.isFavorite.value
+                                    ? Icons.favorite
+                                    : Icons.favorite_outline,
+                                color:
+                                    car.isFavorite.value
+                                        ? AppColors.red
+                                        : AppColors.grey,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
 
-                                  // Car details
-                                  Padding(
-                                    padding: const EdgeInsets.all(12),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          car.name,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Highest Bid: ',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: AppColors.grey,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.price)}',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: AppColors.green,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.calendar_today,
-                                              size: 14,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              car.year.toString(),
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Icon(
-                                              Icons.speed,
-                                              size: 14,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              '${NumberFormat.decimalPattern('en_IN').format(car.kmDriven)} km',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.local_gas_station,
-                                              size: 14,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              car.fuelType,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Icon(
-                                              Icons.location_on,
-                                              size: 14,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              car.location,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        if (car.isInspected == true)
-                                          Column(
-                                            children: [
-                                              Divider(),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.verified_user,
-                                                    size: 14,
-                                                    color: AppColors.green,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    'Inspected 8.2/10',
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color: AppColors.green,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                      ],
+                  // Car details
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          car.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Highest Bid: ',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.grey,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.price)}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.green,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today,
+                              size: 14,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              car.year.toString(),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            const SizedBox(width: 12),
+                            Icon(Icons.speed, size: 14, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${NumberFormat.decimalPattern('en_IN').format(car.kmDriven)} km',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.local_gas_station,
+                              size: 14,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              car.fuelType,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            const SizedBox(width: 12),
+                            Icon(
+                              Icons.location_on,
+                              size: 14,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              car.location,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        if (car.isInspected == true)
+                          Column(
+                            children: [
+                              Divider(),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.verified_user,
+                                    size: 14,
+                                    color: AppColors.green,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Inspected 8.2/10',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: AppColors.green,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            ],
+                          ),
+                      ],
                     ),
-          ),
-        ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return Expanded(
+      child: ListView.separated(
+        itemCount: 3,
+        separatorBuilder: (_, __) => const SizedBox(height: 15),
+        itemBuilder: (context, index) {
+          return Card(
+            // elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image shimmer
+                const ShimmerWidget(height: 160, borderRadius: 12),
+
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      // Title shimmer
+                      ShimmerWidget(height: 14, width: 150),
+                      SizedBox(height: 10),
+
+                      // Bid row shimmer
+                      ShimmerWidget(height: 12, width: 100),
+                      SizedBox(height: 6),
+
+                      // Year and KM
+                      Row(
+                        children: [
+                          ShimmerWidget(height: 10, width: 60),
+                          SizedBox(width: 10),
+                          ShimmerWidget(height: 10, width: 80),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+
+                      // Fuel and Location
+                      Row(
+                        children: [
+                          ShimmerWidget(height: 10, width: 60),
+                          SizedBox(width: 10),
+                          ShimmerWidget(height: 10, width: 80),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+
+                      // Inspection badge
+                      ShimmerWidget(height: 10, width: 100),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

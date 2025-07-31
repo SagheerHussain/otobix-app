@@ -69,9 +69,9 @@ class HomeController extends GetxController {
   final List<String> cities = ['All States', ...AppConstants.indianStates];
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    fetchCarsList();
+    await fetchCarsList();
     // filteredCars.value = carsList;
     // Listen to changes in ValueNotifier
     selectedSegmentNotifier.addListener(() {
@@ -127,6 +127,7 @@ class HomeController extends GetxController {
         );
         filteredCars.value = carsList;
         debugPrint('Cars List Fetched Successfully');
+        debugPrint(carsList[1].toJson().toString());
       } else {
         filteredCars.value = [];
         debugPrint('Failed to fetch data ${response.body}');

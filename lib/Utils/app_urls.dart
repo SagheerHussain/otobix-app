@@ -40,4 +40,7 @@ class AppUrls {
   static String getCarDetails(String carId) => "${baseUrl}car/details/$carId";
 
   static const String getCarsList = "${baseUrl}car/cars-list";
+
+  static String updateUserThroughAdmin(String userId) =>
+      "${baseUrl}user/update-user-through-admin/?userId=$userId";
 }

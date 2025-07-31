@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -5,11 +6,14 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
+import 'package:otobix/Widgets/empty_data_widget.dart';
+import 'package:otobix/Widgets/shimmer_widget.dart';
 
 class WishlistPage extends StatelessWidget {
   WishlistPage({super.key});
 
-  final HomeController getxController = Get.put(HomeController());
+  // final HomeController getxController = Get.put(HomeController());
+  final HomeController getxController = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,18 @@ class WishlistPage extends StatelessWidget {
             //   title: 'No Wishlist',
             //   description: 'You have no wishlist yet.',
             // ),
-            _buildWishlistList(),
+            Obx(() {
+              if (getxController.isLoading.value) {
+                return _buildLoadingWidget();
+              } else if (getxController.carsList.isEmpty) {
+                return const EmptyDataWidget(
+                  icon: Icons.gavel,
+                  message: 'No Live Bids',
+                );
+              } else {
+                return _buildWishlistList();
+              }
+            }),
           ],
         ),
       ),
@@ -42,7 +57,10 @@ class WishlistPage extends StatelessWidget {
           // InkWell for car card
           return InkWell(
             onTap: () {
-              Get.to(() => CarDetailsPage(carId: car.id!, car: car, type: 'wishlist'));
+              Get.to(
+                () =>
+                    CarDetailsPage(carId: car.id!, car: car, type: 'wishlist'),
+              );
             },
             child: Card(
               elevation: 4,
@@ -61,12 +79,30 @@ class WishlistPage extends StatelessWidget {
                             // Car Image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                car.imageUrl,
+                              child: CachedNetworkImage(
+                                imageUrl: car.imageUrl,
                                 width: 120,
                                 height: 80,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
+                                placeholder:
+                                    (context, url) => Container(
+                                      height: 80,
+                                      width: 120,
+                                      color: AppColors.grey.withValues(
+                                        alpha: .3,
+                                      ),
+                                      child: const Center(
+                                        child: SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.green,
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                errorWidget: (context, error, stackTrace) {
                                   return Image.asset(
                                     AppImages.carAlternateImage,
                                     width: 120,
@@ -235,6 +271,70 @@ class WishlistPage extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: ListView.separated(
+        itemCount: 3,
+        separatorBuilder: (_, __) => const SizedBox(height: 15),
+        itemBuilder: (context, index) {
+          return Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image shimmer
+                const ShimmerWidget(height: 160, borderRadius: 12),
+
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      // Title shimmer
+                      ShimmerWidget(height: 14, width: 150),
+                      SizedBox(height: 10),
+
+                      // Bid row shimmer
+                      ShimmerWidget(height: 12, width: 100),
+                      SizedBox(height: 6),
+
+                      // Year and KM
+                      Row(
+                        children: [
+                          ShimmerWidget(height: 10, width: 60),
+                          SizedBox(width: 10),
+                          ShimmerWidget(height: 10, width: 80),
+                        ],
+                      ),
+                      SizedBox(height: 6),
+
+                      // Fuel and Location
+                      Row(
+                        children: [
+                          ShimmerWidget(height: 10, width: 60),
+                          SizedBox(width: 10),
+                          ShimmerWidget(height: 10, width: 80),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+
+                      // Inspection badge
+                      ShimmerWidget(height: 10, width: 100),
+                    ],
+                  ),
+                ),
+              ],
             ),
           );
         },

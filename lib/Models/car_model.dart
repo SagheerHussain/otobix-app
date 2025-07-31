@@ -1,5 +1,6 @@
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:otobix/Utils/app_images.dart';
+import 'package:otobix/Utils/global_functions.dart';
 
 class CarModel {
   String? id;
@@ -35,8 +36,8 @@ class CarModel {
   }) {
     return CarModel(
       id: id,
-      // imageUrl: data['imageUrl'] as String,
-      imageUrl: AppImages.tataNexon1,
+      imageUrl: data['imageUrl'] as String,
+      // imageUrl: AppImages.tataNexon1,
       name: data['name'] as String,
       price: (data['price'] as num).toDouble(),
       year: data['year'] as int,
@@ -44,7 +45,10 @@ class CarModel {
       fuelType: data['fuelType'] as String,
       location: data['location'] as String,
       isInspected: data['isInspected'] as bool? ?? false,
-      imageUrls: data['imageUrls'] as List<String>?,
+      imageUrls: GlobalFunctions.parseList(
+        parsedListType: String,
+        incomingList: data['imageUrls'],
+      ),
     );
   }
 
