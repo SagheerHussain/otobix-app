@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
+import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
-import 'package:otobix/Widgets/empty_page_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 
 class LiveBidsPage extends StatelessWidget {
@@ -121,7 +121,7 @@ class LiveBidsPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    car.name,
+                                    '${car.make} ${car.model} ${car.variant}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -129,7 +129,7 @@ class LiveBidsPage extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.price)}/-',
+                                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
 
                                     style: const TextStyle(
                                       fontSize: 14,
@@ -147,7 +147,11 @@ class LiveBidsPage extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        car.year.toString(),
+                                        GlobalFunctions.getFormattedDate(
+                                              date: car.yearMonthOfManufacture,
+                                              type: GlobalFunctions.monthYear,
+                                            ) ??
+                                            'N/A',
                                         style: const TextStyle(fontSize: 12),
                                       ),
                                       const SizedBox(width: 10),
@@ -158,7 +162,7 @@ class LiveBidsPage extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        '${NumberFormat.decimalPattern('en_IN').format(car.kmDriven)} km',
+                                        '${NumberFormat.decimalPattern('en_IN').format(car.odometerReadingInKms)} km',
                                         style: const TextStyle(fontSize: 12),
                                       ),
                                     ],
@@ -184,7 +188,7 @@ class LiveBidsPage extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        car.location,
+                                        car.inspectionLocation,
                                         style: const TextStyle(fontSize: 12),
                                       ),
                                     ],

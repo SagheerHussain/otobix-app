@@ -15,7 +15,7 @@ class AccordionWidget extends StatelessWidget {
     super.key,
     required this.title,
     required this.content,
-    this.initiallyExpanded = false,
+    this.initiallyExpanded = true,
     this.icon = Icons.article_outlined,
     this.headerColor,
     this.iconColor,
@@ -37,6 +37,7 @@ class AccordionWidget extends StatelessWidget {
       openAndCloseAnimation: true,
       paddingListTop: 0,
       paddingListBottom: 0,
+
       children: [
         AccordionSection(
           isOpen: initiallyExpanded,
@@ -46,18 +47,29 @@ class AccordionWidget extends StatelessWidget {
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           content:
-              contentSize == null
-                  ? content
-                  : SizedBox(
-                    height: contentSize,
-                    child: SingleChildScrollView(child: content),
-                  ),
+              // contentSize == null ?
+              content,
+          // : SizedBox(
+          //   height: contentSize,
+          //   child: SingleChildScrollView(child: content),
+          // ),
           contentHorizontalPadding: 15,
           contentVerticalPadding: 12,
+
           rightIcon: const Icon(
             Icons.keyboard_arrow_down,
             color: AppColors.green,
           ),
+
+          //////////// ✅ Disable collapse interaction /////////////////
+          // headerBackgroundColor:
+          //     headerColor ?? AppColors.blue.withValues(alpha: 0.1),
+          // headerBackgroundColorOpened: AppColors.green.withValues(alpha: 0.1),
+          // contentBorderColor: AppColors.green.withValues(alpha: 0.2),
+          // rightIcon: const SizedBox.shrink(), // removes toggle arrow
+          // onOpenSection: () {}, // do nothing
+          // onCloseSection: () {}, // prevent closing
+          //////////////////////////////////////////////////
         ),
       ],
     );

@@ -1,6 +1,6 @@
 class CarModel2 {
   final String id;
-  final DateTime timestamp;
+  final DateTime? timestamp;
   final String emailAddress;
   final String appointmentId;
   final String city;
@@ -8,8 +8,8 @@ class CarModel2 {
   final String rcBookAvailability;
   final String rcCondition;
   final String registrationNumber;
-  final DateTime registrationDate;
-  final DateTime fitnessTill;
+  final DateTime? registrationDate;
+  final DateTime? fitnessTill;
   final String toBeScrapped;
   final String registrationState;
   final String registeredRto;
@@ -21,16 +21,16 @@ class CarModel2 {
   final String chassisNumber;
   final String registeredOwner;
   final String registeredAddressAsPerRc;
-  final DateTime yearMonthOfManufacture;
+  final DateTime? yearMonthOfManufacture;
   final String fuelType;
   final int cubicCapacity;
   final String hypothecationDetails;
   final String mismatchInRc;
   final String roadTaxValidity;
-  final DateTime taxValidTill;
+  final DateTime? taxValidTill;
   final String insurance;
   final String insurancePolicyNumber;
-  final DateTime insuranceValidity;
+  final DateTime? insuranceValidity;
   final String noClaimBonus;
   final String mismatchInInsurance;
   final String duplicateKey;
@@ -204,11 +204,11 @@ class CarModel2 {
   final String airConditioningClimateControl;
   final String commentsOnAc;
   final String approvedBy;
-  final DateTime approvalDate;
-  final DateTime approvalTime;
+  final DateTime? approvalDate;
+  final DateTime? approvalTime;
   final String approvalStatus;
   final String contactNumber;
-  final DateTime newArrivalMessage;
+  final DateTime? newArrivalMessage;
   final String budgetCar;
   final String status;
   final int priceDiscovery;
@@ -903,7 +903,34 @@ class CarModel2 {
   };
 }
 
-DateTime parseMongoDbDate(dynamic dateJson) {
+DateTime? parseMongoDbDate(dynamic dateJson) {
+  try {
+    if (dateJson == null) return null;
+
+    if (dateJson is String) {
+      return DateTime.tryParse(dateJson);
+    }
+
+    if (dateJson is Map<String, dynamic> && dateJson['\$date'] is String) {
+      return DateTime.tryParse(dateJson['\$date']);
+    }
+
+    if (dateJson is Map<String, dynamic> &&
+        dateJson['\$date'] is Map<String, dynamic>) {
+      final millisStr = dateJson['\$date']['\$numberLong'];
+      final millis = int.tryParse(millisStr ?? '');
+      return millis != null
+          ? DateTime.fromMillisecondsSinceEpoch(millis)
+          : null;
+    }
+  } catch (e) {
+    print('parseMongoDbDate error: $e');
+  }
+
+  return null;
+}
+
+DateTime parseMongoDbDate1(dynamic dateJson) {
   if (dateJson is Map<String, dynamic>) {
     final millisStr = dateJson["\$date"]?["\$numberLong"];
     return DateTime.fromMillisecondsSinceEpoch(

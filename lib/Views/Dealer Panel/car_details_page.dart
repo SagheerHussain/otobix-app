@@ -10,6 +10,7 @@ import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/place_bid_button_widget.dart';
 import 'package:otobix/Views/Dealer%20Panel/start_auto_bid_button_widget.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_images_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/video_player_page.dart';
 import 'package:otobix/Widgets/accordion_widget.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
@@ -52,14 +53,19 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   Widget build(BuildContext context) {
     final getxController = Get.put(CarDetailsController(widget.carId));
     final homeController = Get.put(HomeController());
-    final imageUrls = widget.car.imageUrls ?? [widget.car.imageUrl];
+    // final imageUrls = widget.car.imageUrls ?? [widget.car.imageUrl];
+    final List<CarsListTitleAndImage> imageUrls =
+        widget.car.imageUrls ??
+        [CarsListTitleAndImage(title: 'Main Image', url: widget.car.imageUrl)];
+
     getxController.setImageUrls(imageUrls);
     getxController.startCountdown(DateTime.now().add(const Duration(days: 1)));
 
     final pageController = PageController();
 
     // Set current bid amount
-    getxController.currentHighestBidAmount = widget.car.price.toInt();
+    getxController.currentHighestBidAmount =
+        int.tryParse(widget.car.priceDiscovery.toString()) ?? 0;
     // Set one click price amount
     getxController.oneClickPriceAmount.value =
         getxController.currentHighestBidAmount + 10000;
@@ -81,28 +87,157 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                       ? Center(child: _buildLoading())
                       : Stack(
                         children: [
-                          SingleChildScrollView(
-                            padding: const EdgeInsets.only(bottom: 120),
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minHeight: constraints.maxHeight,
+                          CustomScrollView(
+                            controller: getxController.scrollController,
+                            slivers: [
+                              SliverToBoxAdapter(
+                                child: _buildCarImagesList(
+                                  imageUrls: imageUrls,
+                                  pageController: pageController,
+                                  getxController: getxController,
+                                  carDetails: getxController.carDetails!,
+                                  car: widget.car,
+                                ),
                               ),
-                              child: Column(
-                                children: [
-                                  _buildCarImagesList(
-                                    imageUrls: imageUrls,
-                                    pageController: pageController,
-                                    getxController: getxController,
+                              SliverPersistentHeader(
+                                pinned: true,
+                                delegate: _StickyHeaderDelegate(
+                                  child: _buildMainDetails(
                                     carDetails: getxController.carDetails!,
                                   ),
-                                  const SizedBox(height: 10),
-                                  _buildCarDetails(
-                                    carDetails: getxController.carDetails!,
-                                  ),
-                                ],
+                                  height: 160,
+                                ),
                               ),
-                            ),
+                              SliverPersistentHeader(
+                                pinned: true,
+                                delegate: _StickyHeaderDelegate(
+                                  child: _buildStickyTabs(getxController),
+                                  height: 40,
+                                ),
+                              ),
+                              SliverList(
+                                delegate: SliverChildListDelegate([
+                                  // Each section wrapped with its GlobalKey
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          key:
+                                              getxController
+                                                  .sectionKeys[CarDetailsController
+                                                  .basicDetailsSectionKey],
+                                          child: _buildBasicDetails(
+                                            carDetails:
+                                                getxController.carDetails!,
+                                          ),
+                                        ),
+                                        Container(
+                                          key:
+                                              getxController
+                                                  .sectionKeys[CarDetailsController
+                                                  .documentDetailsSectionKey],
+                                          child: _buildDocumentDetails(
+                                            carDetails:
+                                                getxController.carDetails!,
+                                            getxController: getxController,
+                                          ),
+                                        ),
+                                        Container(
+                                          key:
+                                              getxController
+                                                  .sectionKeys[CarDetailsController
+                                                  .exteriorSectionKey],
+                                          child: _buildExterior(
+                                            carDetails:
+                                                getxController.carDetails!,
+                                            getxController: getxController,
+                                          ),
+                                        ),
+                                        Container(
+                                          key:
+                                              getxController
+                                                  .sectionKeys[CarDetailsController
+                                                  .engineBaySectionKey],
+                                          child: _buildEngineBay(
+                                            carDetails:
+                                                getxController.carDetails!,
+                                            getxController: getxController,
+                                          ),
+                                        ),
+                                        Container(
+                                          key:
+                                              getxController
+                                                  .sectionKeys[CarDetailsController
+                                                  .steeringBrakesAndSuspensionSectionKey],
+                                          child:
+                                              _buildSteeringBrackesAndSuspension(
+                                                carDetails:
+                                                    getxController.carDetails!,
+                                              ),
+                                        ),
+                                        Container(
+                                          key:
+                                              getxController
+                                                  .sectionKeys[CarDetailsController
+                                                  .airConditioningSectionKey],
+                                          child: _buildAirCondition(
+                                            carDetails:
+                                                getxController.carDetails!,
+                                            getxController: getxController,
+                                          ),
+                                        ),
+                                        Container(
+                                          key:
+                                              getxController
+                                                  .sectionKeys[CarDetailsController
+                                                  .interiorAndElectricalsSectionKey],
+                                          child: _buildInteriorAndElectricals(
+                                            carDetails:
+                                                getxController.carDetails!,
+                                            getxController: getxController,
+                                          ),
+                                        ),
+                                        SizedBox(height: 110),
+                                      ],
+                                    ),
+                                  ),
+                                ]),
+                              ),
+                            ],
                           ),
+
+                          // SingleChildScrollView(
+                          //   padding: const EdgeInsets.only(bottom: 120),
+                          //   child: ConstrainedBox(
+                          //     constraints: BoxConstraints(
+                          //       minHeight: constraints.maxHeight,
+                          //     ),
+                          //     child: Column(
+                          //       children: [
+                          //         _buildCarImagesList(
+                          //           imageUrls: imageUrls,
+                          //           pageController: pageController,
+                          //           getxController: getxController,
+                          //           carDetails: getxController.carDetails!,
+                          //           car: widget.car,
+                          //         ),
+                          //         const SizedBox(height: 10),
+                          //         _buildMainDetails(
+                          //           carDetails: getxController.carDetails!,
+                          //         ),
+                          //         const SizedBox(height: 20),
+
+                          //         _buildCarDetails(
+                          //           carDetails: getxController.carDetails!,
+                          //           getxController: getxController,
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                           Positioned(
                             bottom: 0,
                             left: 0,
@@ -124,67 +259,73 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   Widget _buildCarImagesList({
-    required List<String> imageUrls,
+    // required List<String> imageUrls,
+    required List<CarsListTitleAndImage> imageUrls,
     required PageController pageController,
     required CarDetailsController getxController,
     required CarModel2 carDetails,
+    required CarModel car,
   }) {
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
         GestureDetector(
           onTap: () {
-            final List<String> imageLabels = [
-              'Front View',
-              'Rear View',
-              'Left Front 45°',
-              'Right Rear 45°',
-              'Left Fender',
-              'Right Fender',
-            ];
+            // final List<String> imageLabels = [];
 
             Get.to(
               () => CarImagesPage(
-                imageLabels: imageLabels,
-                imageUrls: imageUrls,
+                imageLabels: imageUrls.map((e) => e.title).toList(),
+                imageUrls: imageUrls.map((e) => e.url).toList(),
                 initialIndex: getxController.currentIndex.value,
               ),
             );
           },
-          child: SizedBox(
-            height: 250,
-            child: PhotoViewGallery.builder(
-              itemCount: imageUrls.length,
-              pageController: pageController,
-              onPageChanged: (index) => getxController.updateIndex(index),
-              builder: (context, index) {
-                return PhotoViewGalleryPageOptions(
-                  imageProvider: CachedNetworkImageProvider(imageUrls[index]),
-                  minScale: PhotoViewComputedScale.contained,
-                  maxScale: PhotoViewComputedScale.covered * 2,
-                  heroAttributes: PhotoViewHeroAttributes(
-                    tag: 'image-$index',
-                    transitionOnUserGestures: true,
-                  ),
-                  errorBuilder: (context, error, stackTrace) {
-                    return Center(
-                      child: Image(
-                        image: AssetImage(AppImages.carAlternateImage),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final aspectRatio = 4 / 3; // Your image ratio (1000x750)
+              final imageHeight = screenWidth / aspectRatio;
+              return SizedBox(
+                height: imageHeight,
+                child: PhotoViewGallery.builder(
+                  itemCount: imageUrls.length,
+                  pageController: pageController,
+                  onPageChanged: (index) => getxController.updateIndex(index),
+                  builder: (context, index) {
+                    return PhotoViewGalleryPageOptions(
+                      imageProvider: CachedNetworkImageProvider(
+                        imageUrls[index].url,
                       ),
+                      minScale: PhotoViewComputedScale.contained,
+                      maxScale: PhotoViewComputedScale.covered * 2,
+                      heroAttributes: PhotoViewHeroAttributes(
+                        tag: 'image-$index',
+                        transitionOnUserGestures: true,
+                      ),
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(
+                          child: Image(
+                            image: AssetImage(AppImages.carAlternateImage),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-              loadingBuilder:
-                  (context, event) => const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.green,
-                      strokeWidth: 2,
-                    ),
+                  loadingBuilder:
+                      (context, event) => const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.green,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                  scrollPhysics: const BouncingScrollPhysics(),
+                  backgroundDecoration: const BoxDecoration(
+                    color: AppColors.white,
                   ),
-              scrollPhysics: const BouncingScrollPhysics(),
-              backgroundDecoration: const BoxDecoration(color: AppColors.white),
-            ),
+                ),
+              );
+            },
           ),
         ),
         Positioned(
@@ -251,128 +392,269 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
   }
 
-  Widget _buildCarDetails({required CarModel2 carDetails}) {
+  Widget _buildCarDetails({
+    required CarModel2 carDetails,
+    required CarDetailsController getxController,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          _buildMainDetails(carDetails: carDetails),
-          const SizedBox(height: 20),
-          _buildIconAndTextDetails(carDetails: carDetails),
-          const SizedBox(height: 20),
+          // _buildMainDetails(carDetails: carDetails),
+          // const SizedBox(height: 20),
+          // _buildIconAndTextDetails(carDetails: carDetails),
+          // const SizedBox(height: 20),
           _buildBasicDetails(carDetails: carDetails),
           const SizedBox(height: 10),
-          _buildExteriorCondition(carDetails: carDetails),
+          _buildDocumentDetails(
+            carDetails: carDetails,
+            getxController: getxController,
+          ),
           const SizedBox(height: 5),
-          _buildEngineMechanicalInfo(carDetails: carDetails),
+          _buildExterior(
+            carDetails: carDetails,
+            getxController: getxController,
+          ),
           const SizedBox(height: 5),
-          _buildInteriorFeatures(carDetails: carDetails),
+          _buildEngineBay(
+            carDetails: carDetails,
+            getxController: getxController,
+          ),
           const SizedBox(height: 5),
-          _buildRcAndLegalDocuments(carDetails: carDetails),
+          _buildSteeringBrackesAndSuspension(carDetails: carDetails),
           const SizedBox(height: 5),
-          _buildSafetyAndAirbags(carDetails: carDetails),
-          const SizedBox(height: 15),
+          _buildInteriorAndElectricals(
+            carDetails: carDetails,
+            getxController: getxController,
+          ),
+          const SizedBox(height: 5),
+          _buildAirCondition(
+            carDetails: carDetails,
+            getxController: getxController,
+          ),
+          const SizedBox(height: 5),
+          // _buildSafetyAndAirbags(carDetails: carDetails),
+          // const SizedBox(height: 15),
           // _buildExteriorImages(),
           // const SizedBox(height: 10),
-          _buildStructuralAndUnderbody(carDetails: carDetails),
-          const SizedBox(height: 5),
-          _buildDashboardAndSeating(carDetails: carDetails),
-          const SizedBox(height: 10),
-          _buildAdminAndApprovalInfo(carDetails: carDetails),
-          const SizedBox(height: 20),
+          // _buildStructuralAndUnderbody(carDetails: carDetails),
+          // const SizedBox(height: 5),
+          // _buildDashboardAndSeating(carDetails: carDetails),
+          // const SizedBox(height: 10),
+          // _buildAdminAndApprovalInfo(carDetails: carDetails),
+          // const SizedBox(height: 20),
         ],
       ),
     );
   }
 
   Widget _buildMainDetails({required CarModel2 carDetails}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '${carDetails.make} ${carDetails.model}',
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 3),
-        Row(
-          children: [
-            Text(
-              'Highest Bid: ',
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.grey,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              '${NumberFormat.decimalPattern('en_IN').format(widget.car.price)}/-',
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 3),
-        Row(
-          children: [
-            const Icon(Icons.location_on, color: AppColors.grey, size: 15),
-            const SizedBox(width: 5),
-            Text(carDetails.city, style: const TextStyle(fontSize: 12)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildIconAndTextDetails({
-    // required CarModel car,
-    required CarModel2 carDetails,
-  }) {
     // Helper Function
-    Widget item({required IconData icon, required String text}) => Column(
-      children: [
-        Icon(icon, color: AppColors.grey, size: 20),
-        Text(text, style: const TextStyle(fontSize: 10)),
-      ],
-    );
-
-    // Actual Widget
-    return Row(
-      children: [
-        Expanded(
-          child: Wrap(
-            alignment: WrapAlignment.spaceEvenly,
-            spacing: 10,
-            runSpacing: 5,
-            children: [
-              item(
-                icon: Icons.speed,
-                text:
-                    '${NumberFormat.decimalPattern('en_IN').format(carDetails.odometerReadingInKms)} kms',
+    Widget iconDetail(IconData icon, String label, String value) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, size: 15, color: AppColors.grey),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.grey,
+                fontWeight: FontWeight.w500,
               ),
-              item(icon: Icons.local_gas_station, text: carDetails.fuelType),
-              item(icon: Icons.settings, text: carDetails.variant),
-              // _buildIconAndTextWidget(icon: Icons.color_lens, text: carDetails.color),
-              item(
-                icon: Icons.event,
-                text: GlobalFunctions.getFormattedDate(
-                  date: carDetails.yearMonthOfManufacture,
-                  type: GlobalFunctions.year,
-                ),
-              ),
-            ],
+            ),
           ),
+          // Divider(),
+          // Text(
+          //   label,
+          //   style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+          // ),
+        ],
+      );
+    }
+
+    String maskRegistrationNumber(String? input) {
+      if (input == null || input.length <= 5) return '*****';
+      final visible = input.substring(0, input.length - 5);
+      return '$visible*****';
+    }
+
+    final items = [
+      // iconDetail(Icons.factory, 'Make', 'Mahindra'),
+      // iconDetail(Icons.directions_car, 'Model', 'Scorpio'),
+      // iconDetail(Icons.confirmation_number, 'Variant', '[2014–2017]'),
+      iconDetail(
+        Icons.speed,
+        'Odometer Reading in Kms',
+        '${NumberFormat.decimalPattern('en_IN').format(carDetails.odometerReadingInKms)} km',
+      ),
+      iconDetail(Icons.local_gas_station, 'Fuel Type', carDetails.fuelType),
+      iconDetail(
+        Icons.calendar_month,
+        'Year of Manufacture',
+        GlobalFunctions.getFormattedDate(
+              date: carDetails.yearMonthOfManufacture,
+              type: GlobalFunctions.year,
+            ) ??
+            'N/A',
+      ),
+
+      iconDetail(
+        Icons.settings,
+        'Transmission',
+        carDetails.commentsOnTransmission,
+      ),
+      iconDetail(
+        Icons.receipt_long,
+        'Tax Validity',
+        GlobalFunctions.getFormattedDate(
+              date: carDetails.taxValidTill,
+              type: GlobalFunctions.monthYear,
+            ) ??
+            'N/A',
+      ),
+      iconDetail(
+        Icons.person,
+        'Owner Serial Number',
+        carDetails.ownerSerialNumber == 1
+            ? 'First Owner'
+            : '${carDetails.ownerSerialNumber} Owners',
+      ),
+
+      iconDetail(Icons.location_on, 'Inspection Location', carDetails.city),
+      iconDetail(
+        Icons.directions_car_filled,
+        'Registration No.',
+        maskRegistrationNumber(carDetails.registrationNumber),
+      ),
+      iconDetail(Icons.apartment, 'Registered RTO', carDetails.registeredRto),
+    ];
+
+    return Container(
+      color: AppColors.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            Text(
+              '${carDetails.make} ${carDetails.model} ${carDetails.variant}',
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
+            Container(
+              // padding: const EdgeInsets.all(12),
+              // margin: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Wrap(
+                  //   spacing: 10,
+                  //   runSpacing: 5,
+                  //   alignment: WrapAlignment.start,
+                  //   children: items,
+                  // ),
+                  GridView.count(
+                    padding: EdgeInsets.zero,
+                    crossAxisCount: 3,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 5, // controls vertical space
+                    crossAxisSpacing: 10, // controls horizontal space
+                    childAspectRatio:
+                        4, // width / height ratio — adjust as needed
+                    children: items,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text(
+                  'Highest Bid: ',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    // color: AppColors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  '${NumberFormat.decimalPattern('en_IN').format(widget.car.priceDiscovery)}/-',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
+
+  // Widget _buildIconAndTextDetails({
+  //   // required CarModel car,
+  //   required CarModel2 carDetails,
+  // }) {
+  //   // Helper Function
+  //   Widget item({required IconData icon, required String text}) => Column(
+  //     children: [
+  //       Icon(icon, color: AppColors.grey, size: 20),
+  //       Text(text, style: const TextStyle(fontSize: 10)),
+  //     ],
+  //   );
+
+  //   // Actual Widget
+  //   return Row(
+  //     children: [
+  //       Expanded(
+  //         child: Wrap(
+  //           alignment: WrapAlignment.spaceEvenly,
+  //           spacing: 10,
+  //           runSpacing: 5,
+  //           children: [
+  //             item(
+  //               icon: Icons.speed,
+  //               text:
+  //                   '${NumberFormat.decimalPattern('en_IN').format(carDetails.odometerReadingInKms)} kms',
+  //             ),
+  //             item(icon: Icons.local_gas_station, text: carDetails.fuelType),
+  //             item(icon: Icons.settings, text: carDetails.variant),
+  //             // _buildIconAndTextWidget(icon: Icons.color_lens, text: carDetails.color),
+  //             item(
+  //               icon: Icons.event,
+  //               text:
+  //                   GlobalFunctions.getFormattedDate(
+  //                     date: carDetails.yearMonthOfManufacture,
+  //                     type: GlobalFunctions.year,
+  //                   ) ??
+  //                   'N/A',
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildBasicDetails({required CarModel2 carDetails}) {
     return Column(
       children: [
+        const SizedBox(height: 10),
         Row(
           children: [
             const Icon(
@@ -399,16 +681,18 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         _buildDetailRowForOtherDetails(
           'Registration Date',
           GlobalFunctions.getFormattedDate(
-            date: carDetails.registrationDate,
-            type: GlobalFunctions.date,
-          ),
+                date: carDetails.registrationDate,
+                type: GlobalFunctions.date,
+              ) ??
+              'N/A',
         ),
         _buildDetailRowForOtherDetails(
           'Manufacture Year',
           GlobalFunctions.getFormattedDate(
-            date: carDetails.yearMonthOfManufacture,
-            type: GlobalFunctions.year,
-          ),
+                date: carDetails.yearMonthOfManufacture,
+                type: GlobalFunctions.year,
+              ) ??
+              'N/A',
         ),
         _buildDetailRowForOtherDetails(
           'Odometer Reading',
@@ -441,7 +725,10 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
   }
 
-  Widget _buildRcAndLegalDocuments({required CarModel2 carDetails}) {
+  Widget _buildDocumentDetails({
+    required CarModel2 carDetails,
+    required CarDetailsController getxController,
+  }) {
     Widget buildRow(String title, String value) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
@@ -470,25 +757,72 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     }
 
     return AccordionWidget(
-      title: 'RC, Insurance & Legal Details',
+      // title: 'RC, Insurance & Legal Details',
+      title: 'Document Details',
       contentSize: 300,
       icon: Icons.article_outlined,
       content: Column(
         children: [
           buildRow('RC Book Availability', carDetails.rcBookAvailability),
           buildRow('RC Condition', carDetails.rcCondition),
-          buildRow('Registered Owner', carDetails.registeredOwner),
-          buildRow('Registered Address', carDetails.registeredAddressAsPerRc),
-          buildRow('To Be Scrapped', carDetails.toBeScrapped),
-          buildRow('Road Tax Validity', carDetails.roadTaxValidity),
-          buildRow('RTO NOC', carDetails.rtoNoc),
-          buildRow('RTO Form 28 (2 Nos)', carDetails.rtoForm28),
-          buildRow('Hypothecation Details', carDetails.hypothecationDetails),
           buildRow('Mismatch In RC', carDetails.mismatchInRc),
-          buildRow('Duplicate Key', carDetails.duplicateKey),
-          buildRow('Party Peshi', carDetails.partyPeshi),
-          const Divider(height: 20),
+          buildRow(
+            'Registration Date',
+            GlobalFunctions.getFormattedDate(
+                  date: carDetails.registrationDate,
+                  type: GlobalFunctions.monthYear,
+                ) ??
+                'N/A',
+          ),
+          buildRow(
+            'Fitness Till',
+            GlobalFunctions.getFormattedDate(
+                  date: carDetails.fitnessTill,
+                  type: GlobalFunctions.monthYear,
+                ) ??
+                'N/A',
+          ),
+          buildRow('To Be Scrapped', carDetails.toBeScrapped),
+          buildRow('Cubic Capacity', '${carDetails.cubicCapacity} cc'),
+          buildRow('Hypothecation Details', carDetails.hypothecationDetails),
+          buildRow('Road Tax Validity', carDetails.roadTaxValidity),
+          buildRow(
+            'Tax Valid Till',
+            GlobalFunctions.getFormattedDate(
+                  date: carDetails.taxValidTill,
+                  type: GlobalFunctions.monthYear,
+                ) ??
+                'N/A',
+          ),
           buildRow('Insurance', carDetails.insurance),
+          buildRow(
+            'Insurance Validity',
+            GlobalFunctions.getFormattedDate(
+                  date: carDetails.insuranceValidity,
+                  type: GlobalFunctions.monthYear,
+                ) ??
+                'N/A',
+          ),
+          buildRow('Duplicate Key', carDetails.duplicateKey),
+          buildRow('RTO NOC', carDetails.rtoNoc),
+          buildRow('Party Peshi', carDetails.partyPeshi),
+          if (getxController.isValidComment(carDetails.comments))
+            _buildCommentsCard(
+              title: 'Comments',
+              comment: carDetails.comments,
+              icon: Icons.comment,
+            ),
+          // buildRow('Registered Owner', carDetails.registeredOwner),
+          // buildRow('Registered Address', carDetails.registeredAddressAsPerRc),
+          // buildRow('To Be Scrapped', carDetails.toBeScrapped),
+          // buildRow('Road Tax Validity', carDetails.roadTaxValidity),
+          // buildRow('RTO NOC', carDetails.rtoNoc),
+          // buildRow('RTO Form 28 (2 Nos)', carDetails.rtoForm28),
+          // buildRow('Hypothecation Details', carDetails.hypothecationDetails),
+          // buildRow('Duplicate Key', carDetails.duplicateKey),
+          // buildRow('Party Peshi', carDetails.partyPeshi),
+          // const Divider(height: 20),
+          // buildRow('Insurance', carDetails.insurance),
           // buildRow('Insurance Copy', carDetails.insuranceCopy),
           // buildRow('Insurance Copy 1', carDetails.insuranceCopy1),
           // const Divider(height: 20),
@@ -502,134 +836,251 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
   }
 
-  Widget _buildEngineMechanicalInfo({required CarModel2 carDetails}) {
+  Widget _buildEngineBay({
+    required CarModel2 carDetails,
+    required CarDetailsController getxController,
+  }) {
     // Helper: builds each labeled box
-    Widget infoCard({
-      required IconData icon,
-      required String label,
-      required String value,
-    }) {
-      return Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    // Widget infoCard({
+    //   required IconData icon,
+    //   required String label,
+    //   required String value,
+    // }) {
+    //   return Container(
+    //     decoration: BoxDecoration(
+    //       color: AppColors.white,
+    //       borderRadius: BorderRadius.circular(5),
+    //       boxShadow: [
+    //         BoxShadow(
+    //           color: Colors.black.withValues(alpha: 0.15),
+    //           blurRadius: 10,
+    //           offset: const Offset(0, 4),
+    //         ),
+    //       ],
+    //     ),
+    //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+    //     child: Column(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: [
+    //         Row(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: [
+    //             // Icon badge
+    //             Container(
+    //               width: 28,
+    //               height: 28,
+    //               // margin: const EdgeInsets.only(right: 10),
+    //               decoration: BoxDecoration(
+    //                 color: AppColors.green.withValues(alpha: 0.15),
+    //                 shape: BoxShape.circle,
+    //               ),
+    //               child: Icon(icon, size: 16, color: AppColors.green),
+    //             ),
+    //             // Label + Value
+    //             // Flexible(
+    //             //   child: Column(
+    //             //     crossAxisAlignment: CrossAxisAlignment.start,
+    //             //     mainAxisAlignment: MainAxisAlignment.end,
+    //             //     children: [SizedBox(height: 7)],
+    //             //   ),
+    //             // ),
+    //           ],
+    //         ),
+    //         const SizedBox(height: 10),
+    //         Row(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: [
+    //             Flexible(
+    //               child: Text(
+    //                 label,
+    //                 textAlign: TextAlign.center,
+    //                 style: const TextStyle(
+    //                   fontSize: 10,
+    //                   fontWeight: FontWeight.w600,
+    //                   color: Colors.black87,
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         Row(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: [
+    //             Flexible(
+    //               child: Text(
+    //                 value.isNotEmpty ? value : '—',
+    //                 textAlign: TextAlign.center,
+    //                 style: const TextStyle(fontSize: 12, color: Colors.black54),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // }
+
+    Widget videoCard({required String label, required String videoUrl}) {
+      return InkWell(
+        onTap: () {
+          Get.to(() => VideoPlayerPage(videoLabel: label, videoUrl: videoUrl));
+        },
+        borderRadius: BorderRadius.circular(5),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: AppColors.grey.withValues(alpha: 0.5)),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Column(
               children: [
-                // Icon badge
-                Container(
-                  width: 28,
-                  height: 28,
-                  // margin: const EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(
-                    color: AppColors.green.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, size: 16, color: AppColors.green),
+                Stack(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      // color: AppColors.grey.withValues(alpha: 0.2),
+                      child: const Center(
+                        child: Icon(
+                          Icons.play_circle_outline,
+                          size: 50,
+                          color: AppColors.green,
+                        ),
+                      ),
+                    ),
+                    // Optionally: You can add a thumbnail here using CachedNetworkImage or future frame from video
+                  ],
                 ),
-                // Label + Value
-                // Flexible(
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     mainAxisAlignment: MainAxisAlignment.end,
-                //     children: [SizedBox(height: 7)],
-                //   ),
-                // ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
+                Container(
+                  // width: double.infinity,
+                  color: AppColors.grey.withValues(alpha: 0.5),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 6,
+                    horizontal: 10,
+                  ),
                   child: Text(
                     label,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: AppColors.white,
+                      fontSize: 13,
                     ),
                   ),
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Text(
-                    value.isNotEmpty ? value : '—',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
-                ),
-              ],
+          ),
+        ),
+      );
+    }
+
+    Widget buildItem({
+      required IconData icon,
+      required String label,
+      required Widget trailing,
+    }) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: Colors.black54),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(label, style: const TextStyle(fontSize: 13)),
+                  const SizedBox(width: 10),
+                  Flexible(child: trailing),
+                ],
+              ),
             ),
           ],
         ),
       );
     }
 
+    Widget engineBayValue(String? value) {
+      final status = value?.toLowerCase();
+
+      if (status == 'available' || status == 'yes' || status == 'okay') {
+        return Icon(Icons.check_circle, color: AppColors.green, size: 20);
+      } else if (status == 'not applicable' ||
+          status == 'not available' ||
+          status == 'no' ||
+          status == 'not okay') {
+        return Icon(Icons.cancel, color: AppColors.red, size: 20);
+      } else {
+        return Text(value.toString(), style: const TextStyle(fontSize: 13));
+      }
+    }
+
     // Field Map: Label and matching value from carDetails
     final fields = [
-      {"label": "Engine", "value": carDetails.engine, "icon": Icons.settings},
       {
-        "label": "Engine Number",
-        "value": carDetails.engineNumber,
-        "icon": Icons.confirmation_number,
+        "label": "Upper Cross Member",
+        "value": carDetails.upperCrossMember,
+        "icon": Icons.border_top, // structure part
       },
       {
-        "label": "Chassis Number",
-        "value": carDetails.chassisNumber,
-        "icon": Icons.car_repair,
+        "label": "Radiator Support",
+        "value": carDetails.radiatorSupport,
+        "icon": Icons.water_drop_outlined, // coolant-related
       },
       {
-        "label": "Cubic Capacity",
-        "value": '${carDetails.cubicCapacity} cc',
-        "icon": Icons.compress,
+        "label": "Head Light Support",
+        "value": carDetails.headlightSupport,
+        "icon": Icons.lightbulb_outline, // lights
       },
       {
-        "label": "Fuel Type",
-        "value": carDetails.fuelType,
-        "icon": Icons.local_gas_station,
+        "label": "Lower Cross Member",
+        "value": carDetails.lowerCrossMember,
+        "icon": Icons.border_bottom,
       },
       {
-        "label": "Hypothecation",
-        "value": carDetails.hypothecationDetails,
-        "icon": Icons.verified_user,
+        "label": "LHS Apron",
+        "value": carDetails.lhsApron,
+        "icon": Icons.align_horizontal_left,
       },
       {
-        "label": "Engine Mount",
-        "value": carDetails.engineMount,
-        "icon": Icons.engineering,
+        "label": "RHS Apron",
+        "value": carDetails.rhsApron,
+        "icon": Icons.align_horizontal_right,
+      },
+      {
+        "label": "Firewall",
+        "value": carDetails.firewall,
+        "icon": Icons.shield, // metaphorical for firewall
+      },
+      {
+        "label": "Cowl Top",
+        "value": carDetails.cowlTop,
+        "icon": Icons.expand_less, // top area metaphor
+      },
+      {
+        "label": "Engine",
+        "value": carDetails.engine,
+        "icon": Icons.settings, // engine machinery
       },
       // {
-      //   "label": "Engine Sound",
-      //   "value": carDetails.engineSound,
-      //   "icon": Icons.volume_up,
-      // },
-      // {
-      //   "label": "Engine Bay",
-      //   "value": carDetails.engineBay,
-      //   "icon": Icons.build_circle,
+      //   "label": "Engine Video",
+      //   "value": carDetails.engine,
+      //   "icon": Icons.confirmation_number,
       // },
       {
-        "label": "Dipstick Oil Level",
-        "value": carDetails.engineOilLevelDipstick,
+        "label": "Battery",
+        "value": carDetails.battery,
+        "icon": Icons.battery_full,
+      },
+      {
+        "label": "Coolant",
+        "value": carDetails.coolant,
         "icon": Icons.water_drop,
+      },
+      {
+        "label": "Engine Oil Level Dipstick",
+        "value": carDetails.engineOilLevelDipstick,
+        "icon": Icons.straighten, // for measuring tool
       },
       {
         "label": "Engine Oil",
@@ -637,77 +1088,303 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         "icon": Icons.oil_barrel,
       },
       {
-        "label": "Permissible Blow By",
+        "label": "Engine Mount",
+        "value": carDetails.engineMount,
+        "icon": Icons.construction,
+      },
+      {
+        "label": "Permisable Blow By",
         "value": carDetails.enginePermisableBlowBy,
-        "icon": Icons.air,
+        "icon": Icons.compress,
       },
       {
         "label": "Exhaust Smoke",
         "value": carDetails.exhaustSmoke,
-        "icon": Icons.smoke_free,
+        "icon": Icons.air,
       },
+
       // {
-      //   "label": "Exhaust Smoke 2",
-      //   "value": carDetails.exhaustSmoke1,
-      //   "icon": Icons.smoke_free_outlined,
+      //   "label": "Exhaust Smoke Video",
+      //   "value": carDetails.exhaustSmokeVideo,
+      //   "icon": Icons.confirmation_number,
       // },
-      {"label": "Coolant", "value": carDetails.coolant, "icon": Icons.ac_unit},
       {
-        "label": "Battery",
-        "value": carDetails.battery,
-        "icon": Icons.battery_full,
+        "label": "Clutch",
+        "value": carDetails.clutch,
+        "icon": Icons.sync_alt, // motion/transfer metaphor
       },
-      // {
-      //   "label": "Battery 2",
-      //   "value": carDetails.battery1,
-      //   "icon": Icons.battery_std,
-      // },
-      {"label": "Clutch", "value": carDetails.clutch, "icon": Icons.sync},
       {
         "label": "Gear Shift",
         "value": carDetails.gearShift,
-        "icon": Icons.settings_suggest,
+        "icon": Icons.settings_input_component,
       },
-      {
-        "label": "Oil Comments",
-        "value": carDetails.commentsOnEngineOil,
-        "icon": Icons.comment,
-      },
-      {
-        "label": "Transmission Comments",
-        "value": carDetails.commentsOnTransmission,
-        "icon": Icons.notes,
-      },
+
+      ////
+      // {
+      //   "label": "Chassis Number",
+      //   "value": carDetails.chassisNumber,
+      //   "icon": Icons.car_repair,
+      // },
+      // {
+      //   "label": "Cubic Capacity",
+      //   "value": '${carDetails.cubicCapacity} cc',
+      //   "icon": Icons.compress,
+      // },
+      // {
+      //   "label": "Fuel Type",
+      //   "value": carDetails.fuelType,
+      //   "icon": Icons.local_gas_station,
+      // },
+      // {
+      //   "label": "Hypothecation",
+      //   "value": carDetails.hypothecationDetails,
+      //   "icon": Icons.verified_user,
+      // },
+      // {
+      //   "label": "Engine Mount",
+      //   "value": carDetails.engineMount,
+      //   "icon": Icons.engineering,
+      // },
+      // // {
+      // //   "label": "Engine Sound",
+      // //   "value": carDetails.engineSound,
+      // //   "icon": Icons.volume_up,
+      // // },
+      // // {
+      // //   "label": "Engine Bay",
+      // //   "value": carDetails.engineBay,
+      // //   "icon": Icons.build_circle,
+      // // },
+      // {
+      //   "label": "Dipstick Oil Level",
+      //   "value": carDetails.engineOilLevelDipstick,
+      //   "icon": Icons.water_drop,
+      // },
+      // {
+      //   "label": "Engine Oil",
+      //   "value": carDetails.engineOil,
+      //   "icon": Icons.oil_barrel,
+      // },
+      // {
+      //   "label": "Permissible Blow By",
+      //   "value": carDetails.enginePermisableBlowBy,
+      //   "icon": Icons.air,
+      // },
+      // {
+      //   "label": "Exhaust Smoke",
+      //   "value": carDetails.exhaustSmoke,
+      //   "icon": Icons.smoke_free,
+      // },
+      // // {
+      // //   "label": "Exhaust Smoke 2",
+      // //   "value": carDetails.exhaustSmoke1,
+      // //   "icon": Icons.smoke_free_outlined,
+      // // },
+      // {"label": "Coolant", "value": carDetails.coolant, "icon": Icons.ac_unit},
+      // {
+      //   "label": "Battery",
+      //   "value": carDetails.battery,
+      //   "icon": Icons.battery_full,
+      // },
+      // // {
+      // //   "label": "Battery 2",
+      // //   "value": carDetails.battery1,
+      // //   "icon": Icons.battery_std,
+      // // },
+      // {"label": "Clutch", "value": carDetails.clutch, "icon": Icons.sync},
+      // {
+      //   "label": "Gear Shift",
+      //   "value": carDetails.gearShift,
+      //   "icon": Icons.settings_suggest,
+      // },
+      // {
+      //   "label": "Oil Comments",
+      //   "value": carDetails.commentsOnEngineOil,
+      //   "icon": Icons.comment,
+      // },
+      // {
+      //   "label": "Transmission Comments",
+      //   "value": carDetails.commentsOnTransmission,
+      //   "icon": Icons.notes,
+      // },
     ];
 
     return AccordionWidget(
-      title: 'Engine & Mechanical Info',
+      title: 'Engine Bay',
       contentSize: 400,
       icon: Icons.engineering,
       content: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8),
         child: Column(
           children: [
-            LayoutGrid(
-              columnSizes: [1.fr, 1.fr],
-              rowGap: 12,
-              columnGap: 16,
-              rowSizes: List.generate((fields.length / 2).ceil(), (_) => auto),
-              children:
-                  fields.map((item) {
-                    return infoCard(
-                      icon: item['icon'] as IconData,
-                      label: item['label'] as String,
-                      value: item['value'] as String? ?? '',
-                    );
-                  }).toList(),
+            ...fields.map((item) {
+              return buildItem(
+                icon: item['icon'] as IconData,
+                label: item['label'] as String,
+                trailing: engineBayValue(item['value'] as String? ?? ''),
+              );
+            }),
+
+            // LayoutGrid(
+            //   columnSizes: [1.fr, 1.fr],
+            //   rowGap: 12,
+            //   columnGap: 16,
+            //   rowSizes: List.generate((fields.length / 2).ceil(), (_) => auto),
+            //   children:
+            //       fields.map((item) {
+            //         return infoCard(
+            //           icon: item['icon'] as IconData,
+            //           label: item['label'] as String,
+            //           value: item['value'] as String? ?? '',
+            //         );
+            //       }).toList(),
+            // ),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Videos',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
             ),
+            const Divider(),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                videoCard(
+                  label: 'Engine Sound',
+                  videoUrl: carDetails.engineSound[0],
+                ),
+                videoCard(
+                  label: 'Exhaust Smoke',
+                  videoUrl: carDetails.exhaustSmoke[0],
+                ),
+              ],
+            ),
+            const SizedBox(height: 15),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Comments',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const Divider(),
+            const SizedBox(height: 10),
+            if (!getxController.isValidComment(carDetails.commentsOnEngine) &&
+                !getxController.isValidComment(
+                  carDetails.commentsOnEngineOil,
+                ) &&
+                !getxController.isValidComment(
+                  carDetails.commentsOnTransmission,
+                ) &&
+                !getxController.isValidComment(carDetails.commentsOnRadiator) &&
+                !getxController.isValidComment(carDetails.commentsOnOthers) &&
+                !getxController.isValidComment(carDetails.commentsOnTowing))
+              Text(
+                'No Comments',
+                style: TextStyle(fontSize: 12, color: AppColors.grey),
+              ),
+            if (getxController.isValidComment(carDetails.commentsOnEngine))
+              _buildCommentsCard(
+                title: 'Comments on Engine',
+                comment: carDetails.commentsOnEngine,
+                icon: Icons.settings, // represents engine/machinery
+              ),
+            if (getxController.isValidComment(carDetails.commentsOnEngineOil))
+              _buildCommentsCard(
+                title: 'Comments on Engine Oil',
+                comment: carDetails.commentsOnEngineOil,
+                icon: Icons.oil_barrel, // ideal for oil-related comments
+              ),
+            if (getxController.isValidComment(
+              carDetails.commentsOnTransmission,
+            ))
+              _buildCommentsCard(
+                title: 'Comments on Transmission',
+                comment: carDetails.commentsOnTransmission,
+                icon: Icons.sync_alt, // movement between components
+              ),
+            if (getxController.isValidComment(carDetails.commentsOnRadiator))
+              _buildCommentsCard(
+                title: 'Comments on Radiator',
+                comment: carDetails.commentsOnRadiator,
+                icon: Icons.water_drop, // fluid/coolant
+              ),
+            if (getxController.isValidComment(carDetails.commentsOnOthers))
+              _buildCommentsCard(
+                title: 'Comments on Others',
+                comment: carDetails.commentsOnOthers,
+                icon: Icons.info_outline, // general purpose
+              ),
+            if (getxController.isValidComment(carDetails.commentsOnTowing))
+              _buildCommentsCard(
+                title: 'Comments on Towing',
+                comment: carDetails.commentsOnTowing,
+                icon: Icons.local_shipping, // towing/truck metaphor
+              ),
           ],
         ),
       ),
     );
   }
 
+  // Steering, Brakes and Suspension
+  Widget _buildSteeringBrackesAndSuspension({required CarModel2 carDetails}) {
+    Widget buildItem(IconData icon, String label, String value) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 20, color: AppColors.green),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: const TextStyle(fontSize: 13, color: AppColors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return AccordionWidget(
+      title: 'Steering, Brakes and Suspension',
+      icon: Icons.build_circle_outlined,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          buildItem(Icons.settings_ethernet, 'Steering', carDetails.steering),
+          buildItem(Icons.car_repair, 'Brakes', carDetails.brakes),
+          buildItem(
+            Icons.directions_car_filled,
+            'Suspension',
+            carDetails.suspension,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Safety & Airbags
   Widget _buildSafetyAndAirbags({required CarModel2 carDetails}) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -802,7 +1479,10 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
   }
 
-  Widget _buildInteriorFeatures({required CarModel2 carDetails}) {
+  Widget _buildInteriorAndElectricals({
+    required CarModel2 carDetails,
+    required CarDetailsController getxController,
+  }) {
     Widget item({
       required IconData icon,
       required String label,
@@ -850,120 +1530,376 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     // }
 
     return AccordionWidget(
-      title: 'Interior Features',
+      title: 'Interior & Electricals',
       icon: Icons.chair_alt_outlined,
       contentSize: 300,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Steering & Drive
           item(
-            icon: Icons.settings,
-            label: 'Steering',
-            trailing: interiorFeatureValue(carDetails.steering),
-          ),
-          item(
-            icon: Icons.speed,
-            label: 'Brakes',
-            trailing: interiorFeatureValue(carDetails.brakes),
-          ),
-          item(
-            icon: Icons.directions_car,
-            label: 'Suspension',
-            trailing: interiorFeatureValue(carDetails.suspension),
+            icon: Icons.security, // ABS
+            label: 'ABS',
+            trailing: interiorFeatureValue(carDetails.abs),
           ),
 
-          const SizedBox(height: 10),
-
-          /// AC Features
           item(
-            icon: Icons.ac_unit,
-            label: 'Manual AC',
-            trailing: interiorFeatureValue(carDetails.airConditioningManual),
-          ),
-          item(
-            icon: Icons.ac_unit_outlined,
-            label: 'Climate Control',
-            trailing: interiorFeatureValue(
-              carDetails.airConditioningClimateControl,
-            ),
+            icon: Icons.electric_bolt, // Electricals
+            label: 'Electricals',
+            trailing: interiorFeatureValue(carDetails.electricals),
           ),
 
-          const SizedBox(height: 10),
-
-          /// Music System
           item(
-            icon: Icons.music_note,
+            icon: Icons.wash, // Rear Wiper Washer
+            label: 'Rear Wiper Washer',
+            trailing: interiorFeatureValue(carDetails.rearWiperWasher),
+          ),
+
+          item(
+            icon: Icons.blur_on, // Rear Defogger
+            label: 'Rear Defogger',
+            trailing: interiorFeatureValue(carDetails.rearDefogger),
+          ),
+
+          item(
+            icon: Icons.music_note, // Music System
             label: 'Music System',
             trailing: interiorFeatureValue(carDetails.musicSystem),
           ),
+
           item(
-            icon: Icons.speaker,
+            icon: Icons.speaker, // Stereo
             label: 'Stereo',
             trailing: interiorFeatureValue(carDetails.stereo),
           ),
+
           item(
-            icon: Icons.speaker_group,
+            icon: Icons.speaker_group, // Inbuilt Speaker
             label: 'Inbuilt Speaker',
             trailing: interiorFeatureValue(carDetails.inbuiltSpeaker),
           ),
+
           item(
-            icon: Icons.speaker_outlined,
+            icon: Icons.speaker_outlined, // External Speaker
             label: 'External Speaker',
             trailing: interiorFeatureValue(carDetails.externalSpeaker),
           ),
 
-          const SizedBox(height: 10),
-
-          /// Reverse & Seats
           item(
-            icon: Icons.videocam,
-            label: 'Reverse Camera',
-            trailing: interiorFeatureValue(carDetails.reverseCamera),
-          ),
-          item(
-            icon: Icons.event_seat,
-            label: 'Leather Seats',
-            trailing: interiorFeatureValue(carDetails.leatherSeats),
-          ),
-          item(
-            icon: Icons.event_seat_outlined,
-            label: 'Fabric Seats',
-            trailing: interiorFeatureValue(carDetails.fabricSeats),
-          ),
-          item(
-            icon: Icons.roofing,
-            label: 'Sunroof',
-            trailing: interiorFeatureValue(carDetails.sunroof),
-          ),
-
-          const SizedBox(height: 10),
-
-          /// Power Windows
-          item(
-            icon: Icons.window,
-            label: 'No. of Power Windows',
-            trailing: interiorFeatureValue(carDetails.noOfPowerWindows),
-          ),
-          const SizedBox(height: 6),
-
-          // _powerWindowChips(),
-          const SizedBox(height: 10),
-
-          /// Steering-mounted audio
-          item(
-            icon: Icons.volume_up,
+            icon: Icons.surround_sound, // Steering Mounted Audio Control
             label: 'Steering Mounted Audio Control',
             trailing: interiorFeatureValue(
               carDetails.steeringMountedAudioControl,
             ),
           ),
+
+          item(
+            icon: Icons.window, // No. of Power Windows
+            label: 'No. of Power Windows',
+            trailing: interiorFeatureValue(carDetails.noOfPowerWindows),
+          ),
+
+          item(
+            icon: Icons.open_in_browser, // RHS Front Power Window
+            label: 'Power Window Condition (RHS) Front',
+            trailing: interiorFeatureValue(
+              carDetails.powerWindowConditionRhsFront,
+            ),
+          ),
+
+          item(
+            icon: Icons.open_in_browser, // LHS Front Power Window
+            label: 'Power Window Condition (LHS) Front',
+            trailing: interiorFeatureValue(
+              carDetails.powerWindowConditionLhsFront,
+            ),
+          ),
+
+          item(
+            icon: Icons.open_in_browser, // RHS Rear Power Window
+            label: 'Power Window Condition (RHS) Rear',
+            trailing: interiorFeatureValue(
+              carDetails.powerWindowConditionRhsRear,
+            ),
+          ),
+
+          item(
+            icon: Icons.open_in_browser, // LHS Rear Power Window
+            label: 'Power Window Condition (LHS) Rear',
+            trailing: interiorFeatureValue(
+              carDetails.powerWindowConditionLhsRear,
+            ),
+          ),
+
+          item(
+            icon: Icons.airline_seat_recline_normal, // No. of Airbags
+            label: 'No. of Airbags',
+            trailing: interiorFeatureValue(carDetails.noOfAirBags.toString()),
+          ),
+
+          item(
+            icon: Icons.airline_seat_flat, // Driver Airbag
+            label: 'Airbag Feature Driver Side',
+            trailing: interiorFeatureValue(carDetails.airbagFeaturesDriverSide),
+          ),
+
+          item(
+            icon: Icons.airline_seat_recline_extra, // Co-Driver Airbag
+            label: 'Airbag Feature Co-Driver Side',
+            trailing: interiorFeatureValue(
+              carDetails.airbagFeaturesCoDriverSide,
+            ),
+          ),
+
+          item(
+            icon: Icons.view_column, // LHS A Pillar Airbag
+            label: 'Airbag Feature LHS A Pillar',
+            trailing: interiorFeatureValue(
+              carDetails.airbagFeaturesLhsAPillarCurtain,
+            ),
+          ),
+
+          item(
+            icon: Icons.view_column, // LHS B Pillar Airbag
+            label: 'Airbag Feature LHS B Pillar',
+            trailing: interiorFeatureValue(
+              carDetails.airbagFeaturesLhsBPillarCurtain,
+            ),
+          ),
+
+          item(
+            icon: Icons.view_column, // LHS C Pillar Airbag
+            label: 'Airbag Feature LHS C Pillar',
+            trailing: interiorFeatureValue(
+              carDetails.airbagFeaturesLhsCPillarCurtain,
+            ),
+          ),
+
+          item(
+            icon: Icons.view_column, // RHS A Pillar Airbag
+            label: 'Airbag Feature RHS A Pillar',
+            trailing: interiorFeatureValue(
+              carDetails.airbagFeaturesRhsAPillarCurtain,
+            ),
+          ),
+
+          item(
+            icon: Icons.view_column, // RHS B Pillar Airbag
+            label: 'Airbag Feature RHS B Pillar',
+            trailing: interiorFeatureValue(
+              carDetails.airbagFeaturesRhsBPillarCurtain,
+            ),
+          ),
+
+          item(
+            icon: Icons.view_column, // RHS C Pillar Airbag
+            label: 'Airbag Feature RHS C Pillar',
+            trailing: interiorFeatureValue(
+              carDetails.airbagFeaturesRhsCPillarCurtain,
+            ),
+          ),
+
+          item(
+            icon: Icons.wb_sunny, // Sunroof
+            label: 'Sunroof',
+            trailing: interiorFeatureValue(carDetails.sunroof),
+          ),
+
+          item(
+            icon: Icons.videocam, // Reverse Camera
+            label: 'Reverse Camera',
+            trailing: interiorFeatureValue(carDetails.reverseCamera),
+          ),
+
+          item(
+            icon: Icons.event_seat, // Leather Seats
+            label: 'Leather Seats',
+            trailing: interiorFeatureValue(carDetails.leatherSeats),
+          ),
+
+          item(
+            icon: Icons.event_seat_outlined, // Fabric Seats
+            label: 'Fabric Seats',
+            trailing: interiorFeatureValue(carDetails.fabricSeats),
+          ),
+
+          const SizedBox(height: 10),
+
+          if (getxController.isValidComment(carDetails.commentsOnElectricals))
+            _buildCommentsCard(
+              title: 'Comments on Electricals',
+              comment: carDetails.commentsOnElectricals,
+              icon: Icons.electrical_services,
+            ),
+
+          if (getxController.isValidComment(carDetails.commentOnInterior))
+            _buildCommentsCard(
+              title: 'Comments on Interior',
+              comment: carDetails.commentOnInterior,
+              icon: Icons.weekend,
+            ),
+
+          // const SizedBox(height: 10),
+
+          // /// AC Features
+          // item(
+          //   icon: Icons.ac_unit,
+          //   label: 'Manual AC',
+          //   trailing: interiorFeatureValue(carDetails.airConditioningManual),
+          // ),
+          // item(
+          //   icon: Icons.ac_unit_outlined,
+          //   label: 'Climate Control',
+          //   trailing: interiorFeatureValue(
+          //     carDetails.airConditioningClimateControl,
+          //   ),
+          // ),
+
+          // const SizedBox(height: 10),
+
+          // /// Music System
+          // item(
+          //   icon: Icons.music_note,
+          //   label: 'Music System',
+          //   trailing: interiorFeatureValue(carDetails.musicSystem),
+          // ),
+          // item(
+          //   icon: Icons.speaker,
+          //   label: 'Stereo',
+          //   trailing: interiorFeatureValue(carDetails.stereo),
+          // ),
+          // item(
+          //   icon: Icons.speaker_group,
+          //   label: 'Inbuilt Speaker',
+          //   trailing: interiorFeatureValue(carDetails.inbuiltSpeaker),
+          // ),
+          // item(
+          //   icon: Icons.speaker_outlined,
+          //   label: 'External Speaker',
+          //   trailing: interiorFeatureValue(carDetails.externalSpeaker),
+          // ),
+
+          // const SizedBox(height: 10),
+
+          // /// Reverse & Seats
+          // item(
+          //   icon: Icons.videocam,
+          //   label: 'Reverse Camera',
+          //   trailing: interiorFeatureValue(carDetails.reverseCamera),
+          // ),
+          // item(
+          //   icon: Icons.event_seat,
+          //   label: 'Leather Seats',
+          //   trailing: interiorFeatureValue(carDetails.leatherSeats),
+          // ),
+          // item(
+          //   icon: Icons.event_seat_outlined,
+          //   label: 'Fabric Seats',
+          //   trailing: interiorFeatureValue(carDetails.fabricSeats),
+          // ),
+          // item(
+          //   icon: Icons.roofing,
+          //   label: 'Sunroof',
+          //   trailing: interiorFeatureValue(carDetails.sunroof),
+          // ),
+
+          // const SizedBox(height: 10),
+
+          // /// Power Windows
+          // item(
+          //   icon: Icons.window,
+          //   label: 'No. of Power Windows',
+          //   trailing: interiorFeatureValue(carDetails.noOfPowerWindows),
+          // ),
+          // const SizedBox(height: 6),
+
+          // // _powerWindowChips(),
+          // const SizedBox(height: 10),
+
+          // /// Steering-mounted audio
+          // item(
+          //   icon: Icons.volume_up,
+          //   label: 'Steering Mounted Audio Control',
+          //   trailing: interiorFeatureValue(
+          //     carDetails.steeringMountedAudioControl,
+          //   ),
+          // ),
         ],
       ),
     );
   }
 
-  Widget _buildExteriorCondition({required CarModel2 carDetails}) {
+  // Air Condition
+  Widget _buildAirCondition({
+    required CarModel2 carDetails,
+    required CarDetailsController getxController,
+  }) {
+    Widget buildItem(IconData icon, String label, String value) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 20, color: AppColors.green),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: AppColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: const TextStyle(fontSize: 13, color: AppColors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return AccordionWidget(
+      title: 'Air Condition',
+      icon: Icons.build_circle_outlined,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          buildItem(
+            Icons.ac_unit,
+            'Air Conditioning - Manual',
+            carDetails.airConditioningManual,
+          ),
+          buildItem(
+            Icons.ac_unit,
+            'Air Conditioning - Climate Control',
+            carDetails.airConditioningClimateControl,
+          ),
+
+          // const SizedBox(height: 10),
+          if (getxController.isValidComment(carDetails.commentsOnAc))
+            _buildCommentsCard(
+              title: 'Comments',
+              comment: carDetails.commentsOnAc,
+              icon: Icons.electrical_services,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExterior({
+    required CarModel2 carDetails,
+    required CarDetailsController getxController,
+  }) {
     Widget buildExteriorItem(
       String title,
       String value, {
@@ -980,6 +1916,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
               Expanded(
                 child: Text(value, style: const TextStyle(fontSize: 12)),
               ),
+              Icon(Icons.photo_outlined, color: AppColors.grey),
             ],
           ),
           if (!isLast) Divider(color: AppColors.grey.withValues(alpha: 0.1)),
@@ -987,54 +1924,174 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       );
     }
 
+    Widget buildSection({
+      required String title,
+      required List<Widget> itemsList,
+    }) {
+      return Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColors.grey.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+            ...itemsList,
+          ],
+        ),
+      );
+    }
+
     return AccordionWidget(
-      title: 'Exterior Condition',
+      title: 'Exterior',
       icon: Icons.car_rental,
       contentSize: 400,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildExteriorItem('Bonnet', carDetails.bonnet),
-          buildExteriorItem('Front Windshield', carDetails.frontWindshield),
-          buildExteriorItem('Roof', carDetails.roof),
-          buildExteriorItem('Front Bumper', carDetails.frontBumper),
-          buildExteriorItem('LHS Headlamp', carDetails.lhsHeadlamp),
-          buildExteriorItem('LHS Foglamp', carDetails.lhsFoglamp),
-          buildExteriorItem('RHS Headlamp', carDetails.rhsHeadlamp),
-          buildExteriorItem('RHS Foglamp', carDetails.rhsFoglamp),
-          buildExteriorItem('LHS Fender', carDetails.lhsFender),
-          buildExteriorItem('LHS ORVM', carDetails.lhsOrvm),
-          buildExteriorItem('LHS A Pillar', carDetails.lhsAPillar),
-          buildExteriorItem('LHS B Pillar', carDetails.lhsBPillar),
-          buildExteriorItem('LHS C Pillar', carDetails.lhsCPillar),
-          buildExteriorItem('LHS Front Alloy', carDetails.lhsFrontAlloy),
-          buildExteriorItem('LHS Front Tyre', carDetails.lhsFrontTyre),
-          buildExteriorItem('LHS Rear Alloy', carDetails.lhsRearAlloy),
-          buildExteriorItem('LHS Rear Tyre', carDetails.lhsRearTyre),
-          buildExteriorItem('LHS Front Door', carDetails.lhsFrontDoor),
-          buildExteriorItem('LHS Rear Door', carDetails.lhsRearDoor),
-          buildExteriorItem('LHS Running Border', carDetails.lhsRunningBorder),
-          // buildExteriorItem('LHS Quarter Panel', carDetails.lhsQuarterPanel),
-          buildExteriorItem('Rear Bumper', carDetails.rearBumper),
-          buildExteriorItem('LHS Tail Lamp', carDetails.lhsTailLamp),
-          buildExteriorItem('RHS Tail Lamp', carDetails.rhsTailLamp),
-          buildExteriorItem('Rear Windshield', carDetails.rearWindshield),
-          buildExteriorItem('Boot Door', carDetails.bootDoor),
-          buildExteriorItem('Spare Tyre', carDetails.spareTyre),
-          buildExteriorItem('Boot Floor', carDetails.bootFloor),
-          buildExteriorItem('RHS Rear Alloy', carDetails.rhsRearAlloy),
-          buildExteriorItem('RHS Rear Tyre', carDetails.rhsRearTyre),
-          buildExteriorItem('RHS Front Alloy', carDetails.rhsFrontAlloy),
-          buildExteriorItem('RHS Front Tyre', carDetails.rhsFrontTyre),
-          buildExteriorItem('RHS Quarter Panel', carDetails.rhsQuarterPanel),
-          buildExteriorItem('RHS A Pillar', carDetails.rhsAPillar),
-          buildExteriorItem('RHS B Pillar', carDetails.rhsBPillar),
-          buildExteriorItem('RHS C Pillar', carDetails.rhsCPillar),
-          buildExteriorItem('RHS Running Border', carDetails.rhsRunningBorder),
-          buildExteriorItem('RHS Rear Door', carDetails.rhsRearDoor),
-          buildExteriorItem('RHS Front Door', carDetails.rhsFrontDoor),
-          buildExteriorItem('RHS ORVM', carDetails.rhsOrvm),
-          buildExteriorItem('RHS Fender', carDetails.rhsFender, isLast: true),
+          buildSection(
+            title: 'Front',
+            itemsList: [
+              buildExteriorItem('Bonnet', carDetails.bonnet),
+              buildExteriorItem('Front Windshield', carDetails.frontWindshield),
+              buildExteriorItem('Roof', carDetails.roof),
+              buildExteriorItem('Front Bumper', carDetails.frontBumper),
+              buildExteriorItem('LHS Headlamp', carDetails.lhsHeadlamp),
+              buildExteriorItem('LHS Foglamp', carDetails.lhsFoglamp),
+              buildExteriorItem('RHS Headlamp', carDetails.rhsHeadlamp),
+              buildExteriorItem(
+                'RHS Foglamp',
+                carDetails.rhsFoglamp,
+                isLast: true,
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          buildSection(
+            title: 'Left',
+            itemsList: [
+              buildExteriorItem('LHS Fender', carDetails.lhsFender),
+              buildExteriorItem('LHS ORVM', carDetails.lhsOrvm),
+              buildExteriorItem('LHS A Pillar', carDetails.lhsAPillar),
+              buildExteriorItem('LHS B Pillar', carDetails.lhsBPillar),
+              buildExteriorItem('LHS C Pillar', carDetails.lhsCPillar),
+              buildExteriorItem('LHS Front Alloy', carDetails.lhsFrontAlloy),
+              buildExteriorItem('LHS Front Tyre', carDetails.lhsFrontTyre),
+              buildExteriorItem('LHS Rear Alloy', carDetails.lhsRearAlloy),
+              buildExteriorItem('LHS Rear Tyre', carDetails.lhsRearTyre),
+              buildExteriorItem('LHS Front Door', carDetails.lhsFrontDoor),
+              buildExteriorItem('LHS Rear Door', carDetails.lhsRearDoor),
+              buildExteriorItem(
+                'LHS Running Border',
+                carDetails.lhsRunningBorder,
+              ),
+              buildExteriorItem(
+                'LHS Quarter Panel',
+                carDetails.lhsQuarterPanel,
+                isLast: true,
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          buildSection(
+            title: 'Rear',
+            itemsList: [
+              buildExteriorItem('Rear Bumper', carDetails.rearBumper),
+              buildExteriorItem('LHS Tail Lamp', carDetails.lhsTailLamp),
+              buildExteriorItem('RHS Tail Lamp', carDetails.rhsTailLamp),
+              buildExteriorItem('Rear Windshield', carDetails.rearWindshield),
+              buildExteriorItem('Boot Door', carDetails.bootDoor),
+              buildExteriorItem('Spare Tyre', carDetails.spareTyre),
+              buildExteriorItem(
+                'Boot Floor',
+                carDetails.bootFloor,
+                isLast: true,
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          buildSection(
+            title: 'Right',
+            itemsList: [
+              buildExteriorItem('RHS Rear Alloy', carDetails.rhsRearAlloy),
+              buildExteriorItem('RHS Rear Tyre', carDetails.rhsRearTyre),
+              buildExteriorItem('RHS Front Alloy', carDetails.rhsFrontAlloy),
+              buildExteriorItem('RHS Front Tyre', carDetails.rhsFrontTyre),
+              buildExteriorItem(
+                'RHS Quarter Panel',
+                carDetails.rhsQuarterPanel,
+              ),
+              buildExteriorItem('RHS A Pillar', carDetails.rhsAPillar),
+              buildExteriorItem('RHS B Pillar', carDetails.rhsBPillar),
+              buildExteriorItem('RHS C Pillar', carDetails.rhsCPillar),
+              buildExteriorItem(
+                'RHS Running Border',
+                carDetails.rhsRunningBorder,
+              ),
+              buildExteriorItem('RHS Rear Door', carDetails.rhsRearDoor),
+              buildExteriorItem('RHS Front Door', carDetails.rhsFrontDoor),
+              buildExteriorItem('RHS ORVM', carDetails.rhsOrvm),
+              buildExteriorItem(
+                'RHS Fender',
+                carDetails.rhsFender,
+                isLast: true,
+              ),
+            ],
+          ),
+          // buildExteriorItem('Bonnet', carDetails.bonnet),
+          // buildExteriorItem('Front Windshield', carDetails.frontWindshield),
+          // buildExteriorItem('Roof', carDetails.roof),
+          // buildExteriorItem('Front Bumper', carDetails.frontBumper),
+          // buildExteriorItem('LHS Headlamp', carDetails.lhsHeadlamp),
+          // buildExteriorItem('LHS Foglamp', carDetails.lhsFoglamp),
+          // buildExteriorItem('RHS Headlamp', carDetails.rhsHeadlamp),
+          // buildExteriorItem('RHS Foglamp', carDetails.rhsFoglamp),
+          // buildExteriorItem('LHS Fender', carDetails.lhsFender),
+          // buildExteriorItem('LHS ORVM', carDetails.lhsOrvm),
+          // buildExteriorItem('LHS A Pillar', carDetails.lhsAPillar),
+          // buildExteriorItem('LHS B Pillar', carDetails.lhsBPillar),
+          // buildExteriorItem('LHS C Pillar', carDetails.lhsCPillar),
+          // buildExteriorItem('LHS Front Alloy', carDetails.lhsFrontAlloy),
+          // buildExteriorItem('LHS Front Tyre', carDetails.lhsFrontTyre),
+          // buildExteriorItem('LHS Rear Alloy', carDetails.lhsRearAlloy),
+          // buildExteriorItem('LHS Rear Tyre', carDetails.lhsRearTyre),
+          // buildExteriorItem('LHS Front Door', carDetails.lhsFrontDoor),
+          // buildExteriorItem('LHS Rear Door', carDetails.lhsRearDoor),
+          // buildExteriorItem('LHS Running Border', carDetails.lhsRunningBorder),
+          // // buildExteriorItem('LHS Quarter Panel', carDetails.lhsQuarterPanel),
+          // buildExteriorItem('Rear Bumper', carDetails.rearBumper),
+          // buildExteriorItem('LHS Tail Lamp', carDetails.lhsTailLamp),
+          // buildExteriorItem('RHS Tail Lamp', carDetails.rhsTailLamp),
+          // buildExteriorItem('Rear Windshield', carDetails.rearWindshield),
+          // buildExteriorItem('Boot Door', carDetails.bootDoor),
+          // buildExteriorItem('Spare Tyre', carDetails.spareTyre),
+          // buildExteriorItem('Boot Floor', carDetails.bootFloor),
+          // buildExteriorItem('RHS Rear Alloy', carDetails.rhsRearAlloy),
+          // buildExteriorItem('RHS Rear Tyre', carDetails.rhsRearTyre),
+          // buildExteriorItem('RHS Front Alloy', carDetails.rhsFrontAlloy),
+          // buildExteriorItem('RHS Front Tyre', carDetails.rhsFrontTyre),
+          // buildExteriorItem('RHS Quarter Panel', carDetails.rhsQuarterPanel),
+          // buildExteriorItem('RHS A Pillar', carDetails.rhsAPillar),
+          // buildExteriorItem('RHS B Pillar', carDetails.rhsBPillar),
+          // buildExteriorItem('RHS C Pillar', carDetails.rhsCPillar),
+          // buildExteriorItem('RHS Running Border', carDetails.rhsRunningBorder),
+          // buildExteriorItem('RHS Rear Door', carDetails.rhsRearDoor),
+          // buildExteriorItem('RHS Front Door', carDetails.rhsFrontDoor),
+          // buildExteriorItem('RHS ORVM', carDetails.rhsOrvm),
+          // buildExteriorItem('RHS Fender', carDetails.rhsFender, isLast: true),
+          const SizedBox(height: 15),
+          if (getxController.isValidComment(carDetails.comments))
+            _buildCommentsCard(
+              title: 'Comments',
+              comment: carDetails.comments,
+              icon: Icons.comment,
+            ),
         ],
       ),
     );
@@ -1082,7 +2139,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 () => Text(
                   getxController.remainingTime.value,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: AppColors.red,
                     fontWeight: FontWeight.bold,
                   ),
@@ -1606,10 +2663,12 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 icon: Icons.access_time_filled,
                 color: Colors.orange,
                 label: 'Approval Time',
-                value: GlobalFunctions.getFormattedDate(
-                  date: carDetails.approvalTime,
-                  type: GlobalFunctions.time,
-                ),
+                value:
+                    GlobalFunctions.getFormattedDate(
+                      date: carDetails.approvalTime,
+                      type: GlobalFunctions.time,
+                    ) ??
+                    'N/A',
               ),
               item(
                 icon: Icons.check_circle_outline,
@@ -1652,4 +2711,225 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       ),
     );
   }
+
+  Widget _buildCommentsCard({
+    required String title,
+    required String comment,
+    required IconData icon,
+  }) {
+    if (comment.trim().isEmpty) return SizedBox();
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(color: AppColors.grey.withValues(alpha: .3)),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: AppColors.grey.withValues(alpha: .2),
+        //     blurRadius: 6,
+        //     offset: Offset(0, 3),
+        //   ),
+        // ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: AppColors.green),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.black,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  comment,
+                  style: const TextStyle(fontSize: 13, color: AppColors.grey),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImageCardForSections({
+    required String imageLabel,
+    required String imageUrl,
+
+    required int imageIndex,
+    required List<String> imageLabels,
+    required List<String> imageUrls,
+  }) {
+    return InkWell(
+      onTap: () {
+        Get.to(
+          () => CarImagesPage(
+            imageLabels: imageLabels,
+            imageUrls: imageUrls,
+            initialIndex: imageIndex,
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(5),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: AppColors.grey.withValues(alpha: .5)),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Column(
+            children: [
+              Expanded(
+                child:
+                    imageUrl.isNotEmpty
+                        ? CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          placeholder:
+                              (context, url) => const Center(
+                                child: SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.green,
+                                    strokeWidth: 1,
+                                  ),
+                                ),
+                              ),
+                          errorWidget:
+                              (context, url, error) => const Icon(
+                                Icons.image_not_supported,
+                                size: 40,
+                                color: AppColors.grey,
+                              ),
+                        )
+                        : Container(
+                          color: AppColors.grey.withValues(alpha: .2),
+                          child: Icon(
+                            Icons.image_not_supported,
+                            size: 40,
+                            color: AppColors.grey,
+                          ),
+                        ),
+              ),
+              Container(
+                width: double.infinity,
+                color: AppColors.grey.withValues(alpha: .5),
+                padding: EdgeInsets.symmetric(vertical: 6),
+
+                child: Text(
+                  imageLabel,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.white, fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStickyTabs(CarDetailsController getxController) {
+    final sectionNames = [
+      'Basic',
+      'Documents',
+      'Exterior',
+      'Engine',
+      'Suspension',
+      'AC',
+      'Interior',
+    ];
+    final keys = [
+      CarDetailsController.basicDetailsSectionKey,
+      CarDetailsController.documentDetailsSectionKey,
+      CarDetailsController.exteriorSectionKey,
+      CarDetailsController.engineBaySectionKey,
+      CarDetailsController.steeringBrakesAndSuspensionSectionKey,
+      CarDetailsController.airConditioningSectionKey,
+      CarDetailsController.interiorAndElectricalsSectionKey,
+    ];
+
+    return
+    // Obx(
+    //   () =>
+    Container(
+      color: AppColors.white,
+      height: 50,
+      child: ListView.builder(
+        controller: getxController.sectionTabScrollController,
+        scrollDirection: Axis.horizontal,
+        itemCount: sectionNames.length,
+        itemBuilder: (_, i) {
+          return Obx(() {
+            final isSelected = getxController.currentSection.value == keys[i];
+            return GestureDetector(
+              onTap: () => getxController.scrollToSection(keys[i]),
+              child: Container(
+                key: getxController.sectionTabKeys[keys[i]],
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 6),
+                decoration: BoxDecoration(
+                  border:
+                      isSelected
+                          ? Border(
+                            bottom: BorderSide(
+                              color: AppColors.green,
+                              width: 2,
+                            ),
+                          )
+                          : null,
+                ),
+                child: Text(
+                  sectionNames[i],
+                  style: TextStyle(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
+            );
+          });
+        },
+      ),
+      // ),
+    );
+  }
+}
+
+class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double height;
+
+  _StickyHeaderDelegate({required this.child, this.height = 60});
+
+  @override
+  Widget build(context, shrinkOffset, overlapsContent) => child;
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  double get minExtent => height;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }

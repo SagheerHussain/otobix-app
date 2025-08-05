@@ -7,7 +7,7 @@ import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 import 'package:otobix/admin/controller/admin_approved_users_list_controller.dart';
-import 'package:otobix/admin/controller/admin_home_controller.dart';
+import 'package:otobix/admin/controller/admin_pending_users_list_controller.dart';
 import 'package:otobix/admin/controller/admin_rejected_users_list_controller.dart';
 
 class AdminRejectedUsersListPage extends StatelessWidget {
@@ -353,6 +353,7 @@ class AdminRejectedUsersListPage extends StatelessWidget {
 
   // Show Edit Profile Dialog
   void _showEditDialog(UserModel user) {
+    getxController.obscurePasswordText.value = true;
     final passwordController = TextEditingController(text: user.password);
     final statusOptions = [
       UserModel.userStatusPending,
@@ -463,7 +464,7 @@ class AdminRejectedUsersListPage extends StatelessWidget {
                             //Temp for now
                             await Get.find<AdminApprovedUsersListController>()
                                 .fetchApprovedUsersList();
-                            await Get.find<AdminHomeController>()
+                            await Get.find<AdminPendingUsersListController>()
                                 .fetchPendingUsersList();
                             //////////////
                           }

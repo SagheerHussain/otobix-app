@@ -7,7 +7,6 @@ import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
-import 'package:otobix/admin/admin_approved_rejected_users_page.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -96,17 +95,17 @@ class _AccountPageState extends State<AccountPage> {
                       Get.to(EditProfileScreen());
                     },
                   ),
-                  if (accountController.userRole.value == UserModel.admin)
-                    ProfileOption(
-                      icon: Icons.group,
-                      color: AppColors.blue,
-                      title: "Approved / Rejected Users",
-                      description: "Check approved / rejected users list.",
-                      onTap: () {
-                        Get.to(AdminApprovedRejectedUsersPage());
-                      },
-                    ),
 
+                  // if (accountController.userRole.value == UserModel.admin)
+                  //   ProfileOption(
+                  //     icon: Icons.group,
+                  //     color: AppColors.blue,
+                  //     title: "Approved / Rejected Users",
+                  //     description: "Check approved / rejected users list.",
+                  //     onTap: () {
+                  //       Get.to(AdminApprovedRejectedUsersPage());
+                  //     },
+                  //   ),
                   ProfileOption(
                     icon: Icons.settings,
                     color: AppColors.grey,

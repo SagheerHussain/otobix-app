@@ -1,31 +1,45 @@
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:otobix/Utils/app_images.dart';
-import 'package:otobix/Utils/global_functions.dart';
+import 'package:otobix/Models/car_model2.dart';
 
 class CarModel {
-  String? id;
+  final String id;
   final String imageUrl;
-  final String name;
-  final double price;
-  final int year;
-  final int kmDriven;
+  final String make;
+  final String model;
+  final String variant;
+  final double priceDiscovery;
+  final DateTime? yearMonthOfManufacture;
+  final int odometerReadingInKms;
+  final int ownerSerialNumber;
   final String fuelType;
-  final String location;
+  final String commentsOnTransmission;
+  final DateTime? taxValidTill;
+  final String registrationNumber;
+  final String registeredRto;
+  final String inspectionLocation;
   final bool isInspected;
-  final List<String>? imageUrls;
+  final List<CarsListTitleAndImage>? imageUrls;
+
   final RxBool isFavorite;
 
   CarModel({
-    this.id,
+    required this.id,
     required this.imageUrl,
-    required this.name,
-    required this.price,
-    required this.year,
-    required this.kmDriven,
+    required this.make,
+    required this.model,
+    required this.variant,
+    required this.priceDiscovery,
+    required this.yearMonthOfManufacture,
+    required this.odometerReadingInKms,
+    required this.ownerSerialNumber,
     required this.fuelType,
-    required this.location,
-    this.isInspected = false,
-    this.imageUrls,
+    required this.commentsOnTransmission,
+    required this.taxValidTill,
+    required this.registrationNumber,
+    required this.registeredRto,
+    required this.inspectionLocation,
+    required this.isInspected,
+    required this.imageUrls,
     bool isFavorite = false,
   }) : isFavorite = isFavorite.obs;
 
@@ -36,19 +50,34 @@ class CarModel {
   }) {
     return CarModel(
       id: id,
-      imageUrl: data['imageUrl'] as String,
-      // imageUrl: AppImages.tataNexon1,
-      name: data['name'] as String,
-      price: (data['price'] as num).toDouble(),
-      year: data['year'] as int,
-      kmDriven: data['kmDriven'] as int,
-      fuelType: data['fuelType'] as String,
-      location: data['location'] as String,
-      isInspected: data['isInspected'] as bool? ?? false,
-      imageUrls: GlobalFunctions.parseList(
-        parsedListType: String,
-        incomingList: data['imageUrls'],
-      ),
+      imageUrl: data['imageUrl'] ?? '',
+      make: data['make'] ?? '',
+      model: data['model'] ?? '',
+      variant: data['variant'] ?? '',
+      priceDiscovery:
+          data['priceDiscovery'] is double
+              ? data['priceDiscovery']
+              : double.tryParse(data['priceDiscovery']?.toString() ?? '0') ?? 0,
+      yearMonthOfManufacture: parseMongoDbDate(data["yearMonthOfManufacture"]),
+      odometerReadingInKms:
+          data['odometerReadingInKms'] is int
+              ? data['odometerReadingInKms']
+              : int.tryParse(data['odometerReadingInKms']?.toString() ?? ''),
+      ownerSerialNumber:
+          data['ownerSerialNumber'] is int
+              ? data['ownerSerialNumber']
+              : int.tryParse(data['ownerSerialNumber']?.toString() ?? ''),
+      fuelType: data['fuelType'] ?? '',
+      commentsOnTransmission: data['commentsOnTransmission'] ?? '',
+      taxValidTill: parseMongoDbDate(data["taxValidTill"]),
+      registrationNumber: data['registrationNumber'],
+      registeredRto: data['registeredRto'],
+      inspectionLocation: data['inspectionLocation'],
+      isInspected: data['isInspected'] ?? false,
+      imageUrls:
+          (data['imageUrls'] as List<dynamic>?)
+              ?.map((e) => CarsListTitleAndImage.fromJson(e))
+              .toList(),
     );
   }
 
@@ -56,14 +85,37 @@ class CarModel {
   Map<String, dynamic> toJson() {
     return {
       'imageUrl': imageUrl,
-      'name': name,
-      'price': price,
-      'year': year,
-      'kmDriven': kmDriven,
+      'make': make,
+      'model': model,
+      'variant': variant,
+      'priceDiscovery': priceDiscovery,
+      'yearMonthOfManufacture': yearMonthOfManufacture,
+      'odometerReadingInKms': odometerReadingInKms,
+      'ownerSerialNumber': ownerSerialNumber,
       'fuelType': fuelType,
-      'location': location,
+      'commentsOnTransmission': commentsOnTransmission,
+      'taxValidTill': taxValidTill,
+      'registrationNumber': registrationNumber,
+      'registeredRto': registeredRto,
+      'inspectionLocation': inspectionLocation,
       'isInspected': isInspected,
-      'imageUrls': imageUrls,
+      'imageUrls': imageUrls?.map((e) => e.toJson()).toList(),
     };
   }
+}
+
+class CarsListTitleAndImage {
+  final String title;
+  final String url;
+
+  CarsListTitleAndImage({required this.title, required this.url});
+
+  factory CarsListTitleAndImage.fromJson(Map<String, dynamic> json) {
+    return CarsListTitleAndImage(
+      title: json['title'] ?? '',
+      url: json['url'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {'title': title, 'url': url};
 }

@@ -91,10 +91,11 @@ class GlobalFunctions {
   static const String monthYear = 'monthyear';
   static const String dayMonth = 'daymonth';
 
-  static String getFormattedDate({
-    required DateTime date,
+  static String? getFormattedDate({
+    required DateTime? date,
     required String type,
   }) {
+    if (date == null) return null;
     switch (type.toLowerCase()) {
       case year:
         return DateFormat('yyyy').format(date);

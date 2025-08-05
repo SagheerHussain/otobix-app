@@ -112,6 +112,7 @@ class TabBarButtonsWidget extends StatelessWidget {
             ),
             labelPadding: EdgeInsets.symmetric(horizontal: 8),
             tabAlignment: TabAlignment.center,
+
             tabs: List.generate(
               titles.length,
               (index) => TabItem(

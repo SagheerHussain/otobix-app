@@ -2,14 +2,42 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Models/car_model2.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Widgets/offering_bid_sheet.dart';
 
 class CarDetailsController extends GetxController {
+  static const String basicDetailsSectionKey = 'basic';
+  static const String documentDetailsSectionKey = 'document';
+  static const String exteriorSectionKey = 'exterior';
+  static const String engineBaySectionKey = 'engineBay';
+  static const String steeringBrakesAndSuspensionSectionKey =
+      'steeringBrakesAndSuspension';
+  static const String interiorAndElectricalsSectionKey =
+      'interiorAndElectricals';
+  static const String airConditioningSectionKey = 'airConditioning';
+
+  final sectionKeys = {
+    basicDetailsSectionKey: GlobalKey(),
+    documentDetailsSectionKey: GlobalKey(),
+    exteriorSectionKey: GlobalKey(),
+    engineBaySectionKey: GlobalKey(),
+    steeringBrakesAndSuspensionSectionKey: GlobalKey(),
+    interiorAndElectricalsSectionKey: GlobalKey(),
+    airConditioningSectionKey: GlobalKey(),
+  };
+
+  final ScrollController scrollController = ScrollController();
+  final sectionTabScrollController = ScrollController();
+  final sectionTabKeys = <String, GlobalKey>{};
+  RxString currentSection = basicDetailsSectionKey.obs;
+
   final currentIndex = 0.obs;
-  final imageUrls = <String>[].obs;
+  // final imageUrls = <String>[].obs;
+  final RxList<CarsListTitleAndImage> imageUrls = <CarsListTitleAndImage>[].obs;
+
   RxBool isLoading = false.obs;
 
   final remainingTime = ''.obs;
@@ -33,7 +61,30 @@ class CarDetailsController extends GetxController {
     super.onInit();
     await fetchCarDetails(carId: carId);
     // await fetchCarDetails(carId: '68821747968635d593293346');
-    debugPrint(carDetails?.toJson().toString() ?? 'null');
+    // debugPrint(carDetails?.toJson().toString() ?? 'null');
+    // Initialize keys for each tab
+    for (var key in sectionKeys.keys) {
+      sectionTabKeys[key] = GlobalKey();
+    }
+    scrollController.addListener(() {
+      for (var entry in sectionKeys.entries) {
+        final context = entry.value.currentContext;
+        if (context != null) {
+          final box = context.findRenderObject() as RenderBox;
+          final position = box.localToGlobal(Offset.zero, ancestor: null).dy;
+
+          // Adjust 100 based on height of sticky headers
+          if (position < MediaQuery.of(Get.context!).padding.top + 210 &&
+              position > 0) {
+            currentSection.value = entry.key;
+
+            // Scroll horizontal tab bar
+            scrollToSectionTab(entry.key);
+            break;
+          }
+        }
+      }
+    });
   }
 
   Future<void> fetchCarDetails({required String carId}) async {
@@ -123,7 +174,10 @@ class CarDetailsController extends GetxController {
     isFirstClick = true;
   }
 
-  void setImageUrls(List<String> urls) {
+  // void setImageUrls(List<String> urls) {
+  //   imageUrls.assignAll(urls);
+  // }
+  void setImageUrls(List<CarsListTitleAndImage> urls) {
     imageUrls.assignAll(urls);
   }
 
@@ -153,5 +207,54 @@ class CarDetailsController extends GetxController {
   void onClose() {
     _timer?.cancel();
     super.onClose();
+  }
+
+  bool isValidComment(String? comment) {
+    final val = comment?.trim().toLowerCase() ?? '';
+    return val.isNotEmpty && val != 'n/a';
+  }
+
+  void scrollToSection(String key) {
+    final context = sectionKeys[key]?.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.0,
+      );
+    }
+    // Workaround: Scroll again with offset to account for pinned header height
+    Future.delayed(const Duration(milliseconds: 450), () {
+      scrollController.animateTo(
+        scrollController.offset - 10, // Adjust based on your sticky headers
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  void scrollToSectionTab(String key) {
+    final keyContext = sectionTabKeys[key]?.currentContext;
+    if (keyContext != null) {
+      final box = keyContext.findRenderObject() as RenderBox;
+      final position = box.localToGlobal(Offset.zero, ancestor: null).dx;
+
+      final screenWidth = Get.context!.size!.width;
+      final scrollOffset = sectionTabScrollController.offset;
+
+      // Center the selected tab
+      final targetOffset =
+          scrollOffset + position - (screenWidth / 2) + (box.size.width / 2);
+
+      sectionTabScrollController.animateTo(
+        targetOffset.clamp(
+          sectionTabScrollController.position.minScrollExtent,
+          sectionTabScrollController.position.maxScrollExtent,
+        ),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 }

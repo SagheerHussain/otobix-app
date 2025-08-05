@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
+import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
@@ -56,7 +58,7 @@ class LiveBidsSection extends StatelessWidget {
             onTap: () {
               Get.to(
                 () => CarDetailsPage(
-                  carId: car.id!,
+                  carId: car.id,
                   car: car,
                   type: getxController.liveBidsSectionScreen,
                 ),
@@ -65,7 +67,7 @@ class LiveBidsSection extends StatelessWidget {
             child: Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +77,7 @@ class LiveBidsSection extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(12),
+                          top: Radius.circular(5),
                         ),
 
                         child: CachedNetworkImage(
@@ -148,12 +150,16 @@ class LiveBidsSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          car.name,
+                          '${car.make} ${car.model} ${car.variant}',
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+
+                        const SizedBox(height: 6),
+                        _buildOtherDetails(car),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Text(
@@ -165,7 +171,7 @@ class LiveBidsSection extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.price)}',
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: AppColors.green,
@@ -174,78 +180,31 @@ class LiveBidsSection extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_today,
-                              size: 14,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              car.year.toString(),
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            const SizedBox(width: 12),
-                            Icon(Icons.speed, size: 14, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${NumberFormat.decimalPattern('en_IN').format(car.kmDriven)} km',
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.local_gas_station,
-                              size: 14,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              car.fuelType,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            const SizedBox(width: 12),
-                            Icon(
-                              Icons.location_on,
-                              size: 14,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              car.location,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        if (car.isInspected == true)
-                          Column(
-                            children: [
-                              Divider(),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.verified_user,
-                                    size: 14,
-                                    color: AppColors.green,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'Inspected 8.2/10',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppColors.green,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        const SizedBox(height: 5),
+                        _buildCarCardFooter(),
+                        // if (car.isInspected == true)
+                        //   Column(
+                        //     children: [
+                        //       Divider(),
+                        //       Row(
+                        //         children: [
+                        //           Icon(
+                        //             Icons.verified_user,
+                        //             size: 14,
+                        //             color: AppColors.green,
+                        //           ),
+                        //           const SizedBox(width: 4),
+                        //           Text(
+                        //             'Inspected 8.2/10',
+                        //             style: TextStyle(
+                        //               fontSize: 10,
+                        //               color: AppColors.green,
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ],
+                        //   ),
                       ],
                     ),
                   ),
@@ -318,6 +277,182 @@ class LiveBidsSection extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildOtherDetails(CarModel car) {
+    Widget iconDetail(IconData icon, String label, String value) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, size: 15, color: AppColors.grey),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          // Divider(),
+          // Text(
+          //   label,
+          //   style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+          // ),
+        ],
+      );
+    }
+
+    String maskRegistrationNumber(String? input) {
+      if (input == null || input.length <= 5) return '*****';
+      final visible = input.substring(0, input.length - 5);
+      return '$visible*****';
+    }
+
+    final items = [
+      // iconDetail(Icons.factory, 'Make', 'Mahindra'),
+      // iconDetail(Icons.directions_car, 'Model', 'Scorpio'),
+      // iconDetail(Icons.confirmation_number, 'Variant', '[2014–2017]'),
+      iconDetail(
+        Icons.speed,
+        'Odometer Reading in Kms',
+        '${NumberFormat.decimalPattern('en_IN').format(car.odometerReadingInKms)} km',
+      ),
+      iconDetail(Icons.local_gas_station, 'Fuel Type', car.fuelType),
+      iconDetail(
+        Icons.calendar_month,
+        'Year of Manufacture',
+        GlobalFunctions.getFormattedDate(
+              date: car.yearMonthOfManufacture,
+              type: GlobalFunctions.year,
+            ) ??
+            'N/A',
+      ),
+
+      iconDetail(Icons.settings, 'Transmission', car.commentsOnTransmission),
+      iconDetail(
+        Icons.receipt_long,
+        'Tax Validity',
+        GlobalFunctions.getFormattedDate(
+              date: car.taxValidTill,
+              type: GlobalFunctions.monthYear,
+            ) ??
+            'N/A',
+      ),
+      iconDetail(
+        Icons.person,
+        'Owner Serial Number',
+        car.ownerSerialNumber == 1
+            ? 'First Owner'
+            : '${car.ownerSerialNumber} Owners',
+      ),
+
+      iconDetail(
+        Icons.location_on,
+        'Inspection Location',
+        car.inspectionLocation,
+      ),
+      iconDetail(
+        Icons.directions_car_filled,
+        'Registration No.',
+        maskRegistrationNumber(car.registrationNumber),
+      ),
+      iconDetail(Icons.apartment, 'Registered RTO', car.registeredRto),
+    ];
+
+    return Container(
+      // padding: const EdgeInsets.all(12),
+      // margin: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Wrap(
+          //   spacing: 10,
+          //   runSpacing: 5,
+          //   alignment: WrapAlignment.start,
+          //   children: items,
+          // ),
+          GridView.count(
+            padding: EdgeInsets.zero,
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 5, // controls vertical space
+            crossAxisSpacing: 10, // controls horizontal space
+            childAspectRatio: 4, // width / height ratio — adjust as needed
+            children: items,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCarCardFooter() {
+    return Column(
+      children: [
+        Divider(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Fair Market Value: Rs. 2344/-',
+              style: TextStyle(fontSize: 12),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              '03h:44m:23s',
+              style: TextStyle(fontSize: 12, color: AppColors.red),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOtherDetails1(CarModel car) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+            const SizedBox(width: 4),
+            Text(
+              GlobalFunctions.getFormattedDate(
+                    date: car.yearMonthOfManufacture,
+                    type: GlobalFunctions.monthYear,
+                  ) ??
+                  'N/A',
+              style: const TextStyle(fontSize: 12),
+            ),
+            const SizedBox(width: 12),
+            Icon(Icons.speed, size: 14, color: Colors.grey),
+            const SizedBox(width: 4),
+            Text(
+              '${NumberFormat.decimalPattern('en_IN').format(car.odometerReadingInKms)} km',
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Icon(Icons.local_gas_station, size: 14, color: Colors.grey),
+            const SizedBox(width: 4),
+            Text(car.fuelType, style: const TextStyle(fontSize: 12)),
+            const SizedBox(width: 12),
+            Icon(Icons.location_on, size: 14, color: Colors.grey),
+            const SizedBox(width: 4),
+            Text(car.inspectionLocation, style: const TextStyle(fontSize: 12)),
+          ],
+        ),
+      ],
     );
   }
 }

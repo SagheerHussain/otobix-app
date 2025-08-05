@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
           children: [
             // TabBar Screens / Sections
             Padding(
-              padding: const EdgeInsets.only(top: 150, left: 15, right: 15),
+              padding: const EdgeInsets.only(top: 110, left: 15, right: 15),
               child: TabBarView(
                 controller: tabBarController.tabController,
                 children: [
@@ -71,7 +71,9 @@ class HomePage extends StatelessWidget {
                       ],
                       controller: tabBarController.tabController,
                       selectedIndex: tabBarController.selectedIndex,
-                      titleSize: 10,
+
+                      // titleSize: 10,
+                      titleSize: 11,
                       countSize: 7,
                       tabsHeight: 30,
                       spaceFromSides: 15,
@@ -80,8 +82,8 @@ class HomePage extends StatelessWidget {
                     const SizedBox(height: 15),
 
                     // Filter and Sort buttons
-                    _buildFilterAndSortButtons(),
-                    const SizedBox(height: 20),
+                    // _buildFilterAndSortButtons(),
+                    // const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -120,27 +122,37 @@ class HomePage extends StatelessWidget {
               vertical: 3,
               horizontal: 10,
             ),
-            suffixIcon: Obx(
-              () => Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: GestureDetector(
-                  onTap: () => _buildStateSelector(context),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        getxController.selectedCity.value,
-                        style: TextStyle(fontSize: 10, color: Colors.black),
-                      ),
-                      const Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 20,
-                        color: Colors.grey,
-                      ),
-                    ],
+            suffixIcon: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Obx(
+                //   () =>
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: GestureDetector(
+                    onTap: () => _buildStateSelector(context),
+                    // child: Row(
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     Text(
+                    //       getxController.selectedCity.value,
+                    //       style: TextStyle(fontSize: 10, color: Colors.black),
+                    //     ),
+                    child: Icon(
+                      Icons.location_on_outlined,
+                      size: 20,
+                      color: AppColors.grey,
+                    ),
+                    //   ],
+                    // ),
                   ),
                 ),
-              ),
+                // ),
+
+                // const SizedBox(width: 10),
+                _buildFilterAndSortButtons(),
+              ],
             ),
 
             // suffixIcon: Obx(
@@ -185,8 +197,9 @@ class HomePage extends StatelessWidget {
             getxController.filteredCars.value =
                 getxController.carsList
                     .where(
-                      (car) =>
-                          car.name.toLowerCase().contains(value.toLowerCase()),
+                      (car) => '${car.make} ${car.model} ${car.variant}'
+                          .toLowerCase()
+                          .contains(value.toLowerCase()),
                     )
                     .toList();
           },
@@ -355,69 +368,82 @@ class HomePage extends StatelessWidget {
 
   // Filter and Sort buttons
   Widget _buildFilterAndSortButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        //Filter Button
-        GestureDetector(
-          // onTap:
-          //     () => _showFilterDialog(context: Get.context!, title: 'Filter'),
-          onTap:
-              () => showModalBottomSheet(
-                context: Get.context!,
-                isScrollControlled: true,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                builder: (_) => _buildFilterContent(),
-              ),
-          child: Row(
-            children: [
-              Icon(Icons.filter_alt, size: 14, color: Colors.grey),
-              SizedBox(width: 5),
-              Text('Filter', style: const TextStyle(fontSize: 14)),
-            ],
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(right: 20),
 
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(
-            '|',
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-        ),
-
-        //Sort Button
-        GestureDetector(
-          onTap:
-              () => showModalBottomSheet(
-                context: Get.context!,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          //Filter Button
+          GestureDetector(
+            // onTap:
+            //     () => _showFilterDialog(context: Get.context!, title: 'Filter'),
+            onTap:
+                () => showModalBottomSheet(
+                  context: Get.context!,
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder: (_) => _buildFilterContent(),
                 ),
-                builder: (_) => _buildSortContent(),
-              ),
-          child: Row(
-            children: [
-              Text(
-                getxController.selectedSegment.value != 'live'
-                    ? 'Default'
-                    : 'Sort',
-                style: const TextStyle(fontSize: 14),
-              ),
-              SizedBox(width: 5),
-              Icon(
-                getxController.selectedSegment.value != 'live'
-                    ? Icons.import_export
-                    : Icons.sort,
-                size: 14,
-                color: Colors.grey,
-              ),
-            ],
+            // child: Row(
+            //   children: [
+            child: Icon(
+              Icons.filter_alt_outlined,
+              size: 20,
+              color: AppColors.grey,
+            ),
+            // SizedBox(width: 5),
+            // Text('Filter', style: const TextStyle(fontSize: 14)),
+            //   ],
+            // ),
           ),
-        ),
-      ],
+          SizedBox(width: 10),
+
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 10),
+          //   child: Text(
+          //     '|',
+          //     style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          //   ),
+          // ),
+
+          //Sort Button
+          GestureDetector(
+            onTap:
+                () => showModalBottomSheet(
+                  context: Get.context!,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder: (_) => _buildSortContent(),
+                ),
+            // child: Row(
+            //   children: [
+            // Text(
+            //   getxController.selectedSegment.value != 'live'
+            //       ? 'Default'
+            //       : 'Sort',
+            //   style: const TextStyle(fontSize: 14),
+            // ),
+            // SizedBox(width: 5),
+            child: Icon(
+              getxController.selectedSegment.value != 'live'
+                  ? Icons.import_export_outlined
+                  : Icons.sort,
+              size: 20,
+              color: AppColors.grey,
+            ),
+            //   ],
+            // ),
+          ),
+        ],
+      ),
     );
   }
 
