@@ -153,7 +153,7 @@ void autoBidButtonForOcb70Section(String carId) {
                           int decrement = 1000;
                           if (getxController.yourOfferAmount.value -
                                   decrement <=
-                              getxController.currentHighestBidAmount) {
+                              getxController.currentHighestBidAmount.value) {
                             ToastWidget.show(
                               title:
                                   "You can't bid less than the highest bid amount",
@@ -193,7 +193,7 @@ void autoBidButtonForOcb70Section(String carId) {
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Bid increased by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount)}",
+                                "Bid increased by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount.value)}",
                                 style: TextStyle(
                                   color: AppColors.grey,
                                   fontSize: 12,

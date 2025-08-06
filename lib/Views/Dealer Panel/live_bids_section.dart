@@ -170,18 +170,30 @@ class LiveBidsSection extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            Text(
-                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: AppColors.green,
-                                fontWeight: FontWeight.w600,
+                            Obx(
+                              () => Text(
+                                'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
+                                key: ValueKey(car.highestBid.value),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.green,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
+
+                            // Text(
+                            //   'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid)}/-',
+                            //   style: const TextStyle(
+                            //     fontSize: 14,
+                            //     color: AppColors.green,
+                            //     fontWeight: FontWeight.w600,
+                            //   ),
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 5),
-                        _buildCarCardFooter(),
+                        _buildCarCardFooter(car),
                         // if (car.isInspected == true)
                         //   Column(
                         //     children: [
@@ -394,7 +406,7 @@ class LiveBidsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildCarCardFooter() {
+  Widget _buildCarCardFooter(CarModel car) {
     return Column(
       children: [
         Divider(),
@@ -402,13 +414,15 @@ class LiveBidsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Fair Market Value: Rs. 2344/-',
+              'Fair Market Value: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
               style: TextStyle(fontSize: 12),
             ),
             const SizedBox(width: 10),
-            Text(
-              '03h:44m:23s',
-              style: TextStyle(fontSize: 12, color: AppColors.red),
+            Obx(
+              () => Text(
+                car.remainingAuctionTime.value,
+                style: TextStyle(fontSize: 12, color: AppColors.red),
+              ),
             ),
           ],
         ),

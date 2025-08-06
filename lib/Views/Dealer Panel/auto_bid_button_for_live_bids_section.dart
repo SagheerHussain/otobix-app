@@ -106,7 +106,7 @@ void autoBidButtonForLiveBidsSection(String carId) {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount)}",
+                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount.value)}",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -183,7 +183,7 @@ void autoBidButtonForLiveBidsSection(String carId) {
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount)}",
+                                "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount.value)}",
                                 style: TextStyle(
                                   color: AppColors.grey,
                                   fontSize: 12,

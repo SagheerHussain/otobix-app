@@ -1,12 +1,15 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:otobix/Models/car_model.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 import '../Network/api_service.dart';
@@ -14,6 +17,8 @@ import '../Network/api_service.dart';
 class HomeController extends GetxController {
   List<CarModel> carsList = [];
   RxBool isLoading = false.obs;
+  // RxString remainingAuctionTime = '00h : 00m : 00s'.obs;
+  // Timer? _auctionTimer;
 
   TextEditingController searchController = TextEditingController();
   TextEditingController minPriceController = TextEditingController();
@@ -72,6 +77,7 @@ class HomeController extends GetxController {
   void onInit() async {
     super.onInit();
     await fetchCarsList();
+    setupSocketListeners();
     // filteredCars.value = carsList;
     // Listen to changes in ValueNotifier
     selectedSegmentNotifier.addListener(() {
@@ -112,6 +118,7 @@ class HomeController extends GetxController {
   };
 
   final RxList<CarModel> filteredCars = <CarModel>[].obs;
+
   Future<void> fetchCarsList() async {
     isLoading.value = true;
     try {
@@ -126,6 +133,10 @@ class HomeController extends GetxController {
           ),
         );
         filteredCars.value = carsList;
+        for (var car in carsList) {
+          startAuctionCountdown(car);
+        }
+
         debugPrint('Cars List Fetched Successfully');
         debugPrint(carsList[1].toJson().toString());
       } else {
@@ -138,6 +149,72 @@ class HomeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void setupSocketListeners() {
+    final socketService = SocketService();
+
+    socketService.on(SocketEvents.bidUpdated, (data) {
+      debugPrint('📢 Bid update received: $data');
+      _updateCarBid(data);
+    });
+  }
+
+  void _updateCarBid(dynamic data) {
+    final String carId = data['carId'];
+    final int highestBid = data['highestBid'];
+
+    final index = filteredCars.indexWhere((c) => c.id == carId);
+    if (index != -1) {
+      filteredCars[index].highestBid.value =
+          highestBid.toDouble(); // ✅ this is the real-time field
+    }
+  }
+
+  // Auction Timer
+  void startAuctionCountdown(CarModel car) {
+    DateTime getAuctionEndTime() {
+      final startTime = car.auctionStartTime ?? DateTime.now();
+      final duration = Duration(
+        hours: car.defaultAuctionTime > 0 ? car.defaultAuctionTime : 12,
+      );
+      return startTime.add(duration);
+    }
+
+    car.auctionTimer?.cancel(); // cancel previous
+
+    car.auctionTimer = Timer.periodic(Duration(seconds: 1), (_) {
+      final now = DateTime.now();
+      final diff = getAuctionEndTime().difference(now);
+
+      if (diff.isNegative) {
+        // 🟥 Timer expired — reset startTime and countdown to now + 12 hours
+        car.auctionStartTime = DateTime.now();
+        car.defaultAuctionTime = 12;
+
+        final newDiff = Duration(hours: 12);
+
+        final hours = newDiff.inHours.toString().padLeft(2, '0');
+        final minutes = (newDiff.inMinutes % 60).toString().padLeft(2, '0');
+        final seconds = (newDiff.inSeconds % 60).toString().padLeft(2, '0');
+        car.remainingAuctionTime.value =
+            '${hours}h : ${minutes}m : ${seconds}s';
+      } else {
+        final hours = diff.inHours.toString().padLeft(2, '0');
+        final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
+        final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
+        car.remainingAuctionTime.value =
+            '${hours}h : ${minutes}m : ${seconds}s';
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    for (var car in carsList) {
+      car.auctionTimer?.cancel();
+    }
+    super.onClose();
   }
 
   // final List<CarModel> carsList1 = [

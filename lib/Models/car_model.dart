@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:otobix/Models/car_model2.dart';
 
 class CarModel {
+  RxString remainingAuctionTime = '00h : 00m : 00s'.obs;
+  Timer? auctionTimer;
+
+  ///
   final String id;
   final String imageUrl;
   final String make;
@@ -18,6 +24,9 @@ class CarModel {
   final String registeredRto;
   final String inspectionLocation;
   final bool isInspected;
+  final RxDouble highestBid;
+  DateTime? auctionStartTime;
+  int defaultAuctionTime;
   final List<CarsListTitleAndImage>? imageUrls;
 
   final RxBool isFavorite;
@@ -39,6 +48,9 @@ class CarModel {
     required this.registeredRto,
     required this.inspectionLocation,
     required this.isInspected,
+    required this.highestBid,
+    required this.auctionStartTime,
+    required this.defaultAuctionTime,
     required this.imageUrls,
     bool isFavorite = false,
   }) : isFavorite = isFavorite.obs;
@@ -57,7 +69,8 @@ class CarModel {
       priceDiscovery:
           data['priceDiscovery'] is double
               ? data['priceDiscovery']
-              : double.tryParse(data['priceDiscovery']?.toString() ?? '0') ?? 0,
+              : double.tryParse(data['priceDiscovery']?.toString() ?? '0') ??
+                  0.0,
       yearMonthOfManufacture: parseMongoDbDate(data["yearMonthOfManufacture"]),
       odometerReadingInKms:
           data['odometerReadingInKms'] is int
@@ -74,6 +87,11 @@ class CarModel {
       registeredRto: data['registeredRto'],
       inspectionLocation: data['inspectionLocation'],
       isInspected: data['isInspected'] ?? false,
+      highestBid: RxDouble(
+        double.tryParse(data['highestBid']?.toString() ?? '0') ?? 0.0,
+      ),
+      auctionStartTime: parseMongoDbDate(data["auctionStartTime"]),
+      defaultAuctionTime: data['defaultAuctionTime'] ?? 0,
       imageUrls:
           (data['imageUrls'] as List<dynamic>?)
               ?.map((e) => CarsListTitleAndImage.fromJson(e))
@@ -99,6 +117,9 @@ class CarModel {
       'registeredRto': registeredRto,
       'inspectionLocation': inspectionLocation,
       'isInspected': isInspected,
+      'highestBid': highestBid,
+      'auctionStartTime': auctionStartTime,
+      'defaultAuctionTime': defaultAuctionTime,
       'imageUrls': imageUrls?.map((e) => e.toJson()).toList(),
     };
   }

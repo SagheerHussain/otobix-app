@@ -183,7 +183,7 @@ void autoBidButtonForUpcomingSection(String carId) {
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount)}",
+                                "Bid increase by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount.value)}",
                                 style: TextStyle(
                                   color: AppColors.grey,
                                   fontSize: 12,

@@ -1,8 +1,12 @@
 class AppUrls {
   // static const String baseUrl = "http://localhost:4000/api/";
-  // static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
-  static const String baseUrl =
-      "http://192.168.100.180:4000/api/"; // For Mobile Testing
+  static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
+  // static const String baseUrl =
+  //     "http://192.168.100.180:4000/api/"; // For Mobile Testing
+
+  static final String socketBaseUrl = _extractSocketBaseUrl(
+    baseUrl,
+  ); // Socket base URL
 
   static const String sendOtp = "${baseUrl}send-otp";
 
@@ -43,4 +47,12 @@ class AppUrls {
 
   static String updateUserThroughAdmin(String userId) =>
       "${baseUrl}user/update-user-through-admin/?userId=$userId";
+
+  static const String updateCarBid = "${baseUrl}car/update-bid";
+
+  // Socket URL Extraction
+  static String _extractSocketBaseUrl(String url) {
+    final uri = Uri.parse(url);
+    return '${uri.scheme}://${uri.host}:${uri.port}';
+  }
 }

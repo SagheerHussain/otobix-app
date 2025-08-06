@@ -235,7 +235,7 @@ class PlaceBidButtonWidget extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount)}",
+                                "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount.value)}",
                                 style: TextStyle(
                                   color: AppColors.grey,
                                   fontSize: 12,

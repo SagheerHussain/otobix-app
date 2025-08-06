@@ -5,8 +5,11 @@ import 'package:get/get.dart';
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Models/car_model2.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/offering_bid_sheet.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 class CarDetailsController extends GetxController {
   static const String basicDetailsSectionKey = 'basic';
@@ -39,13 +42,14 @@ class CarDetailsController extends GetxController {
   final RxList<CarsListTitleAndImage> imageUrls = <CarsListTitleAndImage>[].obs;
 
   RxBool isLoading = false.obs;
+  RxBool isPlaceBidButtonLoading = false.obs;
 
   final remainingTime = ''.obs;
   Timer? _timer;
 
-  int currentHighestBidAmount = 54000;
-  RxInt yourOfferAmount = 54000.obs;
-  RxInt oneClickPriceAmount = 0.obs;
+  RxDouble currentHighestBidAmount = 0.0.obs;
+  RxDouble yourOfferAmount = 0.0.obs;
+  RxDouble oneClickPriceAmount = 0.0.obs;
 
   /// NEW: keep track of first click
   bool isFirstClick = true;
@@ -60,6 +64,7 @@ class CarDetailsController extends GetxController {
   void onInit() async {
     super.onInit();
     await fetchCarDetails(carId: carId);
+    setupSocketListeners();
     // await fetchCarDetails(carId: '68821747968635d593293346');
     // debugPrint(carDetails?.toJson().toString() ?? 'null');
     // Initialize keys for each tab
@@ -153,7 +158,7 @@ class CarDetailsController extends GetxController {
 
   /// increase bid logic
   void increaseBid() {
-    int increment = isFirstClick ? 1000 : 1000;
+    double increment = isFirstClick ? 1000 : 1000;
     yourOfferAmount.value += increment;
 
     // After first click, switch to 1000 increment
@@ -163,8 +168,8 @@ class CarDetailsController extends GetxController {
   }
 
   void decreaseBid() {
-    int decrement = isFirstClick ? 4000 : 1000;
-    if (yourOfferAmount.value - decrement >= currentHighestBidAmount) {
+    double decrement = isFirstClick ? 4000 : 1000;
+    if (yourOfferAmount.value - decrement >= currentHighestBidAmount.value) {
       yourOfferAmount.value -= decrement;
     }
   }
@@ -255,6 +260,64 @@ class CarDetailsController extends GetxController {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+    }
+  }
+
+  //  setup socket
+  void setupSocketListeners() {
+    final socketService = SocketService();
+    socketService.joinRoom('car-$carId');
+    socketService.on(SocketEvents.bidUpdated, (data) {
+      debugPrint('📢 Bid update received: $data');
+      _updateCarBid(data);
+    });
+  }
+
+  void _updateCarBid(dynamic data) {
+    final String incomingCarId = data['carId'];
+    final double newBid = (data['highestBid'] as num).toDouble();
+
+    if (carDetails != null && carDetails!.id == incomingCarId) {
+      currentHighestBidAmount.value = newBid;
+      debugPrint('✅ Updated currentHighestBidAmount to $newBid');
+    }
+  }
+
+  // place bid
+  Future<bool> placeBid({required String carId, required double newBid}) async {
+    try {
+      isPlaceBidButtonLoading.value = true;
+      final response = await ApiService.post(
+        endpoint: AppUrls.updateCarBid,
+        body: {'carId': carId, 'newBid': newBid},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Bid updated successfully: $data");
+        ToastWidget.show(
+          context: Get.context!,
+          title: "You're Winning! 🏆",
+          subtitle: "Great job! Currently, you're the highest bidder now.",
+          toastDuration: 5,
+          type: ToastType.success,
+        );
+
+        return true;
+      } else {
+        debugPrint("❌ Failed to update bid: ${response.body}");
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Failed to place bid",
+          type: ToastType.error,
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint("❗ Exception updating bid: $e");
+      return false;
+    } finally {
+      isPlaceBidButtonLoading.value = false;
     }
   }
 }

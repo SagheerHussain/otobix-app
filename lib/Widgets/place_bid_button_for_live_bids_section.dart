@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
-import 'package:otobix/Widgets/toast_widget.dart';
 
 void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
   final CarDetailsController bidController = Get.put(
@@ -106,7 +105,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount)}",
+                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount.value)}",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -182,7 +181,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount)}",
+                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount.value)}",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 12,
@@ -220,19 +219,25 @@ void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
                     Expanded(
                       child: ButtonWidget(
                         text: "Place Bid",
-                        isLoading: bidController.isLoading,
+                        isLoading: bidController.isPlaceBidButtonLoading,
                         onTap: () {
+                          bidController.placeBid(
+                            carId: carId,
+                            newBid: bidController.yourOfferAmount.value,
+                          );
                           Get.back();
                           // offeringBidSheet(context);
-                          ToastWidget.show(
-                            context: context,
-                            title: "You're Winning! 🏆",
-                            subtitle:
-                                "Great job! Currently, you're the highest bidder.",
-                            toastDuration: 5,
-                            type: ToastType.success,
-                          );
 
+                          // ToastWidget.show(
+                          //   context: context,
+                          //   title: "You're Winning! 🏆",
+                          //   subtitle:
+                          //       "Great job! Currently, you're the highest bidder.",
+                          //   toastDuration: 5,
+                          //   type: ToastType.success,
+                          // );
+
+                          //////////////////////////
                           // Get.dialog(
                           //   CongratulationsDialogWidget(
                           //     icon: Icons.gavel,

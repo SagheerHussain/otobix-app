@@ -64,15 +64,15 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     final pageController = PageController();
 
     // Set current bid amount
-    getxController.currentHighestBidAmount =
-        int.tryParse(widget.car.priceDiscovery.toString()) ?? 0;
+    getxController.currentHighestBidAmount.value =
+        double.tryParse(widget.car.highestBid.toString()) ?? 0.0;
     // Set one click price amount
     getxController.oneClickPriceAmount.value =
-        getxController.currentHighestBidAmount + 10000;
+        getxController.currentHighestBidAmount.value + 10000;
     // Set your offer amount
     widget.type != homeController.ocb70SectionScreen
         ? getxController.yourOfferAmount.value =
-            getxController.currentHighestBidAmount + 4000
+            getxController.currentHighestBidAmount.value + 4000
         : getxController.yourOfferAmount.value =
             getxController.oneClickPriceAmount.value;
 
@@ -104,6 +104,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                                 delegate: _StickyHeaderDelegate(
                                   child: _buildMainDetails(
                                     carDetails: getxController.carDetails!,
+                                    getxController: getxController,
                                   ),
                                   height: 160,
                                 ),
@@ -247,6 +248,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                               homeController,
                               context,
                               widget.type,
+                              widget.car,
                             ),
                           ),
                         ],
@@ -448,7 +450,10 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
   }
 
-  Widget _buildMainDetails({required CarModel2 carDetails}) {
+  Widget _buildMainDetails({
+    required CarModel2 carDetails,
+    required CarDetailsController getxController,
+  }) {
     // Helper Function
     Widget iconDetail(IconData icon, String label, String value) {
       return Row(
@@ -590,12 +595,15 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   ),
                 ),
                 const SizedBox(width: 5),
-                Text(
-                  '${NumberFormat.decimalPattern('en_IN').format(widget.car.priceDiscovery)}/-',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.green,
-                    fontWeight: FontWeight.bold,
+                Obx(
+                  () => Text(
+                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount.value)}/-',
+                    key: ValueKey(getxController.currentHighestBidAmount.value),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.green,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -1916,7 +1924,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
               Expanded(
                 child: Text(value, style: const TextStyle(fontSize: 12)),
               ),
-              Icon(Icons.photo_outlined, color: AppColors.grey),
+              // Icon(Icons.photo_outlined, color: AppColors.grey),
             ],
           ),
           if (!isLast) Divider(color: AppColors.grey.withValues(alpha: 0.1)),
@@ -2102,6 +2110,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     HomeController homeController,
     BuildContext context,
     String type,
+    CarModel car,
   ) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
@@ -2137,7 +2146,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             children: [
               Obx(
                 () => Text(
-                  getxController.remainingTime.value,
+                  // getxController.remainingTime.value,
+                  car.remainingAuctionTime.value,
                   style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.red,

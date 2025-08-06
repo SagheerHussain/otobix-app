@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Models/user_model.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
+import 'package:otobix/Utils/app_urls.dart';
 
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
 import 'package:otobix/Views/Dealer%20Panel/account_page.dart';
@@ -30,6 +32,8 @@ void main() async {
   Get.config(enableLog: false);
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPrefsHelper.init();
+  // Initialize socket connection globally
+  SocketService().initSocket(AppUrls.socketBaseUrl);
   runApp(const MyApp());
 }
 
