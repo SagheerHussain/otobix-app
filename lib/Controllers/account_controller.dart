@@ -17,6 +17,7 @@ import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 
 class AccountController extends GetxController {
+  String userRoleFromSharedPrefs = '';
   RxString userRole = ''.obs;
 
   TextEditingController userName = TextEditingController();
@@ -44,7 +45,13 @@ class AccountController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    getUserRoleFromSharedPrefs();
     getUserProfile();
+  }
+
+  void getUserRoleFromSharedPrefs() async {
+    userRoleFromSharedPrefs =
+        await SharedPrefsHelper.getString(SharedPrefsHelper.userTypeKey) ?? '';
   }
 
   Future<void> getUserProfile() async {

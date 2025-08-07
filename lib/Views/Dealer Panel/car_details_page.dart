@@ -5,7 +5,7 @@ import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/home_controller.dart';
-import 'package:otobix/Models/car_model2.dart';
+import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/place_bid_button_widget.dart';
 import 'package:otobix/Views/Dealer%20Panel/start_auto_bid_button_widget.dart';
@@ -17,14 +17,14 @@ import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:otobix/Models/car_model.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 
 class CarDetailsPage extends StatefulWidget {
   final String carId;
-  final CarModel car;
+  final CarsListModel car;
   final String type;
 
   const CarDetailsPage({
@@ -265,8 +265,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     required List<CarsListTitleAndImage> imageUrls,
     required PageController pageController,
     required CarDetailsController getxController,
-    required CarModel2 carDetails,
-    required CarModel car,
+    required CarModel carDetails,
+    required CarsListModel car,
   }) {
     return Stack(
       alignment: Alignment.bottomRight,
@@ -354,7 +354,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
 
   Widget _buildAppbar({
     required CarDetailsController getxController,
-    required CarModel2 carDetails,
+    required CarModel carDetails,
   }) {
     return Positioned(
       top: 12,
@@ -395,7 +395,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   Widget _buildCarDetails({
-    required CarModel2 carDetails,
+    required CarModel carDetails,
     required CarDetailsController getxController,
   }) {
     return Padding(
@@ -451,7 +451,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   Widget _buildMainDetails({
-    required CarModel2 carDetails,
+    required CarModel carDetails,
     required CarDetailsController getxController,
   }) {
     // Helper Function
@@ -659,7 +659,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   //   );
   // }
 
-  Widget _buildBasicDetails({required CarModel2 carDetails}) {
+  Widget _buildBasicDetails({required CarModel carDetails}) {
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -734,7 +734,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   Widget _buildDocumentDetails({
-    required CarModel2 carDetails,
+    required CarModel carDetails,
     required CarDetailsController getxController,
   }) {
     Widget buildRow(String title, String value) {
@@ -845,7 +845,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   Widget _buildEngineBay({
-    required CarModel2 carDetails,
+    required CarModel carDetails,
     required CarDetailsController getxController,
   }) {
     // Helper: builds each labeled box
@@ -1339,7 +1339,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   // Steering, Brakes and Suspension
-  Widget _buildSteeringBrackesAndSuspension({required CarModel2 carDetails}) {
+  Widget _buildSteeringBrackesAndSuspension({required CarModel carDetails}) {
     Widget buildItem(IconData icon, String label, String value) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 10),
@@ -1393,7 +1393,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   // Safety & Airbags
-  Widget _buildSafetyAndAirbags({required CarModel2 carDetails}) {
+  Widget _buildSafetyAndAirbags({required CarModel carDetails}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1488,7 +1488,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   Widget _buildInteriorAndElectricals({
-    required CarModel2 carDetails,
+    required CarModel carDetails,
     required CarDetailsController getxController,
   }) {
     Widget item({
@@ -1838,7 +1838,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
 
   // Air Condition
   Widget _buildAirCondition({
-    required CarModel2 carDetails,
+    required CarModel carDetails,
     required CarDetailsController getxController,
   }) {
     Widget buildItem(IconData icon, String label, String value) {
@@ -1905,7 +1905,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   }
 
   Widget _buildExterior({
-    required CarModel2 carDetails,
+    required CarModel carDetails,
     required CarDetailsController getxController,
   }) {
     Widget buildExteriorItem(
@@ -2110,7 +2110,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     HomeController homeController,
     BuildContext context,
     String type,
-    CarModel car,
+    CarsListModel car,
   ) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
@@ -2266,7 +2266,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
   }
 
-  Widget _buildStructuralAndUnderbody({required CarModel2 carDetails}) {
+  Widget _buildStructuralAndUnderbody({required CarModel carDetails}) {
     Widget item({
       required IconData icon,
       required String label,
@@ -2368,7 +2368,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
   }
 
-  Widget _buildDashboardAndSeating({required CarModel2 carDetails}) {
+  Widget _buildDashboardAndSeating({required CarModel carDetails}) {
     final imageItems = [
       {
         'label': 'Dashboard View',
@@ -2590,7 +2590,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     );
   }
 
-  Widget _buildAdminAndApprovalInfo({required CarModel2 carDetails}) {
+  Widget _buildAdminAndApprovalInfo({required CarModel carDetails}) {
     Widget item({
       required IconData icon,
       required Color color,

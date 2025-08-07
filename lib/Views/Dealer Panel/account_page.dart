@@ -7,6 +7,7 @@ import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
+import 'package:otobix/admin/admin_car_auction_timer_page.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -115,7 +116,19 @@ class _AccountPageState extends State<AccountPage> {
                       Get.to(UserPreferencesPage());
                     },
                   ),
-                  if (accountController.userRole.value != UserModel.admin)
+                  if (accountController.userRoleFromSharedPrefs ==
+                      UserModel.admin)
+                    ProfileOption(
+                      icon: Icons.timer,
+                      color: AppColors.blue,
+                      title: "Car Auction Time",
+                      description: "Set car auction time.",
+                      onTap: () {
+                        Get.to(AdminCarAuctionTimerPage());
+                      },
+                    ),
+                  if (accountController.userRoleFromSharedPrefs !=
+                      UserModel.admin)
                     ProfileOption(
                       icon: Icons.gavel,
                       color: Colors.blue,
@@ -132,7 +145,8 @@ class _AccountPageState extends State<AccountPage> {
                         tabBarWidgetController.setSelectedTab(0);
                       },
                     ),
-                  if (accountController.userRole.value != UserModel.admin)
+                  if (accountController.userRoleFromSharedPrefs !=
+                      UserModel.admin)
                     ProfileOption(
                       icon: Icons.favorite_border,
                       color: Colors.red,

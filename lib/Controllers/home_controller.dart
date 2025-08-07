@@ -4,18 +4,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:otobix/Models/car_model.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
+import 'package:otobix/helpers/Preferences_helper.dart';
 
 import '../Network/api_service.dart';
 
 class HomeController extends GetxController {
-  List<CarModel> carsList = [];
+  List<CarsListModel> carsList = [];
   RxBool isLoading = false.obs;
   // RxString remainingAuctionTime = '00h : 00m : 00s'.obs;
   // Timer? _auctionTimer;
@@ -32,11 +33,11 @@ class HomeController extends GetxController {
   final String marketplaceSectionScreen = 'marketplace';
 
   // dummy add/remove cars to favorite
-  final RxList<CarModel> favorites = <CarModel>[].obs;
+  final RxList<CarsListModel> favorites = <CarsListModel>[].obs;
 
-  final RxList<CarModel> marketplaceCars = <CarModel>[].obs;
+  final RxList<CarsListModel> marketplaceCars = <CarsListModel>[].obs;
 
-  void changeFavoriteCars(CarModel car) {
+  void changeFavoriteCars(CarsListModel car) {
     car.isFavorite.value = !car.isFavorite.value;
 
     if (car.isFavorite.value) {
@@ -77,7 +78,7 @@ class HomeController extends GetxController {
   void onInit() async {
     super.onInit();
     await fetchCarsList();
-    setupSocketListeners();
+    listenUpdatedBidAndChangeHighestBidLocally();
     // filteredCars.value = carsList;
     // Listen to changes in ValueNotifier
     selectedSegmentNotifier.addListener(() {
@@ -117,7 +118,7 @@ class HomeController extends GetxController {
     'Creta': ['EX', 'SX'],
   };
 
-  final RxList<CarModel> filteredCars = <CarModel>[].obs;
+  final RxList<CarsListModel> filteredCars = <CarsListModel>[].obs;
 
   Future<void> fetchCarsList() async {
     isLoading.value = true;
@@ -127,14 +128,14 @@ class HomeController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        carsList = List<CarModel>.from(
+        carsList = List<CarsListModel>.from(
           (data as List).map(
-            (car) => CarModel.fromJson(data: car, id: car['id']),
+            (car) => CarsListModel.fromJson(data: car, id: car['id']),
           ),
         );
         filteredCars.value = carsList;
         for (var car in carsList) {
-          startAuctionCountdown(car);
+          await startAuctionCountdown(car);
         }
 
         debugPrint('Cars List Fetched Successfully');
@@ -151,41 +152,40 @@ class HomeController extends GetxController {
     }
   }
 
-  void setupSocketListeners() {
-    final socketService = SocketService();
+  // Listen and Update Bid locally
+  void listenUpdatedBidAndChangeHighestBidLocally() {
+    SocketService.instance.on(SocketEvents.bidUpdated, (data) {
+      final String carId = data['carId'];
+      final int highestBid = data['highestBid'];
 
-    socketService.on(SocketEvents.bidUpdated, (data) {
+      final index = filteredCars.indexWhere((c) => c.id == carId);
+      if (index != -1) {
+        filteredCars[index].highestBid.value =
+            highestBid.toDouble(); // ✅ this is the real-time field
+      }
       debugPrint('📢 Bid update received: $data');
-      _updateCarBid(data);
     });
   }
 
-  void _updateCarBid(dynamic data) {
-    final String carId = data['carId'];
-    final int highestBid = data['highestBid'];
-
-    final index = filteredCars.indexWhere((c) => c.id == carId);
-    if (index != -1) {
-      filteredCars[index].highestBid.value =
-          highestBid.toDouble(); // ✅ this is the real-time field
-    }
-  }
-
   // Auction Timer
-  void startAuctionCountdown(CarModel car) {
+  Future<void> startAuctionCountdown(CarsListModel car) async {
     DateTime getAuctionEndTime() {
       final startTime = car.auctionStartTime ?? DateTime.now();
       final duration = Duration(
         hours: car.defaultAuctionTime > 0 ? car.defaultAuctionTime : 12,
+        // hours: car.defaultAuctionTime,
       );
-      return startTime.add(duration);
+      return startTime.toUtc().add(duration);
     }
+
+    // final String userId =
+    //     await SharedPrefsHelper.getString(SharedPrefsHelper.userTypeKey) ?? '';
 
     car.auctionTimer?.cancel(); // cancel previous
 
     car.auctionTimer = Timer.periodic(Duration(seconds: 1), (_) {
-      final now = DateTime.now();
-      final diff = getAuctionEndTime().difference(now);
+      final now = DateTime.now().toUtc();
+      final diff = getAuctionEndTime().toUtc().difference(now);
 
       if (diff.isNegative) {
         // 🟥 Timer expired — reset startTime and countdown to now + 12 hours
@@ -193,6 +193,7 @@ class HomeController extends GetxController {
         car.defaultAuctionTime = 12;
 
         final newDiff = Duration(hours: 12);
+        // final newDiff = Duration(hours: 0);
 
         final hours = newDiff.inHours.toString().padLeft(2, '0');
         final minutes = (newDiff.inMinutes % 60).toString().padLeft(2, '0');
@@ -215,6 +216,33 @@ class HomeController extends GetxController {
       car.auctionTimer?.cancel();
     }
     super.onClose();
+  }
+
+  // dummy
+  Future<bool> checkIfUserIsHighestBidder({
+    required String carId,
+    required String userId,
+  }) async {
+    try {
+      final url = AppUrls.checkHighestBidder;
+      final response = await ApiService.post(
+        endpoint: url,
+        body: {'carId': carId, 'userId': userId},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final isHighest = data['isHighestBidder'] as bool;
+        debugPrint('✅ checkIfUserIsHighestBidder → $isHighest');
+        return isHighest;
+      } else {
+        debugPrint('❌ Failed to check highest bidder: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Error checking highest bidder: $e');
+      return false;
+    }
   }
 
   // final List<CarModel> carsList1 = [

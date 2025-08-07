@@ -223,7 +223,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
                         onTap: () {
                           bidController.placeBid(
                             carId: carId,
-                            newBid: bidController.yourOfferAmount.value,
+                            newBidAmount: bidController.yourOfferAmount.value,
                           );
                           Get.back();
                           // offeringBidSheet(context);

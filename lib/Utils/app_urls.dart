@@ -50,6 +50,11 @@ class AppUrls {
 
   static const String updateCarBid = "${baseUrl}car/update-bid";
 
+  static const String updateCarAuctionTime =
+      "${baseUrl}car/update-auction-time";
+
+  static const String checkHighestBidder = "${baseUrl}car/check-highest-bidder";
+
   // Socket URL Extraction
   static String _extractSocketBaseUrl(String url) {
     final uri = Uri.parse(url);

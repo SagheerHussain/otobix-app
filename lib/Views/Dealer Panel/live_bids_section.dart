@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:otobix/Models/car_model.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
@@ -292,7 +292,7 @@ class LiveBidsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildOtherDetails(CarModel car) {
+  Widget _buildOtherDetails(CarsListModel car) {
     Widget iconDetail(IconData icon, String label, String value) {
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -406,7 +406,7 @@ class LiveBidsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildCarCardFooter(CarModel car) {
+  Widget _buildCarCardFooter(CarsListModel car) {
     return Column(
       children: [
         Divider(),
@@ -414,14 +414,18 @@ class LiveBidsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Fair Market Value: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
-              style: TextStyle(fontSize: 12),
+              'Fair Market Value: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 10),
             Obx(
               () => Text(
                 car.remainingAuctionTime.value,
-                style: TextStyle(fontSize: 12, color: AppColors.red),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.red,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -430,7 +434,7 @@ class LiveBidsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildOtherDetails1(CarModel car) {
+  Widget _buildOtherDetails1(CarsListModel car) {
     return Column(
       children: [
         Row(

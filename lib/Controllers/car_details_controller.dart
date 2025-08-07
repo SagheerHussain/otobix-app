@@ -2,14 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Models/car_model.dart';
-import 'package:otobix/Models/car_model2.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/offering_bid_sheet.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
+import 'package:otobix/helpers/Preferences_helper.dart';
 
 class CarDetailsController extends GetxController {
   static const String basicDetailsSectionKey = 'basic';
@@ -54,7 +55,7 @@ class CarDetailsController extends GetxController {
   /// NEW: keep track of first click
   bool isFirstClick = true;
 
-  CarModel2? carDetails;
+  CarModel? carDetails;
 
   final String carId;
 
@@ -64,7 +65,7 @@ class CarDetailsController extends GetxController {
   void onInit() async {
     super.onInit();
     await fetchCarDetails(carId: carId);
-    setupSocketListeners();
+    listenUpdatedBidAndChangeHighestBidLocally();
     // await fetchCarDetails(carId: '68821747968635d593293346');
     // debugPrint(carDetails?.toJson().toString() ?? 'null');
     // Initialize keys for each tab
@@ -101,7 +102,7 @@ class CarDetailsController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        carDetails = CarModel2.fromJson(
+        carDetails = CarModel.fromJson(
           json: data['carDetails'],
           documentId: data['carDetails']['_id'],
         );
@@ -263,33 +264,40 @@ class CarDetailsController extends GetxController {
     }
   }
 
-  //  setup socket
-  void setupSocketListeners() {
-    final socketService = SocketService();
-    socketService.joinRoom('car-$carId');
-    socketService.on(SocketEvents.bidUpdated, (data) {
+  //  Listen and Update Bid locally
+  void listenUpdatedBidAndChangeHighestBidLocally() {
+    SocketService.instance.joinRoom('car-$carId');
+    SocketService.instance.on(SocketEvents.bidUpdated, (data) {
+      final String incomingCarId = data['carId'];
+      final double newBid = (data['highestBid'] as num).toDouble();
+
+      if (carDetails != null && carDetails!.id == incomingCarId) {
+        currentHighestBidAmount.value = newBid;
+        debugPrint('✅ Updated currentHighestBidAmount to $newBid');
+      }
       debugPrint('📢 Bid update received: $data');
-      _updateCarBid(data);
     });
   }
 
-  void _updateCarBid(dynamic data) {
-    final String incomingCarId = data['carId'];
-    final double newBid = (data['highestBid'] as num).toDouble();
-
-    if (carDetails != null && carDetails!.id == incomingCarId) {
-      currentHighestBidAmount.value = newBid;
-      debugPrint('✅ Updated currentHighestBidAmount to $newBid');
-    }
-  }
-
   // place bid
-  Future<bool> placeBid({required String carId, required double newBid}) async {
+  Future<bool> placeBid({
+    required String carId,
+    required double newBidAmount,
+  }) async {
     try {
       isPlaceBidButtonLoading.value = true;
+
+      final currentUserId = await SharedPrefsHelper.getString(
+        SharedPrefsHelper.userIdKey,
+      );
+
       final response = await ApiService.post(
         endpoint: AppUrls.updateCarBid,
-        body: {'carId': carId, 'newBid': newBid},
+        body: {
+          'carId': carId,
+          'newBidAmount': newBidAmount,
+          'userId': currentUserId,
+        },
       );
 
       if (response.statusCode == 200) {
@@ -304,6 +312,14 @@ class CarDetailsController extends GetxController {
         );
 
         return true;
+      } else if (response.statusCode == 403) {
+        debugPrint("❌ Failed to update bid: ${response.body}");
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Bid must be higher than current highest bid.",
+          type: ToastType.error,
+        );
+        return false;
       } else {
         debugPrint("❌ Failed to update bid: ${response.body}");
         ToastWidget.show(

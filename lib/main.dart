@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Models/car_model.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
@@ -33,7 +33,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPrefsHelper.init();
   // Initialize socket connection globally
-  SocketService().initSocket(AppUrls.socketBaseUrl);
+  SocketService.instance.initSocket(AppUrls.socketBaseUrl);
   runApp(const MyApp());
 }
 
