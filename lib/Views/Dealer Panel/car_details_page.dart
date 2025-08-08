@@ -106,7 +106,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                                     carDetails: getxController.carDetails!,
                                     getxController: getxController,
                                   ),
-                                  height: 160,
+                                  height: 180,
                                 ),
                               ),
                               SliverPersistentHeader(

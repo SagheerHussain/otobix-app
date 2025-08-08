@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/controller/admin_car_auction_timer_controller.dart';
 
 class AdminCarAuctionTimerPage extends StatelessWidget {
@@ -72,9 +73,12 @@ class AdminCarAuctionTimerPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Auction Start: ${car.auctionStartTime != null ? DateFormat('yyyy-MM-dd HH:mm').format(car.auctionStartTime!.toLocal()) : 'Not set'}',
+                      'Auction Start Time: ${car.auctionStartTime != null ? DateFormat('yyyy-MM-dd hh:mm a').format(car.auctionStartTime!.toLocal()) : 'Not set'}',
                     ),
-                    Text('Auction Duration: ${car.defaultAuctionTime} hours'),
+                    Text(
+                      'Auction End Time: ${car.auctionEndTime != null ? DateFormat('yyyy-MM-dd hh:mm a').format(car.auctionEndTime!.toLocal()) : 'Not set'}',
+                    ),
+                    Text('Auction Duration: ${car.auctionDuration} hours'),
                     const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -91,18 +95,20 @@ class AdminCarAuctionTimerPage extends StatelessWidget {
 
                               final pickedDate = await showDatePicker(
                                 context: context,
-                                initialDate: initialAuctionDate,
-                                firstDate: now,
-                                lastDate: DateTime(2030),
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate:
+                                    DateTime.now(), // only allow today or past dates
                               );
 
                               if (pickedDate != null) {
                                 final pickedTime = await showTimePicker(
                                   context: context,
                                   initialTime: TimeOfDay.fromDateTime(
-                                    car.auctionStartTime ?? DateTime.now(),
+                                    DateTime.now(),
                                   ),
                                 );
+
                                 if (pickedTime != null) {
                                   final newStart = DateTime(
                                     pickedDate.year,
@@ -111,6 +117,15 @@ class AdminCarAuctionTimerPage extends StatelessWidget {
                                     pickedTime.hour,
                                     pickedTime.minute,
                                   );
+
+                                  if (newStart.isAfter(DateTime.now())) {
+                                    ToastWidget.show(
+                                      context: Get.context!,
+                                      title: 'Cannot select a future time',
+                                      type: ToastType.error,
+                                    );
+                                    return;
+                                  }
 
                                   await controller.updateAuctionTime(
                                     carId: car.id,
@@ -132,7 +147,7 @@ class AdminCarAuctionTimerPage extends StatelessWidget {
                           child: ElevatedButton.icon(
                             onPressed: () {
                               final durationController = TextEditingController(
-                                text: car.defaultAuctionTime.toString(),
+                                text: car.auctionDuration.toString(),
                               );
                               showDialog(
                                 context: context,

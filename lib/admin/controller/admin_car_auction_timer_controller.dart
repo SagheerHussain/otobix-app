@@ -44,8 +44,7 @@ class AdminCarAuctionTimerController extends GetxController {
     final index = cars.indexWhere((c) => c.id == carId);
     if (index != -1) {
       cars[index].auctionStartTime = newStartTime;
-      cars[index].defaultAuctionTime = newDuration;
-      cars.refresh();
+      cars[index].auctionDuration = newDuration;
     }
   }
 
@@ -59,7 +58,7 @@ class AdminCarAuctionTimerController extends GetxController {
         'carId': carId,
         if (newStartTime != null)
           'auctionStartTime': newStartTime.toIso8601String(),
-        if (newDuration != null) 'defaultAuctionTime': newDuration,
+        if (newDuration != null) 'auctionDuration': newDuration,
       };
 
       final response = await ApiService.post(
@@ -75,7 +74,7 @@ class AdminCarAuctionTimerController extends GetxController {
             cars[index].auctionStartTime = newStartTime;
           }
           if (newDuration != null) {
-            cars[index].defaultAuctionTime = newDuration;
+            cars[index].auctionDuration = newDuration;
           }
         }
         ToastWidget.show(

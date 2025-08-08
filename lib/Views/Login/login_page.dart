@@ -54,6 +54,9 @@ class LoginPage extends StatelessWidget {
                       limitLengthToTen: true,
                       keyboardType: TextInputType.phone,
                       isRequired: true,
+                      onSubmitted: (value) {
+                        getxController.loginUser();
+                      },
                     ),
                     SizedBox(height: 10),
                     _buildContinueButton(context),
@@ -68,7 +71,7 @@ class LoginPage extends StatelessWidget {
                         SizedBox(width: 5),
                         InkWell(
                           onTap: () {
-                              Get.delete<RegisterController>();
+                            Get.delete<RegisterController>();
                             Get.to(() => RegisterPage());
                           },
                           borderRadius: BorderRadius.circular(50),
@@ -127,6 +130,7 @@ class LoginPage extends StatelessWidget {
     required bool isRequired,
     bool isPasswordField = false,
     bool limitLengthToTen = false,
+    Function(String)? onSubmitted,
   }) {
     String? validator(String? value) {
       if (isRequired && (value == null || value.trim().isEmpty)) {
@@ -156,6 +160,7 @@ class LoginPage extends StatelessWidget {
               keyboardType: keyboardType,
               maxLength: limitLengthToTen ? 10 : null,
               validator: validator,
+              onFieldSubmitted: onSubmitted,
               decoration: InputDecoration(
                 counterText: "",
                 hintText: hintText,

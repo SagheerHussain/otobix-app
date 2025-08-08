@@ -26,7 +26,8 @@ class CarsListModel {
   final bool isInspected;
   final RxDouble highestBid;
   DateTime? auctionStartTime;
-  int defaultAuctionTime;
+  DateTime? auctionEndTime;
+  int auctionDuration;
   final List<CarsListTitleAndImage>? imageUrls;
 
   final RxBool isFavorite;
@@ -50,7 +51,8 @@ class CarsListModel {
     required this.isInspected,
     required this.highestBid,
     required this.auctionStartTime,
-    required this.defaultAuctionTime,
+    required this.auctionEndTime,
+    required this.auctionDuration,
     required this.imageUrls,
     bool isFavorite = false,
   }) : isFavorite = isFavorite.obs;
@@ -91,7 +93,8 @@ class CarsListModel {
         double.tryParse(data['highestBid']?.toString() ?? '0') ?? 0.0,
       ),
       auctionStartTime: parseMongoDbDate(data["auctionStartTime"]),
-      defaultAuctionTime: data['defaultAuctionTime'] ?? 0,
+      auctionEndTime: parseMongoDbDate(data["auctionEndTime"]),
+      auctionDuration: data['auctionDuration'] ?? 0,
       imageUrls:
           (data['imageUrls'] as List<dynamic>?)
               ?.map((e) => CarsListTitleAndImage.fromJson(e))
@@ -119,7 +122,8 @@ class CarsListModel {
       'isInspected': isInspected,
       'highestBid': highestBid,
       'auctionStartTime': auctionStartTime,
-      'defaultAuctionTime': defaultAuctionTime,
+      'auctionEndTime': auctionEndTime,
+      'auctionDuration': auctionDuration,
       'imageUrls': imageUrls?.map((e) => e.toJson()).toList(),
     };
   }

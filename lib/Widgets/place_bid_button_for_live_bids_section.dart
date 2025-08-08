@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
+import 'package:otobix/Widgets/offering_bid_sheet.dart';
 
 void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
   final CarDetailsController bidController = Get.put(

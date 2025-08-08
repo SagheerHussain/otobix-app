@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/socket_service.dart';
+import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
+import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
@@ -79,6 +82,7 @@ class HomeController extends GetxController {
     super.onInit();
     await fetchCarsList();
     listenUpdatedBidAndChangeHighestBidLocally();
+    listenToAuctionWonEvent();
     // filteredCars.value = carsList;
     // Listen to changes in ValueNotifier
     selectedSegmentNotifier.addListener(() {
@@ -128,12 +132,22 @@ class HomeController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+
+        final currentTime = DateTime.now().toUtc();
+
         carsList = List<CarsListModel>.from(
           (data as List).map(
             (car) => CarsListModel.fromJson(data: car, id: car['id']),
           ),
         );
-        filteredCars.value = carsList;
+        // filteredCars.value = carsList;
+        // Only keep cars with future auctionEndTime
+        filteredCars.value =
+            carsList.where((car) {
+              return car.auctionEndTime != null &&
+                  car.auctionEndTime!.toUtc().isAfter(currentTime);
+            }).toList();
+
         for (var car in carsList) {
           await startAuctionCountdown(car);
         }
@@ -172,7 +186,7 @@ class HomeController extends GetxController {
     DateTime getAuctionEndTime() {
       final startTime = car.auctionStartTime ?? DateTime.now();
       final duration = Duration(
-        hours: car.defaultAuctionTime > 0 ? car.defaultAuctionTime : 12,
+        hours: car.auctionDuration > 0 ? car.auctionDuration : 12,
         // hours: car.defaultAuctionTime,
       );
       return startTime.toUtc().add(duration);
@@ -190,7 +204,7 @@ class HomeController extends GetxController {
       if (diff.isNegative) {
         // 🟥 Timer expired — reset startTime and countdown to now + 12 hours
         car.auctionStartTime = DateTime.now();
-        car.defaultAuctionTime = 12;
+        car.auctionDuration = 12;
 
         final newDiff = Duration(hours: 12);
         // final newDiff = Duration(hours: 0);
@@ -243,6 +257,101 @@ class HomeController extends GetxController {
       debugPrint('❌ Error checking highest bidder: $e');
       return false;
     }
+  }
+
+  void listenToAuctionWonEvent() async {
+    final currentUserId = await SharedPrefsHelper.getString(
+      SharedPrefsHelper.userIdKey,
+    );
+    SocketService.instance.on(SocketEvents.auctionEnded, (data) {
+      final isWinner = data['winnerId'] == currentUserId;
+      debugPrint('ℹ️ User ${data['winnerId']} won car ${data['carId']}');
+
+      if (isWinner) {
+        // 🎉 Show dialog if the current user won
+        showWinDialog();
+      } else {
+        // Show notification or just log
+        debugPrint("ℹ️ User ${data['winnerId']} won car ${data['carId']}");
+        ToastWidget.show(
+          context: Get.context!,
+          title:
+              'User ${data['winnerId']} won the auction for car ${data['carId']} at ₹${data['bidAmount']}',
+          type: ToastType.error,
+        );
+      }
+    });
+  }
+
+  // 🎉 Show dialog if the current user won
+  void showWinDialog() {
+    final ConfettiController confettiController = ConfettiController(
+      duration: const Duration(seconds: 2),
+    );
+    confettiController.play(); // Start confetti
+
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "🎉 You Won the Bid!",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Congratulations on your successful offer!",
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ButtonWidget(
+                    onTap: () => Get.back(),
+                    text: "View Details",
+                    isLoading: false.obs,
+                    height: 40,
+                    width: 150,
+                    backgroundColor: AppColors.green,
+                    textColor: AppColors.white,
+                    loaderSize: 15,
+                    loaderStrokeWidth: 1,
+                    loaderColor: AppColors.white,
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: -10,
+              child: ConfettiWidget(
+                confettiController: confettiController,
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
+                emissionFrequency: 0.05,
+                numberOfParticles: 30,
+                maxBlastForce: 20,
+                minBlastForce: 5,
+                gravity: 0.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+      barrierDismissible: false,
+    );
   }
 
   // final List<CarModel> carsList1 = [

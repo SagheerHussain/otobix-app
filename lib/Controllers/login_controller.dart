@@ -165,7 +165,7 @@ class LoginController extends GetxController {
       debugPrint("Error: $e");
       ToastWidget.show(
         context: Get.context!,
-        title: e.toString(),
+        title: "Something went wrong. Please try again.",
         type: ToastType.error,
       );
     } finally {

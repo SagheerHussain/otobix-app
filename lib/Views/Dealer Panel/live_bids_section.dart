@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Models/cars_list_model.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';

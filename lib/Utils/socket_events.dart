@@ -9,4 +9,5 @@ class SocketEvents {
   static const String joinRoom = 'join-room';
   static const String bidUpdated = 'bid-updated';
   static const String leaveRoom = 'leave-room';
+  static const String auctionEnded = 'auction-ended';
 }
