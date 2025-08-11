@@ -5,6 +5,7 @@ import 'package:otobix/Controllers/account_controller.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
 import 'package:otobix/admin/admin_car_auction_timer_page.dart';
@@ -107,17 +108,19 @@ class _AccountPageState extends State<AccountPage> {
                   //       Get.to(AdminApprovedRejectedUsersPage());
                   //     },
                   //   ),
-                  ProfileOption(
-                    icon: Icons.settings,
-                    color: AppColors.grey,
-                    title: "User Preferences",
-                    description: "Set user preferences.",
-                    onTap: () {
-                      Get.to(UserPreferencesPage());
-                    },
-                  ),
+                  if (accountController.userRoleFromSharedPrefs !=
+                      AppConstants.roles.admin)
+                    ProfileOption(
+                      icon: Icons.settings,
+                      color: AppColors.grey,
+                      title: "User Preferences",
+                      description: "Set user preferences.",
+                      onTap: () {
+                        Get.to(UserPreferencesPage());
+                      },
+                    ),
                   if (accountController.userRoleFromSharedPrefs ==
-                      UserModel.admin)
+                      AppConstants.roles.admin)
                     ProfileOption(
                       icon: Icons.timer,
                       color: AppColors.blue,
@@ -128,7 +131,7 @@ class _AccountPageState extends State<AccountPage> {
                       },
                     ),
                   if (accountController.userRoleFromSharedPrefs !=
-                      UserModel.admin)
+                      AppConstants.roles.admin)
                     ProfileOption(
                       icon: Icons.gavel,
                       color: Colors.blue,
@@ -146,7 +149,7 @@ class _AccountPageState extends State<AccountPage> {
                       },
                     ),
                   if (accountController.userRoleFromSharedPrefs !=
-                      UserModel.admin)
+                      AppConstants.roles.admin)
                     ProfileOption(
                       icon: Icons.favorite_border,
                       color: Colors.red,

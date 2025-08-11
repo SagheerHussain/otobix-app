@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
@@ -8,6 +9,7 @@ import 'package:otobix/Widgets/toast_widget.dart';
 class AdminCarAuctionTimerController extends GetxController {
   final RxList<CarsListModel> cars = <CarsListModel>[].obs;
   final RxBool isLoading = false.obs;
+  final formKey = GlobalKey<FormState>();
 
   @override
   void onInit() {

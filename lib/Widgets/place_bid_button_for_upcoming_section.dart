@@ -105,12 +105,14 @@ void placeBidButtonForUpcomingSection(BuildContext context, String carId) {
                             ),
                           ),
                           SizedBox(height: 4),
-                          Text(
-                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount)}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: AppColors.black,
+                          Obx(
+                            () => Text(
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount.value)}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                color: AppColors.black,
+                              ),
                             ),
                           ),
                         ],

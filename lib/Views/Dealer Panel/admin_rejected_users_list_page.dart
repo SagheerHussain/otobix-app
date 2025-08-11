@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
@@ -12,7 +13,12 @@ import 'package:otobix/admin/controller/admin_rejected_users_list_controller.dar
 
 class AdminRejectedUsersListPage extends StatelessWidget {
   final RxString searchQuery;
-  AdminRejectedUsersListPage({super.key, required this.searchQuery});
+  final RxList<String> selectedRoles;
+  AdminRejectedUsersListPage({
+    super.key,
+    required this.searchQuery,
+    required this.selectedRoles,
+  });
 
   final getxController = Get.put(AdminRejectedUserListController());
 
@@ -28,13 +34,29 @@ class AdminRejectedUsersListPage extends StatelessWidget {
             itemBuilder: (_, __) => _buildUserShimmerCard(),
           );
         }
-        // search users
+
+        // search + role filter
         final filteredUsers =
             getxController.rejectedUsersList.where((user) {
-              final query = searchQuery.value.toLowerCase();
-              final name = user.userName.toLowerCase();
-              final email = user.email.toLowerCase();
-              return name.contains(query) || email.contains(query);
+              final query = (searchQuery.value).toLowerCase().trim();
+
+              // Safe strings
+              final name = (user.userName).toLowerCase();
+              final email = (user.email).toLowerCase();
+              final role = user.userRole;
+
+              // Role filter: if 'All' is selected, everything passes
+              final roles = selectedRoles; // RxList<String>
+              final matchesRole =
+                  roles.contains('All') ? true : roles.contains(role);
+
+              // Text search (empty query passes)
+              final matchesSearch =
+                  query.isEmpty ||
+                  name.contains(query) ||
+                  email.contains(query);
+
+              return matchesRole && matchesSearch;
             }).toList();
 
         if (filteredUsers.isEmpty) {
@@ -356,9 +378,9 @@ class AdminRejectedUsersListPage extends StatelessWidget {
     getxController.obscurePasswordText.value = true;
     final passwordController = TextEditingController(text: user.password);
     final statusOptions = [
-      UserModel.userStatusPending,
-      UserModel.userStatusApproved,
-      UserModel.userStatusRejected,
+      AppConstants.roles.userStatusPending,
+      AppConstants.roles.userStatusApproved,
+      AppConstants.roles.userStatusRejected,
     ];
     final selectedStatus = RxString(user.approvalStatus);
 

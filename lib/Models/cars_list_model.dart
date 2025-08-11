@@ -28,6 +28,7 @@ class CarsListModel {
   DateTime? auctionStartTime;
   DateTime? auctionEndTime;
   int auctionDuration;
+  final String auctionStatus;
   final List<CarsListTitleAndImage>? imageUrls;
 
   final RxBool isFavorite;
@@ -53,6 +54,7 @@ class CarsListModel {
     required this.auctionStartTime,
     required this.auctionEndTime,
     required this.auctionDuration,
+    required this.auctionStatus,
     required this.imageUrls,
     bool isFavorite = false,
   }) : isFavorite = isFavorite.obs;
@@ -95,6 +97,7 @@ class CarsListModel {
       auctionStartTime: parseMongoDbDate(data["auctionStartTime"]),
       auctionEndTime: parseMongoDbDate(data["auctionEndTime"]),
       auctionDuration: data['auctionDuration'] ?? 0,
+      auctionStatus: data['auctionStatus'] ?? '',
       imageUrls:
           (data['imageUrls'] as List<dynamic>?)
               ?.map((e) => CarsListTitleAndImage.fromJson(e))
@@ -124,6 +127,7 @@ class CarsListModel {
       'auctionStartTime': auctionStartTime,
       'auctionEndTime': auctionEndTime,
       'auctionDuration': auctionDuration,
+      'auctionStatus': auctionStatus,
       'imageUrls': imageUrls?.map((e) => e.toJson()).toList(),
     };
   }

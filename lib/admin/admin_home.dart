@@ -65,12 +65,15 @@ class AdminHome extends StatelessWidget {
                 screens: [
                   AdminPendingUsersListPage(
                     searchQuery: getxController.searchQuery,
+                    selectedRoles: getxController.selectedRoles,
                   ),
                   AdminApprovedUsersListPage(
                     searchQuery: getxController.searchQuery,
+                    selectedRoles: getxController.selectedRoles,
                   ),
                   AdminRejectedUsersListPage(
                     searchQuery: getxController.searchQuery,
+                    selectedRoles: getxController.selectedRoles,
                   ),
                 ],
                 titleSize: 10,
@@ -123,12 +126,19 @@ class AdminHome extends StatelessWidget {
   }
 
   void _buildRoleFilterDialog() {
-    final roles = [
-      UserModel.dealer,
-      UserModel.customer,
-      UserModel.salesManager,
-    ];
-    final RxList<String> tempSelected = <String>[].obs;
+    // final roles = [
+    //   'All',
+    //   UserModel.dealer,
+    //   UserModel.customer,
+    //   UserModel.salesManager,
+    // ];
+    // final RxList<String> tempSelected = <String>[].obs;
+
+    final roles = getxController.roles;
+    // Start with current selection so UI shows existing state
+    final RxList<String> tempSelected = RxList<String>.from(
+      getxController.selectedRoles,
+    );
 
     Get.dialog(
       Dialog(
@@ -145,6 +155,7 @@ class AdminHome extends StatelessWidget {
                   "Filter by Role",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
+                Divider(),
                 const SizedBox(height: 10),
                 Wrap(
                   spacing: 10,
@@ -157,17 +168,37 @@ class AdminHome extends StatelessWidget {
                           label: Text(role),
                           selected: isSelected,
                           onSelected: (selected) {
+                            // if (selected) {
+                            //   tempSelected.add(role);
+                            // } else {
+                            //   tempSelected.remove(role);
+                            // }
+
+                            if (role == 'All') {
+                              // If All tapped, keep only All
+                              tempSelected.assignAll(['All']);
+                              return;
+                            }
+
+                            // Non-All role toggled
                             if (selected) {
+                              // Add role, and ensure All is removed
+                              tempSelected.remove('All');
                               tempSelected.add(role);
                             } else {
                               tempSelected.remove(role);
+                            }
+
+                            // If user cleared all, fallback to All
+                            if (tempSelected.isEmpty) {
+                              tempSelected.assignAll(['All']);
                             }
                           },
                           selectedColor: AppColors.green.withValues(alpha: 0.1),
                           checkmarkColor: AppColors.green,
                           showCheckmark: true,
-                          labelPadding: const EdgeInsets.symmetric(
-                            horizontal: 5,
+                          labelPadding: EdgeInsets.symmetric(
+                            horizontal: role == 'All' ? 10 : 5,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -202,7 +233,13 @@ class AdminHome extends StatelessWidget {
                         height: 30,
                         elevation: 3,
                         fontSize: 10,
-                        onTap: () => Get.back(),
+                        onTap: () {
+                          // Commit selection to controller (enforces rules again)
+                          getxController.applyRoleSelection(
+                            List<String>.from(tempSelected),
+                          );
+                          Get.back();
+                        },
                       ),
                     ),
                   ],

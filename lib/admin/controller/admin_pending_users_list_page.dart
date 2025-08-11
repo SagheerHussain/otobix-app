@@ -12,7 +12,12 @@ import 'package:otobix/admin/controller/admin_rejected_users_list_controller.dar
 
 class AdminPendingUsersListPage extends StatelessWidget {
   final RxString searchQuery;
-  AdminPendingUsersListPage({super.key, required this.searchQuery});
+  final RxList<String> selectedRoles;
+  AdminPendingUsersListPage({
+    super.key,
+    required this.searchQuery,
+    required this.selectedRoles,
+  });
 
   final getxController = Get.put(AdminPendingUsersListController());
 
@@ -29,13 +34,28 @@ class AdminPendingUsersListPage extends StatelessWidget {
           );
         }
 
-        // search users
+        // search + role filter
         final filteredUsers =
             getxController.filteredUsersList.where((user) {
-              final query = searchQuery.value.toLowerCase();
-              final name = user.userName.toLowerCase();
-              final email = user.email.toLowerCase();
-              return name.contains(query) || email.contains(query);
+              final query = (searchQuery.value).toLowerCase().trim();
+
+              // Safe strings
+              final name = (user.userName).toLowerCase();
+              final email = (user.email).toLowerCase();
+              final role = user.userRole;
+
+              // Role filter: if 'All' is selected, everything passes
+              final roles = selectedRoles; // RxList<String>
+              final matchesRole =
+                  roles.contains('All') ? true : roles.contains(role);
+
+              // Text search (empty query passes)
+              final matchesSearch =
+                  query.isEmpty ||
+                  name.contains(query) ||
+                  email.contains(query);
+
+              return matchesRole && matchesSearch;
             }).toList();
 
         if (filteredUsers.isEmpty) {

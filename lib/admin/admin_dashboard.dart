@@ -31,13 +31,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
           },
           items: [
             SalomonBottomBarItem(
-              icon: Icon(CupertinoIcons.home),
-              title: Text("Home"),
+              icon: Icon(CupertinoIcons.home, size: 20),
+              title: Text("Home", style: TextStyle(fontSize: 14)),
               selectedColor: AppColors.green,
             ),
             SalomonBottomBarItem(
-              icon: Icon(CupertinoIcons.person),
-              title: Text("Profile"),
+              icon: Icon(CupertinoIcons.person, size: 20),
+              title: Text("Profile", style: TextStyle(fontSize: 14)),
               selectedColor: AppColors.blue,
             ),
           ],

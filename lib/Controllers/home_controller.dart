@@ -5,6 +5,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
@@ -145,6 +146,7 @@ class HomeController extends GetxController {
         filteredCars.value =
             carsList.where((car) {
               return car.auctionEndTime != null &&
+                  // car.auctionStatus == AppConstants.auctionStatuses.live &&
                   car.auctionEndTime!.toUtc().isAfter(currentTime);
             }).toList();
 
@@ -153,7 +155,7 @@ class HomeController extends GetxController {
         }
 
         debugPrint('Cars List Fetched Successfully');
-        debugPrint(carsList[1].toJson().toString());
+        // debugPrint(carsList[1].toJson().toString());
       } else {
         filteredCars.value = [];
         debugPrint('Failed to fetch data ${response.body}');
@@ -232,58 +234,85 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  // dummy
-  Future<bool> checkIfUserIsHighestBidder({
-    required String carId,
-    required String userId,
-  }) async {
-    try {
-      final url = AppUrls.checkHighestBidder;
-      final response = await ApiService.post(
-        endpoint: url,
-        body: {'carId': carId, 'userId': userId},
-      );
+  // // dummy
+  // Future<bool> checkIfUserIsHighestBidder({
+  //   required String carId,
+  //   required String userId,
+  // }) async {
+  //   try {
+  //     final url = AppUrls.checkHighestBidder;
+  //     final response = await ApiService.post(
+  //       endpoint: url,
+  //       body: {'carId': carId, 'userId': userId},
+  //     );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final isHighest = data['isHighestBidder'] as bool;
-        debugPrint('✅ checkIfUserIsHighestBidder → $isHighest');
-        return isHighest;
-      } else {
-        debugPrint('❌ Failed to check highest bidder: ${response.body}');
-        return false;
-      }
-    } catch (e) {
-      debugPrint('❌ Error checking highest bidder: $e');
-      return false;
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       final isHighest = data['isHighestBidder'] as bool;
+  //       debugPrint('✅ checkIfUserIsHighestBidder → $isHighest');
+  //       return isHighest;
+  //     } else {
+  //       debugPrint('❌ Failed to check highest bidder: ${response.body}');
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     debugPrint('❌ Error checking highest bidder: $e');
+  //     return false;
+  //   }
+  // }
 
+  // Listen to Auction Won Event
   void listenToAuctionWonEvent() async {
     final currentUserId = await SharedPrefsHelper.getString(
       SharedPrefsHelper.userIdKey,
     );
     SocketService.instance.on(SocketEvents.auctionEnded, (data) {
-      final isWinner = data['winnerId'] == currentUserId;
-      debugPrint('ℹ️ User ${data['winnerId']} won car ${data['carId']}');
+      // Defensive parsing
+      final winnerId = '${data['winnerId'] ?? ''}';
+      final winnerName = '${data['winnerName'] ?? ''}';
+      final carName = '${data['carName'] ?? ''}';
+      final carId = '${data['carId'] ?? ''}';
+      final num bidAmountNum =
+          (data['bidAmount'] is num)
+              ? data['bidAmount'] as num
+              : num.tryParse('${data['bidAmount']}') ?? 0;
+      final biddersList =
+          (data['biddersList'] as List? ?? const []).map((e) => '$e').toSet();
+
+      final bool isWinner = winnerId == currentUserId;
+      final bool isLoser = !isWinner && biddersList.contains(currentUserId);
+
+      // Format INR nicely
+      final amount = NumberFormat.currency(
+        locale: 'en_IN',
+        symbol: '₹',
+        decimalDigits: 0,
+      ).format(bidAmountNum);
+
+      debugPrint(data.toString());
 
       if (isWinner) {
         // 🎉 Show dialog if the current user won
         showWinDialog();
-      } else {
-        // Show notification or just log
-        debugPrint("ℹ️ User ${data['winnerId']} won car ${data['carId']}");
-        ToastWidget.show(
-          context: Get.context!,
-          title:
-              'User ${data['winnerId']} won the auction for car ${data['carId']} at ₹${data['bidAmount']}',
-          type: ToastType.error,
-        );
+        return;
+      }
+      if (isLoser) {
+        final ctx = Get.overlayContext ?? Get.context;
+        if (ctx != null) {
+          ToastWidget.show(
+            context: ctx,
+            toastDuration: 10,
+            title:
+                'You didn’t win the auction for ${carName.isEmpty ? 'car $carId' : carName}. '
+                'Winning bid: $amount by ${winnerName.isEmpty ? winnerId : winnerName}.',
+            type: ToastType.error,
+          );
+        }
       }
     });
   }
 
-  // 🎉 Show dialog if the current user won
+  // Show dialog if the current user won
   void showWinDialog() {
     final ConfettiController confettiController = ConfettiController(
       duration: const Duration(seconds: 2),

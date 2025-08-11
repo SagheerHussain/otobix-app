@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
@@ -123,7 +124,7 @@ class LoginController extends GetxController {
         );
         await SharedPrefsHelper.saveString(SharedPrefsHelper.userIdKey, userId);
         debugPrint("userId: $userId");
-        if (userType == UserModel.admin) {
+        if (userType == AppConstants.roles.admin) {
           Get.to(() => AdminDashboard());
         } else {
           if (approvalStatus == 'Pending') {
@@ -136,11 +137,11 @@ class LoginController extends GetxController {
               ),
             );
           } else if (approvalStatus == 'Approved') {
-            if (userType == UserModel.customer) {
+            if (userType == AppConstants.roles.customer) {
               Get.to(() => CustomerHomepage());
-            } else if (userType == UserModel.salesManager) {
+            } else if (userType == AppConstants.roles.salesManager) {
               Get.to(() => SalesManagerHomepage());
-            } else if (userType == UserModel.dealer) {
+            } else if (userType == AppConstants.roles.dealer) {
               Get.to(() => BottomNavigationPage());
             }
           } else if (approvalStatus == 'Rejected') {

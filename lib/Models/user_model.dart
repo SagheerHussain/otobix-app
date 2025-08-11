@@ -1,13 +1,13 @@
 class UserModel {
-  // Fields
-  static const String dealer = 'Dealer';
-  static const String customer = 'Customer';
-  static const String salesManager = 'Sales Manager';
-  static const String admin = 'Admin';
+  // // Fields
+  // static const String dealer = 'Dealer';
+  // static const String customer = 'Customer';
+  // static const String salesManager = 'Sales Manager';
+  // static const String admin = 'Admin';
 
-  static const String userStatusPending = 'Pending';
-  static const String userStatusApproved = 'Approved';
-  static const String userStatusRejected = 'Rejected';
+  // static const String userStatusPending = 'Pending';
+  // static const String userStatusApproved = 'Approved';
+  // static const String userStatusRejected = 'Rejected';
 
   final String id;
   final String userRole;

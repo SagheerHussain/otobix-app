@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:otobix/Controllers/registration_form_controller.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_icons.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/dropdown_widget.dart';
@@ -130,7 +131,7 @@ class RegistrationFormPage extends StatelessWidget {
                           return null;
                         },
                       ),
-                      if (userRole == UserModel.dealer)
+                      if (userRole == AppConstants.roles.dealer)
                         _buildCustomTextField(
                           icon: Icons.business,
                           label: "Dealership Name",
@@ -145,12 +146,12 @@ class RegistrationFormPage extends StatelessWidget {
                             return null;
                           },
                         ),
-                      if (userRole == UserModel.dealer)
+                      if (userRole == AppConstants.roles.dealer)
                         _buildEntityTypeDropdown(context),
 
                       const SizedBox(height: 30),
 
-                      if (userRole == UserModel.dealer)
+                      if (userRole == AppConstants.roles.dealer)
                         _buildCustomTextField(
                           icon: Icons.person_outline,
                           label: "Primary Contact Person",
@@ -166,7 +167,7 @@ class RegistrationFormPage extends StatelessWidget {
                             return null;
                           },
                         ),
-                      if (userRole == UserModel.dealer)
+                      if (userRole == AppConstants.roles.dealer)
                         _buildCustomTextField(
                           icon: Icons.phone_android,
                           label: "Primary Contact Mobile No.",
@@ -186,7 +187,7 @@ class RegistrationFormPage extends StatelessWidget {
                             return null;
                           },
                         ),
-                      if (userRole == UserModel.dealer)
+                      if (userRole == AppConstants.roles.dealer)
                         _buildCustomTextField(
                           icon: Icons.person_outline,
                           label: "Secondary Contact Person (Optional)",
@@ -196,7 +197,7 @@ class RegistrationFormPage extends StatelessWidget {
                           keyboardType: TextInputType.text,
                           isRequired: false,
                         ),
-                      if (userRole == UserModel.dealer)
+                      if (userRole == AppConstants.roles.dealer)
                         _buildCustomTextField(
                           icon: Icons.phone_android,
                           label: "Secondary Contact Mobile No. (Optional)",

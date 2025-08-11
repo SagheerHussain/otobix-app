@@ -3,6 +3,7 @@ import 'package:lottie/lottie.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_animations.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
 class WaitingForApprovalPage extends StatefulWidget {
@@ -69,7 +70,7 @@ class _WaitingForApprovalPageState extends State<WaitingForApprovalPage> {
             const SizedBox(height: 30),
 
             // Documents List
-            if (widget.userRole == UserModel.dealer)
+            if (widget.userRole == AppConstants.roles.dealer)
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -142,20 +143,26 @@ class _WaitingForApprovalPageState extends State<WaitingForApprovalPage> {
 
   Widget _buildSubtitleForRole(String role) {
     switch (role.toLowerCase()) {
-      case UserModel.customer:
+      // case AppConstants.roles.customer:
+      case var s
+          when s.toLowerCase() == AppConstants.roles.customer.toLowerCase():
         return const Text(
           'Thank you for registering. Your account is being reviewed. You will receive an email once approved.',
           style: TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
           textAlign: TextAlign.center,
         );
 
-      case UserModel.salesManager:
+      // case AppConstants.roles.salesManager:
+      case var s
+          when s.toLowerCase() == AppConstants.roles.salesManager.toLowerCase():
         return const Text(
           'Your registration is under review. Please wait while the admin verifies your information.',
           style: TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
           textAlign: TextAlign.center,
         );
-      case UserModel.dealer:
+      // case AppConstants.roles.dealer:
+      case var s
+          when s.toLowerCase() == AppConstants.roles.dealer.toLowerCase():
         return RichText(
           text: TextSpan(
             children: [

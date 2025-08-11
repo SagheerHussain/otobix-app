@@ -1,4 +1,8 @@
 class AppConstants {
+  // Other constant classes
+  static final Roles roles = Roles();
+  static final AuctionStatuses auctionStatuses = AuctionStatuses();
+
   static const List<String> indianStates = [
     "Andhra Pradesh",
     "Arunachal Pradesh",
@@ -37,4 +41,27 @@ class AppConstants {
     "Lakshadweep",
     "Puducherry",
   ];
+}
+
+// User roles class
+class Roles {
+  // Fields
+  final String dealer = 'Dealer';
+  final String customer = 'Customer';
+  final String salesManager = 'Sales Manager';
+  final String admin = 'Admin';
+
+  final String userStatusPending = 'Pending';
+  final String userStatusApproved = 'Approved';
+  final String userStatusRejected = 'Rejected';
+
+  List<String> get all => [dealer, customer, salesManager, admin];
+}
+
+// Auction statuses class
+class AuctionStatuses {
+  final String live = 'live';
+  final String ended = 'ended';
+
+  List<String> get all => [live, ended];
 }

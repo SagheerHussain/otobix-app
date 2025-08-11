@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otobix/Controllers/login_controller.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Controllers/register_controller.dart';
@@ -46,7 +47,7 @@ class RegisterPage extends StatelessWidget {
                       SizedBox(width: 5),
                       InkWell(
                         onTap: () {
-                            Get.delete<LoginController>();
+                          Get.delete<LoginController>();
                           Get.to(() => LoginPage());
                         },
                         borderRadius: BorderRadius.circular(50),
@@ -105,17 +106,17 @@ class RegisterPage extends StatelessWidget {
           _buildRoleSelectionButton(
             icon: Icons.group,
             titleText: 'Customer',
-            role: UserModel.customer,
+            role: AppConstants.roles.customer,
           ),
           _buildRoleSelectionButton(
             icon: Icons.person,
             titleText: 'Sales Manager',
-            role: UserModel.salesManager,
+            role: AppConstants.roles.salesManager,
           ),
           _buildRoleSelectionButton(
             icon: Icons.phone,
             titleText: 'Dealer',
-            role: UserModel.dealer,
+            role: AppConstants.roles.dealer,
           ),
         ],
       ),

@@ -128,12 +128,14 @@ void autoBidButtonForOcb70Section(String carId) {
                             ),
                           ),
                           SizedBox(height: 4),
-                          Text(
-                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount)}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: AppColors.black,
+                          Obx(
+                            () => Text(
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount.value)}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                color: AppColors.black,
+                              ),
                             ),
                           ),
                         ],
