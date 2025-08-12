@@ -175,7 +175,7 @@ class AdminCarAuctionTimerPage extends StatelessWidget {
 
                           await controller.updateAuctionTime(
                             carId: car.id,
-                            newStartTime: newStart.toLocal(),
+                            newStartTime: newStart,
                           );
                         }
                       }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Models/cars_list_model.dart';
-import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
@@ -435,45 +434,45 @@ class LiveBidsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildOtherDetails1(CarsListModel car) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Icon(Icons.calendar_today, size: 14, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text(
-              GlobalFunctions.getFormattedDate(
-                    date: car.yearMonthOfManufacture,
-                    type: GlobalFunctions.monthYear,
-                  ) ??
-                  'N/A',
-              style: const TextStyle(fontSize: 12),
-            ),
-            const SizedBox(width: 12),
-            Icon(Icons.speed, size: 14, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text(
-              '${NumberFormat.decimalPattern('en_IN').format(car.odometerReadingInKms)} km',
-              style: const TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        Row(
-          children: [
-            Icon(Icons.local_gas_station, size: 14, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text(car.fuelType, style: const TextStyle(fontSize: 12)),
-            const SizedBox(width: 12),
-            Icon(Icons.location_on, size: 14, color: Colors.grey),
-            const SizedBox(width: 4),
-            Text(car.inspectionLocation, style: const TextStyle(fontSize: 12)),
-          ],
-        ),
-      ],
-    );
-  }
+  // Widget _buildOtherDetails1(CarsListModel car) {
+  //   return Column(
+  //     children: [
+  //       Row(
+  //         children: [
+  //           Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+  //           const SizedBox(width: 4),
+  //           Text(
+  //             GlobalFunctions.getFormattedDate(
+  //                   date: car.yearMonthOfManufacture,
+  //                   type: GlobalFunctions.monthYear,
+  //                 ) ??
+  //                 'N/A',
+  //             style: const TextStyle(fontSize: 12),
+  //           ),
+  //           const SizedBox(width: 12),
+  //           Icon(Icons.speed, size: 14, color: Colors.grey),
+  //           const SizedBox(width: 4),
+  //           Text(
+  //             '${NumberFormat.decimalPattern('en_IN').format(car.odometerReadingInKms)} km',
+  //             style: const TextStyle(fontSize: 12),
+  //           ),
+  //         ],
+  //       ),
+  //       const SizedBox(height: 6),
+  //       Row(
+  //         children: [
+  //           Icon(Icons.local_gas_station, size: 14, color: Colors.grey),
+  //           const SizedBox(width: 4),
+  //           Text(car.fuelType, style: const TextStyle(fontSize: 12)),
+  //           const SizedBox(width: 12),
+  //           Icon(Icons.location_on, size: 14, color: Colors.grey),
+  //           const SizedBox(width: 4),
+  //           Text(car.inspectionLocation, style: const TextStyle(fontSize: 12)),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 }
 
 // import 'package:flutter/material.dart';

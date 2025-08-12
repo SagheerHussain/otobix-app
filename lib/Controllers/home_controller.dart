@@ -1,27 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
-import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
-
 import '../Network/api_service.dart';
 
 class HomeController extends GetxController {
   List<CarsListModel> carsList = [];
   RxBool isLoading = false.obs;
+  final RxInt unreadNotificationsCount = 0.obs;
   // RxString remainingAuctionTime = '00h : 00m : 00s'.obs;
   // Timer? _auctionTimer;
 
@@ -62,10 +59,10 @@ class HomeController extends GetxController {
   }
 
   // single instance of ValueNotifier
-  RxInt liveCarsCount = 23.obs;
-  RxInt upcomingCarsCount = 8.obs;
-  RxInt otoBuyCarsCount = 70.obs;
-  RxInt marketplaceCarsCount = 5.obs;
+  RxInt liveCarsCount = 0.obs;
+  RxInt upcomingCarsCount = 0.obs;
+  RxInt otoBuyCarsCount = 0.obs;
+  RxInt marketplaceCarsCount = 0.obs;
 
   final selectedSegmentNotifier = ValueNotifier<String>('live');
 
@@ -81,6 +78,7 @@ class HomeController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    await getUnreadNotificationsCount();
     await fetchCarsList();
     listenUpdatedBidAndChangeHighestBidLocally();
     listenToAuctionWonEvent();
@@ -134,20 +132,28 @@ class HomeController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        final currentTime = DateTime.now().toUtc();
+        final currentTime = DateTime.now();
 
         carsList = List<CarsListModel>.from(
           (data as List).map(
             (car) => CarsListModel.fromJson(data: car, id: car['id']),
           ),
         );
+
+        liveCarsCount.value = carsList.length;
+        // Temp for now
+        upcomingCarsCount.value = carsList.length;
+        otoBuyCarsCount.value = carsList.length;
+        marketplaceCarsCount.value = carsList.length;
+        ///////////////
+
         // filteredCars.value = carsList;
         // Only keep cars with future auctionEndTime
         filteredCars.value =
             carsList.where((car) {
               return car.auctionEndTime != null &&
                   // car.auctionStatus == AppConstants.auctionStatuses.live &&
-                  car.auctionEndTime!.toUtc().isAfter(currentTime);
+                  car.auctionEndTime!.isAfter(currentTime);
             }).toList();
 
         for (var car in carsList) {
@@ -191,7 +197,7 @@ class HomeController extends GetxController {
         hours: car.auctionDuration > 0 ? car.auctionDuration : 12,
         // hours: car.defaultAuctionTime,
       );
-      return startTime.toUtc().add(duration);
+      return startTime.add(duration);
     }
 
     // final String userId =
@@ -200,8 +206,8 @@ class HomeController extends GetxController {
     car.auctionTimer?.cancel(); // cancel previous
 
     car.auctionTimer = Timer.periodic(Duration(seconds: 1), (_) {
-      final now = DateTime.now().toUtc();
-      final diff = getAuctionEndTime().toUtc().difference(now);
+      final now = DateTime.now();
+      final diff = getAuctionEndTime().difference(now);
 
       if (diff.isNegative) {
         // 🟥 Timer expired — reset startTime and countdown to now + 12 hours
@@ -381,6 +387,65 @@ class HomeController extends GetxController {
       ),
       barrierDismissible: false,
     );
+  }
+
+  // Unread Notifications Count
+  Future<void> getUnreadNotificationsCount() async {
+    final userId =
+        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+    try {
+      final url = AppUrls.userNotificationsUnreadNotificationsCount(
+        userId: userId,
+      );
+      final response = await ApiService.get(endpoint: url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        unreadNotificationsCount.value = data['unreadCount'] ?? 0;
+        debugPrint(
+          'Unread Notifications Count: ${unreadNotificationsCount.value}',
+        );
+      } else {
+        debugPrint(
+          'Failed to fetch unread notifications count ${response.body}',
+        );
+      }
+    } catch (error) {
+      debugPrint('Failed to fetch unread notifications count: $error');
+    }
+  }
+
+  // Add Car To Wishlist
+  Future<void> addCarToWishlist({required String carId}) async {
+    final userId =
+        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+    try {
+      final url = AppUrls.addToWishlist;
+      final response = await ApiService.post(
+        endpoint: url,
+        body: {'userId': userId, 'carId': carId},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint('Car successfully added to favourites: $data');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Car added to favourites',
+          type: ToastType.success,
+        );
+      } else {
+        debugPrint('Failed to add car to favourites ${response.body}');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Failed to add car to favourites',
+          type: ToastType.error,
+        );
+      }
+    } catch (error) {
+      debugPrint('Failed to add car to favourites: $error');
+    }
   }
 
   // final List<CarModel> carsList1 = [

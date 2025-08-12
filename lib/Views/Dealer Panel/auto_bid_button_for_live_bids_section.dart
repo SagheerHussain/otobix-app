@@ -4,7 +4,6 @@ import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
 // Auto Bid Sheet
 void autoBidButtonForLiveBidsSection(String carId) {
@@ -224,18 +223,23 @@ void autoBidButtonForLiveBidsSection(String carId) {
                         text: "Submit Auto Bid",
                         isLoading: getxController.isLoading,
                         onTap: () {
-                          Get.back();
-                          Get.dialog(
-                            CongratulationsDialogWidget(
-                              icon: Icons.gavel,
-                              iconSize: 25,
-                              title: "Auto Bid Submitted!",
-                              message:
-                                  "Your auto bid has been set successfully.",
-                              buttonText: "OK",
-                              onButtonTap: () => Get.back(),
-                            ),
+                          getxController.submitAutoBidForLiveSection(
+                            carId: getxController.carId,
+                            maxAmount:
+                                getxController.yourOfferAmount.value.toInt(),
                           );
+                          // Get.back();
+                          // Get.dialog(
+                          //   CongratulationsDialogWidget(
+                          //     icon: Icons.gavel,
+                          //     iconSize: 25,
+                          //     title: "Auto Bid Submitted!",
+                          //     message:
+                          //         "Your auto bid has been set successfully.",
+                          //     buttonText: "OK",
+                          //     onButtonTap: () => Get.back(),
+                          //   ),
+                          // );
                         },
                         height: 35,
                         fontSize: 12,

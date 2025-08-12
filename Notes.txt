@@ -1,0 +1,30 @@
+
+// Fixed
+    Live bids section count
+    Notifications screen
+
+// Pending
+    Set up auto bid functionality
+    Real time updates on different screens
+    Wishlist functionality
+    
+
+    Set up all files for home tab 
+
+    
+    
+
+
+
+// Rough Work
+    ✅  
+
+
+
+
+// Done after 11 Aug 2025
+    ✅  Updated Set Auction Time screen's UI
+    ✅  Implemented Role Filter
+    ✅  Fixed the local date-time issue
+    ✅  Fixed auto bid & other not opening issue
+    ✅  Win and lost bidder message 

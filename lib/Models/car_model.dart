@@ -903,43 +903,93 @@ class CarModel {
   };
 }
 
-DateTime? parseMongoDbDate(dynamic dateJson) {
+DateTime? parseMongoDbDate(dynamic v) {
   try {
-    if (dateJson == null) return null;
+    if (v == null) return null;
 
-    if (dateJson is String) {
-      return DateTime.tryParse(dateJson);
+    // 1) ISO string: "2025-08-11T10:50:00.000Z" or "+00:00" or no offset
+    if (v is String) {
+      // numeric string? treat as epoch ms
+      final maybeNum = int.tryParse(v);
+      if (maybeNum != null) {
+        return DateTime.fromMillisecondsSinceEpoch(
+          maybeNum,
+          isUtc: true,
+        ).toLocal();
+      }
+
+      final dt = DateTime.parse(
+        v,
+      ); // Dart sets isUtc=true if Z or +/-offset present
+      return dt.isUtc ? dt.toLocal() : dt; // normalize to local
     }
 
-    if (dateJson is Map<String, dynamic> && dateJson['\$date'] is String) {
-      return DateTime.tryParse(dateJson['\$date']);
+    // 2) Epoch milliseconds (int)
+    if (v is int) {
+      return DateTime.fromMillisecondsSinceEpoch(v, isUtc: true).toLocal();
     }
 
-    if (dateJson is Map<String, dynamic> &&
-        dateJson['\$date'] is Map<String, dynamic>) {
-      final millisStr = dateJson['\$date']['\$numberLong'];
-      final millis = int.tryParse(millisStr ?? '');
-      return millis != null
-          ? DateTime.fromMillisecondsSinceEpoch(millis)
-          : null;
+    // 3) Extended JSON: {"$date": "..."} or {"$date": 1723363800000} or {"$date":{"$numberLong":"..."}}
+    if (v is Map) {
+      final raw = v[r'$date'];
+      if (raw == null) return null;
+
+      if (raw is String) {
+        // could be ISO or numeric string
+        final maybeNum = int.tryParse(raw);
+        if (maybeNum != null) {
+          return DateTime.fromMillisecondsSinceEpoch(
+            maybeNum,
+            isUtc: true,
+          ).toLocal();
+        }
+        final dt = DateTime.parse(raw);
+        return dt.isUtc ? dt.toLocal() : dt;
+      }
+
+      if (raw is int) {
+        return DateTime.fromMillisecondsSinceEpoch(raw, isUtc: true).toLocal();
+      }
+
+      if (raw is Map && raw[r'$numberLong'] != null) {
+        final ms = int.tryParse(raw[r'$numberLong'].toString());
+        if (ms != null) {
+          return DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true).toLocal();
+        }
+      }
     }
   } catch (e) {
-    print('parseMongoDbDate error: $e');
+    // optional: debugPrint('parseMongoDbDate error: $e  (value: $v)');
   }
-
   return null;
 }
 
-DateTime parseMongoDbDate1(dynamic dateJson) {
-  if (dateJson is Map<String, dynamic>) {
-    final millisStr = dateJson["\$date"]?["\$numberLong"];
-    return DateTime.fromMillisecondsSinceEpoch(
-      int.tryParse(millisStr ?? '0') ?? 0,
-    );
-  } else {
-    return DateTime.fromMillisecondsSinceEpoch(0);
-  }
-}
+// DateTime? parseMongoDbDate(dynamic dateJson) {
+//   try {
+//     if (dateJson == null) return null;
+
+//     if (dateJson is String) {
+//       return DateTime.tryParse(dateJson);
+//     }
+
+//     if (dateJson is Map<String, dynamic> && dateJson['\$date'] is String) {
+//       return DateTime.tryParse(dateJson['\$date']);
+//     }
+
+//     if (dateJson is Map<String, dynamic> &&
+//         dateJson['\$date'] is Map<String, dynamic>) {
+//       final millisStr = dateJson['\$date']['\$numberLong'];
+//       final millis = int.tryParse(millisStr ?? '');
+//       return millis != null
+//           ? DateTime.fromMillisecondsSinceEpoch(millis)
+//           : null;
+//     }
+//   } catch (e) {
+//     print('parseMongoDbDate error: $e');
+//   }
+
+//   return null;
+// }
 
 List<String> parseStringList(dynamic value) {
   if (value == null) return [];

@@ -107,20 +107,20 @@ class TabItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(fontSize: titleSize, color: titleColor),
           ),
-          if (count > 0)
-            Container(
-              margin: const EdgeInsetsDirectional.only(start: 5),
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(color: badgeBg, shape: BoxShape.circle),
-              child: Text(
-                count > 99
-                    ? '99+'
-                    : count < 10
-                    ? '0${count.toString()}'
-                    : count.toString(),
-                style: TextStyle(color: badgeTextColor, fontSize: countSize),
-              ),
+          // if (count > 0)
+          Container(
+            margin: const EdgeInsetsDirectional.only(start: 5),
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(color: badgeBg, shape: BoxShape.circle),
+            child: Text(
+              count > 99
+                  ? '99+'
+                  : count < 10
+                  ? '0${count.toString()}'
+                  : count.toString(),
+              style: TextStyle(color: badgeTextColor, fontSize: countSize),
             ),
+          ),
         ],
       ),
     );

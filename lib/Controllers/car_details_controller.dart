@@ -8,6 +8,7 @@ import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
+import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 import 'package:otobix/Widgets/offering_bid_sheet.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
@@ -334,6 +335,50 @@ class CarDetailsController extends GetxController {
       return false;
     } finally {
       isPlaceBidButtonLoading.value = false;
+    }
+  }
+
+  // submit auto bid
+  Future<void> submitAutoBidForLiveSection({
+    required String carId,
+    required int maxAmount,
+    int increment = 1000,
+  }) async {
+    try {
+      Get.back();
+      final userId = await SharedPrefsHelper.getString(
+        SharedPrefsHelper.userIdKey,
+      );
+      final res = await ApiService.post(
+        endpoint: AppUrls.submitAutoBidForLiveSection,
+        body: {
+          'carId': carId,
+          'userId': userId,
+          'autoBidAmount': maxAmount,
+          'increment': increment,
+        },
+      );
+
+      if (res.statusCode == 200) {
+        Get.dialog(
+          CongratulationsDialogWidget(
+            icon: Icons.gavel,
+            iconSize: 25,
+            title: "Auto Bid Submitted!",
+            message: "Your auto bid has been set successfully.",
+            buttonText: "OK",
+            onButtonTap: () => Get.back(),
+          ),
+        );
+      } else {
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Failed to submit auto bid',
+          type: ToastType.error,
+        );
+      }
+    } catch (e) {
+      debugPrint("❗ Exception updating bid: $e");
     }
   }
 }

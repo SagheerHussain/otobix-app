@@ -41,6 +41,8 @@ class AppUrls {
 
   static String logout(String userId) => "${baseUrl}user/logout/$userId";
 
+  static const String addToWishlist = "${baseUrl}user/add-to-wishlist";
+
   static String getCarDetails(String carId) => "${baseUrl}car/details/$carId";
 
   static const String getCarsList = "${baseUrl}car/cars-list";
@@ -54,6 +56,36 @@ class AppUrls {
       "${baseUrl}car/update-auction-time";
 
   static const String checkHighestBidder = "${baseUrl}car/check-highest-bidder";
+
+  static const String submitAutoBidForLiveSection =
+      "${baseUrl}car/submit-auto-bid-for-live-section";
+
+  static const String userNotifications =
+      "${baseUrl}user/notifications/create-notification";
+
+  static String userNotificationsList({
+    required String userId,
+    required int page,
+    required int limit,
+  }) =>
+      "${baseUrl}user/notifications/notifications-list?userId=$userId&page=$page&limit=$limit";
+
+  static String userNotificationsDetail({
+    required String userId,
+    required String notificationId,
+  }) =>
+      "${baseUrl}user/notifications/notification-details?userId=$userId&notificationId=$notificationId";
+
+  static const String userNotificationsMarkRead =
+      "${baseUrl}user/notifications/mark-notification-as-read";
+
+  static const String userNotificationsMarkAllRead =
+      "${baseUrl}user/notifications/mark-all-notifications-as-read";
+
+  static String userNotificationsUnreadNotificationsCount({
+    required String userId,
+  }) =>
+      "${baseUrl}user/notifications/get-unread-notifications-count?userId=$userId";
 
   // Socket URL Extraction
   static String _extractSocketBaseUrl(String url) {

@@ -27,6 +27,7 @@ class UserModel {
   final String approvalStatus;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final List<String> wishlist;
 
   UserModel({
     required this.id,
@@ -47,6 +48,7 @@ class UserModel {
     required this.approvalStatus,
     this.createdAt,
     this.updatedAt,
+    this.wishlist = const [],
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -71,6 +73,7 @@ class UserModel {
           json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      wishlist: List<String>.from(json['wishlist'] ?? []),
     );
   }
 
@@ -94,6 +97,7 @@ class UserModel {
       'approvalStatus': approvalStatus,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'wishlist': wishlist,
     };
   }
 }

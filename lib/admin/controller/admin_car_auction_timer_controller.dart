@@ -59,7 +59,7 @@ class AdminCarAuctionTimerController extends GetxController {
       final Map<String, dynamic> body = {
         'carId': carId,
         if (newStartTime != null)
-          'auctionStartTime': newStartTime.toIso8601String(),
+          'auctionStartTime': newStartTime.toUtc().toIso8601String(),
         if (newDuration != null) 'auctionDuration': newDuration,
       };
 
