@@ -22,11 +22,13 @@ import 'package:otobix/Views/Sales%20Manager%20Panel/sales_manager_homepage.dart
 import 'package:otobix/Views/rough_work.dart';
 
 import 'package:otobix/Views/splash/splash_screen.dart';
+import 'package:otobix/Widgets/offline_banner_widget.dart';
 import 'package:otobix/admin/admin_approved_rejected_users_page.dart';
 import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/admin/admin_home.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 import 'package:otobix/Utils/app_bindings.dart';
+import 'package:otobix/Network/connectivity_service.dart';
 
 void main() async {
   Get.config(enableLog: false);
@@ -34,6 +36,7 @@ void main() async {
   await SharedPrefsHelper.init();
   // Initialize socket connection globally
   SocketService.instance.initSocket(AppUrls.socketBaseUrl);
+  await Get.putAsync<ConnectivityService>(() => ConnectivityService().init());
   runApp(const MyApp());
 }
 

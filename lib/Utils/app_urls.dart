@@ -41,8 +41,6 @@ class AppUrls {
 
   static String logout(String userId) => "${baseUrl}user/logout/$userId";
 
-  static const String addToWishlist = "${baseUrl}user/add-to-wishlist";
-
   static String getCarDetails(String carId) => "${baseUrl}car/details/$carId";
 
   static const String getCarsList = "${baseUrl}car/cars-list";
@@ -86,6 +84,17 @@ class AppUrls {
     required String userId,
   }) =>
       "${baseUrl}user/notifications/get-unread-notifications-count?userId=$userId";
+
+  static String getUserWishlist({required String userId}) =>
+      "${baseUrl}user/get-user-wishlist?userId=$userId";
+
+  static const String addToWishlist = "${baseUrl}user/add-to-wishlist";
+
+  static const String removeFromWishlist =
+      "${baseUrl}user/remove-from-wishlist";
+
+  static String getUserWishlistCarsList({required String userId}) =>
+      "${baseUrl}user/get-user-wishlist-cars-list?userId=$userId";
 
   // Socket URL Extraction
   static String _extractSocketBaseUrl(String url) {

@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 import '../Models/user_notifications_model.dart';
 
@@ -18,6 +20,7 @@ class UserNotificationsController extends GetxController {
   void onInit() {
     super.onInit();
     refreshList();
+    _listenUserNotificationsRealtime();
   }
 
   // REFRESH NOTIFICATIONS LIST
@@ -144,5 +147,64 @@ class UserNotificationsController extends GetxController {
       }
       unreadCount.value = 0;
     }
+  }
+
+  void _listenUserNotificationsRealtime() async {
+    final userId =
+        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+
+    // join the same room the server emits to
+    SocketService.instance.joinRoom(
+      SocketEvents.userNotificationsRoom + userId,
+    );
+
+    // listen for updates
+    SocketService.instance.on(SocketEvents.userNotificationCreated, (data) {
+      try {
+        // expected: { item: { _id, userId, title, body, type, data, isRead, createdAt } }
+        final map = (data is Map) ? Map<String, dynamic>.from(data) : null;
+        final item =
+            (map?['item'] is Map)
+                ? Map<String, dynamic>.from(map!['item'])
+                : null;
+        if (item == null) return;
+
+        // normalize id + createdAt
+        final id = (item['_id'] ?? item['id'])?.toString();
+        if (id == null || id.isEmpty) return;
+
+        // prevent duplicates
+        final existingIndex = items.indexWhere((e) => e.id == id);
+        final model = UserNotificationsModel.fromJson(
+          documentId: id,
+          data: item,
+        );
+
+        if (existingIndex != -1) {
+          // update existing (e.g., if server re-sends)
+          items[existingIndex] = model;
+        } else {
+          // insert at top
+          items.insert(0, model);
+          if (model.isRead == false) {
+            unreadCount.value = (unreadCount.value + 1);
+          }
+        }
+
+        // optional: keep list sorted by createdAt desc
+        items.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+        // (Optional) quick feedback
+        // Get.snackbar('New notification', model.title, snackPosition: SnackPosition.TOP);
+      } catch (e) {
+        debugPrint('socket parse error: $e');
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    // SocketService.instance.off(SocketEvents.userNotificationsUpdated);
+    super.onClose();
   }
 }

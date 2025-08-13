@@ -1,13 +1,18 @@
 
 // Fixed
-    Live bids section count
-    Notifications screen
+    ✅ Live bids section count
+    ✅ Notifications screen complete with realtime data
+    ✅ Wishlist screen & complete functionality 
+    ✅ Dealer realtime data on different screens
+    ✅ Set up auto bid functionality
 
 // Pending
-    Set up auto bid functionality
-    Real time updates on different screens
-    Wishlist functionality
-    
+    Admin realtime data on different screens
+    Pictures on each section in car details screen
+    Increase selected tab size in home tab
+    My bids screen in my cars - show all cars on user has placed bid
+
+
 
     Set up all files for home tab 
 

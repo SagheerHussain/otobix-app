@@ -110,9 +110,11 @@ class LiveBidsSection extends StatelessWidget {
                       Positioned(
                         top: 10,
                         right: 10,
-                        child: Obx(
-                          () => InkWell(
-                            onTap: () => getxController.changeFavoriteCars(car),
+                        child: Obx(() {
+                          final isThisCarFav = getxController.wishlistCarsIds
+                              .contains(car.id);
+                          return InkWell(
+                            onTap: () => getxController.toggleFavorite(car),
                             borderRadius: BorderRadius.circular(20),
                             child: Container(
                               padding: const EdgeInsets.all(6),
@@ -127,18 +129,18 @@ class LiveBidsSection extends StatelessWidget {
                                 ],
                               ),
                               child: Icon(
-                                car.isFavorite.value
+                                isThisCarFav
                                     ? Icons.favorite
                                     : Icons.favorite_outline,
                                 color:
-                                    car.isFavorite.value
+                                    isThisCarFav
                                         ? AppColors.red
                                         : AppColors.grey,
                                 size: 20,
                               ),
                             ),
-                          ),
-                        ),
+                          );
+                        }),
                       ),
                     ],
                   ),

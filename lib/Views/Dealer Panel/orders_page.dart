@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Views/Dealer%20Panel/in_negotiation_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/procured_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/rc_transfer_page.dart';
@@ -9,7 +9,9 @@ import 'package:otobix/Widgets/tab_bar_widget.dart';
 import 'package:otobix/Utils/app_colors.dart';
 
 class OrdersPage extends StatelessWidget {
-  const OrdersPage({super.key});
+  OrdersPage({super.key});
+
+  final HomeController homeController = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +86,7 @@ class OrdersPage extends StatelessWidget {
           GestureDetector(
             onTap: () => Get.to(() => UserNotificationsPage()),
             child: Badge.count(
-              count: 1,
+              count: homeController.unreadNotificationsCount.value,
               child: Icon(
                 Icons.notifications_outlined,
                 size: 25,

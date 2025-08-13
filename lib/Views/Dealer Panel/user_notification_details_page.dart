@@ -40,12 +40,12 @@ class _UserNotificationDetailsPageState
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.green,
-        iconTheme: const IconThemeData(color: AppColors.white),
+        backgroundColor: AppColors.white,
+        iconTheme: const IconThemeData(color: AppColors.black),
         title: const Text(
           'Notification Details',
           style: TextStyle(
-            color: AppColors.white,
+            color: AppColors.black,
             fontSize: 15,
             fontWeight: FontWeight.bold,
           ),
@@ -208,6 +208,7 @@ class _UserNotificationDetailsPageState
                         // Text('Details', style: theme.textTheme.titleMedium),
                         // const SizedBox(height: 8),
                         Card(
+                          color: AppColors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -219,8 +220,12 @@ class _UserNotificationDetailsPageState
                               children: [
                                 Text(
                                   'Details',
-                                  style: theme.textTheme.titleMedium,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
+                                Divider(),
 
                                 ...item!.data.entries.map((e) {
                                   return ListTile(

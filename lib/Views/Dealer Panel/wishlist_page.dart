@@ -2,66 +2,62 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Controllers/wishlist_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
-import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
-import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 
 class WishlistPage extends StatelessWidget {
   WishlistPage({super.key});
 
-  // final HomeController getxController = Get.put(HomeController());
-  final HomeController getxController = Get.find<HomeController>();
+  // Initialized in my cars page
+  final WishlistController getxController = Get.find<WishlistController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            //  EmptyPageWidget(
-            //   icon: Icons.favorite_border,
-            //   title: 'No Wishlist',
-            //   description: 'You have no wishlist yet.',
-            // ),
-            Obx(() {
-              if (getxController.isLoading.value) {
-                return _buildLoadingWidget();
-              } else if (getxController.carsList.isEmpty) {
-                return const EmptyDataWidget(
-                  icon: Icons.gavel,
-                  message: 'No Live Bids',
-                );
-              } else {
-                return _buildWishlistList();
-              }
-            }),
-          ],
-        ),
+      body: Column(
+        children: [
+          Obx(() {
+            if (getxController.isLoading.value) {
+              return _buildLoadingWidget();
+            } else if (getxController.carsList.isEmpty) {
+              return Expanded(
+                child: Center(
+                  child: const EmptyDataWidget(
+                    icon: Icons.favorite_border,
+                    message: 'No Cars in Wishlist',
+                  ),
+                ),
+              );
+            } else {
+              return _buildWishlistList();
+            }
+          }),
+        ],
       ),
     );
   }
 
   // Wishlist List
   Widget _buildWishlistList() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+    return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: getxController.carsList.length - 5,
-        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        itemCount: getxController.carsList.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         itemBuilder: (context, index) {
           final car = getxController.carsList[index];
           // InkWell for car card
-          return InkWell(
+          return GestureDetector(
             onTap: () {
-              Get.to(
-                () =>
-                    CarDetailsPage(carId: car.id!, car: car, type: 'wishlist'),
-              );
+              // Get.to(
+              //   () =>
+              //       CarDetailsPage(carId: car.id!, car: car, type: 'wishlist'),
+              // );
             },
             child: Card(
               elevation: 4,
@@ -221,7 +217,6 @@ class WishlistPage extends StatelessWidget {
                             ? Column(
                               children: [
                                 Divider(),
-                                // const SizedBox(height: 5),
                                 Row(
                                   children: [
                                     Icon(
@@ -231,10 +226,9 @@ class WishlistPage extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      'Inspected 8.2/10',
+                                      'Inspected',
                                       style: TextStyle(
                                         fontSize: 10,
-                                        // fontWeight: FontWeight.bold,
                                         color: AppColors.green,
                                       ),
                                     ),
@@ -247,32 +241,31 @@ class WishlistPage extends StatelessWidget {
                     ),
                   ),
 
-                  Obx(
-                    () => Positioned(
-                      top: 10,
-                      right: 10,
-                      child: InkWell(
-                        onTap: () => getxController.changeFavoriteCars(car),
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Obx(() {
+                      final isFav = getxController.isFav(car.id!);
+                      return InkWell(
+                        onTap: () => getxController.toggleFavoriteById(car.id!),
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
+                            color: AppColors.white.withValues(alpha: .8),
                             shape: BoxShape.circle,
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black12, blurRadius: 4),
+                            ],
                           ),
                           child: Icon(
-                            car.isFavorite.value
-                                ? Icons.favorite
-                                : Icons.favorite_outline,
-                            color:
-                                car.isFavorite.value
-                                    ? AppColors.red
-                                    : AppColors.grey,
+                            isFav ? Icons.favorite : Icons.favorite_outline,
+                            color: isFav ? AppColors.red : AppColors.grey,
                             size: 20,
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
                   ),
                 ],
               ),
@@ -284,11 +277,11 @@ class WishlistPage extends StatelessWidget {
   }
 
   Widget _buildLoadingWidget() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+    return Expanded(
       child: ListView.separated(
         itemCount: 3,
         separatorBuilder: (_, __) => const SizedBox(height: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         itemBuilder: (context, index) {
           return Card(
             elevation: 4,

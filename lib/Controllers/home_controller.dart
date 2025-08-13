@@ -19,6 +19,8 @@ class HomeController extends GetxController {
   List<CarsListModel> carsList = [];
   RxBool isLoading = false.obs;
   final RxInt unreadNotificationsCount = 0.obs;
+
+  final RxSet<String> wishlistCarsIds = <String>{}.obs;
   // RxString remainingAuctionTime = '00h : 00m : 00s'.obs;
   // Timer? _auctionTimer;
 
@@ -38,6 +40,7 @@ class HomeController extends GetxController {
 
   final RxList<CarsListModel> marketplaceCars = <CarsListModel>[].obs;
 
+  // dummy add/remove cars to favorite
   void changeFavoriteCars(CarsListModel car) {
     car.isFavorite.value = !car.isFavorite.value;
 
@@ -79,7 +82,27 @@ class HomeController extends GetxController {
   void onInit() async {
     super.onInit();
     await getUnreadNotificationsCount();
+    _listenAndUpdateUnreadNotificationsCount();
+    final userId =
+        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+
+    // 1) Join the user room so server can target this device
+    SocketService.instance.socket.emit(
+      SocketEvents.joinRoom,
+      '${SocketEvents.userRoom}$userId',
+    );
+
+    // 2) Fetch cars then wishlist, then apply hearts
     await fetchCarsList();
+    await _fetchAndApplyWishlist(userId: userId);
+
+    // 3) Listen to realtime wishlist updates
+    _listenWishlistRealtime();
+
+    // 4) 🌟 LIVE LIST: join room + listen for patches
+    _listenLiveBidsSectionRealtime();
+
+    //Other listeners
     listenUpdatedBidAndChangeHighestBidLocally();
     listenToAuctionWonEvent();
     // filteredCars.value = carsList;
@@ -152,7 +175,7 @@ class HomeController extends GetxController {
         filteredCars.value =
             carsList.where((car) {
               return car.auctionEndTime != null &&
-                  // car.auctionStatus == AppConstants.auctionStatuses.live &&
+                  car.auctionStatus == AppConstants.auctionStatuses.live &&
                   car.auctionEndTime!.isAfter(currentTime);
             }).toList();
 
@@ -200,9 +223,6 @@ class HomeController extends GetxController {
       return startTime.add(duration);
     }
 
-    // final String userId =
-    //     await SharedPrefsHelper.getString(SharedPrefsHelper.userTypeKey) ?? '';
-
     car.auctionTimer?.cancel(); // cancel previous
 
     car.auctionTimer = Timer.periodic(Duration(seconds: 1), (_) {
@@ -239,33 +259,6 @@ class HomeController extends GetxController {
     }
     super.onClose();
   }
-
-  // // dummy
-  // Future<bool> checkIfUserIsHighestBidder({
-  //   required String carId,
-  //   required String userId,
-  // }) async {
-  //   try {
-  //     final url = AppUrls.checkHighestBidder;
-  //     final response = await ApiService.post(
-  //       endpoint: url,
-  //       body: {'carId': carId, 'userId': userId},
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       final isHighest = data['isHighestBidder'] as bool;
-  //       debugPrint('✅ checkIfUserIsHighestBidder → $isHighest');
-  //       return isHighest;
-  //     } else {
-  //       debugPrint('❌ Failed to check highest bidder: ${response.body}');
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     debugPrint('❌ Error checking highest bidder: $e');
-  //     return false;
-  //   }
-  // }
 
   // Listen to Auction Won Event
   void listenToAuctionWonEvent() async {
@@ -403,9 +396,9 @@ class HomeController extends GetxController {
         final data = jsonDecode(response.body);
 
         unreadNotificationsCount.value = data['unreadCount'] ?? 0;
-        debugPrint(
-          'Unread Notifications Count: ${unreadNotificationsCount.value}',
-        );
+        // debugPrint(
+        //   'Unread Notifications Count: ${unreadNotificationsCount.value}',
+        // );
       } else {
         debugPrint(
           'Failed to fetch unread notifications count ${response.body}',
@@ -413,6 +406,50 @@ class HomeController extends GetxController {
       }
     } catch (error) {
       debugPrint('Failed to fetch unread notifications count: $error');
+    }
+  }
+
+  // Notifications listener
+  void _listenAndUpdateUnreadNotificationsCount() async {
+    final userId =
+        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+    SocketService.instance.joinRoom(
+      SocketEvents.userNotificationsRoom + userId,
+    );
+    SocketService.instance.on(SocketEvents.userNotificationCreated, (data) {
+      unreadNotificationsCount.value = _extractUnreadNotificationsCount(data);
+    });
+    SocketService.instance.on(SocketEvents.userNotificationMarkedAsRead, (
+      data,
+    ) {
+      unreadNotificationsCount.value = _extractUnreadNotificationsCount(data);
+    });
+    SocketService.instance.on(SocketEvents.userAllNotificationsMarkedAsRead, (
+      data,
+    ) {
+      unreadNotificationsCount.value = _extractUnreadNotificationsCount(data);
+    });
+  }
+
+  // Helper Function to Extract Unread Count
+  int _extractUnreadNotificationsCount(dynamic payload) {
+    try {
+      // Normalize to Map<String, dynamic>
+      final Map<String, dynamic> map =
+          payload is Map
+              ? Map<String, dynamic>.from(payload)
+              : payload is String
+              ? (jsonDecode(payload) as Map<String, dynamic>)
+              : <String, dynamic>{};
+
+      final dynamic v = map['unreadNotificationsCount'];
+
+      if (v is int) return v;
+      if (v is num) return v.toInt();
+      if (v is String) return int.tryParse(v) ?? 0;
+      return 0;
+    } catch (_) {
+      return 0;
     }
   }
 
@@ -428,8 +465,6 @@ class HomeController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        debugPrint('Car successfully added to favourites: $data');
         ToastWidget.show(
           context: Get.context!,
           title: 'Car added to favourites',
@@ -448,7 +483,112 @@ class HomeController extends GetxController {
     }
   }
 
-  // final List<CarModel> carsList1 = [
+  Future<void> _fetchAndApplyWishlist({required String userId}) async {
+    try {
+      final url = AppUrls.getUserWishlist(userId: userId);
+      final response = await ApiService.get(endpoint: url);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> ids = data['wishlist'] ?? [];
+
+        wishlistCarsIds
+          ..clear()
+          ..addAll(ids.map((e) => '$e'));
+      }
+    } catch (e) {
+      debugPrint('_fetchAndApplyWishlist error: $e');
+    }
+  }
+
+  void _listenWishlistRealtime() {
+    SocketService.instance.on(SocketEvents.wishlistUpdated, (data) {
+      final String action = '${data['action']}';
+      final String carId = '${data['carId']}';
+
+      if (action == 'add') {
+        wishlistCarsIds.add(carId);
+      } else if (action == 'remove') {
+        wishlistCarsIds.remove(carId);
+      }
+    });
+  }
+
+  /// Toggle (optimistic UI + rollback on error)
+  Future<void> toggleFavorite(CarsListModel car) async {
+    final userId =
+        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+    final isFav = wishlistCarsIds.contains(car.id);
+
+    // optimistic
+    if (isFav) {
+      wishlistCarsIds.remove(car.id);
+    } else {
+      wishlistCarsIds.add(car.id);
+    }
+
+    try {
+      if (isFav) {
+        final res = await ApiService.post(
+          endpoint: AppUrls.removeFromWishlist,
+          body: {'userId': userId, 'carId': car.id},
+        );
+        if (res.statusCode != 200) throw Exception(res.body);
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Removed from wishlist',
+          type: ToastType.error,
+        );
+      } else {
+        final res = await ApiService.post(
+          endpoint: AppUrls.addToWishlist,
+          body: {'userId': userId, 'carId': car.id},
+        );
+        if (res.statusCode != 200) throw Exception(res.body);
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Added to wishlist',
+          type: ToastType.success,
+        );
+      }
+      // Server will also emit wishlist:updated → sync other devices.
+    } catch (e) {
+      debugPrint('Failed to update wishlist: $e');
+      // rollback
+      if (isFav) {
+        wishlistCarsIds.add(car.id);
+      } else {
+        wishlistCarsIds.remove(car.id);
+      }
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'Failed to update wishlist',
+        type: ToastType.error,
+      );
+    }
+  }
+
+  void _listenLiveBidsSectionRealtime() {
+    SocketService.instance.joinRoom(SocketEvents.liveBidsSectionRoom);
+    SocketService.instance.on(SocketEvents.liveBidsSectionUpdated, (data) {
+      debugPrint('Live Bids Section Updated: $data');
+    });
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // final List<CarModel> carsList1 = [
   //   CarModel(
   //     imageUrl: AppImages.tataNexon1,
   //     name: 'Tata Nexon',
@@ -576,4 +716,3 @@ class HomeController extends GetxController {
   //     imageUrls: [AppImages.renaultKwid1],
   //   ),
   // ];
-}

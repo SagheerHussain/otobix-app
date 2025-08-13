@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Controllers/my_cars_controller.dart';
+import 'package:otobix/Controllers/wishlist_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/live_bids_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/ocb_nego_page.dart';
@@ -12,6 +14,13 @@ class MyCarsPage extends StatelessWidget {
   MyCarsPage({super.key});
 
   final MyCarsController getxController = Get.put(MyCarsController());
+  final HomeController homeController = Get.find<HomeController>();
+
+  // WishlistController for getting realtime wishlist length
+  final WishlistController wishlist = Get.put(
+    WishlistController(),
+    permanent: true,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +33,18 @@ class MyCarsPage extends StatelessWidget {
             SizedBox(height: 20),
 
             Expanded(
-              child: TabBarWidget(
-                titles: ['Live Bids', 'Ocb Nego', 'Wishlist'],
-                counts: [3, 2, 5],
-                screens: [LiveBidsPage(), OcbNegoPage(), WishlistPage()],
-                titleSize: 10,
-                countSize: 8,
-                spaceFromSides: 10,
-                tabsHeight: 30,
-              ),
+              child: Obx(() {
+                final wishlistCarsLength = wishlist.wishlistCarsIds.length;
+                return TabBarWidget(
+                  titles: ['My Bids', 'Ocb Nego', 'Wishlist'],
+                  counts: [3, 2, wishlistCarsLength],
+                  screens: [LiveBidsPage(), OcbNegoPage(), WishlistPage()],
+                  titleSize: 10,
+                  countSize: 8,
+                  spaceFromSides: 10,
+                  tabsHeight: 30,
+                );
+              }),
             ),
           ],
         ),
@@ -80,9 +92,9 @@ class MyCarsPage extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () => Get.to(() =>  UserNotificationsPage()),
+            onTap: () => Get.to(() => UserNotificationsPage()),
             child: Badge.count(
-              count: 1,
+              count: homeController.unreadNotificationsCount.value,
               child: Icon(
                 Icons.notifications_outlined,
                 size: 25,

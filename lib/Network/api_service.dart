@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:otobix/Network/connectivity_service.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 class ApiService {
   // GET method
@@ -46,4 +49,26 @@ class ApiService {
 
     return await http.put(url, headers: defaultHeaders, body: jsonEncode(body));
   }
+
+  // Single place to guard connectivity
+  static Future<T> _withNetGuard<T>(Future<T> Function() request) async {
+    final net = Get.find<ConnectivityService>();
+    final online = await net.ensureOnline();
+    if (!online) {
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'No Internet',
+        subtitle: 'Please check your connection',
+        type: ToastType.error,
+      );
+
+      throw OfflineException();
+    }
+    return await request();
+  }
+}
+
+class OfflineException implements Exception {
+  @override
+  String toString() => 'OFFLINE';
 }
