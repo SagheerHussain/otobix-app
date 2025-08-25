@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Models/user_model.dart';
@@ -36,7 +37,13 @@ void main() async {
   await SharedPrefsHelper.init();
   // Initialize socket connection globally
   SocketService.instance.initSocket(AppUrls.socketBaseUrl);
-  await Get.putAsync<ConnectivityService>(() => ConnectivityService().init());
+  // await Get.putAsync<ConnectivityService>(() => ConnectivityService().init());
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    // DeviceOrientation.portraitDown,
+  ]);
+
   runApp(const MyApp());
 }
 

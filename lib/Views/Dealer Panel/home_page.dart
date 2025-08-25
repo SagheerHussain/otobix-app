@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Controllers/tab_bar_buttons_controller.dart';
+import 'package:otobix/Controllers/upcoming_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/Dealer%20Panel/live_bids_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/live_bids_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/marketplace_section.dart';
 import 'package:otobix/Views/Dealer%20Panel/oto_buy_section.dart';
-import 'package:otobix/Views/Dealer%20Panel/upcoming_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/upcoming_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_notifications_page.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/tab_bar_buttons_widget.dart';
@@ -15,7 +16,15 @@ class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final HomeController getxController = Get.put(HomeController());
-  final tabBarController = Get.put(TabBarButtonsController(tabLength: 4));
+  final tabBarController = Get.put(
+    TabBarButtonsController(tabLength: 4, initialIndex: 1),
+  );
+  // Different tabs controllers
+  final UpcomingController upcomingController = Get.put(UpcomingController());
+  // final LiveBidsController liveBidsController = Get.put(LiveBidsController());
+  // final OtoBuyController otoBuyController = Get.put(OtoBuyController());
+  // final MarketplaceController marketplaceController =
+  //     Get.put(MarketplaceController());
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +39,8 @@ class HomePage extends StatelessWidget {
               child: TabBarView(
                 controller: tabBarController.tabController,
                 children: [
-                  LiveBidsSection(),
-                  UpcomingSection(),
+                  UpcomingPage(),
+                  LiveBidsPage(),
                   OtoBuySection(),
                   MarketplaceSection(),
                 ],
@@ -64,10 +73,11 @@ class HomePage extends StatelessWidget {
                     // TabBar Buttons
                     Obx(
                       () => TabBarButtonsWidget(
-                        titles: ['Live', 'Upcoming', 'OtoBuy', 'Marketplace'],
+                        titles: ['Upcoming', 'Live', 'OtoBuy', 'Marketplace'],
+
                         counts: [
+                          upcomingController.upcomingCarsCount.value,
                           getxController.liveCarsCount.value,
-                          getxController.upcomingCarsCount.value,
                           getxController.otoBuyCarsCount.value,
                           getxController.marketplaceCarsCount.value,
                         ],

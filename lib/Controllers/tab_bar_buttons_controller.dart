@@ -8,8 +8,9 @@ class TabBarButtonsController extends GetxController
 
   /// titles length passed into the controller
   final int? tabLength;
+  final int initialIndex;
 
-  TabBarButtonsController({this.tabLength});
+  TabBarButtonsController({this.tabLength, this.initialIndex = 0});
 
   // dummy for now
   setSelectedTab(int index) {
@@ -19,7 +20,12 @@ class TabBarButtonsController extends GetxController
 
   @override
   void onInit() {
-    tabController = TabController(length: tabLength!, vsync: this);
+    tabController = TabController(
+      length: tabLength!,
+      vsync: this,
+      initialIndex: initialIndex,
+    );
+    selectedIndex.value = initialIndex;
     tabController.addListener(_handleTabChange);
     super.onInit();
   }

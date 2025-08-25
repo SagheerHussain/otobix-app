@@ -114,13 +114,25 @@ class AdminCarAuctionTimerPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Text(
-              'Auction Start Time: ${car.auctionStartTime != null ? DateFormat('yyyy-MM-dd hh:mm a').format(car.auctionStartTime!.toLocal()) : 'Not set'}',
+            GetBuilder<AdminCarAuctionTimerController>(
+              builder: (controller) {
+                return Text(
+                  'Auction Start Time: ${car.auctionStartTime != null ? DateFormat('yyyy-MM-dd hh:mm a').format(car.auctionStartTime!.toLocal()) : 'Not set'}',
+                );
+              },
             ),
-            Text(
-              'Auction End Time: ${car.auctionEndTime != null ? DateFormat('yyyy-MM-dd hh:mm a').format(car.auctionEndTime!.toLocal()) : 'Not set'}',
+            GetBuilder<AdminCarAuctionTimerController>(
+              builder: (controller) {
+                return Text(
+                  'Auction End Time: ${car.auctionEndTime != null ? DateFormat('yyyy-MM-dd hh:mm a').format(car.auctionEndTime!.toLocal()) : 'Not set'}',
+                );
+              },
             ),
-            Text('Auction Duration: ${car.auctionDuration} hours'),
+            GetBuilder<AdminCarAuctionTimerController>(
+              builder: (controller) {
+                return Text('Auction Duration: ${car.auctionDuration} hours');
+              },
+            ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

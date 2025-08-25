@@ -32,7 +32,7 @@ class HomeController extends GetxController {
   // Screen types
   final String liveBidsSectionScreen = 'live_bids';
   final String upcomingSectionScreen = 'upcoming';
-  final String ocb70SectionScreen = 'ocb70';
+  final String otobuySectionScreen = 'otobuy';
   final String marketplaceSectionScreen = 'marketplace';
 
   // dummy add/remove cars to favorite
@@ -81,6 +81,7 @@ class HomeController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+
     await getUnreadNotificationsCount();
     _listenAndUpdateUnreadNotificationsCount();
     final userId =
@@ -93,7 +94,7 @@ class HomeController extends GetxController {
     );
 
     // 2) Fetch cars then wishlist, then apply hearts
-    await fetchCarsList();
+    await fetchLiveCarsList();
     await _fetchAndApplyWishlist(userId: userId);
 
     // 3) Listen to realtime wishlist updates
@@ -146,10 +147,13 @@ class HomeController extends GetxController {
 
   final RxList<CarsListModel> filteredCars = <CarsListModel>[].obs;
 
-  Future<void> fetchCarsList() async {
+  // Live Cars List
+  Future<void> fetchLiveCarsList() async {
     isLoading.value = true;
     try {
-      final url = AppUrls.getCarsList;
+      final url = AppUrls.getCarsList(
+        auctionStatus: AppConstants.auctionStatuses.live,
+      );
       final response = await ApiService.get(endpoint: url);
 
       if (response.statusCode == 200) {

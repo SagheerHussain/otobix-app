@@ -6,7 +6,10 @@ import 'package:otobix/Widgets/button_widget.dart';
 import 'package:intl/intl.dart';
 
 // Auto Bid Sheet
-void autoBidButtonForLiveBidsSection(String carId) {
+void autoBidButtonForLiveBidsSection(
+  String carId,
+  RxString remainingAuctionTime,
+) {
   final CarDetailsController getxController = Get.put(
     CarDetailsController(carId),
   );
@@ -69,7 +72,7 @@ void autoBidButtonForLiveBidsSection(String carId) {
                         SizedBox(width: 4),
                         Obx(
                           () => Text(
-                            getxController.remainingTime.value,
+                            remainingAuctionTime.value,
                             style: TextStyle(
                               color: AppColors.red,
                               fontSize: 12,

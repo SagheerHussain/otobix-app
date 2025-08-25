@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Controllers/upcoming_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
@@ -10,11 +11,11 @@ import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 
-class UpcomingSection extends StatelessWidget {
-  UpcomingSection({super.key});
+class UpcomingPage extends StatelessWidget {
+  UpcomingPage({super.key});
 
-  // final HomeController getxController = Get.put(HomeController());
-  final HomeController getxController = Get.find<HomeController>();
+  final HomeController homeController = Get.find<HomeController>();
+  final UpcomingController upcomingController = Get.find<UpcomingController>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +25,9 @@ class UpcomingSection extends StatelessWidget {
           SizedBox(height: 10),
 
           Obx(() {
-            if (getxController.isLoading.value) {
+            if (upcomingController.isLoading.value) {
               return _buildLoadingWidget();
-            } else if (getxController.filteredCars.isEmpty) {
+            } else if (upcomingController.upcomingCarsList.isEmpty) {
               return Expanded(
                 child: Center(
                   child: const EmptyDataWidget(
@@ -48,18 +49,18 @@ class UpcomingSection extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: getxController.filteredCars.length,
+        itemCount: upcomingController.upcomingCarsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
-          final car = getxController.filteredCars.reversed.toList()[index];
+          final car = upcomingController.upcomingCarsList[index];
           // InkWell for car card
           return InkWell(
             onTap: () {
               Get.to(
                 () => CarDetailsPage(
-                  carId: car.id!,
+                  carId: car.id,
                   car: car,
-                  type: getxController.upcomingSectionScreen,
+                  currentOpenSection: homeController.upcomingSectionScreen,
                 ),
               );
             },
@@ -255,12 +256,14 @@ class UpcomingSection extends StatelessWidget {
                     ),
                   ),
 
-                  Obx(
-                    () => Positioned(
+                  Obx(() {
+                    final isThisCarFav = upcomingController.wishlistCarsIds
+                        .contains(car.id);
+                    return Positioned(
                       top: 10,
                       right: 10,
                       child: InkWell(
-                        onTap: () => getxController.changeFavoriteCars(car),
+                        onTap: () => upcomingController.toggleFavorite(car),
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
                           padding: const EdgeInsets.all(6),
@@ -269,19 +272,17 @@ class UpcomingSection extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            car.isFavorite.value
+                            isThisCarFav
                                 ? Icons.favorite
                                 : Icons.favorite_outline,
                             color:
-                                car.isFavorite.value
-                                    ? AppColors.red
-                                    : AppColors.grey,
+                                isThisCarFav ? AppColors.red : AppColors.grey,
                             size: 20,
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),

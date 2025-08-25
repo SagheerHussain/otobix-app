@@ -4,9 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
-import 'package:otobix/Widgets/offering_bid_sheet.dart';
 
-void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
+void placeBidButtonForLiveBidsSection(
+  BuildContext context,
+  String carId,
+  RxString remainingAuctionTime,
+) {
   final CarDetailsController bidController = Get.put(
     CarDetailsController(carId),
   );
@@ -70,7 +73,7 @@ void placeBidButtonForLiveBidsSection(BuildContext context, String carId) {
                         SizedBox(width: 4),
                         Obx(
                           () => Text(
-                            bidController.remainingTime.value,
+                            remainingAuctionTime.value,
                             style: TextStyle(
                               color: AppColors.red,
                               fontSize: 12,

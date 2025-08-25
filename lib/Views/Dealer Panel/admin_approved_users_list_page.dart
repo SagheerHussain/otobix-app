@@ -8,8 +8,6 @@ import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 import 'package:otobix/admin/controller/admin_approved_users_list_controller.dart';
-import 'package:otobix/admin/controller/admin_pending_users_list_controller.dart';
-import 'package:otobix/admin/controller/admin_rejected_users_list_controller.dart';
 
 class AdminApprovedUsersListPage extends StatelessWidget {
   final RxString searchQuery;
@@ -483,13 +481,13 @@ class AdminApprovedUsersListPage extends StatelessWidget {
                               password: passwordController.text,
                             );
                             Get.back(); // Close the dialog
-                            await getxController.fetchApprovedUsersList();
+                            // await getxController.fetchApprovedUsersList();
 
-                            //Temp for now
-                            await Get.find<AdminRejectedUserListController>()
-                                .fetchRejectedUsersList();
-                            await Get.find<AdminPendingUsersListController>()
-                                .fetchPendingUsersList();
+                            // //Temp for now
+                            // await Get.find<AdminRejectedUserListController>()
+                            //     .fetchRejectedUsersList();
+                            // await Get.find<AdminPendingUsersListController>()
+                            //     .fetchPendingUsersList();
                             //////////////
                           }
                         },

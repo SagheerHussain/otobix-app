@@ -92,7 +92,7 @@ class LoginController extends GetxController {
         "phoneNumber": contactNumber,
         "password": passwordController.text.trim(),
       };
-      debugPrint("Sending body: $requestBody");
+      // debugPrint("Sending body: $requestBody");
       final response = await ApiService.post(
         endpoint: AppUrls.login,
         body: requestBody,

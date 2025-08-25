@@ -11,14 +11,16 @@ import 'package:otobix/Widgets/place_bid_button_for_ocb70_section.dart';
 import 'package:otobix/Widgets/place_bid_button_for_upcoming_section.dart';
 
 class PlaceBidButtonWidget extends StatelessWidget {
+  final String currentOpenSection;
+  final CarDetailsController getxController;
+  final RxString remainingAuctionTime;
+
   PlaceBidButtonWidget({
     super.key,
-    required this.type,
+    required this.currentOpenSection,
     required this.getxController,
+    required this.remainingAuctionTime,
   });
-
-  final String type;
-  final CarDetailsController getxController;
 
   final HomeController homeController = Get.put(HomeController());
 
@@ -26,26 +28,47 @@ class PlaceBidButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ButtonWidget(
       text:
-          type == homeController.liveBidsSectionScreen
+          currentOpenSection == homeController.liveBidsSectionScreen
               ? 'Place Bid'
-              : type == homeController.upcomingSectionScreen
+              : currentOpenSection == homeController.upcomingSectionScreen
               ? 'Pre-Bid'
-              : type == homeController.ocb70SectionScreen
+              : currentOpenSection == homeController.otobuySectionScreen
               ? 'Buy Now'
-              : type == homeController.marketplaceSectionScreen
+              : currentOpenSection == homeController.marketplaceSectionScreen
               ? 'Place Bid'
               : 'Place Bid',
       onTap: () {
-        if (type == homeController.liveBidsSectionScreen) {
-          placeBidButtonForLiveBidsSection(context, getxController.carId);
-        } else if (type == homeController.upcomingSectionScreen) {
-          placeBidButtonForUpcomingSection(context, getxController.carId);
-        } else if (type == homeController.ocb70SectionScreen) {
-          placeBidButtonForOcb70Section(context, getxController.carId);
-        } else if (type == homeController.marketplaceSectionScreen) {
-          defaultPlaceBidButton(context, getxController.carId);
+        if (currentOpenSection == homeController.liveBidsSectionScreen) {
+          placeBidButtonForLiveBidsSection(
+            context,
+            getxController.carId,
+            remainingAuctionTime,
+          );
+        } else if (currentOpenSection == homeController.upcomingSectionScreen) {
+          placeBidButtonForUpcomingSection(
+            context,
+            getxController.carId,
+            remainingAuctionTime,
+          );
+        } else if (currentOpenSection == homeController.otobuySectionScreen) {
+          placeBidButtonForOtobuySection(
+            context,
+            getxController.carId,
+            remainingAuctionTime,
+          );
+        } else if (currentOpenSection ==
+            homeController.marketplaceSectionScreen) {
+          defaultPlaceBidButton(
+            context,
+            getxController.carId,
+            remainingAuctionTime,
+          );
         } else {
-          defaultPlaceBidButton(context, getxController.carId);
+          defaultPlaceBidButton(
+            context,
+            getxController.carId,
+            remainingAuctionTime,
+          );
         }
       },
       isLoading: getxController.isLoading,
@@ -55,7 +78,11 @@ class PlaceBidButtonWidget extends StatelessWidget {
     );
   }
 
-  void defaultPlaceBidButton(BuildContext context, String carId) {
+  void defaultPlaceBidButton(
+    BuildContext context,
+    String carId,
+    RxString remainingAuctionTime,
+  ) {
     final CarDetailsController bidController = Get.put(
       CarDetailsController(carId),
     );
@@ -123,7 +150,7 @@ class PlaceBidButtonWidget extends StatelessWidget {
                           SizedBox(width: 4),
                           Obx(
                             () => Text(
-                              bidController.remainingTime.value,
+                              remainingAuctionTime.value,
                               style: TextStyle(
                                 color: AppColors.red,
                                 fontSize: 12,

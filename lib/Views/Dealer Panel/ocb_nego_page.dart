@@ -59,8 +59,11 @@ class OcbNegoPage extends StatelessWidget {
           return InkWell(
             onTap: () {
               Get.to(
-                () =>
-                    CarDetailsPage(carId: car.id!, car: car, type: 'ocb_nego'),
+                () => CarDetailsPage(
+                  carId: car.id,
+                  car: car,
+                  currentOpenSection: 'ocb_nego',
+                ),
               );
             },
             child: Card(

@@ -2,7 +2,7 @@ class AppUrls {
   // static const String baseUrl = "http://localhost:4000/api/";
   static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
   // static const String baseUrl =
-  //     "http://192.168.100.180:4000/api/"; // For Mobile Testing
+  //     "http://192.168.100.99:4000/api/"; // For Mobile Testing
 
   static final String socketBaseUrl = _extractSocketBaseUrl(
     baseUrl,
@@ -43,7 +43,8 @@ class AppUrls {
 
   static String getCarDetails(String carId) => "${baseUrl}car/details/$carId";
 
-  static const String getCarsList = "${baseUrl}car/cars-list";
+  static String getCarsList({required String auctionStatus}) =>
+      "${baseUrl}car/cars-list?auctionStatus=$auctionStatus";
 
   static String updateUserThroughAdmin(String userId) =>
       "${baseUrl}user/update-user-through-admin/?userId=$userId";
@@ -95,6 +96,16 @@ class AppUrls {
 
   static String getUserWishlistCarsList({required String userId}) =>
       "${baseUrl}user/get-user-wishlist-cars-list?userId=$userId";
+
+  static String getUserMyBidsList({required String userId}) =>
+      "${baseUrl}user/get-user-my-bids?userId=$userId";
+
+  static const String addToMyBids = "${baseUrl}user/add-to-my-bids";
+
+  static const String removeFromMyBids = "${baseUrl}user/remove-from-my-bids";
+
+  static String getUserMyBidsCarsList({required String userId}) =>
+      "${baseUrl}user/get-user-my-bids-cars-list?userId=$userId";
 
   // Socket URL Extraction
   static String _extractSocketBaseUrl(String url) {

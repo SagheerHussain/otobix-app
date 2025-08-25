@@ -60,8 +60,20 @@ class Roles {
 
 // Auction statuses class
 class AuctionStatuses {
+  final String all = 'all';
+  final String upcoming = 'upcoming';
   final String live = 'live';
-  final String ended = 'ended';
+  final String otobuy = 'otobuy';
+  final String marketplace = 'marketplace';
+  final String liveAuctionEnded = 'liveAuctionEnded';
+  final String otobuyEnded = 'otobuyEnded';
 
-  List<String> get all => [live, ended];
+  // List<String> get all => [
+  //   upcoming,
+  //   live,
+  //   otobuy,
+  //   marketplace,
+  //   liveAuctionEnded,
+  //   otobuyEnded,
+  // ];
 }

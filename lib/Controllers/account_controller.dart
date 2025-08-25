@@ -140,7 +140,7 @@ class AccountController extends GetxController {
   }
 
   Future<void> updateProfile() async {
-    debugPrint('Update profile called');
+    // debugPrint('Update profile called');
     try {
       isLoading.value = true;
 

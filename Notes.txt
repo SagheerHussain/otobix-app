@@ -1,33 +1,61 @@
 
-// Fixed
-    ✅ Live bids section count
-    ✅ Notifications screen complete with realtime data
-    ✅ Wishlist screen & complete functionality 
-    ✅ Dealer realtime data on different screens
-    ✅ Set up auto bid functionality
+
 
 // Pending
-    Admin realtime data on different screens
-    Pictures on each section in car details screen
-    Increase selected tab size in home tab
-    My bids screen in my cars - show all cars on user has placed bid
+    ✅ Mask registration number
+    Show terms and privacy policy when someone registers
+    Terms and privacy policies show in dealer panel
+    If terms and privacy policies are updated then send notification to dealers
+    Implement background, foreground and terminated app notifications
+    Implement sound notifications
+    Filters should have kms range, ownership serial no range and transmission option/types
+    ✅ Off screen rotation only portrait allowed
+    A seperate section/screen for all images with seperate images for each section 
+    Star rating for each parameter of inspection: Exterior, Engine, AC, Electricals, Steering. they already have ratings in car inspection report
+    If 30 seconds remaining in end auction time and anyone bids then extend auction time by 2 minutes
+    Setup car status as live, ended, won, lost etc
+    Check auctionStatus before sending win/lost bidder message and notifications/alerts
+    ✅ Timer on bottom sheet of placebid/autobid
+    Align car name and highest bid to center
+    Align upcoming - live- otobuy - marketplace
+    Set auction time to 24 hours for all cars
+    Auction ended cars panel in Admin
+    Move auction ended cars to otobuy through Admin panel
+    Images section before basic details section
+    Year of manufacture before car name
+    Complete states functionality
+    Complete filters functionality
+    Complete sort functionality
+    Complete user preferences functionality
+    Complete upcoming screen
+    Complete otobuy screen
+    Complete marketplace screen
+    
 
 
 
-    Set up all files for home tab 
+    Increase selected tab size in home tab ---- not priority yet
+    Set up all files for home tab ----- not priority yet
 
     
     
 
-
-
-// Rough Work
-    ✅  
+    // Rough Work
+    none - marketplace - upcoming - live - auctionCompleted - otobuy - 
 
 
 
 
-// Done after 11 Aug 2025
+// Completed after 11 Aug 2025
+    ✅  Auction timer screen realtime data
+    ✅  Admin home screens realtime data 
+    ✅  My bids screen in my cars - show all cars on user has placed bid
+    ✅  Pictures on each section in car details screen
+    ✅  Live bids section count
+    ✅  Notifications screen complete with realtime data
+    ✅  Wishlist screen & complete functionality 
+    ✅  Dealer realtime data on different screens
+    ✅  Set up auto bid functionality
     ✅  Updated Set Auction Time screen's UI
     ✅  Implemented Role Filter
     ✅  Fixed the local date-time issue

@@ -6,7 +6,11 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
-void placeBidButtonForOcb70Section(BuildContext context, String carId) {
+void placeBidButtonForOtobuySection(
+  BuildContext context,
+  String carId,
+  RxString remainingAuctionTime,
+) {
   final CarDetailsController bidController = Get.put(
     CarDetailsController(carId),
   );
@@ -70,7 +74,7 @@ void placeBidButtonForOcb70Section(BuildContext context, String carId) {
                         SizedBox(width: 4),
                         Obx(
                           () => Text(
-                            bidController.remainingTime.value,
+                            remainingAuctionTime.value,
                             style: TextStyle(
                               color: AppColors.red,
                               fontSize: 12,

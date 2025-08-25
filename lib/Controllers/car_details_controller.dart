@@ -46,8 +46,8 @@ class CarDetailsController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isPlaceBidButtonLoading = false.obs;
 
-  final remainingTime = ''.obs;
-  Timer? _timer;
+  // final remainingTime = ''.obs;
+  // Timer? _timer;
 
   RxDouble currentHighestBidAmount = 0.0.obs;
   RxDouble yourOfferAmount = 0.0.obs;
@@ -192,27 +192,27 @@ class CarDetailsController extends GetxController {
     currentIndex.value = index;
   }
 
-  void startCountdown(DateTime endTime) {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final now = DateTime.now();
-      final diff = endTime.difference(now);
+  // void startCountdown(DateTime endTime) {
+  //   _timer?.cancel();
+  //   _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+  //     final now = DateTime.now();
+  //     final diff = endTime.difference(now);
 
-      if (diff.isNegative) {
-        remainingTime.value = "00h : 00m : 00s";
-        _timer?.cancel();
-      } else {
-        final hours = diff.inHours.toString().padLeft(2, '0');
-        final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
-        final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
-        remainingTime.value = "${hours}h : ${minutes}m : ${seconds}s";
-      }
-    });
-  }
+  //     if (diff.isNegative) {
+  //       remainingTime.value = "00h : 00m : 00s";
+  //       _timer?.cancel();
+  //     } else {
+  //       final hours = diff.inHours.toString().padLeft(2, '0');
+  //       final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
+  //       final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
+  //       remainingTime.value = "${hours}h : ${minutes}m : ${seconds}s";
+  //     }
+  //   });
+  // }
 
   @override
   void onClose() {
-    _timer?.cancel();
+    // _timer?.cancel();
     super.onClose();
   }
 

@@ -8,7 +8,10 @@ import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 // Auto Bid Sheet
-void autoBidButtonForOcb70Section(String carId) {
+void autoBidButtonForOtobuySection(
+  String carId,
+  RxString remainingAuctionTime,
+) {
   final CarDetailsController getxController = Get.put(
     CarDetailsController(carId),
   );
@@ -70,7 +73,7 @@ void autoBidButtonForOcb70Section(String carId) {
                         SizedBox(width: 4),
                         Obx(
                           () => Text(
-                            getxController.remainingTime.value,
+                            remainingAuctionTime.value,
                             style: TextStyle(
                               color: AppColors.red,
                               fontSize: 12,

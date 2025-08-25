@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:otobix/Controllers/home_controller.dart';
+import 'package:otobix/Controllers/my_bids_controller.dart';
 import 'package:otobix/Controllers/my_cars_controller.dart';
 import 'package:otobix/Controllers/wishlist_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/Dealer%20Panel/live_bids_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/my_bids_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/ocb_nego_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_notifications_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/wishlist_page.dart';
@@ -22,6 +23,9 @@ class MyCarsPage extends StatelessWidget {
     permanent: true,
   );
 
+  // MyBidsController for getting realtime my bids length
+  final MyBidsController myBids = Get.put(MyBidsController(), permanent: true);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -34,11 +38,19 @@ class MyCarsPage extends StatelessWidget {
 
             Expanded(
               child: Obx(() {
+                //  Lengths of each tab
+                final myBidsCarsLength = myBids.myBidCarsIds.length;
+                final ocbNegoCarsLength = 2;
                 final wishlistCarsLength = wishlist.wishlistCarsIds.length;
+
                 return TabBarWidget(
                   titles: ['My Bids', 'Ocb Nego', 'Wishlist'],
-                  counts: [3, 2, wishlistCarsLength],
-                  screens: [LiveBidsPage(), OcbNegoPage(), WishlistPage()],
+                  counts: [
+                    myBidsCarsLength,
+                    ocbNegoCarsLength,
+                    wishlistCarsLength,
+                  ],
+                  screens: [MyBidsPage(), OcbNegoPage(), WishlistPage()],
                   titleSize: 10,
                   countSize: 8,
                   spaceFromSides: 10,

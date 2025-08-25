@@ -58,7 +58,7 @@ class OtoBuySection extends StatelessWidget {
                 () => CarDetailsPage(
                   carId: car.id!,
                   car: car,
-                  type: getxController.ocb70SectionScreen,
+                  currentOpenSection: getxController.otobuySectionScreen,
                 ),
               );
             },

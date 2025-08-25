@@ -24,13 +24,13 @@ import 'package:otobix/Controllers/car_details_controller.dart';
 class CarDetailsPage extends StatefulWidget {
   final String carId;
   final CarsListModel car;
-  final String type;
+  final String currentOpenSection;
 
   const CarDetailsPage({
     super.key,
     required this.carId,
     required this.car,
-    required this.type,
+    required this.currentOpenSection,
   });
 
   @override
@@ -58,7 +58,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         [CarsListTitleAndImage(title: 'Main Image', url: widget.car.imageUrl)];
 
     getxController.setImageUrls(imageUrls);
-    getxController.startCountdown(DateTime.now().add(const Duration(days: 1)));
+    // getxController.startCountdown(DateTime.now().add(const Duration(days: 1)));
 
     final pageController = PageController();
 
@@ -69,7 +69,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     getxController.oneClickPriceAmount.value =
         getxController.currentHighestBidAmount.value + 10000;
     // Set your offer amount
-    widget.type != homeController.ocb70SectionScreen
+    widget.currentOpenSection != homeController.otobuySectionScreen
         ? getxController.yourOfferAmount.value =
             getxController.currentHighestBidAmount.value + 4000
         : getxController.yourOfferAmount.value =
@@ -246,7 +246,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                               getxController,
                               homeController,
                               context,
-                              widget.type,
+                              widget.currentOpenSection,
                               widget.car,
                             ),
                           ),
@@ -546,9 +546,19 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-            Text(
-              '${carDetails.make} ${carDetails.model} ${carDetails.variant}',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Flexible(
+                  child: Text(
+                    '${GlobalFunctions.getFormattedDate(date: carDetails.yearMonthOfManufacture, type: GlobalFunctions.year)} ${carDetails.make} ${carDetails.model} ${carDetails.variant}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 10),
@@ -659,6 +669,13 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   // }
 
   Widget _buildBasicDetails({required CarModel carDetails}) {
+    // Mask Registration Number
+    String maskRegistrationNumber(String? input) {
+      if (input == null || input.length <= 5) return '*****';
+      final visible = input.substring(0, input.length - 5);
+      return '$visible*****';
+    }
+
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -683,7 +700,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         _buildDetailRowForOtherDetails('Variant', carDetails.variant),
         _buildDetailRowForOtherDetails(
           'Registration Number',
-          carDetails.registrationNumber,
+          maskRegistrationNumber(carDetails.registrationNumber),
         ),
         _buildDetailRowForOtherDetails(
           'Registration Date',
@@ -985,6 +1002,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       required IconData icon,
       required String label,
       required Widget trailing,
+      List<String> imageUrls = const [],
     }) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
@@ -1002,6 +1020,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 ],
               ),
             ),
+            const SizedBox(width: 10),
+            if (imageUrls.isNotEmpty) _buildSideImages(imageUrls: imageUrls),
           ],
         ),
       );
@@ -1027,7 +1047,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       {
         "label": "Upper Cross Member",
         "value": carDetails.upperCrossMember,
-        "icon": Icons.border_top, // structure part
+        "icon": Icons.border_top,
       },
       {
         "label": "Radiator Support",
@@ -1048,11 +1068,13 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         "label": "LHS Apron",
         "value": carDetails.lhsApron,
         "icon": Icons.align_horizontal_left,
+        "imageUrls": [carDetails.apronLhsRhs[0]],
       },
       {
         "label": "RHS Apron",
         "value": carDetails.rhsApron,
         "icon": Icons.align_horizontal_right,
+        "imageUrls": [carDetails.apronLhsRhs[1]],
       },
       {
         "label": "Firewall",
@@ -1078,6 +1100,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         "label": "Battery",
         "value": carDetails.battery,
         "icon": Icons.battery_full,
+        "imageUrls": carDetails.batteryImages,
       },
       {
         "label": "Coolant",
@@ -1229,6 +1252,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 icon: item['icon'] as IconData,
                 label: item['label'] as String,
                 trailing: engineBayValue(item['value'] as String? ?? ''),
+                imageUrls: (item['imageUrls'] as List<String>?) ?? [],
               );
             }),
 
@@ -1494,6 +1518,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       required IconData icon,
       required String label,
       required Widget trailing,
+      List<String> imageUrls = const [],
     }) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
@@ -1503,6 +1528,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             const SizedBox(width: 10),
             Expanded(child: Text(label, style: const TextStyle(fontSize: 13))),
             trailing,
+            const SizedBox(width: 10),
+            if (imageUrls.isNotEmpty) _buildSideImages(imageUrls: imageUrls),
           ],
         ),
       );
@@ -1641,6 +1668,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             icon: Icons.airline_seat_recline_normal, // No. of Airbags
             label: 'No. of Airbags',
             trailing: interiorFeatureValue(carDetails.noOfAirBags.toString()),
+            imageUrls: carDetails.airbags,
           ),
 
           item(
@@ -1709,6 +1737,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             icon: Icons.wb_sunny, // Sunroof
             label: 'Sunroof',
             trailing: interiorFeatureValue(carDetails.sunroof),
+            imageUrls: carDetails.sunroofImages,
           ),
 
           item(
@@ -1911,6 +1940,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       String title,
       String value, {
       bool isLast = false,
+      List<String> imageUrls = const [],
     }) {
       return Column(
         children: [
@@ -1918,12 +1948,23 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(title, style: const TextStyle(fontSize: 12)),
+                child: Text(
+                  title,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12),
+                ),
               ),
               Expanded(
-                child: Text(value, style: const TextStyle(fontSize: 12)),
+                child: Text(
+                  value,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12),
+                ),
               ),
-              // Icon(Icons.photo_outlined, color: AppColors.grey),
+              const SizedBox(width: 10),
+              if (imageUrls.isNotEmpty) _buildSideImages(imageUrls: imageUrls),
             ],
           ),
           if (!isLast) Divider(color: AppColors.grey.withValues(alpha: 0.1)),
@@ -1965,16 +2006,45 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           buildSection(
             title: 'Front',
             itemsList: [
-              buildExteriorItem('Bonnet', carDetails.bonnet),
-              buildExteriorItem('Front Windshield', carDetails.frontWindshield),
-              buildExteriorItem('Roof', carDetails.roof),
-              buildExteriorItem('Front Bumper', carDetails.frontBumper),
-              buildExteriorItem('LHS Headlamp', carDetails.lhsHeadlamp),
-              buildExteriorItem('LHS Foglamp', carDetails.lhsFoglamp),
-              buildExteriorItem('RHS Headlamp', carDetails.rhsHeadlamp),
+              buildExteriorItem(
+                'Bonnet',
+                carDetails.bonnet,
+                imageUrls: carDetails.bonnetImages,
+              ),
+              buildExteriorItem(
+                'Front Windshield',
+                carDetails.frontWindshield,
+                imageUrls: carDetails.frontWindshieldImages,
+              ),
+              buildExteriorItem(
+                'Roof',
+                carDetails.roof,
+                imageUrls: carDetails.roofImages,
+              ),
+              buildExteriorItem(
+                'Front Bumper',
+                carDetails.frontBumper,
+                imageUrls: carDetails.frontBumperImages,
+              ),
+              buildExteriorItem(
+                'LHS Headlamp',
+                carDetails.lhsHeadlamp,
+                imageUrls: carDetails.lhsHeadlampImages,
+              ),
+              buildExteriorItem(
+                'LHS Foglamp',
+                carDetails.lhsFoglamp,
+                imageUrls: carDetails.lhsFoglampImages,
+              ),
+              buildExteriorItem(
+                'RHS Headlamp',
+                carDetails.rhsHeadlamp,
+                imageUrls: carDetails.rhsHeadlampImages,
+              ),
               buildExteriorItem(
                 'RHS Foglamp',
                 carDetails.rhsFoglamp,
+                imageUrls: carDetails.rhsFoglampImages,
                 isLast: true,
               ),
             ],
@@ -1983,24 +2053,70 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           buildSection(
             title: 'Left',
             itemsList: [
-              buildExteriorItem('LHS Fender', carDetails.lhsFender),
-              buildExteriorItem('LHS ORVM', carDetails.lhsOrvm),
-              buildExteriorItem('LHS A Pillar', carDetails.lhsAPillar),
-              buildExteriorItem('LHS B Pillar', carDetails.lhsBPillar),
-              buildExteriorItem('LHS C Pillar', carDetails.lhsCPillar),
-              buildExteriorItem('LHS Front Alloy', carDetails.lhsFrontAlloy),
-              buildExteriorItem('LHS Front Tyre', carDetails.lhsFrontTyre),
-              buildExteriorItem('LHS Rear Alloy', carDetails.lhsRearAlloy),
-              buildExteriorItem('LHS Rear Tyre', carDetails.lhsRearTyre),
-              buildExteriorItem('LHS Front Door', carDetails.lhsFrontDoor),
-              buildExteriorItem('LHS Rear Door', carDetails.lhsRearDoor),
+              buildExteriorItem(
+                'LHS Fender',
+                carDetails.lhsFender,
+                imageUrls: carDetails.lhsFenderImages,
+              ),
+              buildExteriorItem(
+                'LHS ORVM',
+                carDetails.lhsOrvm,
+                imageUrls: carDetails.lhsOrvmImages,
+              ),
+              buildExteriorItem(
+                'LHS A Pillar',
+                carDetails.lhsAPillar,
+                imageUrls: carDetails.lhsAPillarImages,
+              ),
+              buildExteriorItem(
+                'LHS B Pillar',
+                carDetails.lhsBPillar,
+                imageUrls: carDetails.lhsBPillarImages,
+              ),
+              buildExteriorItem(
+                'LHS C Pillar',
+                carDetails.lhsCPillar,
+                imageUrls: carDetails.lhsCPillarImages,
+              ),
+              buildExteriorItem(
+                'LHS Front Alloy',
+                carDetails.lhsFrontAlloy,
+                imageUrls: carDetails.lhsFrontAlloyImages,
+              ),
+              buildExteriorItem(
+                'LHS Front Tyre',
+                carDetails.lhsFrontTyre,
+                imageUrls: carDetails.lhsFrontTyreImages,
+              ),
+              buildExteriorItem(
+                'LHS Rear Alloy',
+                carDetails.lhsRearAlloy,
+                imageUrls: carDetails.lhsRearAlloyImages,
+              ),
+              buildExteriorItem(
+                'LHS Rear Tyre',
+                carDetails.lhsRearTyre,
+                imageUrls: carDetails.lhsRearTyreImages,
+              ),
+              buildExteriorItem(
+                'LHS Front Door',
+                carDetails.lhsFrontDoor,
+                imageUrls: carDetails.lhsFrontDoorImages,
+              ),
+              buildExteriorItem(
+                'LHS Rear Door',
+                carDetails.lhsRearDoor,
+                imageUrls: carDetails.lhsRearDoorImages,
+              ),
               buildExteriorItem(
                 'LHS Running Border',
                 carDetails.lhsRunningBorder,
+                imageUrls: carDetails.lhsRunningBorderImages,
               ),
               buildExteriorItem(
                 'LHS Quarter Panel',
                 carDetails.lhsQuarterPanel,
+                imageUrls: carDetails.lhsQuarterPanelImages,
                 isLast: true,
               ),
             ],
@@ -2009,15 +2125,36 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           buildSection(
             title: 'Rear',
             itemsList: [
-              buildExteriorItem('Rear Bumper', carDetails.rearBumper),
-              buildExteriorItem('LHS Tail Lamp', carDetails.lhsTailLamp),
-              buildExteriorItem('RHS Tail Lamp', carDetails.rhsTailLamp),
-              buildExteriorItem('Rear Windshield', carDetails.rearWindshield),
+              buildExteriorItem(
+                'Rear Bumper',
+                carDetails.rearBumper,
+                imageUrls: carDetails.rearBumperImages,
+              ),
+              buildExteriorItem(
+                'LHS Tail Lamp',
+                carDetails.lhsTailLamp,
+                imageUrls: carDetails.lhsTailLampImages,
+              ),
+              buildExteriorItem(
+                'RHS Tail Lamp',
+                carDetails.rhsTailLamp,
+                imageUrls: carDetails.rhsTailLampImages,
+              ),
+              buildExteriorItem(
+                'Rear Windshield',
+                carDetails.rearWindshield,
+                imageUrls: carDetails.rearWindshieldImages,
+              ),
               buildExteriorItem('Boot Door', carDetails.bootDoor),
-              buildExteriorItem('Spare Tyre', carDetails.spareTyre),
+              buildExteriorItem(
+                'Spare Tyre',
+                carDetails.spareTyre,
+                imageUrls: carDetails.spareTyreImages,
+              ),
               buildExteriorItem(
                 'Boot Floor',
                 carDetails.bootFloor,
+                imageUrls: carDetails.bootFloorImages,
                 isLast: true,
               ),
             ],
@@ -2026,27 +2163,70 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           buildSection(
             title: 'Right',
             itemsList: [
-              buildExteriorItem('RHS Rear Alloy', carDetails.rhsRearAlloy),
-              buildExteriorItem('RHS Rear Tyre', carDetails.rhsRearTyre),
-              buildExteriorItem('RHS Front Alloy', carDetails.rhsFrontAlloy),
-              buildExteriorItem('RHS Front Tyre', carDetails.rhsFrontTyre),
+              buildExteriorItem(
+                'RHS Rear Alloy',
+                carDetails.rhsRearAlloy,
+                imageUrls: carDetails.rhsRearAlloyImages,
+              ),
+              buildExteriorItem(
+                'RHS Rear Tyre',
+                carDetails.rhsRearTyre,
+                imageUrls: carDetails.rhsRearTyreImages,
+              ),
+              buildExteriorItem(
+                'RHS Front Alloy',
+                carDetails.rhsFrontAlloy,
+                imageUrls: carDetails.rhsFrontAlloyImages,
+              ),
+              buildExteriorItem(
+                'RHS Front Tyre',
+                carDetails.rhsFrontTyre,
+                imageUrls: carDetails.rhsFrontTyreImages,
+              ),
               buildExteriorItem(
                 'RHS Quarter Panel',
                 carDetails.rhsQuarterPanel,
+                imageUrls: carDetails.rhsQuarterPanelImages,
               ),
-              buildExteriorItem('RHS A Pillar', carDetails.rhsAPillar),
-              buildExteriorItem('RHS B Pillar', carDetails.rhsBPillar),
-              buildExteriorItem('RHS C Pillar', carDetails.rhsCPillar),
+              buildExteriorItem(
+                'RHS A Pillar',
+                carDetails.rhsAPillar,
+                imageUrls: carDetails.rhsAPillarImages,
+              ),
+              buildExteriorItem(
+                'RHS B Pillar',
+                carDetails.rhsBPillar,
+                imageUrls: carDetails.rhsBPillarImages,
+              ),
+              buildExteriorItem(
+                'RHS C Pillar',
+                carDetails.rhsCPillar,
+                imageUrls: carDetails.rhsCPillarImages,
+              ),
               buildExteriorItem(
                 'RHS Running Border',
                 carDetails.rhsRunningBorder,
+                imageUrls: carDetails.rhsRunningBorderImages,
               ),
-              buildExteriorItem('RHS Rear Door', carDetails.rhsRearDoor),
-              buildExteriorItem('RHS Front Door', carDetails.rhsFrontDoor),
-              buildExteriorItem('RHS ORVM', carDetails.rhsOrvm),
+              buildExteriorItem(
+                'RHS Rear Door',
+                carDetails.rhsRearDoor,
+                imageUrls: carDetails.rhsRearDoorImages,
+              ),
+              buildExteriorItem(
+                'RHS Front Door',
+                carDetails.rhsFrontDoor,
+                imageUrls: carDetails.rhsFrontDoorImages,
+              ),
+              buildExteriorItem(
+                'RHS ORVM',
+                carDetails.rhsOrvm,
+                imageUrls: carDetails.rhsOrvmImages,
+              ),
               buildExteriorItem(
                 'RHS Fender',
                 carDetails.rhsFender,
+                imageUrls: carDetails.rhsFenderImages,
                 isLast: true,
               ),
             ],
@@ -2108,7 +2288,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     CarDetailsController getxController,
     HomeController homeController,
     BuildContext context,
-    String type,
+    String currentOpenSection,
     CarsListModel car,
   ) {
     return ClipRRect(
@@ -2157,7 +2337,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
               const SizedBox(height: 20),
 
               /// LOGIC: check if type is marketplace
-              if (type == homeController.marketplaceSectionScreen)
+              if (currentOpenSection == homeController.marketplaceSectionScreen)
                 SizedBox(
                   width: double.infinity,
                   child: ButtonWidget(
@@ -2188,12 +2368,14 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     PlaceBidButtonWidget(
-                      type: type,
+                      currentOpenSection: currentOpenSection,
                       getxController: getxController,
+                      remainingAuctionTime: car.remainingAuctionTime,
                     ),
                     StartAutoBidButtonWidget(
-                      type: type,
+                      currentOpenSection: currentOpenSection,
                       carId: getxController.carId,
+                      remainingAuctionTime: car.remainingAuctionTime,
                     ),
                   ],
                 ),
@@ -2919,6 +3101,39 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         },
       ),
       // ),
+    );
+  }
+
+  // Side images
+  Widget _buildSideImages({required List<String> imageUrls}) {
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => CarImagesPage(imageUrls: imageUrls, initialIndex: 0));
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: CachedNetworkImage(
+          imageUrl: imageUrls.first,
+          width: 35,
+          placeholder:
+              (context, url) => const Center(
+                child: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: AppColors.green,
+                    strokeWidth: 1,
+                  ),
+                ),
+              ),
+          errorWidget:
+              (context, url, error) => const Icon(
+                Icons.image_not_supported,
+                size: 40,
+                color: AppColors.grey,
+              ),
+        ),
+      ),
     );
   }
 }

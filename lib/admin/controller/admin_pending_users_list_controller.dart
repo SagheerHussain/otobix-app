@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 class AdminPendingUsersListController extends GetxController {
@@ -20,6 +22,7 @@ class AdminPendingUsersListController extends GetxController {
     super.onInit();
     fetchPendingUsersList();
     filteredUsersList.value = usersList;
+    listenToUpdatedUsersList();
   }
 
   // Fetch Pending Users List
@@ -81,7 +84,7 @@ class AdminPendingUsersListController extends GetxController {
           type: ToastType.success,
         );
 
-        fetchPendingUsersList();
+        // fetchPendingUsersList();
       } else {
         debugPrint("Failed to update user: ${response.body}");
         ToastWidget.show(
@@ -119,7 +122,7 @@ class AdminPendingUsersListController extends GetxController {
           type: ToastType.success,
         );
 
-        fetchPendingUsersList();
+        // fetchPendingUsersList();
       } else {
         debugPrint("Failed to approve user: ${response.body}");
         ToastWidget.show(
@@ -137,5 +140,16 @@ class AdminPendingUsersListController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // Listen to updated users list
+  void listenToUpdatedUsersList() {
+    SocketService.instance.joinRoom(SocketEvents.adminHomeRoom);
+    SocketService.instance.on(SocketEvents.updatedAdminHomeUsers, (data) {
+      final List<dynamic> pendingUsersList = data['pendingUsersList'] ?? [];
+
+      filteredUsersList.value =
+          pendingUsersList.map((user) => UserModel.fromJson(user)).toList();
+    });
   }
 }

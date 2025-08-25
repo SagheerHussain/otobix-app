@@ -22,6 +22,7 @@ class LoginPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Form(
                 key: formKey,
+                // autovalidateMode: AutovalidateMode.always,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,7 +56,10 @@ class LoginPage extends StatelessWidget {
                       keyboardType: TextInputType.phone,
                       isRequired: true,
                       onSubmitted: (value) {
+                        // Validate all fields first
+                        // if (formKey.currentState!.validate()) {
                         getxController.loginUser();
+                        // }
                       },
                     ),
                     SizedBox(height: 10),
@@ -132,13 +136,44 @@ class LoginPage extends StatelessWidget {
     bool limitLengthToTen = false,
     Function(String)? onSubmitted,
   }) {
+    // String? validator(String? value) {
+    //   if (isRequired && (value == null || value.trim().isEmpty)) {
+    //     return "$label is required";
+    //   }
+    //   if (limitLengthToTen && value!.length != 10) {
+    //     return "Contact Number must be exactly 10 digits";
+    //   }
+    //   return null;
+    // }
+
     String? validator(String? value) {
-      if (isRequired && (value == null || value.trim().isEmpty)) {
+      final text = value?.trim() ?? "";
+
+      // Common required check
+      if (isRequired && text.isEmpty) {
         return "$label is required";
       }
-      if (limitLengthToTen && value!.length != 10) {
-        return "Contact Number must be exactly 10 digits";
+
+      // Username specific
+      if (label == "User Name / User ID" &&
+          text.isNotEmpty &&
+          text.length < 4) {
+        return "User ID must be at least 4 characters";
       }
+
+      // Password specific
+      if (isPasswordField && text.isNotEmpty) {
+        final msg = getxController.validatePassword(text);
+        if (msg != null) return msg;
+      }
+
+      // Contact number specific
+      if (label == "Contact Number" && text.isNotEmpty) {
+        if (!RegExp(r'^[0-9]{10}$').hasMatch(text)) {
+          return "Enter a valid 10-digit phone number";
+        }
+      }
+
       return null;
     }
 
@@ -282,7 +317,10 @@ class LoginPage extends StatelessWidget {
     isLoading: getxController.isLoading,
     // onTap: () => getxController.sendOTP(phoneNumber: phoneController.text),
     onTap: () {
+      // Validate all fields first
+      // if (formKey.currentState!.validate()) {
       getxController.loginUser();
+      // }
     },
     height: 40,
     width: 150,

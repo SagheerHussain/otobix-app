@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
-import 'package:otobix/Models/user_model.dart';
 
 class AdminHomeController extends GetxController {
   // loading
@@ -37,6 +38,7 @@ class AdminHomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchUsersLength();
+    listenToUpdatedUsersLengths();
   }
 
   // fetch users length
@@ -87,6 +89,20 @@ class AdminHomeController extends GetxController {
     final sel = selectedRoles;
     if (sel.contains('All')) return true;
     return sel.contains(userRole);
+  }
+
+  // Listen to updated users lengths
+  void listenToUpdatedUsersLengths() {
+    SocketService.instance.joinRoom(SocketEvents.adminHomeRoom);
+    SocketService.instance.on(SocketEvents.updatedAdminHomeUsers, (data) {
+      final List<dynamic> approvedUsersList = data['approvedUsersList'] ?? [];
+      final List<dynamic> rejectedUsersList = data['rejectedUsersList'] ?? [];
+      final List<dynamic> pendingUsersList = data['pendingUsersList'] ?? [];
+
+      approvedUsersLength.value = approvedUsersList.length;
+      rejectedUsersLength.value = rejectedUsersList.length;
+      pendingUsersLength.value = pendingUsersList.length;
+    });
   }
 }
 

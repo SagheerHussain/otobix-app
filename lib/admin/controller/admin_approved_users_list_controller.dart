@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 class AdminApprovedUsersListController extends GetxController {
@@ -19,6 +21,7 @@ class AdminApprovedUsersListController extends GetxController {
   onInit() {
     super.onInit();
     fetchApprovedUsersList();
+    listenToUpdatedUsersList();
   }
 
   // Fetch Approved Users List
@@ -103,5 +106,16 @@ class AdminApprovedUsersListController extends GetxController {
     } finally {
       isLoadingUpdateUserThroughAdmin.value = false;
     }
+  }
+
+  // Listen to updated users list
+  void listenToUpdatedUsersList() {
+    SocketService.instance.joinRoom(SocketEvents.adminHomeRoom);
+    SocketService.instance.on(SocketEvents.updatedAdminHomeUsers, (data) {
+      final List<dynamic> usersList = data['approvedUsersList'] ?? [];
+
+      approvedUsersList.value =
+          usersList.map((user) => UserModel.fromJson(user)).toList();
+    });
   }
 }

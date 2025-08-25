@@ -43,9 +43,26 @@ class SocketService {
     debugPrint('Joined room: $roomId');
   }
 
+  // Leave a room
+  void leaveRoom(String roomId) {
+    socket.emit(SocketEvents.leaveRoom, roomId);
+    debugPrint('📤 Left room: $roomId');
+  }
+
   // For listening to events
   void on(String event, Function(dynamic) handler) {
     socket.on(event, handler);
+  }
+
+  // Stop listening to a specific event
+  void off(String event, [void Function(dynamic)? handler]) {
+    if (handler != null) {
+      socket.off(event, handler); // removes only that handler
+      debugPrint('🚫 Removed handler for event: $event');
+    } else {
+      socket.off(event); // removes all handlers for that event
+      debugPrint('🚫 Removed all handlers for event: $event');
+    }
   }
 
   // For sending events

@@ -223,8 +223,8 @@ class AdminPendingUsersListPage extends StatelessWidget {
                       getxController.approveUser(user.id);
 
                       //Temp for now
-                      await Get.find<AdminApprovedUsersListController>()
-                          .fetchApprovedUsersList();
+                      // await Get.find<AdminApprovedUsersListController>()
+                      //     .fetchApprovedUsersList();
                       //////////////
                     },
                   ),

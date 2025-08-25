@@ -10,17 +10,17 @@ import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 
 class StartAutoBidButtonWidget extends StatelessWidget {
+  final String currentOpenSection;
+  final String carId;
+  final HomeController homeController = Get.put(HomeController());
+  final RxString remainingAuctionTime;
+
   StartAutoBidButtonWidget({
     super.key,
-    required this.type,
+    required this.currentOpenSection,
     required this.carId,
+    required this.remainingAuctionTime,
   });
-
-  final String type;
-
-  final String carId;
-
-  final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -29,26 +29,27 @@ class StartAutoBidButtonWidget extends StatelessWidget {
     );
     return ButtonWidget(
       text:
-          type == homeController.liveBidsSectionScreen
+          currentOpenSection == homeController.liveBidsSectionScreen
               ? 'Submit Auto Bid'
-              : type == homeController.upcomingSectionScreen
+              : currentOpenSection == homeController.upcomingSectionScreen
               ? 'Auto Bid Upto'
-              : type == homeController.ocb70SectionScreen
+              : currentOpenSection == homeController.otobuySectionScreen
               ? 'Make Offer'
-              : type == homeController.marketplaceSectionScreen
+              : currentOpenSection == homeController.marketplaceSectionScreen
               ? 'Submit Auto Bid'
               : 'Submit Auto Bid',
       onTap: () {
-        if (type == homeController.liveBidsSectionScreen) {
-          autoBidButtonForLiveBidsSection(carId);
-        } else if (type == homeController.upcomingSectionScreen) {
-          autoBidButtonForUpcomingSection(carId);
-        } else if (type == homeController.ocb70SectionScreen) {
-          autoBidButtonForOcb70Section(carId);
-        } else if (type == homeController.marketplaceSectionScreen) {
-          defaultAutoBidSheet(carId);
+        if (currentOpenSection == homeController.liveBidsSectionScreen) {
+          autoBidButtonForLiveBidsSection(carId, remainingAuctionTime);
+        } else if (currentOpenSection == homeController.upcomingSectionScreen) {
+          autoBidButtonForUpcomingSection(carId, remainingAuctionTime);
+        } else if (currentOpenSection == homeController.otobuySectionScreen) {
+          autoBidButtonForOtobuySection(carId, remainingAuctionTime);
+        } else if (currentOpenSection ==
+            homeController.marketplaceSectionScreen) {
+          defaultAutoBidSheet(carId, remainingAuctionTime);
         } else {
-          defaultAutoBidSheet(carId);
+          defaultAutoBidSheet(carId, remainingAuctionTime);
         }
       },
       isLoading: getxController.isLoading,
@@ -60,7 +61,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
   }
 
   // Default Auto Bid Sheet
-  void defaultAutoBidSheet(String carId) {
+  void defaultAutoBidSheet(String carId, RxString remainingAuctionTime) {
     final CarDetailsController bidController = Get.put(
       CarDetailsController(carId),
     );
@@ -127,7 +128,7 @@ class StartAutoBidButtonWidget extends StatelessWidget {
                           SizedBox(width: 4),
                           Obx(
                             () => Text(
-                              bidController.remainingTime.value,
+                              remainingAuctionTime.value,
                               style: TextStyle(
                                 color: AppColors.red,
                                 fontSize: 12,

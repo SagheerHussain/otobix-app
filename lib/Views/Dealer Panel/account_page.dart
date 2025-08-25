@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
 import 'package:otobix/Controllers/account_controller.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
-import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Network/socket_service.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Utils/socket_events.dart';
 import 'dart:convert';
 import 'package:otobix/Widgets/toast_widget.dart';
 
@@ -15,12 +18,18 @@ class AdminCarAuctionTimerController extends GetxController {
   void onInit() {
     super.onInit();
     fetchCars();
+    listenToAuctionTimeUpdate();
   }
 
+  // Fetch cars
   Future<void> fetchCars() async {
     isLoading.value = true;
     try {
-      final response = await ApiService.get(endpoint: AppUrls.getCarsList);
+      final response = await ApiService.get(
+        endpoint: AppUrls.getCarsList(
+          auctionStatus: AppConstants.auctionStatuses.all,
+        ),
+      );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         cars.value = List<CarsListModel>.from(
@@ -38,18 +47,20 @@ class AdminCarAuctionTimerController extends GetxController {
     }
   }
 
-  void updateAuctionFields({
-    required String carId,
-    required DateTime newStartTime,
-    required int newDuration,
-  }) {
-    final index = cars.indexWhere((c) => c.id == carId);
-    if (index != -1) {
-      cars[index].auctionStartTime = newStartTime;
-      cars[index].auctionDuration = newDuration;
-    }
-  }
+  // Update auction fields
+  // void updateAuctionFields({
+  //   required String carId,
+  //   required DateTime newStartTime,
+  //   required int newDuration,
+  // }) {
+  //   final index = cars.indexWhere((c) => c.id == carId);
+  //   if (index != -1) {
+  //     cars[index].auctionStartTime = newStartTime;
+  //     cars[index].auctionDuration = newDuration;
+  //   }
+  // }
 
+  // Update auction time
   Future<void> updateAuctionTime({
     required String carId,
     DateTime? newStartTime,
@@ -78,26 +89,60 @@ class AdminCarAuctionTimerController extends GetxController {
           if (newDuration != null) {
             cars[index].auctionDuration = newDuration;
           }
+          cars.refresh(); // <— notify Obx rebuilds bound to cars
+          update();
         }
-        ToastWidget.show(
-          context: Get.context!,
-          title: 'Auction time updated successfully',
-          type: ToastType.success,
-        );
-        fetchCars();
+        final ctx = Get.overlayContext ?? Get.context;
+        if (ctx != null) {
+          ToastWidget.show(
+            context: ctx,
+            title: 'Auction time updated successfully',
+            type: ToastType.success,
+          );
+        }
       } else {
+        final ctx = Get.overlayContext ?? Get.context;
+        if (ctx != null) {
+          ToastWidget.show(
+            context: ctx,
+            title: 'Failed to update auction time',
+            type: ToastType.error,
+          );
+        }
+      }
+    } catch (e) {
+      final ctx = Get.overlayContext ?? Get.context;
+      if (ctx != null) {
         ToastWidget.show(
-          context: Get.context!,
+          context: ctx,
           title: 'Failed to update auction time',
           type: ToastType.error,
         );
       }
-    } catch (e) {
-      ToastWidget.show(
-        context: Get.context!,
-        title: 'Failed to update auction time',
-        type: ToastType.error,
-      );
     }
+  }
+
+  // Listen to auction time update
+  void listenToAuctionTimeUpdate() {
+    SocketService.instance.joinRoom(SocketEvents.auctionTimerRoom);
+    SocketService.instance.on(SocketEvents.auctionTimerUpdated, (data) {
+      final carId = data['carId'].toString();
+      final index = cars.indexWhere((c) => c.id == carId);
+      if (index == -1) return;
+
+      if (data['auctionStartTime'] != null) {
+        cars[index].auctionStartTime = DateTime.parse(data['auctionStartTime']);
+      }
+      if (data['auctionEndTime'] != null) {
+        cars[index].auctionEndTime = DateTime.parse(data['auctionEndTime']);
+      }
+      if (data['auctionDuration'] != null) {
+        cars[index].auctionDuration = int.parse(
+          data['auctionDuration'].toString(),
+        );
+      }
+      cars.refresh();
+      update();
+    });
   }
 }
