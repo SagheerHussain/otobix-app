@@ -11,9 +11,9 @@ import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 import '../Network/api_service.dart';
 
-class LiveBidsController extends GetxController {
-  RxInt liveBidsCarsCount = 0.obs;
-  List<CarsListModel> liveBidsCarsList = <CarsListModel>[];
+class MarketplaceController extends GetxController {
+  RxInt marketplaceCarsCount = 0.obs;
+  List<CarsListModel> marketplaceCarsList = [];
   RxBool isLoading = false.obs;
 
   final RxSet<String> wishlistCarsIds = <String>{}.obs;
@@ -21,33 +21,26 @@ class LiveBidsController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-
     final userId =
         await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
 
     // Fetch cars then wishlist, then apply hearts
-    await fetchLiveBidsCarsList();
+    await fetchMarketplaceCarsList();
     await _fetchAndApplyWishlist(userId: userId);
 
     // Listen to realtime wishlist updates
     _listenWishlistRealtime();
-
-    // Listen for patches
-    _listenLiveBidsSectionRealtime();
-
-    //Other listeners
-    listenUpdatedBidAndChangeHighestBidLocally();
-    // listenToAuctionWonEvent();
   }
 
-  final RxList<CarsListModel> filteredLiveBidsCarsList = <CarsListModel>[].obs;
+  final RxList<CarsListModel> filteredMarketplaceCarsList =
+      <CarsListModel>[].obs;
 
-  // Live Bids Cars List
-  Future<void> fetchLiveBidsCarsList() async {
+  // Live Cars List
+  Future<void> fetchMarketplaceCarsList() async {
     isLoading.value = true;
     try {
       final url = AppUrls.getCarsList(
-        auctionStatus: AppConstants.auctionStatuses.live,
+        auctionStatus: AppConstants.auctionStatuses.marketplace,
       );
       final response = await ApiService.get(endpoint: url);
 
@@ -56,100 +49,79 @@ class LiveBidsController extends GetxController {
 
         final currentTime = DateTime.now();
 
-        // liveBidsCarsList = List<CarsListModel>.from(
-        //   (data as List).map(
-        //     (car) => CarsListModel.fromJson(data: car, id: car['id']),
-        //   ),
-        // );
+        marketplaceCarsList = List<CarsListModel>.from(
+          (data as List).map(
+            (car) => CarsListModel.fromJson(data: car, id: car['id']),
+          ),
+        );
 
-        liveBidsCarsList = (data as List<dynamic>)
-            .map<CarsListModel>(
-              (e) => CarsListModel.fromJson(
-                id: e['id'] as String,
-                data: Map<String, dynamic>.from(e as Map),
-              ),
-            )
-            .toList(growable: false);
+        marketplaceCarsCount.value = marketplaceCarsList.length;
 
         // Only keep cars with future auctionEndTime
-        filteredLiveBidsCarsList.value = liveBidsCarsList
-            .where((car) {
+        filteredMarketplaceCarsList.value =
+            marketplaceCarsList.where((car) {
               return car.auctionEndTime != null &&
-                  car.auctionStatus == AppConstants.auctionStatuses.live &&
                   car.auctionEndTime!.isAfter(currentTime);
-            })
-            .toList(growable: false);
+            }).toList();
 
-        liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
-
-        for (var car in liveBidsCarsList) {
+        for (var car in marketplaceCarsList) {
           await startAuctionCountdown(car);
         }
       } else {
-        filteredLiveBidsCarsList.value = <CarsListModel>[];
-        liveBidsCarsCount.value = 0;
+        filteredMarketplaceCarsList.value = [];
         debugPrint('Failed to fetch data ${response.body}');
       }
     } catch (error) {
       debugPrint('Failed to fetch data: $error');
-      filteredLiveBidsCarsList.value = <CarsListModel>[];
-      liveBidsCarsCount.value = 0;
+      filteredMarketplaceCarsList.value = [];
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Listen and Update Bid locally
-  void listenUpdatedBidAndChangeHighestBidLocally() {
-    SocketService.instance.on(SocketEvents.bidUpdated, (data) {
-      final String carId = data['carId'];
-      final int highestBid = data['highestBid'];
-
-      final index = filteredLiveBidsCarsList.indexWhere((c) => c.id == carId);
-      if (index != -1) {
-        filteredLiveBidsCarsList[index].highestBid.value =
-            highestBid.toDouble(); // ✅ this is the real-time field
-      }
-      debugPrint('📢 Bid update received: $data');
-    });
-  }
-
   // Auction Timer
   Future<void> startAuctionCountdown(CarsListModel car) async {
     DateTime getAuctionEndTime() {
-      // ✅ Prefer server's end time when present
-      if (car.auctionEndTime != null) return car.auctionEndTime!;
       final startTime = car.auctionStartTime ?? DateTime.now();
       final duration = Duration(
         hours: car.auctionDuration > 0 ? car.auctionDuration : 12,
+        // hours: car.defaultAuctionTime,
       );
       return startTime.add(duration);
     }
 
-    car.auctionTimer?.cancel(); // cancel previous if any
+    car.auctionTimer?.cancel(); // cancel previous
 
-    car.auctionTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    car.auctionTimer = Timer.periodic(Duration(seconds: 1), (_) {
       final now = DateTime.now();
-      final endAt = getAuctionEndTime();
-      final diff = endAt.difference(now);
+      final diff = getAuctionEndTime().difference(now);
 
       if (diff.isNegative) {
-        // stop at zero instead of silently rolling another 12h
-        car.remainingAuctionTime.value = '00h : 00m : 00s';
-        car.auctionTimer?.cancel();
-        return;
-      }
+        // 🟥 Timer expired — reset startTime and countdown to now + 12 hours
+        car.auctionStartTime = DateTime.now();
+        car.auctionDuration = 12;
 
-      final hours = diff.inHours.toString().padLeft(2, '0');
-      final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
-      final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
-      car.remainingAuctionTime.value = '${hours}h : ${minutes}m : ${seconds}s';
+        final newDiff = Duration(hours: 12);
+        // final newDiff = Duration(hours: 0);
+
+        final hours = newDiff.inHours.toString().padLeft(2, '0');
+        final minutes = (newDiff.inMinutes % 60).toString().padLeft(2, '0');
+        final seconds = (newDiff.inSeconds % 60).toString().padLeft(2, '0');
+        car.remainingAuctionTime.value =
+            '${hours}h : ${minutes}m : ${seconds}s';
+      } else {
+        final hours = diff.inHours.toString().padLeft(2, '0');
+        final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
+        final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
+        car.remainingAuctionTime.value =
+            '${hours}h : ${minutes}m : ${seconds}s';
+      }
     });
   }
 
   @override
   void onClose() {
-    for (var car in filteredLiveBidsCarsList) {
+    for (var car in marketplaceCarsList) {
       car.auctionTimer?.cancel();
     }
     super.onClose();
@@ -267,54 +239,5 @@ class LiveBidsController extends GetxController {
         type: ToastType.error,
       );
     }
-  }
-
-  // Listen to live bids section realtime
-  void _listenLiveBidsSectionRealtime() {
-    SocketService.instance.joinRoom(SocketEvents.liveBidsSectionRoom);
-
-    SocketService.instance.on(SocketEvents.liveBidsSectionUpdated, (
-      data,
-    ) async {
-      final String action = '${data['action']}';
-
-      if (action == 'removed') {
-        final String id = '${data['id']}';
-        // cancel its timer to avoid leaks
-        final idx = filteredLiveBidsCarsList.indexWhere((c) => c.id == id);
-        if (idx != -1) {
-          filteredLiveBidsCarsList[idx].auctionTimer?.cancel();
-        }
-        filteredLiveBidsCarsList.value =
-            filteredLiveBidsCarsList.where((c) => c.id != id).toList();
-        liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
-        return;
-      }
-
-      if (action == 'added' || action == 'updated') {
-        final String id = '${data['id']}';
-        final Map<String, dynamic> carJson = Map<String, dynamic>.from(
-          data['car'] ?? const {},
-        );
-
-        final incoming = CarsListModel.fromJson(id: id, data: carJson);
-
-        final idx = filteredLiveBidsCarsList.indexWhere((c) => c.id == id);
-
-        if (idx == -1) {
-          // brand-new → add, then start its timer
-          filteredLiveBidsCarsList.add(incoming);
-          await startAuctionCountdown(incoming);
-        } else {
-          // existing → cancel old timer, replace model, restart timer
-          filteredLiveBidsCarsList[idx].auctionTimer?.cancel();
-          filteredLiveBidsCarsList[idx] = incoming;
-          await startAuctionCountdown(filteredLiveBidsCarsList[idx]);
-        }
-        // ✅ update count after mutation
-        liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
-        return;
-      }
-    });
   }
 }

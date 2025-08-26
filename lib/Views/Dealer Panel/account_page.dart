@@ -4,10 +4,10 @@ import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
 import 'package:otobix/Controllers/account_controller.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
 import 'package:otobix/admin/admin_car_auction_timer_page.dart';
+import 'package:otobix/admin/admin_cars_list_page.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -19,11 +19,11 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   final AccountController accountController = Get.put(AccountController());
 
-  @override
-  void initState() {
-    super.initState();
-    accountController.getUserProfile();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   accountController.getUserProfile();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +107,7 @@ class _AccountPageState extends State<AccountPage> {
                   //       Get.to(AdminApprovedRejectedUsersPage());
                   //     },
                   //   ),
-                  if (accountController.userRoleFromSharedPrefs !=
-                      AppConstants.roles.admin)
+                  if (!accountController.isAdmin)
                     ProfileOption(
                       icon: Icons.settings,
                       color: AppColors.grey,
@@ -118,8 +117,7 @@ class _AccountPageState extends State<AccountPage> {
                         Get.to(UserPreferencesPage());
                       },
                     ),
-                  if (accountController.userRoleFromSharedPrefs ==
-                      AppConstants.roles.admin)
+                  if (accountController.isAdmin)
                     ProfileOption(
                       icon: Icons.timer,
                       color: AppColors.blue,
@@ -129,8 +127,18 @@ class _AccountPageState extends State<AccountPage> {
                         Get.to(AdminCarAuctionTimerPage());
                       },
                     ),
-                  if (accountController.userRoleFromSharedPrefs !=
-                      AppConstants.roles.admin)
+                  if (accountController.isAdmin)
+                    ProfileOption(
+                      icon: Icons.car_rental,
+                      color: AppColors.green,
+                      title: "Cars List",
+                      description: "View all cars list.",
+                      onTap: () {
+                        Get.to(AdminCarsListPage());
+                      },
+                    ),
+
+                  if (!accountController.isAdmin)
                     ProfileOption(
                       icon: Icons.gavel,
                       color: Colors.blue,
@@ -147,8 +155,7 @@ class _AccountPageState extends State<AccountPage> {
                         tabBarWidgetController.setSelectedTab(0);
                       },
                     ),
-                  if (accountController.userRoleFromSharedPrefs !=
-                      AppConstants.roles.admin)
+                  if (!accountController.isAdmin)
                     ProfileOption(
                       icon: Icons.favorite_border,
                       color: Colors.red,

@@ -4,7 +4,6 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
@@ -16,13 +15,13 @@ import 'package:otobix/helpers/Preferences_helper.dart';
 import '../Network/api_service.dart';
 
 class HomeController extends GetxController {
-  List<CarsListModel> carsList = [];
-  RxBool isLoading = false.obs;
+  // List<CarsListModel> carsList = [];
+  // RxBool isLoading = false.obs;
   final RxInt unreadNotificationsCount = 0.obs;
 
   final RxSet<String> wishlistCarsIds = <String>{}.obs;
-  // RxString remainingAuctionTime = '00h : 00m : 00s'.obs;
-  // Timer? _auctionTimer;
+  // // RxString remainingAuctionTime = '00h : 00m : 00s'.obs;
+  // // Timer? _auctionTimer;
 
   TextEditingController searchController = TextEditingController();
   TextEditingController minPriceController = TextEditingController();
@@ -36,41 +35,41 @@ class HomeController extends GetxController {
   final String marketplaceSectionScreen = 'marketplace';
 
   // dummy add/remove cars to favorite
-  final RxList<CarsListModel> favorites = <CarsListModel>[].obs;
+  // final RxList<CarsListModel> favorites = <CarsListModel>[].obs;
 
-  final RxList<CarsListModel> marketplaceCars = <CarsListModel>[].obs;
+  // final RxList<CarsListModel> marketplaceCars = <CarsListModel>[].obs;
 
   // dummy add/remove cars to favorite
-  void changeFavoriteCars(CarsListModel car) {
-    car.isFavorite.value = !car.isFavorite.value;
+  // void changeFavoriteCars(CarsListModel car) {
+  //   car.isFavorite.value = !car.isFavorite.value;
 
-    if (car.isFavorite.value) {
-      favorites.add(car);
-      ToastWidget.show(
-        context: Get.context!,
-        title: 'Added to wishlist',
-        type: ToastType.success,
-      );
-    } else {
-      favorites.remove(car);
-      ToastWidget.show(
-        context: Get.context!,
-        title: 'Removed from wishlist',
-        type: ToastType.error,
-      );
-    }
-  }
+  //   if (car.isFavorite.value) {
+  //     favorites.add(car);
+  //     ToastWidget.show(
+  //       context: Get.context!,
+  //       title: 'Added to wishlist',
+  //       type: ToastType.success,
+  //     );
+  //   } else {
+  //     favorites.remove(car);
+  //     ToastWidget.show(
+  //       context: Get.context!,
+  //       title: 'Removed from wishlist',
+  //       type: ToastType.error,
+  //     );
+  //   }
+  // }
 
   // single instance of ValueNotifier
-  RxInt liveCarsCount = 0.obs;
-  RxInt upcomingCarsCount = 0.obs;
-  RxInt otoBuyCarsCount = 0.obs;
-  RxInt marketplaceCarsCount = 0.obs;
+  // RxInt liveCarsCount = 0.obs;
+  // RxInt upcomingCarsCount = 0.obs;
+  // RxInt otoBuyCarsCount = 0.obs;
+  // RxInt marketplaceCarsCount = 0.obs;
 
   final selectedSegmentNotifier = ValueNotifier<String>('live');
 
-  // final segments =
-  //     {'live': 'Live (23)', 'ocb': 'OCB (10)', 'marketplace': 'Marketplace (5)'}.obs;
+  // // final segments =
+  // //     {'live': 'Live (23)', 'ocb': 'OCB (10)', 'marketplace': 'Marketplace (5)'}.obs;
 
   RxString selectedSegment = 'live'.obs;
 
@@ -94,19 +93,18 @@ class HomeController extends GetxController {
     );
 
     // 2) Fetch cars then wishlist, then apply hearts
-    await fetchLiveCarsList();
-    await _fetchAndApplyWishlist(userId: userId);
+    // await fetchLiveCarsList();
+    // await _fetchAndApplyWishlist(userId: userId);
 
     // 3) Listen to realtime wishlist updates
-    _listenWishlistRealtime();
+    // _listenWishlistRealtime();
 
     // 4) 🌟 LIVE LIST: join room + listen for patches
-    _listenLiveBidsSectionRealtime();
+    // _listenLiveBidsSectionRealtime();
 
     //Other listeners
-    listenUpdatedBidAndChangeHighestBidLocally();
+    // listenUpdatedBidAndChangeHighestBidLocally();
     listenToAuctionWonEvent();
-    // filteredCars.value = carsList;
     // Listen to changes in ValueNotifier
     selectedSegmentNotifier.addListener(() {
       selectedSegment.value = selectedSegmentNotifier.value;
@@ -145,122 +143,157 @@ class HomeController extends GetxController {
     'Creta': ['EX', 'SX'],
   };
 
-  final RxList<CarsListModel> filteredCars = <CarsListModel>[].obs;
+  // final RxList<CarsListModel> filteredCars = <CarsListModel>[].obs;
 
-  // Live Cars List
-  Future<void> fetchLiveCarsList() async {
-    isLoading.value = true;
-    try {
-      final url = AppUrls.getCarsList(
-        auctionStatus: AppConstants.auctionStatuses.live,
-      );
-      final response = await ApiService.get(endpoint: url);
+  // Live Bids Cars List
+  // Future<void> fetchLiveCarsList() async {
+  //   isLoading.value = true;
+  //   try {
+  //     final url = AppUrls.getCarsList(
+  //       auctionStatus: AppConstants.auctionStatuses.live,
+  //     );
+  //     final response = await ApiService.get(endpoint: url);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
 
-        final currentTime = DateTime.now();
+  //       final currentTime = DateTime.now();
 
-        carsList = List<CarsListModel>.from(
-          (data as List).map(
-            (car) => CarsListModel.fromJson(data: car, id: car['id']),
-          ),
-        );
+  //       carsList = List<CarsListModel>.from(
+  //         (data as List).map(
+  //           (car) => CarsListModel.fromJson(data: car, id: car['id']),
+  //         ),
+  //       );
 
-        liveCarsCount.value = carsList.length;
-        // Temp for now
-        upcomingCarsCount.value = carsList.length;
-        otoBuyCarsCount.value = carsList.length;
-        marketplaceCarsCount.value = carsList.length;
-        ///////////////
+  //       liveCarsCount.value = carsList.length;
+  //       // Temp for now
+  //       upcomingCarsCount.value = carsList.length;
+  //       otoBuyCarsCount.value = carsList.length;
+  //       marketplaceCarsCount.value = carsList.length;
+  //       ///////////////
 
-        // filteredCars.value = carsList;
-        // Only keep cars with future auctionEndTime
-        filteredCars.value =
-            carsList.where((car) {
-              return car.auctionEndTime != null &&
-                  car.auctionStatus == AppConstants.auctionStatuses.live &&
-                  car.auctionEndTime!.isAfter(currentTime);
-            }).toList();
+  //       // filteredCars.value = carsList;
+  //       // Only keep cars with future auctionEndTime
+  //       filteredCars.value =
+  //           carsList.where((car) {
+  //             return car.auctionEndTime != null &&
+  //                 car.auctionStatus == AppConstants.auctionStatuses.live &&
+  //                 car.auctionEndTime!.isAfter(currentTime);
+  //           }).toList();
 
-        for (var car in carsList) {
-          await startAuctionCountdown(car);
-        }
+  //       for (var car in carsList) {
+  //         await startAuctionCountdown(car);
+  //       }
 
-        debugPrint('Cars List Fetched Successfully');
-        // debugPrint(carsList[1].toJson().toString());
-      } else {
-        filteredCars.value = [];
-        debugPrint('Failed to fetch data ${response.body}');
-      }
-    } catch (error) {
-      debugPrint('Failed to fetch data: $error');
-      filteredCars.value = [];
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  //       debugPrint('Cars List Fetched Successfully');
+  //       // debugPrint(carsList[1].toJson().toString());
+  //     } else {
+  //       filteredCars.value = [];
+  //       debugPrint('Failed to fetch data ${response.body}');
+  //     }
+  //   } catch (error) {
+  //     debugPrint('Failed to fetch data: $error');
+  //     filteredCars.value = [];
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   // Listen and Update Bid locally
-  void listenUpdatedBidAndChangeHighestBidLocally() {
-    SocketService.instance.on(SocketEvents.bidUpdated, (data) {
-      final String carId = data['carId'];
-      final int highestBid = data['highestBid'];
+  // void listenUpdatedBidAndChangeHighestBidLocally() {
+  //   SocketService.instance.on(SocketEvents.bidUpdated, (data) {
+  //     final String carId = data['carId'];
+  //     final int highestBid = data['highestBid'];
 
-      final index = filteredCars.indexWhere((c) => c.id == carId);
-      if (index != -1) {
-        filteredCars[index].highestBid.value =
-            highestBid.toDouble(); // ✅ this is the real-time field
-      }
-      debugPrint('📢 Bid update received: $data');
-    });
-  }
+  //     final index = filteredCars.indexWhere((c) => c.id == carId);
+  //     if (index != -1) {
+  //       filteredCars[index].highestBid.value =
+  //           highestBid.toDouble(); // ✅ this is the real-time field
+  //     }
+  //     debugPrint('📢 Bid update received: $data');
+  //   });
+  // }
 
   // Auction Timer
-  Future<void> startAuctionCountdown(CarsListModel car) async {
-    DateTime getAuctionEndTime() {
-      final startTime = car.auctionStartTime ?? DateTime.now();
-      final duration = Duration(
-        hours: car.auctionDuration > 0 ? car.auctionDuration : 12,
-        // hours: car.defaultAuctionTime,
-      );
-      return startTime.add(duration);
-    }
+  // Future<void> startAuctionCountdown(CarsListModel car) async {
+  //   DateTime getAuctionEndTime() {
+  //     // ✅ Prefer server's end time when present
+  //     if (car.auctionEndTime != null) return car.auctionEndTime!;
+  //     final startTime = car.auctionStartTime ?? DateTime.now();
+  //     final duration = Duration(
+  //       hours: car.auctionDuration > 0 ? car.auctionDuration : 12,
+  //     );
+  //     return startTime.add(duration);
+  //   }
 
-    car.auctionTimer?.cancel(); // cancel previous
+  //   car.auctionTimer?.cancel(); // cancel previous if any
 
-    car.auctionTimer = Timer.periodic(Duration(seconds: 1), (_) {
-      final now = DateTime.now();
-      final diff = getAuctionEndTime().difference(now);
+  //   car.auctionTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+  //     final now = DateTime.now();
+  //     final endAt = getAuctionEndTime();
+  //     final diff = endAt.difference(now);
 
-      if (diff.isNegative) {
-        // 🟥 Timer expired — reset startTime and countdown to now + 12 hours
-        car.auctionStartTime = DateTime.now();
-        car.auctionDuration = 12;
+  //     if (diff.isNegative) {
+  //       // stop at zero instead of silently rolling another 12h
+  //       car.remainingAuctionTime.value = '00h : 00m : 00s';
+  //       car.auctionTimer?.cancel();
+  //       return;
+  //     }
 
-        final newDiff = Duration(hours: 12);
-        // final newDiff = Duration(hours: 0);
+  //     final hours = diff.inHours.toString().padLeft(2, '0');
+  //     final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
+  //     final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
+  //     car.remainingAuctionTime.value = '${hours}h : ${minutes}m : ${seconds}s';
+  //   });
+  // }
 
-        final hours = newDiff.inHours.toString().padLeft(2, '0');
-        final minutes = (newDiff.inMinutes % 60).toString().padLeft(2, '0');
-        final seconds = (newDiff.inSeconds % 60).toString().padLeft(2, '0');
-        car.remainingAuctionTime.value =
-            '${hours}h : ${minutes}m : ${seconds}s';
-      } else {
-        final hours = diff.inHours.toString().padLeft(2, '0');
-        final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
-        final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
-        car.remainingAuctionTime.value =
-            '${hours}h : ${minutes}m : ${seconds}s';
-      }
-    });
-  }
+  // Future<void> startAuctionCountdown1(CarsListModel car) async {
+  //   DateTime getAuctionEndTime() {
+  //     // ✅ Prefer server's end time when present
+  //     if (car.auctionEndTime != null) return car.auctionEndTime!;
+
+  //     final startTime = car.auctionStartTime ?? DateTime.now();
+  //     final duration = Duration(
+  //       hours: car.auctionDuration > 0 ? car.auctionDuration : 12,
+  //       // hours: car.defaultAuctionTime,
+  //     );
+  //     return startTime.add(duration);
+  //   }
+
+  //   car.auctionTimer?.cancel(); // cancel previous
+
+  //   car.auctionTimer = Timer.periodic(Duration(seconds: 1), (_) {
+  //     final now = DateTime.now();
+  //     final diff = getAuctionEndTime().difference(now);
+
+  //     if (diff.isNegative) {
+  //       // 🟥 Timer expired — reset startTime and countdown to now + 12 hours
+  //       car.auctionStartTime = DateTime.now();
+  //       car.auctionDuration = 12;
+
+  //       final newDiff = Duration(hours: 12);
+  //       // final newDiff = Duration(hours: 0);
+
+  //       final hours = newDiff.inHours.toString().padLeft(2, '0');
+  //       final minutes = (newDiff.inMinutes % 60).toString().padLeft(2, '0');
+  //       final seconds = (newDiff.inSeconds % 60).toString().padLeft(2, '0');
+  //       car.remainingAuctionTime.value =
+  //           '${hours}h : ${minutes}m : ${seconds}s';
+  //     } else {
+  //       final hours = diff.inHours.toString().padLeft(2, '0');
+  //       final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
+  //       final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
+  //       car.remainingAuctionTime.value =
+  //           '${hours}h : ${minutes}m : ${seconds}s';
+  //     }
+  //   });
+  // }
 
   @override
   void onClose() {
-    for (var car in carsList) {
-      car.auctionTimer?.cancel();
-    }
+    // for (var car in carsList) {
+    //   car.auctionTimer?.cancel();
+    // }
     super.onClose();
   }
 
@@ -353,7 +386,7 @@ class HomeController extends GetxController {
                   const SizedBox(height: 20),
                   ButtonWidget(
                     onTap: () => Get.back(),
-                    text: "View Details",
+                    text: "Ok",
                     isLoading: false.obs,
                     height: 40,
                     width: 150,
@@ -458,125 +491,194 @@ class HomeController extends GetxController {
   }
 
   // Add Car To Wishlist
-  Future<void> addCarToWishlist({required String carId}) async {
-    final userId =
-        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
-    try {
-      final url = AppUrls.addToWishlist;
-      final response = await ApiService.post(
-        endpoint: url,
-        body: {'userId': userId, 'carId': carId},
-      );
+  // Future<void> addCarToWishlist({required String carId}) async {
+  //   final userId =
+  //       await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+  //   try {
+  //     final url = AppUrls.addToWishlist;
+  //     final response = await ApiService.post(
+  //       endpoint: url,
+  //       body: {'userId': userId, 'carId': carId},
+  //     );
 
-      if (response.statusCode == 200) {
-        ToastWidget.show(
-          context: Get.context!,
-          title: 'Car added to favourites',
-          type: ToastType.success,
-        );
-      } else {
-        debugPrint('Failed to add car to favourites ${response.body}');
-        ToastWidget.show(
-          context: Get.context!,
-          title: 'Failed to add car to favourites',
-          type: ToastType.error,
-        );
-      }
-    } catch (error) {
-      debugPrint('Failed to add car to favourites: $error');
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       ToastWidget.show(
+  //         context: Get.context!,
+  //         title: 'Car added to favourites',
+  //         type: ToastType.success,
+  //       );
+  //     } else {
+  //       debugPrint('Failed to add car to favourites ${response.body}');
+  //       ToastWidget.show(
+  //         context: Get.context!,
+  //         title: 'Failed to add car to favourites',
+  //         type: ToastType.error,
+  //       );
+  //     }
+  //   } catch (error) {
+  //     debugPrint('Failed to add car to favourites: $error');
+  //   }
+  // }
 
-  Future<void> _fetchAndApplyWishlist({required String userId}) async {
-    try {
-      final url = AppUrls.getUserWishlist(userId: userId);
-      final response = await ApiService.get(endpoint: url);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final List<dynamic> ids = data['wishlist'] ?? [];
+  // Future<void> _fetchAndApplyWishlist({required String userId}) async {
+  //   try {
+  //     final url = AppUrls.getUserWishlist(userId: userId);
+  //     final response = await ApiService.get(endpoint: url);
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       final List<dynamic> ids = data['wishlist'] ?? [];
 
-        wishlistCarsIds
-          ..clear()
-          ..addAll(ids.map((e) => '$e'));
-      }
-    } catch (e) {
-      debugPrint('_fetchAndApplyWishlist error: $e');
-    }
-  }
+  //       wishlistCarsIds
+  //         ..clear()
+  //         ..addAll(ids.map((e) => '$e'));
+  //     }
+  //   } catch (e) {
+  //     debugPrint('_fetchAndApplyWishlist error: $e');
+  //   }
+  // }
 
-  void _listenWishlistRealtime() {
-    SocketService.instance.on(SocketEvents.wishlistUpdated, (data) {
-      final String action = '${data['action']}';
-      final String carId = '${data['carId']}';
+  // void _listenWishlistRealtime() {
+  //   SocketService.instance.on(SocketEvents.wishlistUpdated, (data) {
+  //     final String action = '${data['action']}';
+  //     final String carId = '${data['carId']}';
 
-      if (action == 'add') {
-        wishlistCarsIds.add(carId);
-      } else if (action == 'remove') {
-        wishlistCarsIds.remove(carId);
-      }
-    });
-  }
+  //     if (action == 'add') {
+  //       wishlistCarsIds.add(carId);
+  //     } else if (action == 'remove') {
+  //       wishlistCarsIds.remove(carId);
+  //     }
+  //   });
+  // }
 
-  /// Toggle (optimistic UI + rollback on error)
-  Future<void> toggleFavorite(CarsListModel car) async {
-    final userId =
-        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
-    final isFav = wishlistCarsIds.contains(car.id);
+  // /// Toggle (optimistic UI + rollback on error)
+  // Future<void> toggleFavorite(CarsListModel car) async {
+  //   final userId =
+  //       await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+  //   final isFav = wishlistCarsIds.contains(car.id);
 
-    // optimistic
-    if (isFav) {
-      wishlistCarsIds.remove(car.id);
-    } else {
-      wishlistCarsIds.add(car.id);
-    }
+  //   // optimistic
+  //   if (isFav) {
+  //     wishlistCarsIds.remove(car.id);
+  //   } else {
+  //     wishlistCarsIds.add(car.id);
+  //   }
 
-    try {
-      if (isFav) {
-        final res = await ApiService.post(
-          endpoint: AppUrls.removeFromWishlist,
-          body: {'userId': userId, 'carId': car.id},
-        );
-        if (res.statusCode != 200) throw Exception(res.body);
-        ToastWidget.show(
-          context: Get.context!,
-          title: 'Removed from wishlist',
-          type: ToastType.error,
-        );
-      } else {
-        final res = await ApiService.post(
-          endpoint: AppUrls.addToWishlist,
-          body: {'userId': userId, 'carId': car.id},
-        );
-        if (res.statusCode != 200) throw Exception(res.body);
-        ToastWidget.show(
-          context: Get.context!,
-          title: 'Added to wishlist',
-          type: ToastType.success,
-        );
-      }
-      // Server will also emit wishlist:updated → sync other devices.
-    } catch (e) {
-      debugPrint('Failed to update wishlist: $e');
-      // rollback
-      if (isFav) {
-        wishlistCarsIds.add(car.id);
-      } else {
-        wishlistCarsIds.remove(car.id);
-      }
-      ToastWidget.show(
-        context: Get.context!,
-        title: 'Failed to update wishlist',
-        type: ToastType.error,
-      );
-    }
-  }
+  //   try {
+  //     if (isFav) {
+  //       final res = await ApiService.post(
+  //         endpoint: AppUrls.removeFromWishlist,
+  //         body: {'userId': userId, 'carId': car.id},
+  //       );
+  //       if (res.statusCode != 200) throw Exception(res.body);
+  //       ToastWidget.show(
+  //         context: Get.context!,
+  //         title: 'Removed from wishlist',
+  //         type: ToastType.error,
+  //       );
+  //     } else {
+  //       final res = await ApiService.post(
+  //         endpoint: AppUrls.addToWishlist,
+  //         body: {'userId': userId, 'carId': car.id},
+  //       );
+  //       if (res.statusCode != 200) throw Exception(res.body);
+  //       ToastWidget.show(
+  //         context: Get.context!,
+  //         title: 'Added to wishlist',
+  //         type: ToastType.success,
+  //       );
+  //     }
+  //     // Server will also emit wishlist:updated → sync other devices.
+  //   } catch (e) {
+  //     debugPrint('Failed to update wishlist: $e');
+  //     // rollback
+  //     if (isFav) {
+  //       wishlistCarsIds.add(car.id);
+  //     } else {
+  //       wishlistCarsIds.remove(car.id);
+  //     }
+  //     ToastWidget.show(
+  //       context: Get.context!,
+  //       title: 'Failed to update wishlist',
+  //       type: ToastType.error,
+  //     );
+  //   }
+  // }
 
-  void _listenLiveBidsSectionRealtime() {
-    SocketService.instance.joinRoom(SocketEvents.liveBidsSectionRoom);
-    SocketService.instance.on(SocketEvents.liveBidsSectionUpdated, (data) {
-      debugPrint('Live Bids Section Updated: $data');
-    });
-  }
+  // // Listen to live bids section realtime
+  // void _listenLiveBidsSectionRealtime() {
+  //   SocketService.instance.joinRoom(SocketEvents.liveBidsSectionRoom);
+
+  //   SocketService.instance.on(SocketEvents.liveBidsSectionUpdated, (
+  //     data,
+  //   ) async {
+  //     final String action = '${data['action']}';
+
+  //     if (action == 'removed') {
+  //       final String id = '${data['id']}';
+  //       // cancel its timer to avoid leaks
+  //       final idx = filteredCars.indexWhere((c) => c.id == id);
+  //       if (idx != -1) {
+  //         filteredCars[idx].auctionTimer?.cancel();
+  //       }
+  //       filteredCars.value = filteredCars.where((c) => c.id != id).toList();
+  //       return;
+  //     }
+
+  //     if (action == 'added' || action == 'updated') {
+  //       final String id = '${data['id']}';
+  //       final Map<String, dynamic> carJson = Map<String, dynamic>.from(
+  //         data['car'] ?? const {},
+  //       );
+
+  //       final incoming = CarsListModel.fromJson(id: id, data: carJson);
+
+  //       final idx = filteredCars.indexWhere((c) => c.id == id);
+  //       if (idx == -1) {
+  //         // brand-new → add, then start its timer
+  //         filteredCars.add(incoming);
+  //         await startAuctionCountdown(incoming);
+  //       } else {
+  //         // existing → cancel old timer, replace model, restart timer
+  //         filteredCars[idx].auctionTimer?.cancel();
+  //         filteredCars[idx] = incoming;
+  //         await startAuctionCountdown(filteredCars[idx]);
+  //       }
+  //       return;
+  //     }
+  //   });
+  // }
+
+  // void _listenLiveBidsSectionRealtime() {
+  //   SocketService.instance.joinRoom(SocketEvents.liveBidsSectionRoom);
+  //   SocketService.instance.on(SocketEvents.liveBidsSectionUpdated, (data) {
+  //     if (data['action'] == 'removed') {
+  //       filteredCars.value =
+  //           filteredCars.where((car) {
+  //             return car.id != data['id'];
+  //           }).toList();
+  //     } else if (data['action'] == 'added') {
+  //       final String id = '${data['id']}';
+
+  //       // Expecting the server to send a listing-shaped map under 'car'
+  //       final Map<String, dynamic> carJson = Map<String, dynamic>.from(
+  //         data['car'] ?? const {},
+  //       );
+
+  //       // Build model using your factory
+  //       final newModel = CarsListModel.fromJson(id: id, data: carJson);
+
+  //       // Append if missing, otherwise update in place
+  //       final idx = filteredCars.indexWhere((c) => c.id == id);
+  //       if (idx == -1) {
+  //         filteredCars.add(newModel);
+  //       } else {
+  //         filteredCars[idx] = newModel; // replace to reflect latest fields
+  //       }
+  //       return;
+  //     }
+  //     debugPrint('Live Bids Section Updated: $data');
+  //   });
+  // }
 }
 
 

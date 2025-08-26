@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
@@ -17,8 +18,10 @@ import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 
 class AccountController extends GetxController {
-  String userRoleFromSharedPrefs = '';
+  // String userRoleFromSharedPrefs = '';
+  final RxString userRoleFromSharedPrefs = ''.obs;
   RxString userRole = ''.obs;
+  final RxBool roleReady = false.obs;
 
   TextEditingController userName = TextEditingController();
   TextEditingController userEmail = TextEditingController();
@@ -45,14 +48,21 @@ class AccountController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getUserRoleFromSharedPrefs();
+    // getUserRoleFromSharedPrefs();
     getUserProfile();
   }
 
-  void getUserRoleFromSharedPrefs() async {
-    userRoleFromSharedPrefs =
-        await SharedPrefsHelper.getString(SharedPrefsHelper.userTypeKey) ?? '';
-  }
+  // void getUserRoleFromSharedPrefs() async {
+  //   userRoleFromSharedPrefs.value =
+  //       await SharedPrefsHelper.getString(SharedPrefsHelper.userTypeKey) ?? '';
+  // }
+
+  // convenience getter: single source of truth
+  bool get isAdmin =>
+      (userRoleFromSharedPrefs.value == AppConstants.roles.admin) ||
+      (userRole.value == AppConstants.roles.admin);
+
+  // getUserProfile: keep as-is, but DON’T call it again from the page
 
   Future<void> getUserProfile() async {
     try {

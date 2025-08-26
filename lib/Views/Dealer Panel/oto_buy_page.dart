@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Controllers/oto_buy_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
@@ -10,11 +11,11 @@ import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 
-class OtoBuySection extends StatelessWidget {
-  OtoBuySection({super.key});
+class OtoBuyPage extends StatelessWidget {
+  OtoBuyPage({super.key});
 
-  // final HomeController getxController = Get.put(HomeController());
-  final HomeController getxController = Get.find<HomeController>();
+  final HomeController homeController = Get.find<HomeController>();
+  final OtoBuyController otoBuyController = Get.find<OtoBuyController>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +23,11 @@ class OtoBuySection extends StatelessWidget {
       body: Column(
         children: [
           SizedBox(height: 10),
+
           Obx(() {
-            if (getxController.isLoading.value) {
+            if (otoBuyController.isLoading.value) {
               return _buildLoadingWidget();
-            } else if (getxController.filteredCars.isEmpty) {
+            } else if (otoBuyController.otoBuyCarsList.isEmpty) {
               return Expanded(
                 child: Center(
                   child: const EmptyDataWidget(
@@ -47,18 +49,18 @@ class OtoBuySection extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: getxController.filteredCars.length,
+        itemCount: otoBuyController.otoBuyCarsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
-          final car = getxController.filteredCars[index];
+          final car = otoBuyController.otoBuyCarsList[index];
           // InkWell for car card
           return InkWell(
             onTap: () {
               Get.to(
                 () => CarDetailsPage(
-                  carId: car.id!,
+                  carId: car.id,
                   car: car,
-                  currentOpenSection: getxController.otobuySectionScreen,
+                  currentOpenSection: homeController.otobuySectionScreen,
                 ),
               );
             },
@@ -128,7 +130,7 @@ class OtoBuySection extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'One Click Price:',
+                                    'Auction Starts at:',
 
                                     style: const TextStyle(
                                       fontSize: 10,
@@ -194,17 +196,33 @@ class OtoBuySection extends StatelessWidget {
                                         color: Colors.grey,
                                       ),
                                       const SizedBox(width: 4),
-                                      Flexible(
-                                        child: Text(
-                                          car.inspectionLocation,
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
+                                      Text(
+                                        car.inspectionLocation,
+                                        style: const TextStyle(fontSize: 12),
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
+
+                            // // Watchlist button
+                            // Row(
+                            //   crossAxisAlignment: CrossAxisAlignment.start,
+                            //   children: [
+                            //     Padding(
+                            //       padding: const EdgeInsets.only(right: 10),
+                            //       child: InkWell(
+                            //         onTap: () {},
+                            //         child: const Icon(
+                            //           Icons.favorite_outline,
+                            //           color: AppColors.gray,
+                            //           size: 22,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 5),
@@ -238,12 +256,14 @@ class OtoBuySection extends StatelessWidget {
                     ),
                   ),
 
-                  Obx(
-                    () => Positioned(
+                  Obx(() {
+                    final isThisCarFav = otoBuyController.wishlistCarsIds
+                        .contains(car.id);
+                    return Positioned(
                       top: 10,
                       right: 10,
                       child: InkWell(
-                        onTap: () => getxController.changeFavoriteCars(car),
+                        onTap: () => otoBuyController.toggleFavorite(car),
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
                           padding: const EdgeInsets.all(6),
@@ -252,19 +272,17 @@ class OtoBuySection extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            car.isFavorite.value
+                            isThisCarFav
                                 ? Icons.favorite
                                 : Icons.favorite_outline,
                             color:
-                                car.isFavorite.value
-                                    ? AppColors.red
-                                    : AppColors.grey,
+                                isThisCarFav ? AppColors.red : AppColors.grey,
                             size: 20,
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),

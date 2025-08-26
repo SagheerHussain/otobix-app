@@ -60,7 +60,6 @@ class UpcomingController extends GetxController {
         filteredUpcomingCarsList.value =
             upcomingCarsList.where((car) {
               return car.auctionEndTime != null &&
-                  car.auctionStatus == AppConstants.auctionStatuses.live &&
                   car.auctionEndTime!.isAfter(currentTime);
             }).toList();
 

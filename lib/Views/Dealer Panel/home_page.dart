@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/home_controller.dart';
+import 'package:otobix/Controllers/live_bids_controller.dart';
+import 'package:otobix/Controllers/marketplace_controller.dart';
+import 'package:otobix/Controllers/oto_buy_controller.dart';
 import 'package:otobix/Controllers/tab_bar_buttons_controller.dart';
 import 'package:otobix/Controllers/upcoming_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/live_bids_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/marketplace_section.dart';
-import 'package:otobix/Views/Dealer%20Panel/oto_buy_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/marketplace_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/oto_buy_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/upcoming_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_notifications_page.dart';
 import 'package:otobix/Widgets/button_widget.dart';
@@ -21,10 +24,11 @@ class HomePage extends StatelessWidget {
   );
   // Different tabs controllers
   final UpcomingController upcomingController = Get.put(UpcomingController());
-  // final LiveBidsController liveBidsController = Get.put(LiveBidsController());
-  // final OtoBuyController otoBuyController = Get.put(OtoBuyController());
-  // final MarketplaceController marketplaceController =
-  //     Get.put(MarketplaceController());
+  final LiveBidsController liveBidsController = Get.put(LiveBidsController());
+  final OtoBuyController otoBuyController = Get.put(OtoBuyController());
+  final MarketplaceController marketplaceController = Get.put(
+    MarketplaceController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +45,8 @@ class HomePage extends StatelessWidget {
                 children: [
                   UpcomingPage(),
                   LiveBidsPage(),
-                  OtoBuySection(),
-                  MarketplaceSection(),
+                  OtoBuyPage(),
+                  MarketplacePage(),
                 ],
               ),
             ),
@@ -77,9 +81,9 @@ class HomePage extends StatelessWidget {
 
                         counts: [
                           upcomingController.upcomingCarsCount.value,
-                          getxController.liveCarsCount.value,
-                          getxController.otoBuyCarsCount.value,
-                          getxController.marketplaceCarsCount.value,
+                          liveBidsController.liveBidsCarsCount.value,
+                          otoBuyController.otoBuyCarsCount.value,
+                          marketplaceController.marketplaceCarsCount.value,
                         ],
                         controller: tabBarController.tabController,
                         selectedIndex: tabBarController.selectedIndex,
@@ -214,14 +218,14 @@ class HomePage extends StatelessWidget {
                   // ),
                 ),
                 onChanged: (value) {
-                  getxController.filteredCars.value =
-                      getxController.carsList
-                          .where(
-                            (car) => '${car.make} ${car.model} ${car.variant}'
-                                .toLowerCase()
-                                .contains(value.toLowerCase()),
-                          )
-                          .toList();
+                  // getxController.filteredCars.value =
+                  //     getxController.carsList
+                  //         .where(
+                  //           (car) => '${car.make} ${car.model} ${car.variant}'
+                  //               .toLowerCase()
+                  //               .contains(value.toLowerCase()),
+                  //         )
+                  //         .toList();
                 },
               ),
             ),

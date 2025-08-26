@@ -2,12 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Controllers/live_bids_controller.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
-import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 
@@ -15,7 +16,7 @@ class LiveBidsPage extends StatelessWidget {
   LiveBidsPage({super.key});
 
   // final HomeController getxController = Get.put(HomeController());
-  final HomeController getxController = Get.find<HomeController>();
+  final LiveBidsController getxController = Get.find<LiveBidsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class LiveBidsPage extends StatelessWidget {
           Obx(() {
             if (getxController.isLoading.value) {
               return _buildLoadingWidget();
-            } else if (getxController.filteredCars.isEmpty) {
+            } else if (getxController.filteredLiveBidsCarsList.isEmpty) {
               return Expanded(
                 child: Center(
                   child: const EmptyDataWidget(
@@ -49,10 +50,10 @@ class LiveBidsPage extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
         // padding: const EdgeInsets.symmetric(horizontal: 10),
-        itemCount: getxController.filteredCars.length,
+        itemCount: getxController.filteredLiveBidsCarsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 15),
         itemBuilder: (context, index) {
-          final car = getxController.filteredCars[index];
+          final car = getxController.filteredLiveBidsCarsList[index];
 
           return InkWell(
             onTap: () {
@@ -60,7 +61,7 @@ class LiveBidsPage extends StatelessWidget {
                 () => CarDetailsPage(
                   carId: car.id,
                   car: car,
-                  currentOpenSection: getxController.liveBidsSectionScreen,
+                  currentOpenSection: AppConstants.auctionStatuses.live,
                 ),
               );
             },
