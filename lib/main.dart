@@ -37,7 +37,7 @@ void main() async {
   await SharedPrefsHelper.init();
   // Initialize socket connection globally
   SocketService.instance.initSocket(AppUrls.socketBaseUrl);
-  // await Get.putAsync<ConnectivityService>(() => ConnectivityService().init());
+  // // await Get.putAsync<ConnectivityService>(() => ConnectivityService().init());
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
