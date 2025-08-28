@@ -189,6 +189,7 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                                                 ) ??
                                                 'N/A',
                                           ),
+                                          
                                           _buildIconAndTextWidget(
                                             icon: Icons.local_gas_station,
                                             text: car.fuelType,

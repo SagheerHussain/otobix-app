@@ -55,12 +55,12 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // initialBinding: AppBindings(),
-      theme: ThemeData(
+    theme: ThemeData(
         brightness: Brightness.light,
         // fontFamily: 'Poppins',
         scaffoldBackgroundColor: AppColors.white,
         canvasColor: AppColors.white,
-        dialogTheme: const DialogTheme(backgroundColor: AppColors.white),
+        // dialogTheme: const DialogTheme(backgroundColor: AppColors.white),
         bottomSheetTheme: const BottomSheetThemeData(
           backgroundColor: AppColors.white,
         ),
