@@ -10,6 +10,7 @@ class SocketEvents {
   static const String auctionEnded = 'auction-ended';
   static const String wishlistUpdated = 'wishlist-updated';
   static const String myBidsUpdated = 'my-bids-updated';
+  static const String upcomingBidsSectionUpdated = 'upcoming-bids-section-updated';
   static const String liveBidsSectionUpdated = 'live-bids-section-updated';
   static const String userNotificationCreated = 'user-notification-created';
   static const String userNotificationMarkedAsRead =
@@ -23,6 +24,7 @@ class SocketEvents {
   static const String joinRoom = 'join-room';
   static const String leaveRoom = 'leave-room';
   static const String userRoom = 'user-room:';
+  static const String upcomingBidsSectionRoom = 'upcoming-bids-section-room:';
   static const String liveBidsSectionRoom = 'live-bids-section-room:';
   static const String userNotificationsRoom = 'user-notifications-room:';
   static const String auctionTimerRoom = 'auction-timer-room:';

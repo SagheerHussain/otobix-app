@@ -28,7 +28,7 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
           Obx(() {
             if (upcomingController.isLoading.value) {
               return _buildLoadingWidget();
-            } else if (upcomingController.upcomingCarsList.isEmpty) {
+            } else if (upcomingController.filteredUpcomingCarsList.isEmpty) {
               return Expanded(
                 child: Center(
                   child: const EmptyDataWidget(
@@ -51,11 +51,11 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: upcomingController.upcomingCarsList.length,
+        itemCount: upcomingController.filteredUpcomingCarsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 10),
         padding: const EdgeInsets.symmetric(horizontal: 15),
         itemBuilder: (context, index) {
-          final car = upcomingController.upcomingCarsList[index];
+          final car = upcomingController.filteredUpcomingCarsList[index];
           // InkWell for car card
           return GestureDetector(
             onTap: () => _showAuctionBottomSheet(car),
@@ -166,7 +166,33 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 5),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Go Live In: ',
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.green,
+                                        ),
+                                      ),
+                                      Obx(
+                                        () => Text(
+                                          upcomingController.remainingTimes[car
+                                                  .id] ??
+                                              "--",
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.red,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
                                   const Divider(),
                                   const SizedBox(height: 5),
 
@@ -189,7 +215,7 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                                                 ) ??
                                                 'N/A',
                                           ),
-                                          
+
                                           _buildIconAndTextWidget(
                                             icon: Icons.local_gas_station,
                                             text: car.fuelType,
@@ -505,23 +531,46 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                         ],
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Go Live In: ',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.green,
+                            ),
+                          ),
+                          Obx(
+                            () => Text(
+                              upcomingController.remainingTimes[car.id] ?? "--",
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       const Divider(),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 10),
 
                       // Mode switch
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
                           color: AppColors.grey.withValues(alpha: .1),
                         ),
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
+                        child: Row(
                           children: [
-                            _chip('Go live now', 0),
-                            _chip('Schedule', 1),
+                            Expanded(child: _chip('Go live now', 0)),
+                            const SizedBox(width: 10), // space between
+                            Expanded(child: _chip('Schedule', 1)),
                           ],
                         ),
                       ),
@@ -598,28 +647,6 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      // Quick presets
-                      // Wrap(
-                      //   spacing: 8,
-                      //   children: [
-                      //     ActionChip(
-                      //       label: const Text('+1h'),
-                      //       onPressed: () => setState(() => durationHrs += 1),
-                      //     ),
-                      //     ActionChip(
-                      //       label: const Text('+2h'),
-                      //       onPressed: () => setState(() => durationHrs += 2),
-                      //     ),
-                      //     ActionChip(
-                      //       label: const Text('3h preset'),
-                      //       onPressed: () => setState(() => durationHrs = 3),
-                      //     ),
-                      //     ActionChip(
-                      //       label: const Text('6h preset'),
-                      //       onPressed: () => setState(() => durationHrs = 6),
-                      //     ),
-                      //   ],
-                      // ),
                       const SizedBox(height: 10),
 
                       // Buttons
@@ -656,51 +683,6 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                   ),
                 );
               },
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _buildBottomSheet1() {
-    showModalBottomSheet(
-      context: Get.context!,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      isScrollControlled: true,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          maxChildSize: 0.95,
-          minChildSize: 0.7,
-          initialChildSize: 0.8,
-          builder: (_, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ButtonWidget(
-                        text: 'Make Live Now',
-                        isLoading: false.obs,
-                        onTap: () {},
-                      ),
-                      ButtonWidget(
-                        text: 'Set Auction Time',
-                        isLoading: false.obs,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ],
-              ),
             );
           },
         );

@@ -4,21 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Utils/socket_events.dart';
 
 class AdminUpcomingCarsListController extends GetxController {
   RxInt upcomingCarsCount = 0.obs;
   List<CarsListModel> upcomingCarsList = [];
   RxBool isLoading = false.obs;
 
+  // Countdown state
+  final RxMap<String, String> remainingTimes = <String, String>{}.obs;
+  final Map<String, Timer> _timers = {};
+
+  final RxList<CarsListModel> filteredUpcomingCarsList = <CarsListModel>[].obs;
+
   @override
   void onInit() async {
     super.onInit();
     await fetchUpcomingCarsList();
+    _listenUpcomingCarsSectionRealtime();
   }
-
-  final RxList<CarsListModel> filteredUpcomingCarsList = <CarsListModel>[].obs;
 
   // Live Cars List
   Future<void> fetchUpcomingCarsList() async {
@@ -32,8 +39,6 @@ class AdminUpcomingCarsListController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        // final currentTime = DateTime.now();
-
         upcomingCarsList = List<CarsListModel>.from(
           (data as List).map(
             (car) => CarsListModel.fromJson(data: car, id: car['id']),
@@ -42,12 +47,11 @@ class AdminUpcomingCarsListController extends GetxController {
 
         upcomingCarsCount.value = upcomingCarsList.length;
 
-        // Only keep cars with future auctionEndTime
-        filteredUpcomingCarsList.value = upcomingCarsList;
+        // filteredUpcomingCarsList.value = upcomingCarsList;
+        // setupCountdowns(upcomingCarsList);
 
-        // for (var car in upcomingCarsList) {
-        //   await startAuctionCountdown(car);
-        // }
+        filteredUpcomingCarsList.assignAll(upcomingCarsList);
+        setupCountdowns(filteredUpcomingCarsList);
       } else {
         filteredUpcomingCarsList.clear();
         debugPrint('Failed to fetch data ${response.body}');
@@ -60,51 +64,120 @@ class AdminUpcomingCarsListController extends GetxController {
     }
   }
 
-  // Auction Timer
-  // Future<void> startAuctionCountdown(CarsListModel car) async {
-  //   DateTime getAuctionEndTime() {
-  //     final startTime = car.auctionStartTime ?? DateTime.now();
-  //     final duration = Duration(
-  //       hours: car.auctionDuration > 0 ? car.auctionDuration : 12,
-  //       // hours: car.defaultAuctionTime,
-  //     );
-  //     return startTime.add(duration);
-  //   }
+  /// Single entry-point: wire countdowns to the given cars list.
+  /// - Cancels timers for cars that disappeared
+  /// - (Re)starts timers for provided cars
+  /// - Formats "15h : 22m : 44s"
+  void setupCountdowns(List<CarsListModel> cars) {
+    // 1) Cancel timers that are no longer needed
+    final newIds = cars.map((c) => c.id).toSet();
+    final toRemove = _timers.keys.where((id) => !newIds.contains(id)).toList();
+    for (final id in toRemove) {
+      _timers[id]?.cancel();
+      _timers.remove(id);
+      remainingTimes.remove(id);
+    }
 
-  //   car.auctionTimer?.cancel(); // cancel previous
+    // Local helpers (kept inside this single function)
+    String fmt(Duration d) {
+      String two(int n) => n.toString().padLeft(2, '0');
+      return '${two(d.inHours)}h : ${two(d.inMinutes % 60)}m : ${two(d.inSeconds % 60)}s';
+    }
 
-  //   car.auctionTimer = Timer.periodic(Duration(seconds: 1), (_) {
-  //     final now = DateTime.now();
-  //     final diff = getAuctionEndTime().difference(now);
+    void startFor(CarsListModel car) {
+      // Cancel previous timer for this car (if any)
+      _timers[car.id]?.cancel();
 
-  //     if (diff.isNegative) {
-  //       // 🟥 Timer expired — reset startTime and countdown to now + 12 hours
-  //       car.auctionStartTime = DateTime.now();
-  //       car.auctionDuration = 12;
+      final until = car.upcomingUntil;
+      if (until == null) {
+        remainingTimes[car.id] = 'N/A';
+        return;
+      }
 
-  //       final newDiff = Duration(hours: 12);
-  //       // final newDiff = Duration(hours: 0);
+      void tick() {
+        final diff = until.difference(DateTime.now());
+        if (diff.isNegative) {
+          remainingTimes[car.id] = '00h : 00m : 00s';
+          _timers[car.id]?.cancel();
+          _timers.remove(car.id);
+          return;
+        }
+        remainingTimes[car.id] = fmt(diff);
+      }
 
-  //       final hours = newDiff.inHours.toString().padLeft(2, '0');
-  //       final minutes = (newDiff.inMinutes % 60).toString().padLeft(2, '0');
-  //       final seconds = (newDiff.inSeconds % 60).toString().padLeft(2, '0');
-  //       car.remainingAuctionTime.value =
-  //           '${hours}h : ${minutes}m : ${seconds}s';
-  //     } else {
-  //       final hours = diff.inHours.toString().padLeft(2, '0');
-  //       final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
-  //       final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
-  //       car.remainingAuctionTime.value =
-  //           '${hours}h : ${minutes}m : ${seconds}s';
-  //     }
-  //   });
-  // }
+      // Prime immediately, then every second
+      tick();
+      _timers[car.id] = Timer.periodic(
+        const Duration(seconds: 1),
+        (_) => tick(),
+      );
+    }
+
+    // 2) Ensure every given car has an active timer
+    for (final car in cars) {
+      startFor(car);
+    }
+  }
+
+  // Listen to upcoming cars section realtime
+  void _listenUpcomingCarsSectionRealtime() {
+    SocketService.instance.joinRoom(SocketEvents.upcomingBidsSectionRoom);
+
+    SocketService.instance.on(SocketEvents.upcomingBidsSectionUpdated, (
+      data,
+    ) async {
+      final String action = '${data['action']}';
+
+      if (action == 'removed') {
+        final String id = '${data['id']}';
+
+        // cancel controller-owned timer & remove readable time
+        _timers[id]?.cancel();
+        _timers.remove(id);
+        remainingTimes.remove(id);
+
+        // remove from list
+        filteredUpcomingCarsList.value =
+            filteredUpcomingCarsList.where((c) => c.id != id).toList();
+
+        // update count
+        upcomingCarsCount.value = filteredUpcomingCarsList.length;
+        return;
+      }
+
+      if (action == 'added') {
+        final String id = '${data['id']}';
+        final Map<String, dynamic> carJson = Map<String, dynamic>.from(
+          data['car'] ?? const {},
+        );
+        final incoming = CarsListModel.fromJson(id: id, data: carJson);
+
+        final idx = filteredUpcomingCarsList.indexWhere((c) => c.id == id);
+        if (idx == -1) {
+          filteredUpcomingCarsList.add(incoming);
+        } else {
+          // replace model (no model timers to cancel anymore)
+          filteredUpcomingCarsList[idx] = incoming;
+        }
+
+        // refresh all timers via the single entry-point
+        setupCountdowns(filteredUpcomingCarsList);
+
+        // update count
+        upcomingCarsCount.value = filteredUpcomingCarsList.length;
+        return;
+      }
+    });
+  }
 
   @override
   void onClose() {
-    // for (var car in upcomingCarsList) {
-    //   car.auctionTimer?.cancel();
-    // }
+    // stop all timers and clear remaining times via the same single function
+    setupCountdowns(const []);
+
+    // detach socket listener and leave room (avoid memory leaks / dup listeners)
+    SocketService.instance.off(SocketEvents.upcomingBidsSectionUpdated);
+    SocketService.instance.leaveRoom(SocketEvents.upcomingBidsSectionRoom);
     super.onClose();
   }
 }

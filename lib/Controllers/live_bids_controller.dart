@@ -75,7 +75,8 @@ class LiveBidsController extends GetxController {
         filteredLiveBidsCarsList.value = liveBidsCarsList
             .where((car) {
               return car.auctionEndTime != null &&
-                  car.auctionStatus == AppConstants.auctionStatuses.live &&
+                  car.auctionStatus == AppConstants.auctionStatuses.live 
+                  &&
                   car.auctionEndTime!.isAfter(currentTime);
             })
             .toList(growable: false);
@@ -291,7 +292,8 @@ class LiveBidsController extends GetxController {
         return;
       }
 
-      if (action == 'added' || action == 'updated') {
+
+      if (action == 'added') {
         final String id = '${data['id']}';
         final Map<String, dynamic> carJson = Map<String, dynamic>.from(
           data['car'] ?? const {},

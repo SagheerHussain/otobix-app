@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // initialBinding: AppBindings(),
-    theme: ThemeData(
+      theme: ThemeData(
         brightness: Brightness.light,
         // fontFamily: 'Poppins',
         scaffoldBackgroundColor: AppColors.white,
