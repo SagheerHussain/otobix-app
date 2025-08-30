@@ -27,7 +27,7 @@ class UpcomingPage extends StatelessWidget {
           Obx(() {
             if (upcomingController.isLoading.value) {
               return _buildLoadingWidget();
-            } else if (upcomingController.upcomingCarsList.isEmpty) {
+            } else if (upcomingController.filteredUpcomingCarsList.isEmpty) {
               return Expanded(
                 child: Center(
                   child: const EmptyDataWidget(
@@ -49,10 +49,10 @@ class UpcomingPage extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: upcomingController.upcomingCarsList.length,
+        itemCount: upcomingController.filteredUpcomingCarsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
-          final car = upcomingController.upcomingCarsList[index];
+          final car = upcomingController.filteredUpcomingCarsList[index];
           // InkWell for car card
           return InkWell(
             onTap: () {

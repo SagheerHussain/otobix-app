@@ -62,29 +62,48 @@ class LiveBidsController extends GetxController {
         //   ),
         // );
 
-        liveBidsCarsList = (data as List<dynamic>)
-            .map<CarsListModel>(
-              (e) => CarsListModel.fromJson(
-                id: e['id'] as String,
-                data: Map<String, dynamic>.from(e as Map),
-              ),
-            )
-            .toList(growable: false);
+        liveBidsCarsList =
+            (data as List<dynamic>)
+                .map<CarsListModel>(
+                  (e) => CarsListModel.fromJson(
+                    id: e['id'] as String,
+                    data: Map<String, dynamic>.from(e as Map),
+                  ),
+                )
+                .toList(); // ✅ growable
+
+        // liveBidsCarsList = (data as List<dynamic>)
+        //     .map<CarsListModel>(
+        //       (e) => CarsListModel.fromJson(
+        //         id: e['id'] as String,
+        //         data: Map<String, dynamic>.from(e as Map),
+        //       ),
+        //     )
+        //     .toList(growable: false);
 
         // Only keep cars with future auctionEndTime
-        filteredLiveBidsCarsList.value = liveBidsCarsList
-            .where((car) {
-              return car.auctionEndTime != null &&
-                  car.auctionStatus == AppConstants.auctionStatuses.live 
-                  &&
-                  car.auctionEndTime!.isAfter(currentTime);
-            })
-            .toList(growable: false);
+        filteredLiveBidsCarsList.assignAll(
+          liveBidsCarsList.where(
+            (car) =>
+                car.auctionEndTime != null &&
+                car.auctionStatus == AppConstants.auctionStatuses.live &&
+                car.auctionEndTime!.isAfter(currentTime),
+          ),
+        ); // ✅ stays growable
+        // filteredLiveBidsCarsList.value = liveBidsCarsList
+        //     .where((car) {
+        //       return car.auctionEndTime != null &&
+        //           car.auctionStatus == AppConstants.auctionStatuses.live &&
+        //           car.auctionEndTime!.isAfter(currentTime);
+        //     })
+        //     .toList(growable: false);
 
         liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
 
-        for (var car in liveBidsCarsList) {
+        // for (var car in liveBidsCarsList) {
+        for (var car in filteredLiveBidsCarsList) {
           await startAuctionCountdown(car);
+          debugPrint(car.toJson().toString());
         }
       } else {
         filteredLiveBidsCarsList.value = <CarsListModel>[];
@@ -119,11 +138,9 @@ class LiveBidsController extends GetxController {
   Future<void> startAuctionCountdown(CarsListModel car) async {
     DateTime getAuctionEndTime() {
       // ✅ Prefer server's end time when present
-      if (car.auctionEndTime != null) return car.auctionEndTime!;
-      final startTime = car.auctionStartTime ?? DateTime.now();
-      final duration = Duration(
-        hours: car.auctionDuration > 0 ? car.auctionDuration : 12,
-      );
+      if (car.auctionEndTime != null) return car.auctionEndTime!.toLocal();
+      final startTime = car.auctionStartTime!.toLocal() ?? DateTime.now();
+      final duration = Duration(hours: car.auctionDuration);
       return startTime.add(duration);
     }
 
@@ -286,12 +303,15 @@ class LiveBidsController extends GetxController {
         if (idx != -1) {
           filteredLiveBidsCarsList[idx].auctionTimer?.cancel();
         }
-        filteredLiveBidsCarsList.value =
-            filteredLiveBidsCarsList.where((c) => c.id != id).toList();
+        // filteredLiveBidsCarsList.value =
+        //     filteredLiveBidsCarsList.where((c) => c.id != id).toList();
+        // liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
+        filteredLiveBidsCarsList.removeWhere(
+          (c) => c.id == id,
+        ); // simple & growable-safe
         liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
         return;
       }
-
 
       if (action == 'added') {
         final String id = '${data['id']}';
@@ -300,6 +320,7 @@ class LiveBidsController extends GetxController {
         );
 
         final incoming = CarsListModel.fromJson(id: id, data: carJson);
+        debugPrint(incoming.toJson().toString());
 
         final idx = filteredLiveBidsCarsList.indexWhere((c) => c.id == id);
 

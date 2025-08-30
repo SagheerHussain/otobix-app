@@ -230,6 +230,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
+
           GestureDetector(
             onTap: () => Get.to(() => UserNotificationsPage()),
             child: Obx(
@@ -243,6 +244,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
+
           SizedBox(width: 15),
         ],
       ),

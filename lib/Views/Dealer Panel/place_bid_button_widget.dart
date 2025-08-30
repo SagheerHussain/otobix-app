@@ -185,14 +185,34 @@ class PlaceBidButtonWidget extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount)}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                                color: AppColors.black,
-                              ),
-                            ),
+                            // Text(
+                            //   "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount)}",
+                            //   style: TextStyle(
+                            //     fontWeight: FontWeight.w600,
+                            //     fontSize: 12,
+                            //     color: AppColors.black,
+                            //   ),
+                            // ),
+                            Obx(() {
+                              double highestBid =
+                                  bidController
+                                      .currentHighestBidAmount
+                                      .value; // Unwrap the value
+
+                              // Now check if it's negative
+                              if (highestBid.isNegative) {
+                                // Handle case where the bid is negative
+                              }
+
+                              return Text(
+                                "Rs. ${NumberFormat.decimalPattern('en_IN').format(highestBid)}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                  color: AppColors.black,
+                                ),
+                              );
+                            }),
                           ],
                         ),
                         Container(width: 1, height: 30, color: AppColors.grey),

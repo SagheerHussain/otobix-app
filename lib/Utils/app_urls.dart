@@ -54,6 +54,9 @@ class AppUrls {
   static const String updateCarAuctionTime =
       "${baseUrl}car/update-auction-time";
 
+  static const String schedulAuction =
+      "${baseUrl}upcoming/update-car-auction-time";
+
   static const String checkHighestBidder = "${baseUrl}car/check-highest-bidder";
 
   static const String submitAutoBidForLiveSection =

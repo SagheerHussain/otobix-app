@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
@@ -285,7 +286,7 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
 
   // Bottom sheet
 
-  void _showAuctionBottomSheet(final car) {
+  void _showAuctionBottomSheet(final CarsListModel car) {
     showModalBottomSheet(
       context: Get.context!,
       backgroundColor: Colors.white,
@@ -295,7 +296,7 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
       isScrollControlled: true,
       builder: (context) {
         // Local sheet state
-        int mode = 0; // 0 = Go Live Now, 1 = Schedule
+        int goLiveNowOrScheduleIndex = 0; // 0 = Go Live Now, 1 = Schedule
         DateTime now = DateTime.now();
         DateTime? startAt = (car.auctionStartTime ?? now);
         int durationHrs =
@@ -329,24 +330,59 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
           );
         }
 
-        Future<void> _submit() async {
+        Future<void> _submit({
+          required String carId,
+          required DateTime? auctionStartTime,
+          required int auctionDuration,
+          required int goLiveNowOrScheduleIndex,
+        }) async {
           try {
-            final pickedStart = (mode == 0 ? DateTime.now() : startAt)!.toUtc();
+            // final pickedStart =
+            //     (goLiveNowOrScheduleIndex == 0 ? DateTime.now() : startAt)!
+            //         .toUtc();
+
+            // Current time for go live now tab
+            final DateTime currentTime = DateTime.now();
+
+            // Decide start time from the selected tab
+            final DateTime auctionStartTimeLocal =
+                (goLiveNowOrScheduleIndex == 0)
+                    ? currentTime
+                    : (auctionStartTime ?? currentTime);
+
+            // Get auction duration in hours
+            final auctionDurationLocal = auctionDuration;
+
+            // Compute end time from duration
+            final DateTime auctionEndTimeLocal = auctionStartTimeLocal.add(
+              Duration(hours: auctionDuration),
+            );
+
             final body = {
-              'carId': car.id,
-              'auctionStartTime': pickedStart.toIso8601String(),
-              'auctionDuration': durationHrs,
+              'carId': carId,
+              'auctionStartTime':
+                  auctionStartTimeLocal.toUtc().toIso8601String(),
+              'auctionDuration': auctionDurationLocal,
+              'auctionEndTime': auctionEndTimeLocal.toUtc().toIso8601String(),
+              'auctionMode':
+                  goLiveNowOrScheduleIndex == 0
+                      ? 'makeLiveNow'
+                      : 'scheduledForLater',
             };
 
             final response = await ApiService.post(
-              endpoint: AppUrls.updateCarAuctionTime,
+              // endpoint: AppUrls.updateCarAuctionTime,
+              endpoint: AppUrls.schedulAuction,
               body: body,
             );
 
             if (response.statusCode == 200) {
               ToastWidget.show(
                 context: Get.context!,
-                title: mode == 0 ? 'Car is live now' : 'Auction time updated',
+                title:
+                    goLiveNowOrScheduleIndex == 0
+                        ? 'Car is live now'
+                        : 'Auction scheduled',
                 type: ToastType.success,
               );
               Get.back(); // close sheet
@@ -358,6 +394,7 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
               );
             }
           } catch (e) {
+            debugPrint(e.toString());
             ToastWidget.show(
               context: Get.context!,
               title: 'Something went wrong',
@@ -374,15 +411,17 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
           builder: (_, scrollController) {
             return StatefulBuilder(
               builder: (context, setState) {
-                final effectiveStart = (mode == 0 ? now : startAt!);
+                final effectiveStart =
+                    (goLiveNowOrScheduleIndex == 0 ? now : startAt!);
                 final endAt = getEnd(effectiveStart, durationHrs);
 
                 Widget _chip(String label, int value) {
-                  final selected = mode == value;
+                  final selected = goLiveNowOrScheduleIndex == value;
                   return ChoiceChip(
                     label: Text(label),
                     selected: selected,
-                    onSelected: (_) => setState(() => mode = value),
+                    onSelected:
+                        (_) => setState(() => goLiveNowOrScheduleIndex = value),
                     backgroundColor: AppColors.grey.withValues(alpha: .1),
                     selectedColor: AppColors.green.withValues(alpha: .15),
                     labelStyle: TextStyle(
@@ -439,9 +478,13 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                               children: [
                                 Text(
                                   title,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13,
+                                    color:
+                                        enabled
+                                            ? AppColors.black
+                                            : Colors.black54,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
@@ -580,18 +623,23 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                       // Start time
                       _tile(
                         icon: Icons.access_time,
-                        title: mode == 0 ? 'Live start' : 'Scheduled start',
+                        title:
+                            goLiveNowOrScheduleIndex == 0
+                                ? 'Live start'
+                                : 'Scheduled start',
                         subtitle: fmt(effectiveStart),
                         onTap:
-                            mode == 1
+                            goLiveNowOrScheduleIndex == 1
                                 ? () async {
                                   await _pickDateTime();
                                   setState(() {});
                                 }
                                 : null,
-                        enabled: mode == 1,
+                        enabled: goLiveNowOrScheduleIndex == 1,
                         trailing: Icon(
-                          mode == 1 ? Icons.edit_calendar : Icons.lock_clock,
+                          goLiveNowOrScheduleIndex == 1
+                              ? Icons.edit_calendar
+                              : Icons.lock_clock,
                           color: AppColors.grey,
                         ),
                       ),
@@ -669,10 +717,19 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                           Expanded(
                             child: ButtonWidget(
                               text:
-                                  mode == 0 ? 'Make Live Now' : 'Save Schedule',
+                                  goLiveNowOrScheduleIndex == 0
+                                      ? 'Make Live Now'
+                                      : 'Save Schedule',
                               isLoading: false.obs,
                               fontSize: 13,
-                              onTap: _submit,
+                              onTap:
+                                  () => _submit(
+                                    carId: car.id,
+                                    auctionStartTime: startAt,
+                                    auctionDuration: durationHrs,
+                                    goLiveNowOrScheduleIndex:
+                                        goLiveNowOrScheduleIndex,
+                                  ),
                             ),
                           ),
                         ],

@@ -25,6 +25,7 @@
     Year of manufacture before car name
     ✅ Car added and removed in real time from live bids section
     Deactivate bids for the car in bids collection if auction is ended
+    Stop auction timer after 6pm and start on next day on 11am 
     Complete states functionality
     Complete filters functionality
     Complete sort functionality

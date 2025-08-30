@@ -6,8 +6,8 @@ import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
-import 'package:otobix/admin/admin_car_auction_timer_page.dart';
 import 'package:otobix/admin/admin_cars_list_page.dart';
+import 'package:otobix/admin/dummy_car_add_in_upcoming.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -117,14 +117,25 @@ class _AccountPageState extends State<AccountPage> {
                         Get.to(UserPreferencesPage());
                       },
                     ),
+
+                  // if (accountController.isAdmin)
+                  //   ProfileOption(
+                  //     icon: Icons.timer,
+                  //     color: AppColors.blue,
+                  //     title: "Car Auction Time",
+                  //     description: "Set car auction time.",
+                  //     onTap: () {
+                  //       Get.to(AdminCarAuctionTimerPage());
+                  //     },
+                  //   ),
                   if (accountController.isAdmin)
                     ProfileOption(
-                      icon: Icons.timer,
+                      icon: Icons.car_rental,
                       color: AppColors.blue,
-                      title: "Car Auction Time",
-                      description: "Set car auction time.",
+                      title: "Add a Car",
+                      description: "Add a car in upcoming.",
                       onTap: () {
-                        Get.to(AdminCarAuctionTimerPage());
+                        Get.to(DummyCarAddInUpcoming());
                       },
                     ),
                   if (accountController.isAdmin)

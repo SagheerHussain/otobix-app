@@ -174,10 +174,6 @@ class AdminUpcomingCarsListController extends GetxController {
   void onClose() {
     // stop all timers and clear remaining times via the same single function
     setupCountdowns(const []);
-
-    // detach socket listener and leave room (avoid memory leaks / dup listeners)
-    SocketService.instance.off(SocketEvents.upcomingBidsSectionUpdated);
-    SocketService.instance.leaveRoom(SocketEvents.upcomingBidsSectionRoom);
     super.onClose();
   }
 }
