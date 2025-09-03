@@ -6,6 +6,7 @@ import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
+import 'package:otobix/Widgets/terms_and_conditions_bottom_sheet_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'dart:convert';
 
@@ -384,5 +385,79 @@ class RegistrationFormController extends GetxController {
     filteredStates = List.from(indianStates);
 
     update();
+  }
+
+  /// Call this from the Submit button.
+  Future<void> showTermsAndConditionsThenSubmit({
+    required String userRole,
+    required String contactNumber,
+  }) async {
+    // 1) run same validations you already have
+    final okUser = await validateUsername();
+    final okForm = formKey.currentState?.validate() ?? false;
+
+    if (!okUser || !okForm) {
+      ToastWidget.show(
+        context: Get.context!,
+        title: "Please fill all required fields",
+        type: ToastType.error,
+      );
+
+      touchedFields.addAll([
+        "State",
+        "Dealer Name",
+        "Dealer Email",
+        "Dealership Name",
+        "Entity Type",
+        "Primary Contact Person",
+        "Primary Contact Mobile No.",
+        "Password",
+      ]);
+      update();
+      return;
+    }
+
+    // 2) fetch latest terms
+    String title = 'Terms & Conditions';
+    String html = '';
+    try {
+      final resp = await ApiService.get(
+        endpoint: AppUrls.getLatestTermsAndConditions,
+      );
+      if (resp.statusCode == 200 && resp.body.isNotEmpty) {
+        final parsed = jsonDecode(resp.body) as Map<String, dynamic>;
+        final data = parsed['data'] as Map<String, dynamic>?;
+        if (data != null) {
+          title =
+              (data['title'] as String?)?.trim().isNotEmpty == true
+                  ? data['title'] as String
+                  : title;
+          html = (data['content'] as String?) ?? '';
+        }
+      }
+    } catch (e) {
+      debugPrint('Failed to load terms: $e');
+    }
+
+    // If no terms & conditions found in database, submit form directly
+    if (html.trim().isEmpty) {
+      submitForm(userRole: userRole, contactNumber: contactNumber);
+      return;
+    }
+
+    // 3) show bottom sheet; on agree run the real submit
+    await Get.bottomSheet(
+      TermsAndConditionsBottomSheetWidget(
+        title: title,
+        html: html,
+        onAgree: () {
+          submitForm(userRole: userRole, contactNumber: contactNumber);
+        },
+      ),
+      isScrollControlled: true, // allow tall sheet
+      enableDrag: false,
+      ignoreSafeArea: false,
+      backgroundColor: Colors.transparent,
+    );
   }
 }

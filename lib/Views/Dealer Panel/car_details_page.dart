@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Models/car_model.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/global_functions.dart';
+import 'package:otobix/Views/Dealer%20Panel/car_images_gallery_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/place_bid_button_widget.dart';
 import 'package:otobix/Views/Dealer%20Panel/start_auto_bid_button_widget.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_images_page.dart';
@@ -20,17 +22,20 @@ import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CarDetailsPage extends StatefulWidget {
   final String carId;
   final CarsListModel car;
   final String currentOpenSection;
+  final RxString remainingAuctionTime;
 
   const CarDetailsPage({
     super.key,
     required this.carId,
     required this.car,
     required this.currentOpenSection,
+    required this.remainingAuctionTime,
   });
 
   @override
@@ -124,6 +129,15 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                                     ),
                                     child: Column(
                                       children: [
+                                        Container(
+                                          key:
+                                              getxController
+                                                  .sectionKeys[CarDetailsController
+                                                  .imagesSectionKey],
+                                          child: _buildImagesSection(
+                                            car: getxController.carDetails!,
+                                          ),
+                                        ),
                                         Container(
                                           key:
                                               getxController
@@ -248,6 +262,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                               context,
                               widget.currentOpenSection,
                               widget.car,
+                              widget.remainingAuctionTime,
                             ),
                           ),
                         ],
@@ -2290,6 +2305,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     BuildContext context,
     String currentOpenSection,
     CarsListModel car,
+    Rx<String> remainingAuctionTime,
   ) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
@@ -2326,7 +2342,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
               Obx(
                 () => Text(
                   // getxController.remainingTime.value,
-                  car.remainingAuctionTime.value,
+                  remainingAuctionTime.value,
                   style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.red,
@@ -2362,20 +2378,20 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                     backgroundColor: AppColors.blue,
                   ),
                 )
+              /// Show two buttons
               else
-                /// Show two buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     PlaceBidButtonWidget(
                       currentOpenSection: currentOpenSection,
                       getxController: getxController,
-                      remainingAuctionTime: car.remainingAuctionTime,
+                      remainingAuctionTime: widget.remainingAuctionTime,
                     ),
                     StartAutoBidButtonWidget(
                       currentOpenSection: currentOpenSection,
                       carId: getxController.carId,
-                      remainingAuctionTime: car.remainingAuctionTime,
+                      remainingAuctionTime: widget.remainingAuctionTime,
                     ),
                   ],
                 ),
@@ -3037,6 +3053,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
 
   Widget _buildStickyTabs(CarDetailsController getxController) {
     final sectionNames = [
+      'Images',
       'Basic',
       'Documents',
       'Exterior',
@@ -3046,6 +3063,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       'Interior',
     ];
     final keys = [
+      CarDetailsController.imagesSectionKey,
       CarDetailsController.basicDetailsSectionKey,
       CarDetailsController.documentDetailsSectionKey,
       CarDetailsController.exteriorSectionKey,
@@ -3136,6 +3154,176 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       ),
     );
   }
+}
+
+// Images Section
+Widget _buildImagesSection({required CarModel car}) {
+  final getxController = Get.find<CarDetailsController>();
+  // 1) Per-section fallbacks (assets or CDN placeholders)
+  final fallbackBySection = <String, String>{
+    AppConstants.imagesSectionIds.exterior: AppImages.exteriorFallback,
+    AppConstants.imagesSectionIds.interior: AppImages.interiorFallback,
+    AppConstants.imagesSectionIds.engine: AppImages.engineFallback,
+    AppConstants.imagesSectionIds.suspension: AppImages.suspensionFallback,
+    AppConstants.imagesSectionIds.ac: AppImages.acFallback,
+  };
+
+  // 2) Your items, using your picker (primary → alts → fallback)
+  final imageSections = <Map<String, String>>[
+    {
+      'id': AppConstants.imagesSectionIds.exterior,
+      'title': 'Exterior',
+      'thumb': getxController.pickImageForImagesSection(
+        car.bonnetImages,
+        // try other related sets if bonnet is empty:
+        alts: [car.apronLhsRhs, car.airbags],
+        fallbackUrl: AppImages.exteriorFallback,
+      ),
+    },
+    {
+      'id': AppConstants.imagesSectionIds.interior,
+      'title': 'Interior',
+      'thumb': getxController.pickImageForImagesSection(
+        car.airbags,
+        fallbackUrl: AppImages.interiorFallback,
+      ),
+    },
+    {
+      'id': AppConstants.imagesSectionIds.engine,
+      'title': 'Engine',
+      'thumb': getxController.pickImageForImagesSection(
+        car.apronLhsRhs,
+        fallbackUrl: AppImages.engineFallback,
+      ),
+    },
+    {
+      'id': AppConstants.imagesSectionIds.suspension,
+      'title': 'Suspension',
+      'thumb': AppImages.suspensionFallback,
+    },
+    {
+      'id': AppConstants.imagesSectionIds.ac,
+      'title': 'AC',
+      'thumb': AppImages.acFallback,
+    },
+  ];
+
+  return SizedBox(
+    height: 120, // taller row to fit the image tiles nicely
+    child: ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      scrollDirection: Axis.horizontal,
+      itemCount: imageSections.length,
+      separatorBuilder: (_, __) => const SizedBox(width: 10),
+      itemBuilder: (_, i) {
+        final section = imageSections[i];
+        final title = section['title'] ?? '';
+        final thumb = section['thumb'] ?? '';
+        final id = section['id'];
+        final alternativeImage = fallbackBySection[id]!;
+
+        return InkWell(
+          onTap: () {
+            Get.to(
+              () => const CarImagesGalleryPage(),
+              arguments: {'sectionId': id},
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Ink(
+            width: 120, // a bit wider to let the title breathe
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                children: [
+                  // Image
+                  Positioned.fill(
+                    child: CachedNetworkImage(
+                      imageUrl: thumb,
+                      fit: BoxFit.cover,
+                      placeholder:
+                          (_, __) => Shimmer.fromColors(
+                            baseColor: const Color(0xFFE5E7EB),
+                            highlightColor: const Color(0xFFF3F4F6),
+                            child: Container(color: const Color(0xFFE5E7EB)),
+                          ),
+                      errorWidget:
+                          (_, __, ___) =>
+                              Image.asset(alternativeImage, fit: BoxFit.cover),
+                    ),
+                  ),
+
+                  // Bottom gradient (softens image behind blur bar)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 56,
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0x00000000),
+                              Color(0x55000000),
+                              Color(0x77000000),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Blurred title bar
+                  Positioned(
+                    left: 8,
+                    right: 8,
+                    bottom: 8,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(
+                              0xAA111111,
+                            ), // translucent dark glass
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.18),
+                            ),
+                          ),
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }
 
 class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {

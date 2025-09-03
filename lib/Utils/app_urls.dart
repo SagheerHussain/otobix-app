@@ -110,6 +110,19 @@ class AppUrls {
   static String getUserMyBidsCarsList({required String userId}) =>
       "${baseUrl}user/get-user-my-bids-cars-list?userId=$userId";
 
+  static const String uploadTermsAndConditions = "${baseUrl}terms/upload";
+
+  static const String getLatestTermsAndConditions = "${baseUrl}terms/latest";
+
+  static const String uploadPrivacyPolicy = "${baseUrl}privacy-policy/upload";
+
+  static const String getLatestPrivacyPolicy =
+      "${baseUrl}privacy-policy/latest";
+
+  static const String uploadDealerGuide = "${baseUrl}dealer-guide/upload";
+
+  static const String getLatestDealerGuide = "${baseUrl}dealer-guide/latest";
+
   // Socket URL Extraction
   static String _extractSocketBaseUrl(String url) {
     final uri = Uri.parse(url);

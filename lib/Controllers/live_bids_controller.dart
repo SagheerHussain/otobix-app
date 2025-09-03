@@ -18,6 +18,10 @@ class LiveBidsController extends GetxController {
 
   final RxSet<String> wishlistCarsIds = <String>{}.obs;
 
+  // Countdown state (controller-owned)
+  final RxMap<String, RxString> remainingTimes = <String, RxString>{}.obs;
+  final Map<String, Timer> _timers = {};
+
   @override
   void onInit() async {
     super.onInit();
@@ -54,7 +58,7 @@ class LiveBidsController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        final currentTime = DateTime.now();
+        // final currentTime = DateTime.now();
 
         // liveBidsCarsList = List<CarsListModel>.from(
         //   (data as List).map(
@@ -84,10 +88,9 @@ class LiveBidsController extends GetxController {
         // Only keep cars with future auctionEndTime
         filteredLiveBidsCarsList.assignAll(
           liveBidsCarsList.where(
-            (car) =>
-                car.auctionEndTime != null &&
-                car.auctionStatus == AppConstants.auctionStatuses.live &&
-                car.auctionEndTime!.isAfter(currentTime),
+            (car) => car.auctionStatus == AppConstants.auctionStatuses.live,
+            //  &&  car.auctionEndTime != null &&
+            // car.auctionEndTime!.isAfter(currentTime),
           ),
         ); // ✅ stays growable
         // filteredLiveBidsCarsList.value = liveBidsCarsList
@@ -100,11 +103,14 @@ class LiveBidsController extends GetxController {
 
         liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
 
+        // 🔁 one entry-point to handle every timer:
+        setupCountdowns(filteredLiveBidsCarsList);
+
         // for (var car in liveBidsCarsList) {
-        for (var car in filteredLiveBidsCarsList) {
-          await startAuctionCountdown(car);
-          debugPrint(car.toJson().toString());
-        }
+        // for (var car in filteredLiveBidsCarsList) {
+        //   await startAuctionCountdown(car);
+        //   debugPrint(car.toJson().toString());
+        // }
       } else {
         filteredLiveBidsCarsList.value = <CarsListModel>[];
         liveBidsCarsCount.value = 0;
@@ -135,41 +141,42 @@ class LiveBidsController extends GetxController {
   }
 
   // Auction Timer
-  Future<void> startAuctionCountdown(CarsListModel car) async {
-    DateTime getAuctionEndTime() {
-      // ✅ Prefer server's end time when present
-      if (car.auctionEndTime != null) return car.auctionEndTime!.toLocal();
-      final startTime = car.auctionStartTime!.toLocal() ?? DateTime.now();
-      final duration = Duration(hours: car.auctionDuration);
-      return startTime.add(duration);
-    }
+  // Future<void> startAuctionCountdown(CarsListModel car) async {
+  //   DateTime getAuctionEndTime() {
+  //     // ✅ Prefer server's end time when present
+  //     if (car.auctionEndTime != null) return car.auctionEndTime!.toLocal();
+  //     final startTime = car.auctionStartTime!.toLocal() ?? DateTime.now();
+  //     final duration = Duration(hours: car.auctionDuration);
+  //     return startTime.add(duration);
+  //   }
 
-    car.auctionTimer?.cancel(); // cancel previous if any
+  //   car.auctionTimer?.cancel(); // cancel previous if any
 
-    car.auctionTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final now = DateTime.now();
-      final endAt = getAuctionEndTime();
-      final diff = endAt.difference(now);
+  //   car.auctionTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+  //     final now = DateTime.now();
+  //     final endAt = getAuctionEndTime();
+  //     final diff = endAt.difference(now);
 
-      if (diff.isNegative) {
-        // stop at zero instead of silently rolling another 12h
-        car.remainingAuctionTime.value = '00h : 00m : 00s';
-        car.auctionTimer?.cancel();
-        return;
-      }
+  //     if (diff.isNegative) {
+  //       // stop at zero instead of silently rolling another 12h
+  //       car.remainingAuctionTime.value = '00h : 00m : 00s';
+  //       car.auctionTimer?.cancel();
+  //       return;
+  //     }
 
-      final hours = diff.inHours.toString().padLeft(2, '0');
-      final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
-      final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
-      car.remainingAuctionTime.value = '${hours}h : ${minutes}m : ${seconds}s';
-    });
-  }
+  //     final hours = diff.inHours.toString().padLeft(2, '0');
+  //     final minutes = (diff.inMinutes % 60).toString().padLeft(2, '0');
+  //     final seconds = (diff.inSeconds % 60).toString().padLeft(2, '0');
+  //     car.remainingAuctionTime.value = '${hours}h : ${minutes}m : ${seconds}s';
+  //   });
+  // }
 
   @override
   void onClose() {
-    for (var car in filteredLiveBidsCarsList) {
-      car.auctionTimer?.cancel();
-    }
+    // for (var car in filteredLiveBidsCarsList) {
+    // car.auctionTimer?.cancel();
+    // }
+    setupCountdowns(const []); // cancels all timers + clears times
     super.onClose();
   }
 
@@ -299,10 +306,14 @@ class LiveBidsController extends GetxController {
       if (action == 'removed') {
         final String id = '${data['id']}';
         // cancel its timer to avoid leaks
-        final idx = filteredLiveBidsCarsList.indexWhere((c) => c.id == id);
-        if (idx != -1) {
-          filteredLiveBidsCarsList[idx].auctionTimer?.cancel();
-        }
+        // final idx = filteredLiveBidsCarsList.indexWhere((c) => c.id == id);
+        // if (idx != -1) {
+        //   filteredLiveBidsCarsList[idx].auctionTimer?.cancel();
+        // }
+        // cancel controller-owned timer + remove displayed time
+        _timers[id]?.cancel();
+        _timers.remove(id);
+        remainingTimes.remove(id);
         // filteredLiveBidsCarsList.value =
         //     filteredLiveBidsCarsList.where((c) => c.id != id).toList();
         // liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
@@ -320,24 +331,92 @@ class LiveBidsController extends GetxController {
         );
 
         final incoming = CarsListModel.fromJson(id: id, data: carJson);
-        debugPrint(incoming.toJson().toString());
 
         final idx = filteredLiveBidsCarsList.indexWhere((c) => c.id == id);
 
         if (idx == -1) {
           // brand-new → add, then start its timer
           filteredLiveBidsCarsList.add(incoming);
-          await startAuctionCountdown(incoming);
+          // await startAuctionCountdown(incoming);
         } else {
           // existing → cancel old timer, replace model, restart timer
-          filteredLiveBidsCarsList[idx].auctionTimer?.cancel();
+          // filteredLiveBidsCarsList[idx].auctionTimer?.cancel();
           filteredLiveBidsCarsList[idx] = incoming;
-          await startAuctionCountdown(filteredLiveBidsCarsList[idx]);
+          // await startAuctionCountdown(filteredLiveBidsCarsList[idx]);
         }
+
+        // 🔁 refresh all timers via the single entry-point
+        setupCountdowns(filteredLiveBidsCarsList);
+
         // ✅ update count after mutation
         liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
         return;
       }
     });
   }
+
+  /// Wire countdowns to the given cars list:
+  /// - cancels timers for cars not in the list
+  /// - (re)starts timers for cars in the list
+  /// - writes formatted time into remainingTimes[carId]
+  void setupCountdowns(List<CarsListModel> cars) {
+    // 1) cancel timers for cars that disappeared
+    final newIds = cars.map((c) => c.id).toSet();
+    final toRemove = _timers.keys.where((id) => !newIds.contains(id)).toList();
+    for (final id in toRemove) {
+      _timers[id]?.cancel();
+      _timers.remove(id);
+      remainingTimes.remove(id); // drops the RxString entry
+    }
+
+    String fmt(Duration d) {
+      String two(int n) => n.toString().padLeft(2, '0');
+      return '${two(d.inHours)}h : ${two(d.inMinutes % 60)}m : ${two(d.inSeconds % 60)}s';
+    }
+
+    DateTime? computeLiveEnd(CarsListModel car) {
+      if (car.auctionEndTime != null) return car.auctionEndTime!.toLocal();
+      final start = car.auctionStartTime?.toLocal();
+      if (start == null) return null;
+      return start.add(Duration(hours: car.auctionDuration));
+    }
+
+    void startFor(CarsListModel car) {
+      _timers[car.id]?.cancel();
+
+      final endAt = computeLiveEnd(car);
+      if (endAt == null) {
+        // 🔴 IMPORTANT: write to .value of the RxString
+        getCarRemainingTimeForNextScreen(car.id).value = 'N/A';
+        return;
+      }
+
+      void tick() {
+        final diff = endAt.difference(DateTime.now());
+        if (diff.isNegative) {
+          getCarRemainingTimeForNextScreen(car.id).value = '00h : 00m : 00s';
+          _timers[car.id]?.cancel();
+          _timers.remove(car.id);
+          return;
+        }
+        getCarRemainingTimeForNextScreen(car.id).value = fmt(diff);
+      }
+
+      // prime immediately, then every second
+      tick();
+      _timers[car.id] = Timer.periodic(
+        const Duration(seconds: 1),
+        (_) => tick(),
+      );
+    }
+
+    // 2) ensure every listed car has an active timer
+    for (final car in cars) {
+      startFor(car);
+    }
+  }
+
+  // Get remaining time for car details screen
+  RxString getCarRemainingTimeForNextScreen(String carId) =>
+      remainingTimes.putIfAbsent(carId, () => ''.obs);
 }

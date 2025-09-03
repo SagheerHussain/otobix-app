@@ -14,6 +14,7 @@ import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 
 class CarDetailsController extends GetxController {
+  static const String imagesSectionKey = 'images';
   static const String basicDetailsSectionKey = 'basic';
   static const String documentDetailsSectionKey = 'document';
   static const String exteriorSectionKey = 'exterior';
@@ -25,6 +26,7 @@ class CarDetailsController extends GetxController {
   static const String airConditioningSectionKey = 'airConditioning';
 
   final sectionKeys = {
+    imagesSectionKey: GlobalKey(),
     basicDetailsSectionKey: GlobalKey(),
     documentDetailsSectionKey: GlobalKey(),
     exteriorSectionKey: GlobalKey(),
@@ -380,5 +382,23 @@ class CarDetailsController extends GetxController {
     } catch (e) {
       debugPrint("❗ Exception updating bid: $e");
     }
+  }
+
+  String pickImageForImagesSection(
+    List<String>? primary, {
+    List<List<String>?> alts = const [],
+    required String fallbackUrl,
+  }) {
+    if (primary != null &&
+        primary.isNotEmpty &&
+        primary.first.trim().isNotEmpty) {
+      return primary.first;
+    }
+    for (final list in alts) {
+      if (list != null && list.isNotEmpty && list.first.trim().isNotEmpty) {
+        return list.first;
+      }
+    }
+    return fallbackUrl; // final fallback (e.g., picsum or your CDN placeholder)
   }
 }

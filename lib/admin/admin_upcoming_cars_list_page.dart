@@ -47,7 +47,7 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
     );
   }
 
-  // Wishlist List
+  // Upcoming Cars List
   Widget _buildUpcomingCarsList() {
     return Expanded(
       child: ListView.separated(

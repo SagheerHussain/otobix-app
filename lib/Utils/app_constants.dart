@@ -2,6 +2,7 @@ class AppConstants {
   // Other constant classes
   static final Roles roles = Roles();
   static final AuctionStatuses auctionStatuses = AuctionStatuses();
+  static final ImagesSectionIds imagesSectionIds = ImagesSectionIds();
 
   static const List<String> indianStates = [
     "Andhra Pradesh",
@@ -76,4 +77,15 @@ class AuctionStatuses {
   //   liveAuctionEnded,
   //   otobuyEnded,
   // ];
+}
+
+// Images section ids
+class ImagesSectionIds {
+  final String exterior = 'exterior';
+  final String interior = 'interior';
+  final String engine = 'engine';
+  final String suspension = 'suspension';
+  final String ac = 'ac';
+
+  List<String> get all => [exterior, interior, engine, suspension, ac];
 }

@@ -62,6 +62,7 @@ class MarketplacePage extends StatelessWidget {
                   carId: car.id,
                   car: car,
                   currentOpenSection: homeController.marketplaceSectionScreen,
+                  remainingAuctionTime: car.remainingAuctionTime,
                 ),
               );
             },

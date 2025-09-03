@@ -225,6 +225,7 @@ void placeBidButtonForLiveBidsSection(
                         text: "Place Bid",
                         isLoading: bidController.isPlaceBidButtonLoading,
                         onTap: () {
+                          debugPrint("Place Bid Button Tapped");
                           bidController.placeBid(
                             carId: carId,
                             newBidAmount: bidController.yourOfferAmount.value,

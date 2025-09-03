@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
-
+import 'package:otobix/Utils/app_urls.dart';
 import '../Network/api_service.dart';
 
 class DummyCarAddInUpcoming extends StatelessWidget {
@@ -33,8 +33,7 @@ class DummyCarAddInUpcoming extends StatelessWidget {
   }
 
   Future<void> addCar() async {
-    final url = 'https://otobix-app-backend.onrender.com/api/addADummyCar';
-    // final url = 'http://192.168.100.99:4000/api/addADummyCar';
+    final url = '${AppUrls.baseUrl}addADummyCar';
 
     try {
       final response = await ApiService.post(endpoint: url, body: body);

@@ -1,32 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
-import 'package:otobix/Controllers/account_controller.dart';
-import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/Dealer%20Panel/dealer_guide_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/privacy_policy_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/terms_and_conditions_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
 import 'package:otobix/admin/admin_cars_list_page.dart';
+import 'package:otobix/admin/admin_settings_page.dart';
+import 'package:otobix/admin/controller/admin_profile_controller.dart';
 import 'package:otobix/admin/dummy_car_add_in_upcoming.dart';
 
-class AccountPage extends StatefulWidget {
-  const AccountPage({super.key});
+class AdminProfilePage extends StatefulWidget {
+  const AdminProfilePage({super.key});
 
   @override
-  State<AccountPage> createState() => _AccountPageState();
+  State<AdminProfilePage> createState() => _AdminProfilePageState();
 }
 
-class _AccountPageState extends State<AccountPage> {
-  final AccountController accountController = Get.put(AccountController());
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   accountController.getUserProfile();
-  // }
+class _AdminProfilePageState extends State<AdminProfilePage> {
+  final AdminProfileController adminProfileController = Get.put(
+    AdminProfileController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +35,7 @@ class _AccountPageState extends State<AccountPage> {
                       children: [
                         Obx(() {
                           final imageUrl =
-                              accountController
+                              adminProfileController
                                   .imageUrl
                                   .value; // make sure `user` is reactive
 
@@ -69,7 +60,7 @@ class _AccountPageState extends State<AccountPage> {
 
                         SizedBox(height: 12),
                         Text(
-                          accountController.username.value,
+                          adminProfileController.username.value,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -78,7 +69,7 @@ class _AccountPageState extends State<AccountPage> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          accountController.useremail.value,
+                          adminProfileController.useremail.value,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[700],
@@ -100,126 +91,43 @@ class _AccountPageState extends State<AccountPage> {
                     },
                   ),
 
-                  // if (accountController.userRole.value == UserModel.admin)
-                  //   ProfileOption(
-                  //     icon: Icons.group,
-                  //     color: AppColors.blue,
-                  //     title: "Approved / Rejected Users",
-                  //     description: "Check approved / rejected users list.",
-                  //     onTap: () {
-                  //       Get.to(AdminApprovedRejectedUsersPage());
-                  //     },
-                  //   ),
-                  if (!accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.settings,
-                      color: AppColors.grey,
-                      title: "User Preferences",
-                      description: "Set user preferences.",
-                      onTap: () {
-                        Get.to(UserPreferencesPage());
-                      },
-                    ),
-
-                  // if (accountController.isAdmin)
-                  //   ProfileOption(
-                  //     icon: Icons.timer,
-                  //     color: AppColors.blue,
-                  //     title: "Car Auction Time",
-                  //     description: "Set car auction time.",
-                  //     onTap: () {
-                  //       Get.to(AdminCarAuctionTimerPage());
-                  //     },
-                  //   ),
-                  if (accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.car_rental,
-                      color: AppColors.blue,
-                      title: "Add a Car",
-                      description: "Add a car in upcoming.",
-                      onTap: () {
-                        Get.to(DummyCarAddInUpcoming());
-                      },
-                    ),
-                  if (accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.car_rental,
-                      color: AppColors.green,
-                      title: "Cars List",
-                      description: "View all cars list.",
-                      onTap: () {
-                        Get.to(AdminCarsListPage());
-                      },
-                    ),
-
-                  if (!accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.gavel,
-                      color: Colors.blue,
-                      title: "My Bids",
-                      description: "View all your active and past bids.",
-                      onTap: () {
-                        final navController =
-                            Get.find<BottomNavigationController>();
-                        navController.currentIndex.value = 1;
-
-                        final tabBarWidgetController = Get.put(
-                          TabBarWidgetController(tabLength: 3),
-                        );
-                        tabBarWidgetController.setSelectedTab(0);
-                      },
-                    ),
-                  if (!accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.favorite_border,
-                      color: Colors.red,
-                      title: "Wishlist",
-                      description: "See cars you've saved for later.",
-                      onTap: () {
-                        final navController =
-                            Get.find<BottomNavigationController>();
-                        navController.currentIndex.value = 1;
-
-                        final tabBarWidgetController = Get.put(
-                          TabBarWidgetController(tabLength: 3),
-                        );
-                        tabBarWidgetController.setSelectedTab(2);
-                      },
-                    ),
                   ProfileOption(
-                    icon: Icons.description,
-                    color: AppColors.green,
-                    title: "Terms and Conditions",
-                    description: "View terms and conditions.",
-                    onTap: () {
-                      Get.to(TermsAndConditionsPage());
-                    },
-                  ),
-                  ProfileOption(
-                    icon: Icons.lock,
-                    color: AppColors.grey,
-                    title: "Privacy Policy",
-                    description: "View privacy policy.",
-                    onTap: () {
-                      Get.to(PrivacyPolicyPage());
-                    },
-                  ),
-                  ProfileOption(
-                    icon: Icons.menu_book,
+                    icon: Icons.car_rental,
                     color: AppColors.blue,
-                    title: "Dealer Guide",
-                    description: "View dealer guide.",
+                    title: "Add a Car",
+                    description: "Add a car in upcoming.",
                     onTap: () {
-                      Get.to(DealerGuidePage());
+                      Get.to(DummyCarAddInUpcoming());
                     },
                   ),
+
+                  ProfileOption(
+                    icon: Icons.car_rental,
+                    color: AppColors.green,
+                    title: "Cars List",
+                    description: "View all cars list.",
+                    onTap: () {
+                      Get.to(AdminCarsListPage());
+                    },
+                  ),
+
+                  ProfileOption(
+                    icon: Icons.settings,
+                    color: AppColors.blue,
+                    title: "Settings",
+                    description: "Update terms and privacy policy.",
+                    onTap: () {
+                      Get.to(AdminSettingsPage());
+                    },
+                  ),
+
                   ProfileOption(
                     icon: Icons.logout,
                     color: Colors.red,
                     title: "Logout",
                     description: "Sign out of your account securely.",
                     onTap: () {
-                      accountController.logout();
+                      adminProfileController.logout();
                     },
                   ),
                 ],

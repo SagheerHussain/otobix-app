@@ -77,6 +77,96 @@ class HomeController extends GetxController {
 
   final List<String> cities = ['All States', ...AppConstants.indianStates];
 
+  // TRANSMISSION
+  final List<String> transmissionTypes = const [
+    'Manual',
+    'Automatic',
+    'AMT',
+    'CVT',
+    'DCT',
+  ];
+  final RxList<String> selectedTransmissionFilter = <String>[].obs;
+
+  // KMS
+  final double minKms = 0; // in kms
+  final double maxKms = 300000; // 0–300k kms
+  final Rx<RangeValues> selectedKmsRange = const RangeValues(0, 300000).obs;
+  final TextEditingController minKmsController = TextEditingController(
+    text: '0',
+  );
+  final TextEditingController maxKmsController = TextEditingController(
+    text: '300000',
+  );
+
+  // OWNERSHIP (Serial No.)
+  final int minOwnership = 1;
+  final int maxOwnership = 5;
+  final Rx<RangeValues> selectedOwnershipRange =
+      const RangeValues(1, 5).obs; // integers only
+  final TextEditingController minOwnershipController = TextEditingController(
+    text: '1',
+  );
+  final TextEditingController maxOwnershipController = TextEditingController(
+    text: '5',
+  );
+
+  // Optional: central apply/reset helpers
+  void resetFilters() {
+    selectedYearFilter.value = 2022;
+    selectedMakeFilter.value = '';
+    selectedModelFilter.value = '';
+    selectedVariantFilter.value = '';
+
+    // new ones
+    selectedTransmissionFilter.clear();
+
+    selectedKmsRange.value = const RangeValues(0, 300000);
+    minKmsController.text = '0';
+    maxKmsController.text = '300000';
+
+    selectedOwnershipRange.value = const RangeValues(1, 5);
+    minOwnershipController.text = '1';
+    maxOwnershipController.text = '5';
+
+    // keep your existing price reset if needed:
+    // selectedPriceRange.value = RangeValues(minPrice, maxPrice);
+    // minPriceController.text = minPrice.toInt().toString();
+    // maxPriceController.text = maxPrice.toInt().toString();
+  }
+
+  void applyFilters() {
+    // Call your fetch/filter logic here.
+    // Example predicate if you filter locally:
+    /*
+  final cars = allCars.where((c) {
+    final okFuel = selectedFuelTypesFilter.isEmpty || selectedFuelTypesFilter.contains(c.fuelType);
+    final okPrice = c.priceLacs >= selectedPriceRange.value.start && c.priceLacs <= selectedPriceRange.value.end;
+    final okYear  = selectedYearFilter.value == null ? true : c.year == selectedYearFilter.value;
+    final okMake  = selectedMakeFilter.value.isEmpty ? true : c.make == selectedMakeFilter.value;
+    final okModel = selectedModelFilter.value.isEmpty ? true : c.model == selectedModelFilter.value;
+    final okVar   = selectedVariantFilter.value.isEmpty ? true : c.variant == selectedVariantFilter.value;
+
+    final okTrans = selectedTransmissionFilter.isEmpty || selectedTransmissionFilter.contains(c.transmission);
+    final okKms   = c.kms >= selectedKmsRange.value.start && c.kms <= selectedKmsRange.value.end;
+
+    final owners  = (c.ownershipSerial ?? 1).toDouble();
+    final okOwn   = owners >= selectedOwnershipRange.value.start && owners <= selectedOwnershipRange.value.end;
+
+    return okFuel && okPrice && okYear && okMake && okModel && okVar && okTrans && okKms && okOwn;
+  }).toList();
+
+  filteredCars.assignAll(cars);
+  */
+  }
+
+  String formatKm(num n) {
+    if (n >= 1000000)
+      return '${(n / 1000000).toStringAsFixed((n % 1000000) == 0 ? 0 : 1)}m';
+    if (n >= 1000)
+      return '${(n / 1000).toStringAsFixed((n % 1000) == 0 ? 0 : 1)}k';
+    return n.toStringAsFixed(0);
+  }
+
   @override
   void onInit() async {
     super.onInit();

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/registration_form_controller.dart';
-import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_icons.dart';
@@ -873,7 +872,7 @@ class RegistrationFormPage extends StatelessWidget {
     text: 'Submit',
     isLoading: getxController.isLoading,
     onTap:
-        () => getxController.submitForm(
+        () => getxController.showTermsAndConditionsThenSubmit(
           userRole: userRole,
           contactNumber: phoneNumber,
         ),

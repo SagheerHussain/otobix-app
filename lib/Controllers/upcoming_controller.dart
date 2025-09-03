@@ -19,7 +19,7 @@ class UpcomingController extends GetxController {
   final RxSet<String> wishlistCarsIds = <String>{}.obs;
 
   // Countdown state
-  final RxMap<String, String> remainingTimes = <String, String>{}.obs;
+  final RxMap<String, RxString> remainingTimes = <String, RxString>{}.obs;
   final Map<String, Timer> _timers = {};
 
   @override
@@ -59,25 +59,30 @@ class UpcomingController extends GetxController {
           ),
         );
 
-        upcomingCarsCount.value = upcomingCarsList.length;
-
-        // Only keep cars with future auctionEndTime
+        // Only keep cars with upcoming time
         filteredUpcomingCarsList.value =
             upcomingCarsList.where((car) {
-              return car.auctionEndTime != null &&
-                  car.auctionEndTime!.isAfter(currentTime);
+              return car.upcomingUntil != null &&
+                  car.upcomingUntil!.isAfter(currentTime);
             }).toList();
 
-        for (var car in upcomingCarsList) {
-          await startAuctionCountdown(car);
-        }
+        upcomingCarsCount.value = filteredUpcomingCarsList.length;
+
+        // 🔁 Single entry-point to handle ALL timers
+        setupCountdowns(filteredUpcomingCarsList);
+
+        // for (var car in upcomingCarsList) {
+        //   await startAuctionCountdown(car);
+        // }
       } else {
         filteredUpcomingCarsList.value = [];
+        upcomingCarsCount.value = 0;
         debugPrint('Failed to fetch data ${response.body}');
       }
     } catch (error) {
       debugPrint('Failed to fetch data: $error');
       filteredUpcomingCarsList.value = [];
+      upcomingCarsCount.value = 0;
     } finally {
       isLoading.value = false;
     }
@@ -241,41 +246,41 @@ class UpcomingController extends GetxController {
   /// - Cancels timers for cars that disappeared
   /// - (Re)starts timers for provided cars
   /// - Formats "15h : 22m : 44s"
+  // ---- Countdown: single entry-point ----
   void setupCountdowns(List<CarsListModel> cars) {
-    // 1) Cancel timers that are no longer needed
+    // 1) cancel timers for cars that disappeared from the provided list
     final newIds = cars.map((c) => c.id).toSet();
     final toRemove = _timers.keys.where((id) => !newIds.contains(id)).toList();
     for (final id in toRemove) {
       _timers[id]?.cancel();
       _timers.remove(id);
-      remainingTimes.remove(id);
+      // keep the RxString instance but show zero, so any screen still bound remains stable
+      getCarRemainingTimeForNextScreen(id).value = '00h : 00m : 00s';
     }
 
-    // Local helpers (kept inside this single function)
     String fmt(Duration d) {
       String two(int n) => n.toString().padLeft(2, '0');
       return '${two(d.inHours)}h : ${two(d.inMinutes % 60)}m : ${two(d.inSeconds % 60)}s';
     }
 
     void startFor(CarsListModel car) {
-      // Cancel previous timer for this car (if any)
       _timers[car.id]?.cancel();
 
-      final until = car.upcomingUntil;
+      final until = car.upcomingUntil; // your model’s target DateTime
       if (until == null) {
-        remainingTimes[car.id] = 'N/A';
+        getCarRemainingTimeForNextScreen(car.id).value = 'N/A';
         return;
       }
 
       void tick() {
         final diff = until.difference(DateTime.now());
         if (diff.isNegative) {
-          remainingTimes[car.id] = '00h : 00m : 00s';
+          getCarRemainingTimeForNextScreen(car.id).value = '00h : 00m : 00s';
           _timers[car.id]?.cancel();
           _timers.remove(car.id);
           return;
         }
-        remainingTimes[car.id] = fmt(diff);
+        getCarRemainingTimeForNextScreen(car.id).value = fmt(diff);
       }
 
       // Prime immediately, then every second
@@ -286,7 +291,7 @@ class UpcomingController extends GetxController {
       );
     }
 
-    // 2) Ensure every given car has an active timer
+    // 2) ensure each car in the list has an active timer
     for (final car in cars) {
       startFor(car);
     }
@@ -307,7 +312,7 @@ class UpcomingController extends GetxController {
         // cancel controller-owned timer & remove readable time
         _timers[id]?.cancel();
         _timers.remove(id);
-        remainingTimes.remove(id);
+        getCarRemainingTimeForNextScreen(id).value = '00h : 00m : 00s';
 
         // remove from list
         filteredUpcomingCarsList.value =
@@ -345,11 +350,12 @@ class UpcomingController extends GetxController {
 
   @override
   void onClose() {
-    for (var car in filteredUpcomingCarsList) {
-      car.auctionTimer?.cancel();
-    }
     // stop all timers and clear remaining times via the same single function
     setupCountdowns(const []);
     super.onClose();
   }
+
+  // Get remaining time for car details screen
+  RxString getCarRemainingTimeForNextScreen(String carId) =>
+      remainingTimes.putIfAbsent(carId, () => ''.obs);
 }

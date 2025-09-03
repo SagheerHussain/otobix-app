@@ -1,3 +1,35 @@
+Minor Changes
+
+1: Show terms and privacy policy when someone registers--------------
+2: Terms and privacy policies show in dealer panel--------------
+3: If terms and privacy policies are updated then send notification to all dealers
+4: Filters should have kms range, ownership serial no range and transmission option/types -----------------
+5: Check auctionStatus before sending win/lost bidder message and notifications/alerts
+6: Images section before basic details section ---------------------
+7: Deactivate bids for the car in bids collection if auction is ended
+_____________________________________________________________________________________________
+Major Changes
+
+1: CICD Pipelines
+2: Implement background, foreground and terminated app notifications
+3: Implement sound notifications
+4: A seperate section/screen for all images with seperate images for each section 
+5: Star rating for each parameter of inspection: Exterior, Engine, AC, Electricals, Steering. they already have ratings in car inspection report
+6: If 30 seconds remaining in end auction time and anyone bids then extend auction time by 2 minutes
+7: Auction ended cars screen in Admin
+8: Move auction ended cars to otobuy through Admin panel
+9: Stop auction timer after 6pm and start on next day on 11am ()
+10:Upcoming and Live place/pre bid and autobid/autobid upto
+11: Complete otobuy screen
+12: Complete marketplace screen
+13: Complete states functionality
+14: Complete filters functionality
+15: Complete sort functionality
+16: Complete user preferences functionality
+
+
+   
+  
 
 
 
@@ -17,8 +49,8 @@
     Check auctionStatus before sending win/lost bidder message and notifications/alerts
     ✅ Timer on bottom sheet of placebid/autobid
     Align car name and highest bid to center
-    Align upcoming - live- otobuy - marketplace
-    Set auction time to 24 hours for all cars
+    ✅ Align upcoming - live- otobuy - marketplace
+    ✅Set default auction time to 24 hours for all cars
     Auction ended cars panel in Admin
     Move auction ended cars to otobuy through Admin panel
     Images section before basic details section
@@ -26,6 +58,8 @@
     ✅ Car added and removed in real time from live bids section
     Deactivate bids for the car in bids collection if auction is ended
     Stop auction timer after 6pm and start on next day on 11am 
+    Upcoming timer should be shown to the dealer or not 
+    Upcoming and Live place/pre bid and autobid are same or different
     Complete states functionality
     Complete filters functionality
     Complete sort functionality
@@ -33,6 +67,40 @@
     Complete upcoming screen
     Complete otobuy screen
     Complete marketplace screen
+    
+
+
+    CICD configure -> Firebase App Distribution -> Email through twilio
+    password hash with salt
+    external waff outside render: extra security layer 
+    lock testing: ?
+    2 seperate environments for development and production: on dev env will be testing on Deploy will be on dep env.
+    configuration file which will have:  typical auction hour, typical wait time:  for default values of upcoming timer editable.
+    direct otobuy from upcoming.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 
 

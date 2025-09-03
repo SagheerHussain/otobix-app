@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Views/Dealer%20Panel/account_page.dart';
 import 'package:otobix/admin/admin_home.dart';
+import 'package:otobix/admin/admin_profile_page.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -18,7 +18,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   // );
   RxInt currentIndex = 0.obs;
 
-  final List<Widget> pages = [AdminHome(), const AccountPage()];
+  final List<Widget> pages = [AdminHome(), const AdminProfilePage()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

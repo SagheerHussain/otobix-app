@@ -41,4 +41,12 @@ class AppImages {
       'lib/assets/images/hondaFrontSeats.jpg';
   static const String hondaRearSeatsView =
       'lib/assets/images/hondaRearSeats.jpg';
+
+  // Image sections fallbacks
+  static const String exteriorFallback = 'lib/assets/images/carExterior.jpg';
+  static const String interiorFallback = 'lib/assets/images/carInterior.jpg';
+  static const String engineFallback = 'lib/assets/images/carEngine.jpg';
+  static const String suspensionFallback =
+      'lib/assets/images/carSuspension.jpg';
+  static const String acFallback = 'lib/assets/images/carAc.jpg';
 }

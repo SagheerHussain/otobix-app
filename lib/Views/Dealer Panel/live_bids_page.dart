@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Controllers/live_bids_controller.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
@@ -17,6 +18,7 @@ class LiveBidsPage extends StatelessWidget {
 
   // final HomeController getxController = Get.put(HomeController());
   final LiveBidsController getxController = Get.find<LiveBidsController>();
+  final HomeController homeController = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +63,9 @@ class LiveBidsPage extends StatelessWidget {
                 () => CarDetailsPage(
                   carId: car.id,
                   car: car,
-                  currentOpenSection: AppConstants.auctionStatuses.live,
+                  currentOpenSection: homeController.liveBidsSectionScreen,
+                  remainingAuctionTime: getxController
+                      .getCarRemainingTimeForNextScreen(car.id),
                 ),
               );
             },
@@ -423,7 +427,8 @@ class LiveBidsPage extends StatelessWidget {
             const SizedBox(width: 10),
             Obx(
               () => Text(
-                car.remainingAuctionTime.value,
+                // car.remainingAuctionTime.value,
+                getxController.getCarRemainingTimeForNextScreen(car.id).value,
                 style: TextStyle(
                   fontSize: 12,
                   color: AppColors.red,

@@ -61,6 +61,7 @@ class OtoBuyPage extends StatelessWidget {
                   carId: car.id,
                   car: car,
                   currentOpenSection: homeController.otobuySectionScreen,
+                  remainingAuctionTime: car.remainingAuctionTime,
                 ),
               );
             },

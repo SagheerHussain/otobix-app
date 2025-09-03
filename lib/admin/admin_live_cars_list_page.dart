@@ -66,6 +66,7 @@ class AdminLiveCarsListPage extends StatelessWidget {
                   carId: car.id,
                   car: car,
                   currentOpenSection: AppConstants.auctionStatuses.live,
+                  remainingAuctionTime: car.remainingAuctionTime,
                 ),
               );
             },
