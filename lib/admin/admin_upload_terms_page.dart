@@ -1,4 +1,3 @@
-// lib/screens/terms_upload_screen.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,11 +8,9 @@ class AdminUploadTermsPage extends StatelessWidget {
     Get.put(AdminUploadTermsController(), permanent: true);
   }
 
-  // final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
-    final c = Get.find<AdminUploadTermsController>();
+    final getxController = Get.find<AdminUploadTermsController>();
 
     return Scaffold(
       body: SafeArea(
@@ -22,23 +19,12 @@ class AdminUploadTermsPage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                // Form(
-                //   key: _formKey,
-                //   child: TextFormField(
-                //     initialValue: c.titleCtrl.value,
-                //     decoration: const InputDecoration(
-                //       labelText: 'Title (optional)',
-                //       hintText: 'e.g., Terms & Conditions — September 2025',
-                //       border: OutlineInputBorder(),
-                //     ),
-                //     onChanged: c.setTitle,
-                //   ),
-                // ),
-                // const SizedBox(height: 16),
-
                 // File chooser row
                 InkWell(
-                  onTap: c.isUploading.value ? null : () => c.pickFile(),
+                  onTap:
+                      getxController.isUploading.value
+                          ? null
+                          : () => getxController.pickFile(),
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -55,19 +41,20 @@ class AdminUploadTermsPage extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            c.pickedFile.value?.name ?? 'Choose .docx or .pdf',
+                            getxController.pickedFile.value?.name ??
+                                'Choose .docx or .pdf',
                             style: TextStyle(
                               color:
-                                  c.pickedFile.value == null
+                                  getxController.pickedFile.value == null
                                       ? Colors.grey
                                       : Colors.black87,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (c.pickedFile.value != null)
+                        if (getxController.pickedFile.value != null)
                           Text(
-                            '${(c.pickedFile.value!.size / 1024).toStringAsFixed(1)} KB',
+                            '${(getxController.pickedFile.value!.size / 1024).toStringAsFixed(1)} KB',
                             style: const TextStyle(color: Colors.grey),
                           ),
                       ],
@@ -82,20 +69,21 @@ class AdminUploadTermsPage extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed:
-                        c.isUploading.value || c.pickedFile.value == null
+                        getxController.isUploading.value ||
+                                getxController.pickedFile.value == null
                             ? null
                             : () async {
-                              await c.upload();
+                              await getxController.upload();
                             },
                     icon: const Icon(Icons.cloud_upload),
                     label:
-                        c.isUploading.value
+                        getxController.isUploading.value
                             ? const Text('Uploading...')
                             : const Text('Upload'),
                   ),
                 ),
 
-                if (c.isUploading.value) ...[
+                if (getxController.isUploading.value) ...[
                   const SizedBox(height: 12),
                   const LinearProgressIndicator(),
                 ],
@@ -116,10 +104,10 @@ class AdminUploadTermsPage extends StatelessWidget {
 class _ResponseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final c = Get.find<AdminUploadTermsController>();
+    final uploadTermsController = Get.find<AdminUploadTermsController>();
 
     return Obx(() {
-      final r = c.lastResponse.value;
+      final r = uploadTermsController.lastResponse.value;
       if (r == null) {
         return const SizedBox.shrink();
       }

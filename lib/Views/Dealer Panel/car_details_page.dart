@@ -3225,7 +3225,7 @@ Widget _buildImagesSection({required CarModel car}) {
         return InkWell(
           onTap: () {
             Get.to(
-              () => const CarImagesGalleryPage(),
+              () => CarImagesGalleryPage(car: car),
               arguments: {'sectionId': id},
             );
           },

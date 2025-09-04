@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
@@ -15,7 +16,22 @@ class DealerGuideController extends GetxController {
   void onInit() {
     super.onInit();
     webController =
-        WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted);
+        WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onNavigationRequest: (NavigationRequest navigation) async {
+                // Check for external links, mailto or other special cases
+                if (await _canLaunch(navigation.url)) {
+                  await _launchUrl(navigation.url);
+                  return NavigationDecision
+                      .prevent; // Prevent loading in the WebView
+                }
+                return NavigationDecision
+                    .navigate; // Allow loading within WebView
+              },
+            ),
+          );
     fetchLatest();
   }
 
@@ -62,7 +78,10 @@ class DealerGuideController extends GetxController {
   void reload() => fetchLatest();
 
   // Wrap HTML content
-  String _wrapHtml(String body) => '''
+  String _wrapHtml(String body) {
+    // Replace all http:// links with https://
+    body = body.replaceAll('http://', 'https://');
+    return '''
 <!doctype html>
 <html>
 <head>
@@ -77,4 +96,19 @@ class DealerGuideController extends GetxController {
 <body>$body</body>
 </html>
 ''';
+  }
+
+  // Helper to check if URL can be launched
+  Future<bool> _canLaunch(String url) async {
+    return await canLaunchUrl(Uri.parse(url));
+  }
+
+  // Helper to launch URL in external browser
+  Future<void> _launchUrl(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 }

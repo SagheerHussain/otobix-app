@@ -276,6 +276,7 @@ class CarDetailsController extends GetxController {
 
       if (carDetails != null && carDetails!.id == incomingCarId) {
         currentHighestBidAmount.value = newBid;
+        yourOfferAmount.value = newBid;
         debugPrint('✅ Updated currentHighestBidAmount to $newBid');
       }
       debugPrint('📢 Bid update received: $data');
