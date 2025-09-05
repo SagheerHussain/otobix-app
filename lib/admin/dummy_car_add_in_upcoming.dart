@@ -312,5 +312,6 @@ class DummyCarAddInUpcoming extends StatelessWidget {
     "status": "FINISHED",
     "latlong": "NO",
     "retailAssociate": "Followup",
+    "priceDiscovery": 1000000,
   };
 }

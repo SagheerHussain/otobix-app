@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/home_controller.dart';
+import 'package:otobix/Controllers/live_bids_controller.dart';
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/global_functions.dart';
@@ -53,16 +54,30 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   //   debugPrint(getxController.carDetails?.toJson().toString() ?? 'null');
   // }
 
+  late final CarDetailsController getxController; // keep controller once
+  late final HomeController homeController; // keep reference once
+
+  final LiveBidsController live = Get.find<LiveBidsController>();
+  List<CarsListTitleAndImage> imageUrls = [];
+
   @override
-  Widget build(BuildContext context) {
-    final getxController = Get.put(CarDetailsController(widget.carId));
-    final homeController = Get.put(HomeController());
-    // final imageUrls = widget.car.imageUrls ?? [widget.car.imageUrl];
-    final List<CarsListTitleAndImage> imageUrls =
+  void initState() {
+    super.initState();
+    getxController = Get.put(CarDetailsController(widget.carId));
+    homeController = Get.put(HomeController());
+
+    imageUrls =
         widget.car.imageUrls ??
         [CarsListTitleAndImage(title: 'Main Image', url: widget.car.imageUrl)];
-
     getxController.setImageUrls(imageUrls);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final getxController = Get.put(CarDetailsController(widget.carId));
+    // final homeController = Get.put(HomeController());
+    // final imageUrls = widget.car.imageUrls ?? [widget.car.imageUrl];
+
     // getxController.startCountdown(DateTime.now().add(const Duration(days: 1)));
 
     final pageController = PageController();

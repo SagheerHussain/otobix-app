@@ -32,6 +32,7 @@ class CarsListModel {
   final int upcomingTime;
   final DateTime? upcomingUntil;
   final DateTime? liveAt;
+  final int oneClickPrice;
   final List<CarsListTitleAndImage>? imageUrls;
 
   final RxBool isFavorite;
@@ -61,6 +62,7 @@ class CarsListModel {
     required this.upcomingTime,
     required this.upcomingUntil,
     required this.liveAt,
+    required this.oneClickPrice,
     required this.imageUrls,
     bool isFavorite = false,
   }) : isFavorite = isFavorite.obs;
@@ -107,6 +109,7 @@ class CarsListModel {
       upcomingTime: data['upcomingTime'] ?? 0,
       upcomingUntil: parseMongoDbDate(data["upcomingUntil"]),
       liveAt: parseMongoDbDate(data["liveAt"]),
+      oneClickPrice: data['oneClickPrice'] ?? 0,
       imageUrls:
           (data['imageUrls'] as List<dynamic>?)
               ?.map((e) => CarsListTitleAndImage.fromJson(e))
@@ -140,6 +143,7 @@ class CarsListModel {
       'upcomingTime': upcomingTime,
       'upcomingUntil': upcomingUntil,
       'liveAt': liveAt,
+      'oneClickPrice': oneClickPrice,
       'imageUrls': imageUrls?.map((e) => e.toJson()).toList(),
     };
   }

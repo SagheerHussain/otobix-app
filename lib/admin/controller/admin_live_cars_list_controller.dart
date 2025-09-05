@@ -85,9 +85,10 @@ class AdminLiveCarsListController extends GetxController {
         filteredLiveBidsCarsList.assignAll(
           liveBidsCarsList.where(
             (car) =>
-                car.auctionEndTime != null &&
-                car.auctionStatus == AppConstants.auctionStatuses.live &&
-                car.auctionEndTime!.isAfter(currentTime),
+                // car.auctionEndTime != null &&
+                car.auctionStatus == AppConstants.auctionStatuses.live,
+            //  &&
+            // car.auctionEndTime!.isAfter(currentTime),
           ),
         ); // ✅ stays growable
         // filteredLiveBidsCarsList.value = liveBidsCarsList

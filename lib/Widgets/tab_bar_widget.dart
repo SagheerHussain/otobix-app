@@ -11,6 +11,7 @@ class TabBarWidget extends StatelessWidget {
   final double countSize;
   final double tabsHeight;
   final double spaceFromSides;
+  final bool showCount;
 
   const TabBarWidget({
     super.key,
@@ -21,12 +22,17 @@ class TabBarWidget extends StatelessWidget {
     this.countSize = 10,
     this.tabsHeight = 35,
     this.spaceFromSides = 15,
+    this.showCount = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    // tag to tell the controller that which screen's tabs length it is
+    final tag = (key ?? UniqueKey()).toString();
+
     final tabController = Get.put(
       TabBarWidgetController(tabLength: titles.length),
+      tag: tag,
     );
 
     return Obx(
@@ -57,6 +63,7 @@ class TabBarWidget extends StatelessWidget {
                     selected: tabController.selectedIndex.value == index,
                     titleSize: titleSize,
                     countSize: countSize,
+                    showCount: showCount,
                   ),
                 ),
               ),
@@ -81,6 +88,7 @@ class TabItem extends StatelessWidget {
   final bool selected;
   final double titleSize;
   final double countSize;
+  final bool showCount;
 
   const TabItem({
     super.key,
@@ -89,6 +97,7 @@ class TabItem extends StatelessWidget {
     required this.selected,
     this.titleSize = 12,
     this.countSize = 10,
+    this.showCount = true,
   });
 
   @override
@@ -108,19 +117,20 @@ class TabItem extends StatelessWidget {
             style: TextStyle(fontSize: titleSize, color: titleColor),
           ),
           // if (count > 0)
-          Container(
-            margin: const EdgeInsetsDirectional.only(start: 5),
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(color: badgeBg, shape: BoxShape.circle),
-            child: Text(
-              count > 99
-                  ? '99+'
-                  : count < 10
-                  ? '0${count.toString()}'
-                  : count.toString(),
-              style: TextStyle(color: badgeTextColor, fontSize: countSize),
+          if (showCount)
+            Container(
+              margin: const EdgeInsetsDirectional.only(start: 5),
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(color: badgeBg, shape: BoxShape.circle),
+              child: Text(
+                count > 99
+                    ? '99+'
+                    : count < 10
+                    ? '0${count.toString()}'
+                    : count.toString(),
+                style: TextStyle(color: badgeTextColor, fontSize: countSize),
+              ),
             ),
-          ),
         ],
       ),
     );

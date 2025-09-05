@@ -5,13 +5,13 @@ Major Changes
 1: CICD Pipelines
 2: Implement background, foreground and terminated app notifications
 3: Implement sound notifications
-4: A seperate section/screen for all images with seperate images for each section 
+4: A seperate section/screen for all images with seperate images for each section *********
 5: Star rating for each parameter of inspection: Exterior, Engine, AC, Electricals, Steering. they already have ratings in car inspection report
-6: If 30 seconds remaining in end auction time and anyone bids then extend auction time by 2 minutes----------
-7: Auction ended cars screen in Admin
-8: Move auction ended cars to otobuy through Admin panel
+6: If 30 seconds remaining in end auction time and anyone bids then extend auction time by 2 minutes -------------
+7: Auction ended cars screen in Admin ---------------
+8: Move auction ended cars to otobuy through Admin panel ********
 9: Stop auction timer after 6pm and start on next day on 11am 
-10: Upcoming and Live place/pre bid and autobid/autobid upto
+10: Upcoming and Live place/pre bid and autobid/autobid upto **********
 11: Complete otobuy screen
 12: Complete marketplace screen
 13: Complete states functionality

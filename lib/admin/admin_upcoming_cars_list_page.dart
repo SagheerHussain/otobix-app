@@ -54,7 +54,7 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
         shrinkWrap: true,
         itemCount: upcomingController.filteredUpcomingCarsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         itemBuilder: (context, index) {
           final car = upcomingController.filteredUpcomingCarsList[index];
           // InkWell for car card

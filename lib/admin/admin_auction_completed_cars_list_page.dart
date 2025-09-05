@@ -15,14 +15,13 @@ import 'package:otobix/Widgets/shimmer_widget.dart';
 import 'package:otobix/Widgets/tab_bar_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/controller/admin_auction_completed_cars_list_controller.dart';
-import 'package:otobix/admin/controller/admin_oto_buy_cars_list_controller.dart';
 
-class AdminOtoBuyCarsListPage extends StatelessWidget {
-  AdminOtoBuyCarsListPage({super.key});
+class AdminAuctionCompletedCarsListPage extends StatelessWidget {
+  AdminAuctionCompletedCarsListPage({super.key});
 
   // Initialized in my cars page
-  final AdminOtoBuyCarsListController otoBuyController =
-      Get.find<AdminOtoBuyCarsListController>();
+  final AdminAuctionCompletedCarsListController auctionCompletedController =
+      Get.find<AdminAuctionCompletedCarsListController>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +29,21 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
       body: Column(
         children: [
           Obx(() {
-            if (otoBuyController.isLoading.value) {
+            if (auctionCompletedController.isLoading.value) {
               return _buildLoadingWidget();
-            } else if (otoBuyController.filteredOtoBuyCarsList.isEmpty) {
+            } else if (auctionCompletedController
+                .filteredAuctionCompletedCarsList
+                .isEmpty) {
               return Expanded(
                 child: Center(
                   child: const EmptyDataWidget(
                     icon: Icons.local_car_wash,
-                    message: 'No Cars in Otobuy',
+                    message: 'No Cars in Upcoming',
                   ),
                 ),
               );
             } else {
-              return _buildOtoBuyCarsList();
+              return _buildAuctionCompletedCarsList();
             }
           }),
         ],
@@ -50,20 +51,22 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
     );
   }
 
-  // OtoBuy Cars List
-  Widget _buildOtoBuyCarsList() {
+  // Auction Completed Cars List
+  Widget _buildAuctionCompletedCarsList() {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: otoBuyController.filteredOtoBuyCarsList.length,
+        itemCount:
+            auctionCompletedController.filteredAuctionCompletedCarsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 10),
         padding: const EdgeInsets.symmetric(horizontal: 5),
         itemBuilder: (context, index) {
-          final car = otoBuyController.filteredOtoBuyCarsList[index];
+          final car =
+              auctionCompletedController
+                  .filteredAuctionCompletedCarsList[index];
           // InkWell for car card
           return GestureDetector(
-            // onTap: () => _showOtoBuyCarsBottomSheet(car),
-            onTap: () {},
+            onTap: () => _showAuctionCompletedCarsBottomSheet(car),
             child: Card(
               elevation: 4,
               color: AppColors.white,
@@ -144,7 +147,7 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
                                             Row(
                                               children: [
                                                 Text(
-                                                  'OCP: ',
+                                                  'HB: ',
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -153,15 +156,18 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                Text(
-                                                  'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.oneClickPrice)}/-',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: AppColors.green,
-                                                    fontWeight: FontWeight.bold,
+                                                Obx(
+                                                  () => Text(
+                                                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: AppColors.green,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -341,7 +347,7 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'OCP: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.oneClickPrice)}/-',
+                      'FMV: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
                       style: const TextStyle(
                         color: AppColors.green,
                         fontWeight: FontWeight.w600,

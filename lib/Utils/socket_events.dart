@@ -8,10 +8,15 @@ class SocketEvents {
   // Custom Events (match your backend)
   static const String bidUpdated = 'bid-updated';
   static const String auctionEnded = 'auction-ended';
+  static const String auctionExtended = 'auction-extended';
   static const String wishlistUpdated = 'wishlist-updated';
   static const String myBidsUpdated = 'my-bids-updated';
-  static const String upcomingBidsSectionUpdated = 'upcoming-bids-section-updated';
+  static const String upcomingBidsSectionUpdated =
+      'upcoming-bids-section-updated';
   static const String liveBidsSectionUpdated = 'live-bids-section-updated';
+  static const String auctionCompletedCarsSectionUpdated =
+      'auction-completed-cars-section-updated';
+  static const String otobuyCarsSectionUpdated = 'otobuy-cars-section-updated';
   static const String userNotificationCreated = 'user-notification-created';
   static const String userNotificationMarkedAsRead =
       'user-notification-marked-as-read';
@@ -26,6 +31,9 @@ class SocketEvents {
   static const String userRoom = 'user-room:';
   static const String upcomingBidsSectionRoom = 'upcoming-bids-section-room:';
   static const String liveBidsSectionRoom = 'live-bids-section-room:';
+  static const String auctionCompletedCarsSectionRoom =
+      'auction-completed-cars-section-room:';
+  static const String otobuyCarsSectionRoom = 'otobuy-cars-section-room:';
   static const String userNotificationsRoom = 'user-notifications-room:';
   static const String auctionTimerRoom = 'auction-timer-room:';
   static const String adminHomeRoom = 'admin-home-room:';

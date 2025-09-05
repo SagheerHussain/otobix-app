@@ -42,6 +42,7 @@ class LiveBidsController extends GetxController {
     //Other listeners
     listenUpdatedBidAndChangeHighestBidLocally();
     // listenToAuctionWonEvent();
+    _listenToExtendedTimerRealtime();
   }
 
   final RxList<CarsListModel> filteredLiveBidsCarsList = <CarsListModel>[].obs;
@@ -419,4 +420,104 @@ class LiveBidsController extends GetxController {
   // Get remaining time for car details screen
   RxString getCarRemainingTimeForNextScreen(String carId) =>
       remainingTimes.putIfAbsent(carId, () => ''.obs);
+
+  // Listen to timer exteded updates
+  void _listenToExtendedTimerRealtime() {
+    SocketService.instance.joinRoom(SocketEvents.liveBidsSectionRoom);
+
+    SocketService.instance.on(SocketEvents.auctionExtended, (data) {
+      final carId = '${data['carId']}';
+      final newEnd =
+          data['newEndTime'] == null ? null : '${data['newEndTime']}';
+      final extendedBy =
+          data['extendedBy'] == null
+              ? null
+              : int.tryParse('${data['extendedBy']}') ??
+                  (data['extendedBy'] as num).toInt();
+
+      applyAuctionTimeUpdate(
+        carId: carId,
+        newEndIso: newEnd,
+        extendedBySeconds: extendedBy,
+      );
+    });
+  }
+
+  /// Single entry-point to update ONE car’s end time and restart only its timer.
+  /// Call from your socket listener whenever an auction time changes.
+  ///
+  /// Usage:
+  /// applyAuctionTimeUpdate(
+  ///   carId: id,
+  ///   newEndIso: data['newEndTime'],      // optional ISO string
+  ///   extendedBySeconds: data['extendedBy'] as int?, // optional delta seconds
+  /// );
+  void applyAuctionTimeUpdate({
+    required String carId,
+    String? newEndIso,
+    int? extendedBySeconds,
+  }) {
+    // 1) find the car
+    final idx = filteredLiveBidsCarsList.indexWhere((c) => c.id == carId);
+    if (idx == -1) return;
+
+    final car = filteredLiveBidsCarsList[idx];
+
+    // 2) compute the new end time
+    DateTime? computeLiveEnd() {
+      if (car.auctionEndTime != null) return car.auctionEndTime!.toLocal();
+      final start = car.auctionStartTime?.toLocal();
+      if (start == null) return null;
+      return start.add(Duration(hours: car.auctionDuration));
+    }
+
+    DateTime? endAt = computeLiveEnd();
+
+    if (newEndIso != null && newEndIso.isNotEmpty) {
+      // server gave us a concrete new end time
+      endAt = DateTime.tryParse(newEndIso)?.toLocal();
+    } else if (extendedBySeconds != null && extendedBySeconds != 0) {
+      // server gave us a delta (extend/shrink)
+      if (endAt != null) {
+        endAt = endAt!.add(Duration(seconds: extendedBySeconds));
+      }
+    }
+
+    // 3) update your model in-place (or via copyWith if fields are final)
+    // If your model is immutable, replace with copyWith(auctionEndTime: endAt)
+    car.auctionEndTime = endAt;
+    filteredLiveBidsCarsList[idx] = car; // notify GetX that item changed
+
+    // 4) (re)start ONLY this car’s timer
+    _timers[carId]?.cancel();
+
+    String fmt(Duration d) {
+      String two(int n) => n.toString().padLeft(2, '0');
+      return '${two(d.inHours)}h : ${two(d.inMinutes % 60)}m : ${two(d.inSeconds % 60)}s';
+    }
+
+    void write(String text) =>
+        getCarRemainingTimeForNextScreen(carId).value = text;
+
+    if (endAt == null) {
+      write('N/A');
+      _timers.remove(carId);
+      return;
+    }
+
+    void tick() {
+      final diff = endAt!.difference(DateTime.now());
+      if (diff.isNegative) {
+        write('00h : 00m : 00s');
+        _timers[carId]?.cancel();
+        _timers.remove(carId);
+        return;
+      }
+      write(fmt(diff));
+    }
+
+    // prime and schedule
+    tick();
+    _timers[carId] = Timer.periodic(const Duration(seconds: 1), (_) => tick());
+  }
 }

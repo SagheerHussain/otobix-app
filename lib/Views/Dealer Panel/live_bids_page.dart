@@ -6,7 +6,6 @@ import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Controllers/live_bids_controller.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
