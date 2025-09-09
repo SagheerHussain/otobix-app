@@ -70,6 +70,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         widget.car.imageUrls ??
         [CarsListTitleAndImage(title: 'Main Image', url: widget.car.imageUrl)];
     getxController.setImageUrls(imageUrls);
+    getxController.oneClickPriceAmount.value = widget.car.oneClickPrice;
   }
 
   @override
@@ -86,8 +87,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     getxController.currentHighestBidAmount.value =
         double.tryParse(widget.car.highestBid.toString()) ?? 0.0;
     // Set one click price amount
-    getxController.oneClickPriceAmount.value =
-        getxController.currentHighestBidAmount.value + 10000;
+    // getxController.oneClickPriceAmount.value =
+    //     getxController.currentHighestBidAmount.value + 10000;
     // Set your offer amount
     widget.currentOpenSection != homeController.otobuySectionScreen
         ? getxController.yourOfferAmount.value =
@@ -527,29 +528,20 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         '${NumberFormat.decimalPattern('en_IN').format(carDetails.odometerReadingInKms)} km',
       ),
       iconDetail(Icons.local_gas_station, 'Fuel Type', carDetails.fuelType),
-      iconDetail(
-        Icons.calendar_month,
-        'Year of Manufacture',
-        GlobalFunctions.getFormattedDate(
-              date: carDetails.yearMonthOfManufacture,
-              type: GlobalFunctions.year,
-            ) ??
-            'N/A',
-      ),
 
+      // iconDetail(
+      //   Icons.calendar_month,
+      //   'Year of Manufacture',
+      //   GlobalFunctions.getFormattedDate(
+      //         date: carDetails.yearMonthOfManufacture,
+      //         type: GlobalFunctions.year,
+      //       ) ??
+      //       'N/A',
+      // ),
       iconDetail(
         Icons.settings,
         'Transmission',
         carDetails.commentsOnTransmission,
-      ),
-      iconDetail(
-        Icons.receipt_long,
-        'Tax Validity',
-        GlobalFunctions.getFormattedDate(
-              date: carDetails.taxValidTill,
-              type: GlobalFunctions.monthYear,
-            ) ??
-            'N/A',
       ),
       iconDetail(
         Icons.person,
@@ -557,6 +549,26 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         carDetails.ownerSerialNumber == 1
             ? 'First Owner'
             : '${carDetails.ownerSerialNumber} Owners',
+      ),
+      iconDetail(
+        Icons.receipt_long,
+        'Tax Validity',
+        carDetails.roadTaxValidity == 'LTT' ||
+                carDetails.roadTaxValidity == 'OTT'
+            ? carDetails.roadTaxValidity
+            : GlobalFunctions.getFormattedDate(
+                  date: carDetails.taxValidTill,
+                  type: GlobalFunctions.monthYear,
+                ) ??
+                'N/A',
+      ),
+
+      iconDetail(
+        Icons.science,
+        'Cubic Capacity',
+        carDetails.cubicCapacity != 0
+            ? '${carDetails.cubicCapacity} cc'
+            : 'N/A',
       ),
 
       iconDetail(Icons.location_on, 'Inspection Location', carDetails.city),
@@ -568,6 +580,24 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       iconDetail(Icons.apartment, 'Registered RTO', carDetails.registeredRto),
     ];
 
+    final highestBidText =
+        widget.currentOpenSection == homeController.liveBidsSectionScreen
+            ? 'Highest Bid: '
+            : widget.currentOpenSection == homeController.upcomingSectionScreen
+            ? 'Current Pre-Bid: '
+            : widget.currentOpenSection == homeController.otobuySectionScreen
+            ? 'One Click Price: '
+            : 'Highest Bid: ';
+
+    final RxDouble highestBidValue =
+        widget.currentOpenSection == homeController.liveBidsSectionScreen
+            ? getxController.currentHighestBidAmount
+            : widget.currentOpenSection == homeController.upcomingSectionScreen
+            ? getxController.currentHighestBidAmount
+            : widget.currentOpenSection == homeController.otobuySectionScreen
+            ? getxController.oneClickPriceAmount
+            : getxController.currentHighestBidAmount;
+
     return Container(
       color: AppColors.white,
       child: Padding(
@@ -577,6 +607,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           children: [
             const SizedBox(height: 10),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(
                   child: Text(
@@ -626,7 +657,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             Row(
               children: [
                 Text(
-                  'Highest Bid: ',
+                  highestBidText,
                   style: const TextStyle(
                     fontSize: 14,
                     // color: AppColors.grey,
@@ -636,8 +667,10 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 const SizedBox(width: 5),
                 Obx(
                   () => Text(
-                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount.value)}/-',
-                    key: ValueKey(getxController.currentHighestBidAmount.value),
+                    // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount.value)}/-',
+                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(highestBidValue.value)}/-',
+                    // key: ValueKey(getxController.currentHighestBidAmount.value),
+                    key: ValueKey(highestBidValue.value),
                     style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.green,
@@ -3186,16 +3219,6 @@ Widget _buildImagesSection({required CarModel car}) {
   // 2) Your items, using your picker (primary → alts → fallback)
   final imageSections = <Map<String, String>>[
     {
-      'id': AppConstants.imagesSectionIds.exterior,
-      'title': 'Exterior',
-      'thumb': getxController.pickImageForImagesSection(
-        car.bonnetImages,
-        // try other related sets if bonnet is empty:
-        alts: [car.apronLhsRhs, car.airbags],
-        fallbackUrl: AppImages.exteriorFallback,
-      ),
-    },
-    {
       'id': AppConstants.imagesSectionIds.interior,
       'title': 'Interior',
       'thumb': getxController.pickImageForImagesSection(
@@ -3203,6 +3226,12 @@ Widget _buildImagesSection({required CarModel car}) {
         fallbackUrl: AppImages.interiorFallback,
       ),
     },
+    {
+      'id': AppConstants.imagesSectionIds.suspension,
+      'title': 'Suspension',
+      'thumb': AppImages.suspensionFallback,
+    },
+
     {
       'id': AppConstants.imagesSectionIds.engine,
       'title': 'Engine',
@@ -3212,15 +3241,21 @@ Widget _buildImagesSection({required CarModel car}) {
       ),
     },
     {
-      'id': AppConstants.imagesSectionIds.suspension,
-      'title': 'Suspension',
-      'thumb': AppImages.suspensionFallback,
+      'id': AppConstants.imagesSectionIds.exterior,
+      'title': 'Exterior',
+      'thumb': getxController.pickImageForImagesSection(
+        car.bonnetImages,
+        // try other related sets if bonnet is empty:
+        alts: [car.apronLhsRhs, car.airbags],
+        fallbackUrl: AppImages.exteriorFallback,
+      ),
     },
-    {
-      'id': AppConstants.imagesSectionIds.ac,
-      'title': 'AC',
-      'thumb': AppImages.acFallback,
-    },
+
+    // {
+    //   'id': AppConstants.imagesSectionIds.ac,
+    //   'title': 'AC',
+    //   'thumb': AppImages.acFallback,
+    // },
   ];
 
   return SizedBox(
@@ -3234,14 +3269,19 @@ Widget _buildImagesSection({required CarModel car}) {
         final section = imageSections[i];
         final title = section['title'] ?? '';
         final thumb = section['thumb'] ?? '';
-        final id = section['id'];
-        final alternativeImage = fallbackBySection[id]!;
+        final sectionId = section['id'] ?? '';
+        final alternativeImage = fallbackBySection[sectionId]!;
 
         return InkWell(
           onTap: () {
             Get.to(
-              () => CarImagesGalleryPage(car: car),
-              arguments: {'sectionId': id},
+              () => CarImagesGalleryPage(
+                car: car,
+                initialSectionId: sectionId,
+                initialSectionIndex: i,
+              ),
+
+              // arguments: {'sectionId': id},
             );
           },
           borderRadius: BorderRadius.circular(16),

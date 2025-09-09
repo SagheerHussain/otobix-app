@@ -224,21 +224,22 @@ void placeBidButtonForOtobuySection(
                     Expanded(
                       child: ButtonWidget(
                         text: "Buy Now",
-                        isLoading: bidController.isLoading,
+                        isLoading: bidController.isBuyNowButtonLoading,
                         onTap: () {
+                          bidController.buyNow(carId: carId);
                           Get.back();
-                          Get.dialog(
-                            CongratulationsDialogWidget(
-                              title: "🎉 You Bought the Car!",
-                              message:
-                                  "Congratulations on your successful purchase!",
-                              buttonText: "Check Details",
-                              onButtonTap: () {
-                                // handle navigation or close
-                                Get.back();
-                              },
-                            ),
-                          );
+                          // Get.dialog(
+                          //   CongratulationsDialogWidget(
+                          //     title: "🎉 You Bought the Car!",
+                          //     message:
+                          //         "Congratulations on your successful purchase!",
+                          //     buttonText: "Check Details",
+                          //     onButtonTap: () {
+                          //       // handle navigation or close
+                          //       Get.back();
+                          //     },
+                          //   ),
+                          // );
                         },
                         height: 35,
                         fontSize: 12,

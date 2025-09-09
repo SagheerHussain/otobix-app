@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/global_functions.dart';
@@ -171,8 +172,71 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 5),
+                                  const SizedBox(height: 10),
 
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              car.auctionStatus ==
+                                                      AppConstants
+                                                          .auctionStatuses
+                                                          .otobuy
+                                                  ? AppColors.green.withValues(
+                                                    alpha: .3,
+                                                  )
+                                                  : AppColors.red.withValues(
+                                                    alpha: .3,
+                                                  ),
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          car.auctionStatus ==
+                                                  AppConstants
+                                                      .auctionStatuses
+                                                      .otobuy
+                                              ? 'In Otobuy'
+                                              : 'Sold',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      Obx(() {
+                                        final offer = otoBuyController.offerFor(
+                                          car.id,
+                                          car.otobuyOffer,
+                                        );
+                                        return Text(
+                                          car.auctionStatus ==
+                                                  AppConstants
+                                                      .auctionStatuses
+                                                      .otobuy
+                                              ? 'Current Offer: ${NumberFormat.decimalPattern('en_IN').format(offer)}/-'
+                                              : 'Sold At: ${NumberFormat.decimalPattern('en_IN').format(car.oneClickPrice)}/-',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: AppColors.green,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      }),
+                                    ],
+                                  ),
                                   const Divider(),
                                   const SizedBox(height: 5),
 

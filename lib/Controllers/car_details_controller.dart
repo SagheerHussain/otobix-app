@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
+import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
@@ -47,6 +49,9 @@ class CarDetailsController extends GetxController {
 
   RxBool isLoading = false.obs;
   RxBool isPlaceBidButtonLoading = false.obs;
+  RxBool isPreBidButtonLoading = false.obs;
+  RxBool isBuyNowButtonLoading = false.obs;
+  RxBool isMakeOfferButtonLoading = false.obs;
 
   // final remainingTime = ''.obs;
   // Timer? _timer;
@@ -385,6 +390,234 @@ class CarDetailsController extends GetxController {
     }
   }
 
+  //   pre bid for upcoming section
+  Future<bool> preBid({
+    required String carId,
+    required double newBidAmount,
+  }) async {
+    try {
+      isPreBidButtonLoading.value = true;
+
+      final currentUserId = await SharedPrefsHelper.getString(
+        SharedPrefsHelper.userIdKey,
+      );
+
+      final response = await ApiService.post(
+        endpoint: AppUrls.updateCarBid,
+        body: {
+          'carId': carId,
+          'newBidAmount': newBidAmount,
+          'userId': currentUserId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint("✅ Pre-Bid updated successfully: $data");
+        Get.dialog(
+          CongratulationsDialogWidget(
+            icon: Icons.timer_outlined,
+            iconColor: AppColors.grey,
+            iconSize: 25,
+            title: "Pre-Bid Set!",
+            message: "Your pre-bid has been successfully recorded.",
+            buttonText: "OK",
+            onButtonTap: () => Get.back(),
+          ),
+        );
+
+        return true;
+      } else if (response.statusCode == 403) {
+        debugPrint("❌ Failed to update pre-bid: ${response.body}");
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Bid must be higher than current pre-bid amount.",
+          type: ToastType.error,
+        );
+        return false;
+      } else {
+        debugPrint("❌ Failed to update pre-bid: ${response.body}");
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Failed to place pre-bid",
+          type: ToastType.error,
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint("❗ Exception updating pre-bid: $e");
+      return false;
+    } finally {
+      isPreBidButtonLoading.value = false;
+    }
+  }
+
+  // submit auto bid upto for upcoming section
+  Future<void> submitAutoBidUpto({
+    required String carId,
+    required int maxAmount,
+    int increment = 1000,
+  }) async {
+    try {
+      Get.back();
+      final userId = await SharedPrefsHelper.getString(
+        SharedPrefsHelper.userIdKey,
+      );
+      final res = await ApiService.post(
+        endpoint: AppUrls.submitAutoBidForLiveSection,
+        body: {
+          'carId': carId,
+          'userId': userId,
+          'autoBidAmount': maxAmount,
+          'increment': increment,
+        },
+      );
+
+      if (res.statusCode == 200) {
+        Get.dialog(
+          CongratulationsDialogWidget(
+            icon: Icons.gavel,
+            iconSize: 25,
+            title: "Auto Bid Submitted!",
+            message: "Your auto bid has been set successfully.",
+            buttonText: "OK",
+            onButtonTap: () => Get.back(),
+          ),
+        );
+      } else {
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Failed to submit auto bid',
+          type: ToastType.error,
+        );
+      }
+    } catch (e) {
+      debugPrint("❗ Exception updating bid: $e");
+    }
+  }
+
+  // Buy now for otobuy section
+  Future<bool> buyNow({required String carId}) async {
+    try {
+      isBuyNowButtonLoading.value = true;
+
+      final currentUserId = await SharedPrefsHelper.getString(
+        SharedPrefsHelper.userIdKey,
+      );
+
+      final response = await ApiService.post(
+        endpoint: AppUrls.buyCar,
+        body: {'carId': carId, 'userId': currentUserId},
+      );
+
+      if (response.statusCode == 200) {
+        Get.dialog(
+          CongratulationsDialogWidget(
+            title: "🎉 You Bought the Car!",
+            message: "Congratulations on your successful purchase!",
+            buttonText: "Ok",
+            onButtonTap: () {
+              // handle navigation or close
+              Get.back();
+            },
+          ),
+        );
+
+        return true;
+      } else {
+        debugPrint("❌ Failed to buy car: ${response.body}");
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Failed to buy car",
+          type: ToastType.error,
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint("❗ Exception buying car: $e");
+      return false;
+    } finally {
+      isBuyNowButtonLoading.value = false;
+    }
+  }
+
+  // Make offer for otobuy section
+  Future<bool> makeOffer({required String carId}) async {
+    try {
+      isMakeOfferButtonLoading.value = true;
+
+      final currentUserId = await SharedPrefsHelper.getString(
+        SharedPrefsHelper.userIdKey,
+      );
+
+      final response = await ApiService.post(
+        endpoint: AppUrls.makeOfferForCar,
+        body: {
+          'carId': carId,
+          'userId': currentUserId,
+          'otobuyOffer': yourOfferAmount.value,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Get.dialog(
+          CongratulationsDialogWidget(
+            icon: Icons.emoji_events,
+            iconColor: AppColors.yellow,
+            iconSize: 25,
+            title: "Offer Placed!",
+            message: "Your offer has been successfully placed.",
+            buttonText: "OK",
+            onButtonTap: () {
+              // handle navigation or close
+              Get.back();
+            },
+          ),
+        );
+
+        return true;
+      }
+
+      // Try to read JSON error payload
+      Map<String, dynamic>? data;
+      try {
+        data = jsonDecode(response.body);
+      } catch (_) {}
+
+      if (response.statusCode == 404) {
+        debugPrint("Error: ${response.body}");
+        final currentHighestOffer =
+            (data?['currentHighestOffer'] as num?)?.toDouble() ?? 0.0;
+        // final data = jsonDecode(response.body);
+        // final double currentHighestOffer = double.parse(
+        //   data['currentHighestOffer'],
+        // );
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Cannot make offer less than highest offer.",
+          subtitle:
+              'Current highest offer price is Rs. ${NumberFormat.decimalPattern('en_IN').format(currentHighestOffer)}/-',
+          toastDuration: 5,
+          type: ToastType.error,
+        );
+        return false;
+      }
+      debugPrint("❌ Failed to make offer: ${response.body}");
+      ToastWidget.show(
+        context: Get.context!,
+        title: "Failed to make offer",
+        type: ToastType.error,
+      );
+      return false;
+    } catch (e) {
+      debugPrint("❗ Exception in make offer: $e");
+      return false;
+    } finally {
+      isMakeOfferButtonLoading.value = false;
+    }
+  }
+
+  // pick image for images section
   String pickImageForImagesSection(
     List<String>? primary, {
     List<List<String>?> alts = const [],

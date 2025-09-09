@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
-import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
 void placeBidButtonForUpcomingSection(
   BuildContext context,
@@ -226,21 +225,26 @@ void placeBidButtonForUpcomingSection(
                     Expanded(
                       child: ButtonWidget(
                         text: "Set Pre-Bid",
-                        isLoading: bidController.isLoading,
+                        isLoading: bidController.isPreBidButtonLoading,
                         onTap: () {
-                          Get.back();
-                          Get.dialog(
-                            CongratulationsDialogWidget(
-                              icon: Icons.timer_outlined,
-                              iconColor: AppColors.grey,
-                              iconSize: 25,
-                              title: "Pre-Bid Set!",
-                              message:
-                                  "Your pre-bid has been successfully recorded.",
-                              buttonText: "OK",
-                              onButtonTap: () => Get.back(),
-                            ),
+                          bidController.preBid(
+                            carId: carId,
+                            newBidAmount: bidController.yourOfferAmount.value,
                           );
+                          Get.back();
+                          // Get.back();
+                          // Get.dialog(
+                          //   CongratulationsDialogWidget(
+                          //     icon: Icons.timer_outlined,
+                          //     iconColor: AppColors.grey,
+                          //     iconSize: 25,
+                          //     title: "Pre-Bid Set!",
+                          //     message:
+                          //         "Your pre-bid has been successfully recorded.",
+                          //     buttonText: "OK",
+                          //     onButtonTap: () => Get.back(),
+                          //   ),
+                          // );
                         },
                         height: 35,
                         fontSize: 12,

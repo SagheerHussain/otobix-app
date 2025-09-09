@@ -2,14 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
-import 'package:otobix/Widgets/toast_widget.dart';
 
 class AdminOtoBuyCarsListController extends GetxController {
   RxInt otoBuyCarsCount = 0.obs;
@@ -17,6 +16,21 @@ class AdminOtoBuyCarsListController extends GetxController {
   RxBool isLoading = false.obs;
 
   final RxList<CarsListModel> filteredOtoBuyCarsList = <CarsListModel>[].obs;
+
+  // ...
+  final RxMap<String, double> _otobuyOfferValues = <String, double>{}.obs;
+
+  double offerFor(String carId, double fallback) =>
+      _otobuyOfferValues[carId] ?? fallback;
+
+  void _seedOffers(Iterable<CarsListModel> cars) {
+    for (final c in cars) {
+      _otobuyOfferValues.putIfAbsent(c.id, () => c.otobuyOffer);
+    }
+  }
+
+  // final CarsListModel car;
+  // AdminOtoBuyCarsListController({required this.car});
 
   @override
   void onInit() async {
@@ -30,7 +44,8 @@ class AdminOtoBuyCarsListController extends GetxController {
     isLoading.value = true;
     try {
       final url = AppUrls.getCarsList(
-        auctionStatus: AppConstants.auctionStatuses.otobuy,
+        auctionStatus:
+            '${AppConstants.auctionStatuses.otobuy},${AppConstants.auctionStatuses.sold}',
       );
       final response = await ApiService.get(endpoint: url);
 
@@ -46,6 +61,8 @@ class AdminOtoBuyCarsListController extends GetxController {
         otoBuyCarsCount.value = otoBuyCarsList.length;
 
         filteredOtoBuyCarsList.assignAll(otoBuyCarsList);
+        // assign otobuy offer values to map
+        _seedOffers(filteredOtoBuyCarsList);
       } else {
         filteredOtoBuyCarsList.clear();
         debugPrint('Failed to fetch data ${response.body}');
@@ -73,6 +90,8 @@ class AdminOtoBuyCarsListController extends GetxController {
         // remove from list
         filteredOtoBuyCarsList.removeWhere((c) => c.id == id);
 
+        _otobuyOfferValues.remove(id); // remove otobuy offer value for that car
+
         // update count
         otoBuyCarsCount.value = filteredOtoBuyCarsList.length;
         return;
@@ -93,8 +112,29 @@ class AdminOtoBuyCarsListController extends GetxController {
           filteredOtoBuyCarsList[idx] = incoming;
         }
 
+        // Add otobuy offer value for that car
+        _otobuyOfferValues.putIfAbsent(incoming.id, () => incoming.otobuyOffer);
+
         // update count
         otoBuyCarsCount.value = filteredOtoBuyCarsList.length;
+        return;
+      }
+
+      if (action == 'sold') {}
+
+      if (action == 'offer-made') {
+        final String id = '${data['id']}';
+        final double newOffer =
+            (data['otobuyOffer'] is num)
+                ? (data['otobuyOffer'] as num).toDouble()
+                : double.tryParse('${data['otobuyOffer']}') ?? 0.0;
+
+        // update page-local offer (triggers Obx rebuilds where it's read)
+        _otobuyOfferValues[id] = newOffer;
+
+        // if this controller was constructed with a specific car, sync its observable too
+        // if (car.id == id) currentOfferForTheCar.value = newOffer;
+
         return;
       }
     });

@@ -242,24 +242,25 @@ void autoBidButtonForOtobuySection(
                     Expanded(
                       child: ButtonWidget(
                         text: "Make Offer",
-                        isLoading: getxController.isLoading,
+                        isLoading: getxController.isMakeOfferButtonLoading,
                         onTap: () {
+                          getxController.makeOffer(carId: carId);
                           Get.back();
-                          Get.dialog(
-                            CongratulationsDialogWidget(
-                              icon: Icons.emoji_events,
-                              iconColor: AppColors.yellow,
-                              iconSize: 25,
-                              title: "Offer Placed!",
-                              message:
-                                  "Your offer has been successfully placed.",
-                              buttonText: "OK",
-                              onButtonTap: () {
-                                // handle navigation or close
-                                Get.back();
-                              },
-                            ),
-                          );
+                          // Get.dialog(
+                          //   CongratulationsDialogWidget(
+                          //     icon: Icons.emoji_events,
+                          //     iconColor: AppColors.yellow,
+                          //     iconSize: 25,
+                          //     title: "Offer Placed!",
+                          //     message:
+                          //         "Your offer has been successfully placed.",
+                          //     buttonText: "OK",
+                          //     onButtonTap: () {
+                          //       // handle navigation or close
+                          //       Get.back();
+                          //     },
+                          //   ),
+                          // );
                         },
                         height: 35,
                         fontSize: 12,

@@ -67,6 +67,7 @@ class AuctionStatuses {
   final String otobuy = 'otobuy';
   final String marketplace = 'marketplace';
   final String liveAuctionEnded = 'liveAuctionEnded';
+  final String sold = 'sold';
   final String otobuyEnded = 'otobuyEnded';
 
   // List<String> get all => [

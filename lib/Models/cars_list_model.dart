@@ -19,11 +19,13 @@ class CarsListModel {
   final int ownerSerialNumber;
   final String fuelType;
   final String commentsOnTransmission;
+  final String roadTaxValidity;
   final DateTime? taxValidTill;
   final String registrationNumber;
   final String registeredRto;
   final String inspectionLocation;
   final bool isInspected;
+  final int cubicCapacity;
   final RxDouble highestBid;
   DateTime? auctionStartTime;
   DateTime? auctionEndTime;
@@ -32,7 +34,8 @@ class CarsListModel {
   final int upcomingTime;
   final DateTime? upcomingUntil;
   final DateTime? liveAt;
-  final int oneClickPrice;
+  final double oneClickPrice;
+  final double otobuyOffer;
   final List<CarsListTitleAndImage>? imageUrls;
 
   final RxBool isFavorite;
@@ -49,11 +52,13 @@ class CarsListModel {
     required this.ownerSerialNumber,
     required this.fuelType,
     required this.commentsOnTransmission,
+    required this.roadTaxValidity,
     required this.taxValidTill,
     required this.registrationNumber,
     required this.registeredRto,
     required this.inspectionLocation,
     required this.isInspected,
+    required this.cubicCapacity,
     required this.highestBid,
     required this.auctionStartTime,
     required this.auctionEndTime,
@@ -63,6 +68,7 @@ class CarsListModel {
     required this.upcomingUntil,
     required this.liveAt,
     required this.oneClickPrice,
+    required this.otobuyOffer,
     required this.imageUrls,
     bool isFavorite = false,
   }) : isFavorite = isFavorite.obs;
@@ -94,11 +100,13 @@ class CarsListModel {
               : int.tryParse(data['ownerSerialNumber']?.toString() ?? ''),
       fuelType: data['fuelType'] ?? '',
       commentsOnTransmission: data['commentsOnTransmission'] ?? '',
+      roadTaxValidity: data['roadTaxValidity'] ?? '',
       taxValidTill: parseMongoDbDate(data["taxValidTill"]),
       registrationNumber: data['registrationNumber'],
       registeredRto: data['registeredRto'],
       inspectionLocation: data['inspectionLocation'],
       isInspected: data['isInspected'] ?? false,
+      cubicCapacity: data['cubicCapacity'] ?? 0,
       highestBid: RxDouble(
         double.tryParse(data['highestBid']?.toString() ?? '0') ?? 0.0,
       ),
@@ -109,7 +117,10 @@ class CarsListModel {
       upcomingTime: data['upcomingTime'] ?? 0,
       upcomingUntil: parseMongoDbDate(data["upcomingUntil"]),
       liveAt: parseMongoDbDate(data["liveAt"]),
-      oneClickPrice: data['oneClickPrice'] ?? 0,
+      oneClickPrice:
+          double.tryParse(data['oneClickPrice']?.toString() ?? '0') ?? 0.0,
+      otobuyOffer:
+          double.tryParse(data['otobuyOffer']?.toString() ?? '0') ?? 0.0,
       imageUrls:
           (data['imageUrls'] as List<dynamic>?)
               ?.map((e) => CarsListTitleAndImage.fromJson(e))
@@ -130,11 +141,13 @@ class CarsListModel {
       'ownerSerialNumber': ownerSerialNumber,
       'fuelType': fuelType,
       'commentsOnTransmission': commentsOnTransmission,
+      'roadTaxValidity': roadTaxValidity,
       'taxValidTill': taxValidTill,
       'registrationNumber': registrationNumber,
       'registeredRto': registeredRto,
       'inspectionLocation': inspectionLocation,
       'isInspected': isInspected,
+      'cubicCapacity': cubicCapacity,
       'highestBid': highestBid,
       'auctionStartTime': auctionStartTime,
       'auctionEndTime': auctionEndTime,
@@ -144,6 +157,7 @@ class CarsListModel {
       'upcomingUntil': upcomingUntil,
       'liveAt': liveAt,
       'oneClickPrice': oneClickPrice,
+      'otobuyOffer': otobuyOffer,
       'imageUrls': imageUrls?.map((e) => e.toJson()).toList(),
     };
   }

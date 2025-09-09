@@ -165,39 +165,39 @@ class LiveBidsPage extends StatelessWidget {
 
                         const SizedBox(height: 6),
                         _buildOtherDetails(car),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Text(
-                              'Highest Bid: ',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: AppColors.grey,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Obx(
-                              () => Text(
-                                'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
-                                key: ValueKey(car.highestBid.value),
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.green,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
+                        // const SizedBox(height: 10),
+                        // Row(
+                        //   children: [
+                        //     Text(
+                        //       'Highest Bid: ',
+                        //       style: const TextStyle(
+                        //         fontSize: 14,
+                        //         color: AppColors.grey,
+                        //         fontWeight: FontWeight.w600,
+                        //       ),
+                        //     ),
+                        //     Obx(
+                        //       () => Text(
+                        //         'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
+                        //         key: ValueKey(car.highestBid.value),
+                        //         style: const TextStyle(
+                        //           fontSize: 14,
+                        //           color: AppColors.green,
+                        //           fontWeight: FontWeight.w600,
+                        //         ),
+                        //       ),
+                        //     ),
 
-                            // Text(
-                            //   'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid)}/-',
-                            //   style: const TextStyle(
-                            //     fontSize: 14,
-                            //     color: AppColors.green,
-                            //     fontWeight: FontWeight.w600,
-                            //   ),
-                            // ),
-                          ],
-                        ),
+                        //     // Text(
+                        //     //   'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid)}/-',
+                        //     //   style: const TextStyle(
+                        //     //     fontSize: 14,
+                        //     //     color: AppColors.green,
+                        //     //     fontWeight: FontWeight.w600,
+                        //     //   ),
+                        //     // ),
+                        //   ],
+                        // ),
                         const SizedBox(height: 5),
                         _buildCarCardFooter(car),
                         // if (car.isInspected == true)
@@ -342,32 +342,40 @@ class LiveBidsPage extends StatelessWidget {
         '${NumberFormat.decimalPattern('en_IN').format(car.odometerReadingInKms)} km',
       ),
       iconDetail(Icons.local_gas_station, 'Fuel Type', car.fuelType),
-      iconDetail(
-        Icons.calendar_month,
-        'Year of Manufacture',
-        GlobalFunctions.getFormattedDate(
-              date: car.yearMonthOfManufacture,
-              type: GlobalFunctions.year,
-            ) ??
-            'N/A',
-      ),
 
+      // iconDetail(
+      //   Icons.calendar_month,
+      //   'Year of Manufacture',
+      //   GlobalFunctions.getFormattedDate(
+      //         date: carDetails.yearMonthOfManufacture,
+      //         type: GlobalFunctions.year,
+      //       ) ??
+      //       'N/A',
+      // ),
       iconDetail(Icons.settings, 'Transmission', car.commentsOnTransmission),
-      iconDetail(
-        Icons.receipt_long,
-        'Tax Validity',
-        GlobalFunctions.getFormattedDate(
-              date: car.taxValidTill,
-              type: GlobalFunctions.monthYear,
-            ) ??
-            'N/A',
-      ),
       iconDetail(
         Icons.person,
         'Owner Serial Number',
         car.ownerSerialNumber == 1
             ? 'First Owner'
             : '${car.ownerSerialNumber} Owners',
+      ),
+      iconDetail(
+        Icons.receipt_long,
+        'Tax Validity',
+        car.roadTaxValidity == 'LTT' || car.roadTaxValidity == 'OTT'
+            ? car.roadTaxValidity
+            : GlobalFunctions.getFormattedDate(
+                  date: car.taxValidTill,
+                  type: GlobalFunctions.monthYear,
+                ) ??
+                'N/A',
+      ),
+
+      iconDetail(
+        Icons.science,
+        'Cubic Capacity',
+        car.cubicCapacity != 0 ? '${car.cubicCapacity} cc' : 'N/A',
       ),
 
       iconDetail(
@@ -419,10 +427,33 @@ class LiveBidsPage extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Fair Market Value: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Text(
+                  'Highest Bid: ',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Obx(
+                  () => Text(
+                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
+                    key: ValueKey(car.highestBid.value),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.green,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            // Text(
+            //   'Fair Market Value: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
+            //   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            // ),
             const SizedBox(width: 10),
             Obx(
               () => Text(

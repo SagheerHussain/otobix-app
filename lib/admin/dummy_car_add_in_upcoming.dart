@@ -91,7 +91,7 @@ class DummyCarAddInUpcoming extends StatelessWidget {
     "hypothecationDetails": "Loan Active",
     "mismatchInRc": "No Mismatch",
     "roadTaxValidity": "LTT",
-    "taxValidTill": null,
+    "taxValidTill": "2025-01-07T21:35:47.999Z",
     "insurance": "Yes but not seen",
     "insurancePolicyNumber": null,
     "insuranceValidity": null,
