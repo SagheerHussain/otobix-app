@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
-import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 
 void placeBidButtonForOtobuySection(
   BuildContext context,
@@ -177,7 +176,7 @@ void placeBidButtonForOtobuySection(
                         () => Column(
                           children: [
                             Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.oneClickPriceAmount.value)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -227,6 +226,7 @@ void placeBidButtonForOtobuySection(
                         isLoading: bidController.isBuyNowButtonLoading,
                         onTap: () {
                           bidController.buyNow(carId: carId);
+                          Get.back();
                           Get.back();
                           // Get.dialog(
                           //   CongratulationsDialogWidget(

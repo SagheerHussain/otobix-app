@@ -6,14 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
-import 'package:otobix/Widgets/tab_bar_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/controller/admin_auction_completed_cars_list_controller.dart';
 import 'package:otobix/admin/controller/admin_oto_buy_cars_list_controller.dart';
@@ -61,10 +59,14 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 5),
         itemBuilder: (context, index) {
           final car = otoBuyController.filteredOtoBuyCarsList[index];
+
           // InkWell for car card
           return GestureDetector(
             // onTap: () => _showOtoBuyCarsBottomSheet(car),
-            onTap: () {},
+            onTap: () {
+              final isSold = otoBuyController.isSold(car.id, car.auctionStatus);
+              !isSold ? _showAuctionCompletedCarsBottomSheet(car) : null;
+            },
             child: Card(
               elevation: 4,
               color: AppColors.white,
@@ -174,58 +176,47 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 10),
 
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 2,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              car.auctionStatus ==
-                                                      AppConstants
-                                                          .auctionStatuses
-                                                          .otobuy
-                                                  ? AppColors.green.withValues(
-                                                    alpha: .3,
-                                                  )
-                                                  : AppColors.red.withValues(
-                                                    alpha: .3,
-                                                  ),
-                                          borderRadius: BorderRadius.circular(
-                                            5,
+                                  Obx(() {
+                                    final sold = otoBuyController.isSold(
+                                      car.id,
+                                      car.auctionStatus,
+                                    );
+
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                sold
+                                                    ? AppColors.red.withValues(
+                                                      alpha: .3,
+                                                    ) // or withOpacity(0.3)
+                                                    : AppColors.green
+                                                        .withValues(alpha: .3),
+                                            borderRadius: BorderRadius.circular(
+                                              5,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            sold ? 'Sold' : 'In Otobuy',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
-                                        child: Text(
-                                          car.auctionStatus ==
-                                                  AppConstants
-                                                      .auctionStatuses
-                                                      .otobuy
-                                              ? 'In Otobuy'
-                                              : 'Sold',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      Obx(() {
-                                        final offer = otoBuyController.offerFor(
-                                          car.id,
-                                          car.otobuyOffer,
-                                        );
-                                        return Text(
-                                          car.auctionStatus ==
-                                                  AppConstants
-                                                      .auctionStatuses
-                                                      .otobuy
-                                              ? 'Current Offer: ${NumberFormat.decimalPattern('en_IN').format(offer)}/-'
-                                              : 'Sold At: ${NumberFormat.decimalPattern('en_IN').format(car.oneClickPrice)}/-',
+                                        Text(
+                                          sold
+                                              ? 'Sold At: ${NumberFormat.decimalPattern('en_IN').format(otoBuyController.soldAtFor(car.id, car.soldAt.toDouble()))}/-'
+                                              : 'Current Offer: ${NumberFormat.decimalPattern('en_IN').format(otoBuyController.offerFor(car.id, car.otobuyOffer))}/-',
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -233,10 +224,11 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
                                             color: AppColors.green,
                                             fontWeight: FontWeight.bold,
                                           ),
-                                        );
-                                      }),
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+
                                   const Divider(),
                                   const SizedBox(height: 5),
 
@@ -339,9 +331,9 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
       builder: (context) {
         return DraggableScrollableSheet(
           expand: false,
-          maxChildSize: 0.95,
-          minChildSize: 0.55,
-          initialChildSize: 0.7,
+          maxChildSize: 0.5,
+          minChildSize: 0.3,
+          initialChildSize: 0.5,
           builder: (_, scrollController) {
             return StatefulBuilder(
               builder: (context, setState) {
@@ -356,6 +348,8 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
 
   // Bottom sheet content
   Widget _buildBottomSheetContent(final CarsListModel car) {
+    final AdminOtoBuyCarsListController otoBuyController =
+        Get.find<AdminOtoBuyCarsListController>();
     return Column(
       children: [
         // SizedBox(height: 20),
@@ -421,19 +415,45 @@ class AdminOtoBuyCarsListPage extends StatelessWidget {
 
         const SizedBox(height: 15),
 
-        Expanded(
-          child: TabBarWidget(
-            titles: ['Move to Otobuy', 'Make Live Again'],
-            counts: [0, 0],
-            showCount: false,
-            screens: [
-              _buildMoveToOtobuyWidget(car),
-              _buildMakeLiveWidget(car, Get.context!),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 30),
+              Text(
+                'Current Offer: Rs. ${NumberFormat.decimalPattern("en_IN").format(otoBuyController.offerFor(car.id, car.otobuyOffer))}/-',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.green,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Are you sure you want to mark this car as SOLD for Rs. ${NumberFormat.decimalPattern("en_IN").format(otoBuyController.offerFor(car.id, car.otobuyOffer))}/-',
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ButtonWidget(
+                      text: 'Mark As Sold',
+                      isLoading: otoBuyController.isMarkCarAsSoldButtonLoading,
+                      onTap: () {
+                        // call your API to mark car as sold
+                        otoBuyController.markCarAsSold(carId: car.id);
+                        Get.back();
+                      },
+                      height: 40,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
             ],
-            titleSize: 11,
-            countSize: 0,
-            spaceFromSides: 10,
-            tabsHeight: 30,
           ),
         ),
       ],

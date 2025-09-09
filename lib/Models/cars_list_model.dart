@@ -36,6 +36,7 @@ class CarsListModel {
   final DateTime? liveAt;
   final double oneClickPrice;
   final double otobuyOffer;
+  final double soldAt;
   final List<CarsListTitleAndImage>? imageUrls;
 
   final RxBool isFavorite;
@@ -69,6 +70,7 @@ class CarsListModel {
     required this.liveAt,
     required this.oneClickPrice,
     required this.otobuyOffer,
+    required this.soldAt,
     required this.imageUrls,
     bool isFavorite = false,
   }) : isFavorite = isFavorite.obs;
@@ -121,6 +123,7 @@ class CarsListModel {
           double.tryParse(data['oneClickPrice']?.toString() ?? '0') ?? 0.0,
       otobuyOffer:
           double.tryParse(data['otobuyOffer']?.toString() ?? '0') ?? 0.0,
+      soldAt: double.tryParse(data['soldAt']?.toString() ?? '0') ?? 0.0,
       imageUrls:
           (data['imageUrls'] as List<dynamic>?)
               ?.map((e) => CarsListTitleAndImage.fromJson(e))
@@ -158,6 +161,7 @@ class CarsListModel {
       'liveAt': liveAt,
       'oneClickPrice': oneClickPrice,
       'otobuyOffer': otobuyOffer,
+      'soldAt': soldAt,
       'imageUrls': imageUrls?.map((e) => e.toJson()).toList(),
     };
   }

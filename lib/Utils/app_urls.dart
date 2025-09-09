@@ -1,8 +1,8 @@
 class AppUrls {
   // static const String baseUrl = "http://localhost:4000/api/";
-  // static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
-  static const String baseUrl =
-      "http://192.168.100.99:4000/api/"; // For Mobile Testing
+  static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
+  // static const String baseUrl =
+  //     "http://192.168.100.99:4000/api/"; // For Mobile Testing
 
   static final String socketBaseUrl = _extractSocketBaseUrl(
     baseUrl,
@@ -128,6 +128,8 @@ class AppUrls {
   static const String buyCar = "${baseUrl}otobuy/buy-car";
 
   static const String makeOfferForCar = "${baseUrl}otobuy/make-offer-for-car";
+
+  static const String markCarAsSold = "${baseUrl}otobuy/mark-car-as-sold";
 
   // Socket URL Extraction
   static String _extractSocketBaseUrl(String url) {

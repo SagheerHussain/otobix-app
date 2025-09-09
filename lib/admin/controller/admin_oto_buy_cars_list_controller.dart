@@ -2,31 +2,55 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 class AdminOtoBuyCarsListController extends GetxController {
   RxInt otoBuyCarsCount = 0.obs;
   List<CarsListModel> otoBuyCarsList = [];
   RxBool isLoading = false.obs;
+  RxBool isMarkCarAsSoldButtonLoading = false.obs;
 
   final RxList<CarsListModel> filteredOtoBuyCarsList = <CarsListModel>[].obs;
 
-  // ...
+  // Set otobuy offers
   final RxMap<String, double> _otobuyOfferValues = <String, double>{}.obs;
-
   double offerFor(String carId, double fallback) =>
       _otobuyOfferValues[carId] ?? fallback;
-
   void _seedOffers(Iterable<CarsListModel> cars) {
     for (final c in cars) {
       _otobuyOfferValues.putIfAbsent(c.id, () => c.otobuyOffer);
     }
+  }
+
+  // Set sold cars
+  final RxSet<String> _soldIds = <String>{}.obs;
+  bool isSold(String carId, String fallbackStatus) {
+    // treat as sold if either the server said so earlier, or the original model was sold
+    return _soldIds.contains(carId) ||
+        fallbackStatus == AppConstants.auctionStatuses.sold;
+  }
+
+  // Set sold price values
+  final RxMap<String, double> _soldAtValues = <String, double>{}.obs;
+  double soldAtFor(String carId, double fallback) =>
+      _soldAtValues[carId] ?? fallback;
+  void _seedSoldAts(Iterable<CarsListModel> cars) {
+    for (final c in cars) {
+      if (c.soldAt != null && c.soldAt > 0) {
+        _soldAtValues.putIfAbsent(c.id, () => c.soldAt.toDouble());
+      }
+    }
+  }
+
+  void _markSold(String id) {
+    _soldIds.add(id);
+    _otobuyOfferValues.remove(id); // no need to track live offer once sold
   }
 
   // final CarsListModel car;
@@ -63,6 +87,16 @@ class AdminOtoBuyCarsListController extends GetxController {
         filteredOtoBuyCarsList.assignAll(otoBuyCarsList);
         // assign otobuy offer values to map
         _seedOffers(filteredOtoBuyCarsList);
+
+        // seed sold markers for cars that already arrived as sold
+        for (final car in filteredOtoBuyCarsList) {
+          if (car.auctionStatus == AppConstants.auctionStatuses.sold) {
+            _soldIds.add(car.id);
+          }
+        }
+
+        // Seed sold price values
+        _seedSoldAts(filteredOtoBuyCarsList);
       } else {
         filteredOtoBuyCarsList.clear();
         debugPrint('Failed to fetch data ${response.body}');
@@ -84,18 +118,21 @@ class AdminOtoBuyCarsListController extends GetxController {
     ) async {
       final String action = '${data['action']}';
 
-      if (action == 'removed') {
-        final String id = '${data['id']}';
+      // if (action == 'removed') {
+      //   final String id = '${data['id']}';
 
-        // remove from list
-        filteredOtoBuyCarsList.removeWhere((c) => c.id == id);
+      //   // Mark as sold
+      //   _markSold(id);
 
-        _otobuyOfferValues.remove(id); // remove otobuy offer value for that car
+      //   // remove from list
+      //   filteredOtoBuyCarsList.removeWhere((c) => c.id == id);
 
-        // update count
-        otoBuyCarsCount.value = filteredOtoBuyCarsList.length;
-        return;
-      }
+      //   _otobuyOfferValues.remove(id); // remove otobuy offer value for that car
+
+      //   // update count
+      //   otoBuyCarsCount.value = filteredOtoBuyCarsList.length;
+      //   return;
+      // }
 
       if (action == 'added') {
         final String id = '${data['id']}';
@@ -120,7 +157,17 @@ class AdminOtoBuyCarsListController extends GetxController {
         return;
       }
 
-      if (action == 'sold') {}
+      if (action == 'sold') {
+        final String id = '${data['id']}';
+        final double soldAt =
+            (data['soldAt'] is num)
+                ? (data['soldAt'] as num).toDouble()
+                : double.tryParse('${data['soldAt']}') ?? 0.0;
+
+        _soldAtValues[id] = soldAt; // <-- store it for UI
+        _markSold(id);
+        return;
+      }
 
       if (action == 'offer-made') {
         final String id = '${data['id']}';
@@ -187,6 +234,43 @@ class AdminOtoBuyCarsListController extends GetxController {
   //     );
   //   }
   // }
+
+  // Mark car as sold
+  Future<void> markCarAsSold({required String carId}) async {
+    isMarkCarAsSoldButtonLoading.value = true;
+    try {
+      final response = await ApiService.post(
+        endpoint: AppUrls.markCarAsSold,
+        body: {'carId': carId},
+      );
+
+      if (response.statusCode == 200) {
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Car Marked as sold",
+          // subtitle:
+          //     "Sold at the highest offer of ${offerFor(car.id, car.otobuyOffer)}.",
+          type: ToastType.success,
+        );
+      } else {
+        debugPrint('Failed to mark car as sold: ${response.body}');
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Failed to mark car as sold.",
+          type: ToastType.error,
+        );
+      }
+    } catch (error) {
+      debugPrint('Error marking car as sold: $error');
+      ToastWidget.show(
+        context: Get.context!,
+        title: "Error marking car as sold.",
+        type: ToastType.error,
+      );
+    } finally {
+      isMarkCarAsSoldButtonLoading.value = false;
+    }
+  }
 
   @override
   void onClose() {
