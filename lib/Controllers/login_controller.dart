@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:otobix/Network/api_service.dart';
+import 'package:otobix/Services/notification_sevice.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
@@ -108,6 +110,10 @@ class LoginController extends GetxController {
         debugPrint("userType: $userType");
         debugPrint("token: $token");
         debugPrint("approvalStatus: $approvalStatus");
+
+        // Link current userid in OneSignal to receive push notifications
+        await NotificationService.instance.login(userId);
+
         if (approvalStatus == 'Approved') {
           await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
         }

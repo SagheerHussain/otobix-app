@@ -1,4 +1,4 @@
-package com.example.otobix_frontend
+package com.example.otobix
 
 import io.flutter.embedding.android.FlutterActivity
 

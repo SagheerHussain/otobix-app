@@ -4,11 +4,6 @@ import 'package:get/get.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:otobix/Views/Dealer%20Panel/home_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/my_cars_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/orders_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/add_ons_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/account_page.dart';
 
 class BottomNavigationPage extends StatelessWidget {
   BottomNavigationPage({super.key});
@@ -32,6 +27,10 @@ class BottomNavigationPage extends StatelessWidget {
       body: Obx(() => getxController.pages[getxController.currentIndex.value]),
       bottomNavigationBar: Obx(
         () => SalomonBottomBar(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 10,
+          ), // remove if uncomment below tabs
           currentIndex: getxController.currentIndex.value,
           onTap: (index) {
             getxController.currentIndex.value = index;
@@ -52,18 +51,18 @@ class BottomNavigationPage extends StatelessWidget {
             ),
 
             /// Orders
-            SalomonBottomBarItem(
-              icon: Icon(CupertinoIcons.shopping_cart),
-              title: Text("Orders"),
-              selectedColor: AppColors.red,
-            ),
+            // SalomonBottomBarItem(
+            //   icon: Icon(CupertinoIcons.shopping_cart),
+            //   title: Text("Orders"),
+            //   selectedColor: AppColors.red,
+            // ),
 
-            /// Add Ons
-            SalomonBottomBarItem(
-              icon: Icon(CupertinoIcons.add),
-              title: Text("Add Ons"),
-              selectedColor: AppColors.yellow,
-            ),
+            // /// Add Ons
+            // SalomonBottomBarItem(
+            //   icon: Icon(CupertinoIcons.add),
+            //   title: Text("Add Ons"),
+            //   selectedColor: AppColors.yellow,
+            // ),
 
             /// Account
             SalomonBottomBarItem(

@@ -7,6 +7,7 @@ import 'package:otobix/Controllers/oto_buy_controller.dart';
 import 'package:otobix/Controllers/tab_bar_buttons_controller.dart';
 import 'package:otobix/Controllers/upcoming_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Dealer%20Panel/live_bids_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/marketplace_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/oto_buy_page.dart';
@@ -14,21 +15,23 @@ import 'package:otobix/Views/Dealer%20Panel/upcoming_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_notifications_page.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/tab_bar_buttons_widget.dart';
+import 'package:otobix/helpers/dealer_home_search_sort_filter_helper.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final HomeController getxController = Get.put(HomeController());
   final tabBarController = Get.put(
-    TabBarButtonsController(tabLength: 4, initialIndex: 1),
+    // TabBarButtonsController(tabLength: 4, initialIndex: 1),
+    TabBarButtonsController(tabLength: 3, initialIndex: 1),
   );
   // Different tabs controllers
   final UpcomingController upcomingController = Get.put(UpcomingController());
   final LiveBidsController liveBidsController = Get.put(LiveBidsController());
   final OtoBuyController otoBuyController = Get.put(OtoBuyController());
-  final MarketplaceController marketplaceController = Get.put(
-    MarketplaceController(),
-  );
+  // final MarketplaceController marketplaceController = Get.put(
+  //   MarketplaceController(),
+  // );
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +49,7 @@ class HomePage extends StatelessWidget {
                   UpcomingPage(),
                   LiveBidsPage(),
                   OtoBuyPage(),
-                  MarketplacePage(),
+                  // MarketplacePage(),
                 ],
               ),
             ),
@@ -77,13 +80,16 @@ class HomePage extends StatelessWidget {
                     // TabBar Buttons
                     Obx(
                       () => TabBarButtonsWidget(
-                        titles: ['Upcoming', 'Live', 'OtoBuy', 'Marketplace'],
+                        titles: [
+                          'Upcoming', 'Live', 'OtoBuy',
+                          //  'Marketplace'
+                        ],
 
                         counts: [
                           upcomingController.upcomingCarsCount.value,
                           liveBidsController.liveBidsCarsCount.value,
                           otoBuyController.otoBuyCarsCount.value,
-                          marketplaceController.marketplaceCarsCount.value,
+                          // marketplaceController.marketplaceCarsCount.value,
                         ],
                         controller: tabBarController.tabController,
                         selectedIndex: tabBarController.selectedIndex,
@@ -217,16 +223,17 @@ class HomePage extends StatelessWidget {
                   //   ),
                   // ),
                 ),
-                onChanged: (value) {
-                  // getxController.filteredCars.value =
-                  //     getxController.carsList
-                  //         .where(
-                  //           (car) => '${car.make} ${car.model} ${car.variant}'
-                  //               .toLowerCase()
-                  //               .contains(value.toLowerCase()),
-                  //         )
-                  //         .toList();
-                },
+                onChanged: (value) => getxController.changeSearchText(value),
+                // onChanged: (value) {
+                // getxController.filteredCars.value =
+                //     getxController.carsList
+                //         .where(
+                //           (car) => '${car.make} ${car.model} ${car.variant}'
+                //               .toLowerCase()
+                //               .contains(value.toLowerCase()),
+                //         )
+                //         .toList();
+                // },
               ),
             ),
           ),
@@ -252,12 +259,16 @@ class HomePage extends StatelessWidget {
   }
 
   void _buildStateSelector(BuildContext context) {
-    final filteredStates = getxController.cities.obs;
+    // Make sure options are initialized (safe to call multiple times)
+    DealerHomeSearchSortFilterHelper.initStates(AppConstants.indianStates);
+
+    final options = DealerHomeSearchSortFilterHelper.stateOptions; // RxList
+    final filteredStates = options.toList().obs; // local filtered view
     getxController.searchStateController.clear();
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Important for full height
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -272,6 +283,7 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: [
+                  // Header
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: const Text(
@@ -282,8 +294,9 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  // Search Field
+                  const SizedBox(height: 10),
+
+                  // Search
                   SizedBox(
                     height: 35,
                     child: TextFormField(
@@ -318,31 +331,35 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       onChanged: (value) {
+                        final v = value.toLowerCase();
                         filteredStates.value =
-                            getxController.cities
-                                .where(
-                                  (city) => city.toLowerCase().contains(
-                                    value.toLowerCase(),
-                                  ),
-                                )
+                            options
+                                .where((s) => s.toLowerCase().contains(v))
                                 .toList();
                       },
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // State List
-                  Obx(
-                    () => Expanded(
+                  // List
+                  Obx(() {
+                    final selected =
+                        DealerHomeSearchSortFilterHelper.selectedState.value;
+                    final list = filteredStates;
+                    return Expanded(
                       child: ListView.separated(
                         controller: scrollController,
-                        itemCount: filteredStates.length,
-                        separatorBuilder: (_, __) => SizedBox(height: 10),
+                        itemCount: list.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (_, index) {
-                          final city = filteredStates[index];
+                          final city = list[index];
+                          final isSelected = city == selected;
                           return InkWell(
                             onTap: () {
-                              getxController.selectedCity.value = city;
+                              DealerHomeSearchSortFilterHelper.setSelectedState(
+                                city,
+                              );
+                              DealerHomeSearchSortFilterHelper.applyStateFilter();
                               Navigator.pop(context);
                             },
                             borderRadius: BorderRadius.circular(100),
@@ -359,9 +376,14 @@ class HomePage extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(city, style: TextStyle(fontSize: 12)),
+                                  Text(
+                                    city,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
                                   Icon(
-                                    Icons.location_on,
+                                    isSelected
+                                        ? Icons.check_circle
+                                        : Icons.location_on,
                                     size: 15,
                                     color: AppColors.green,
                                   ),
@@ -371,8 +393,22 @@ class HomePage extends StatelessWidget {
                           );
                         },
                       ),
-                    ),
-                  ),
+                    );
+                  }),
+
+                  // const SizedBox(height: 10),
+
+                  // // Clear filter
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: TextButton(
+                  //     onPressed: () {
+                  //       DealerHomeSearchSortFilterHelper.clearStateFilter();
+                  //       Navigator.pop(context);
+                  //     },
+                  //     child: const Text('Clear state filter'),
+                  //   ),
+                  // ),
                 ],
               ),
             );
@@ -560,10 +596,13 @@ class HomePage extends StatelessWidget {
             Wrap(
               spacing: 8,
               children:
-                  ['Petrol', 'Diesel', 'CNG', 'Electric'].map((type) {
+                  ['Petrol', 'Diesel'].map((type) {
                     return Obx(() {
-                      final isSelected = getxController.selectedFuelTypesFilter
+                      // Fuel chips
+                      final isSelected = DealerHomeSearchSortFilterHelper
+                          .selectedFuelTypesFilter
                           .contains(type);
+
                       return FilterChip(
                         label: Text(
                           type,
@@ -584,19 +623,16 @@ class HomePage extends StatelessWidget {
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
-                          // side: BorderSide(
-                          //   color:
-                          //       isSelected
-                          //           ? AppColors.green.withValues(alpha: .1)
-                          //           : AppColors.gray.withValues(alpha: .3),
-                          // ),
                         ),
+
                         onSelected: (selected) {
-                          if (selected) {
-                            getxController.selectedFuelTypesFilter.add(type);
-                          } else {
-                            getxController.selectedFuelTypesFilter.remove(type);
-                          }
+                          final s =
+                              DealerHomeSearchSortFilterHelper
+                                  .selectedFuelTypesFilter;
+                          if (selected)
+                            s.add(type);
+                          else
+                            s.remove(type);
                         },
                       );
                     });
@@ -616,21 +652,30 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RangeSlider(
-                    values: getxController.selectedPriceRange.value,
-                    min: getxController.minPrice,
-                    max: getxController.maxPrice,
+                    values:
+                        DealerHomeSearchSortFilterHelper
+                            .selectedPriceRange
+                            .value,
+                    min: DealerHomeSearchSortFilterHelper.minPrice,
+                    max: DealerHomeSearchSortFilterHelper.maxPrice,
                     divisions: 50,
                     labels: RangeLabels(
-                      '${getxController.selectedPriceRange.value.start.toStringAsFixed(0)} Lacs',
-                      '${getxController.selectedPriceRange.value.end.toStringAsFixed(0)} Lacs',
+                      '${DealerHomeSearchSortFilterHelper.selectedPriceRange.value.start.toStringAsFixed(0)} Lacs',
+                      '${DealerHomeSearchSortFilterHelper.selectedPriceRange.value.end.toStringAsFixed(0)} Lacs',
                     ),
-                    onChanged: (RangeValues values) {
-                      getxController.selectedPriceRange.value = values;
-                      getxController.minPriceController.text =
-                          values.start.toInt().toString();
-                      getxController.maxPriceController.text =
-                          values.end.toInt().toString();
+
+                    onChanged: (values) {
+                      DealerHomeSearchSortFilterHelper
+                          .selectedPriceRange
+                          .value = values;
+                      DealerHomeSearchSortFilterHelper
+                          .minPriceController
+                          .text = values.start.toStringAsFixed(0);
+                      DealerHomeSearchSortFilterHelper
+                          .maxPriceController
+                          .text = values.end.toStringAsFixed(0);
                     },
+
                     activeColor: AppColors.green,
                     inactiveColor: AppColors.grey.withValues(alpha: .3),
                   ),
@@ -639,7 +684,7 @@ class HomePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Rs. ${getxController.selectedPriceRange.value.start.toStringAsFixed(0)}L - Rs. ${getxController.selectedPriceRange.value.end.toStringAsFixed(0)}L',
+                        'Rs. ${DealerHomeSearchSortFilterHelper.selectedPriceRange.value.start.toStringAsFixed(0)}L - Rs. ${DealerHomeSearchSortFilterHelper.selectedPriceRange.value.end.toStringAsFixed(0)}L',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -654,7 +699,9 @@ class HomePage extends StatelessWidget {
                           children: [
                             Expanded(
                               child: TextField(
-                                controller: getxController.minPriceController,
+                                controller:
+                                    DealerHomeSearchSortFilterHelper
+                                        .minPriceController,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   labelText: 'Min (Lacs)',
@@ -674,18 +721,22 @@ class HomePage extends StatelessWidget {
                                 onChanged: (value) {
                                   final min = double.tryParse(value);
                                   final currentMax =
-                                      getxController
+                                      DealerHomeSearchSortFilterHelper
                                           .selectedPriceRange
                                           .value
                                           .end;
                                   if (min != null) {
                                     final clampedMin = min.clamp(
-                                      getxController.minPrice,
-                                      getxController.maxPrice,
+                                      DealerHomeSearchSortFilterHelper.minPrice,
+                                      DealerHomeSearchSortFilterHelper.maxPrice,
                                     );
                                     if (clampedMin <= currentMax) {
-                                      getxController.selectedPriceRange.value =
-                                          RangeValues(clampedMin, currentMax);
+                                      DealerHomeSearchSortFilterHelper
+                                          .selectedPriceRange
+                                          .value = RangeValues(
+                                        clampedMin,
+                                        currentMax,
+                                      );
                                     }
                                   }
                                 },
@@ -694,7 +745,9 @@ class HomePage extends StatelessWidget {
                             const SizedBox(width: 10),
                             Expanded(
                               child: TextField(
-                                controller: getxController.maxPriceController,
+                                controller:
+                                    DealerHomeSearchSortFilterHelper
+                                        .maxPriceController,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   labelText: 'Max (Lacs)',
@@ -714,18 +767,22 @@ class HomePage extends StatelessWidget {
                                 onChanged: (value) {
                                   final max = double.tryParse(value);
                                   final currentMin =
-                                      getxController
+                                      DealerHomeSearchSortFilterHelper
                                           .selectedPriceRange
                                           .value
                                           .start;
                                   if (max != null) {
                                     final clampedMax = max.clamp(
-                                      getxController.minPrice,
-                                      getxController.maxPrice,
+                                      DealerHomeSearchSortFilterHelper.minPrice,
+                                      DealerHomeSearchSortFilterHelper.maxPrice,
                                     );
                                     if (clampedMax >= currentMin) {
-                                      getxController.selectedPriceRange.value =
-                                          RangeValues(currentMin, clampedMax);
+                                      DealerHomeSearchSortFilterHelper
+                                          .selectedPriceRange
+                                          .value = RangeValues(
+                                        currentMin,
+                                        clampedMax,
+                                      );
                                     }
                                   }
                                 },
@@ -750,11 +807,14 @@ class HomePage extends StatelessWidget {
                   child: _buildFilterDropdown<int>(
                     label: 'Manufacturing Year',
                     hintText: 'Select Year',
-                    selectedValue: getxController.selectedYearFilter,
-                    items: List.generate(10, (i) => 2025 - i),
+                    selectedValue:
+                        DealerHomeSearchSortFilterHelper.selectedYearFilter,
+                    items: List.generate(100, (i) => 2025 - i),
                     onChanged: (val) {
                       if (val != null) {
-                        getxController.selectedYearFilter.value = val;
+                        DealerHomeSearchSortFilterHelper
+                            .selectedYearFilter
+                            .value = val;
                       }
                     },
                   ),
@@ -764,13 +824,21 @@ class HomePage extends StatelessWidget {
                   child: _buildFilterDropdown<String>(
                     label: 'Make',
                     hintText: 'Select Make',
-                    selectedValue: getxController.selectedMakeFilter,
-                    items: getxController.makesListFilter,
+                    selectedValue:
+                        DealerHomeSearchSortFilterHelper.selectedMakeFilter,
+                    items: DealerHomeSearchSortFilterHelper.makesListFilter,
                     onChanged: (val) {
                       if (val != null) {
-                        getxController.selectedMakeFilter.value = val;
-                        getxController.selectedModelFilter.value = '';
-                        getxController.selectedVariantFilter.value = '';
+                        // When Make changes
+                        DealerHomeSearchSortFilterHelper
+                            .selectedMakeFilter
+                            .value = val;
+                        DealerHomeSearchSortFilterHelper
+                            .selectedModelFilter
+                            .value = null;
+                        DealerHomeSearchSortFilterHelper
+                            .selectedVariantFilter
+                            .value = null;
                       }
                     },
                   ),
@@ -781,39 +849,56 @@ class HomePage extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _buildFilterDropdown<String>(
-                    label: 'Model',
-                    hintText: 'Select Model',
-                    selectedValue: getxController.selectedModelFilter,
-                    items:
-                        getxController.modelsListFilter[getxController
-                            .selectedMakeFilter
-                            .value] ??
-                        [],
-                    onChanged: (val) {
-                      if (val != null) {
-                        getxController.selectedModelFilter.value = val;
-                        getxController.selectedVariantFilter.value = '';
-                      }
-                    },
+                  child: Obx(
+                    () => _buildFilterDropdown<String>(
+                      label: 'Model',
+                      hintText: 'Select Model',
+                      selectedValue:
+                          DealerHomeSearchSortFilterHelper.selectedModelFilter,
+                      items:
+                          DealerHomeSearchSortFilterHelper
+                              .modelsListFilter[DealerHomeSearchSortFilterHelper
+                              .selectedMakeFilter
+                              .value] ??
+                          [],
+                      onChanged: (val) {
+                        if (val != null) {
+                          // When Model changes
+                          DealerHomeSearchSortFilterHelper
+                              .selectedModelFilter
+                              .value = val;
+                          DealerHomeSearchSortFilterHelper
+                              .selectedVariantFilter
+                              .value = null;
+                        }
+                      },
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: _buildFilterDropdown<String>(
-                    label: 'Variant',
-                    hintText: 'Select Variant',
-                    selectedValue: getxController.selectedVariantFilter,
-                    items:
-                        getxController.variantsListFilter[getxController
-                            .selectedModelFilter
-                            .value] ??
-                        [],
-                    onChanged: (val) {
-                      if (val != null) {
-                        getxController.selectedVariantFilter.value = val;
-                      }
-                    },
+                  child: Obx(
+                    () => _buildFilterDropdown<String>(
+                      label: 'Variant',
+                      hintText: 'Select Variant',
+                      selectedValue:
+                          DealerHomeSearchSortFilterHelper
+                              .selectedVariantFilter,
+                      items:
+                          DealerHomeSearchSortFilterHelper
+                              .variantsListFilter[DealerHomeSearchSortFilterHelper
+                              .selectedModelFilter
+                              .value] ??
+                          [],
+                      onChanged: (val) {
+                        if (val != null) {
+                          // When Variant changes
+                          DealerHomeSearchSortFilterHelper
+                              .selectedVariantFilter
+                              .value = val;
+                        }
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -829,9 +914,9 @@ class HomePage extends StatelessWidget {
               spacing: 8,
               runSpacing: 6,
               children:
-                  getxController.transmissionTypes.map((t) {
+                  DealerHomeSearchSortFilterHelper.transmissionTypes.map((t) {
                     return Obx(() {
-                      final isSelected = getxController
+                      final isSelected = DealerHomeSearchSortFilterHelper
                           .selectedTransmissionFilter
                           .contains(t);
                       return FilterChip(
@@ -856,9 +941,13 @@ class HomePage extends StatelessWidget {
                         ),
                         onSelected: (sel) {
                           if (sel) {
-                            getxController.selectedTransmissionFilter.add(t);
+                            DealerHomeSearchSortFilterHelper
+                                .selectedTransmissionFilter
+                                .add(t);
                           } else {
-                            getxController.selectedTransmissionFilter.remove(t);
+                            DealerHomeSearchSortFilterHelper
+                                .selectedTransmissionFilter
+                                .remove(t);
                           }
                         },
                       );
@@ -878,7 +967,8 @@ class HomePage extends StatelessWidget {
                 final isNarrow = constraints.maxWidth < 360;
 
                 return Obx(() {
-                  final rv = getxController.selectedKmsRange.value;
+                  final rv =
+                      DealerHomeSearchSortFilterHelper.selectedKmsRange.value;
 
                   Widget valueAndInputs =
                       isNarrow
@@ -900,7 +990,8 @@ class HomePage extends StatelessWidget {
                                   Expanded(
                                     child: TextField(
                                       controller:
-                                          getxController.minKmsController,
+                                          DealerHomeSearchSortFilterHelper
+                                              .minKmsController,
                                       keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
                                         labelText: 'Min (km)',
@@ -923,17 +1014,19 @@ class HomePage extends StatelessWidget {
                                       onChanged: (v) {
                                         final min = double.tryParse(v);
                                         final currentMax =
-                                            getxController
+                                            DealerHomeSearchSortFilterHelper
                                                 .selectedKmsRange
                                                 .value
                                                 .end;
                                         if (min != null) {
                                           final clampedMin = min.clamp(
-                                            getxController.minKms,
-                                            getxController.maxKms,
+                                            DealerHomeSearchSortFilterHelper
+                                                .minKms,
+                                            DealerHomeSearchSortFilterHelper
+                                                .maxKms,
                                           );
                                           if (clampedMin <= currentMax) {
-                                            getxController
+                                            DealerHomeSearchSortFilterHelper
                                                 .selectedKmsRange
                                                 .value = RangeValues(
                                               clampedMin,
@@ -948,7 +1041,8 @@ class HomePage extends StatelessWidget {
                                   Expanded(
                                     child: TextField(
                                       controller:
-                                          getxController.maxKmsController,
+                                          DealerHomeSearchSortFilterHelper
+                                              .maxKmsController,
                                       keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
                                         labelText: 'Max (km)',
@@ -971,17 +1065,19 @@ class HomePage extends StatelessWidget {
                                       onChanged: (v) {
                                         final max = double.tryParse(v);
                                         final currentMin =
-                                            getxController
+                                            DealerHomeSearchSortFilterHelper
                                                 .selectedKmsRange
                                                 .value
                                                 .start;
                                         if (max != null) {
                                           final clampedMax = max.clamp(
-                                            getxController.minKms,
-                                            getxController.maxKms,
+                                            DealerHomeSearchSortFilterHelper
+                                                .minKms,
+                                            DealerHomeSearchSortFilterHelper
+                                                .maxKms,
                                           );
                                           if (clampedMax >= currentMin) {
-                                            getxController
+                                            DealerHomeSearchSortFilterHelper
                                                 .selectedKmsRange
                                                 .value = RangeValues(
                                               currentMin,
@@ -1025,7 +1121,8 @@ class HomePage extends StatelessWidget {
                                         Expanded(
                                           child: TextField(
                                             controller:
-                                                getxController.minKmsController,
+                                                DealerHomeSearchSortFilterHelper
+                                                    .minKmsController,
                                             keyboardType: TextInputType.number,
                                             decoration: InputDecoration(
                                               labelText: 'Min (km)',
@@ -1047,17 +1144,19 @@ class HomePage extends StatelessWidget {
                                             onChanged: (v) {
                                               final min = double.tryParse(v);
                                               final currentMax =
-                                                  getxController
+                                                  DealerHomeSearchSortFilterHelper
                                                       .selectedKmsRange
                                                       .value
                                                       .end;
                                               if (min != null) {
                                                 final clampedMin = min.clamp(
-                                                  getxController.minKms,
-                                                  getxController.maxKms,
+                                                  DealerHomeSearchSortFilterHelper
+                                                      .minKms,
+                                                  DealerHomeSearchSortFilterHelper
+                                                      .maxKms,
                                                 );
                                                 if (clampedMin <= currentMax) {
-                                                  getxController
+                                                  DealerHomeSearchSortFilterHelper
                                                       .selectedKmsRange
                                                       .value = RangeValues(
                                                     clampedMin,
@@ -1072,7 +1171,8 @@ class HomePage extends StatelessWidget {
                                         Expanded(
                                           child: TextField(
                                             controller:
-                                                getxController.maxKmsController,
+                                                DealerHomeSearchSortFilterHelper
+                                                    .maxKmsController,
                                             keyboardType: TextInputType.number,
                                             decoration: InputDecoration(
                                               labelText: 'Max (km)',
@@ -1094,17 +1194,19 @@ class HomePage extends StatelessWidget {
                                             onChanged: (v) {
                                               final max = double.tryParse(v);
                                               final currentMin =
-                                                  getxController
+                                                  DealerHomeSearchSortFilterHelper
                                                       .selectedKmsRange
                                                       .value
                                                       .start;
                                               if (max != null) {
                                                 final clampedMax = max.clamp(
-                                                  getxController.minKms,
-                                                  getxController.maxKms,
+                                                  DealerHomeSearchSortFilterHelper
+                                                      .minKms,
+                                                  DealerHomeSearchSortFilterHelper
+                                                      .maxKms,
                                                 );
                                                 if (clampedMax >= currentMin) {
-                                                  getxController
+                                                  DealerHomeSearchSortFilterHelper
                                                       .selectedKmsRange
                                                       .value = RangeValues(
                                                     currentMin,
@@ -1128,8 +1230,8 @@ class HomePage extends StatelessWidget {
                     children: [
                       RangeSlider(
                         values: rv,
-                        min: getxController.minKms,
-                        max: getxController.maxKms,
+                        min: DealerHomeSearchSortFilterHelper.minKms,
+                        max: DealerHomeSearchSortFilterHelper.maxKms,
                         divisions: 60,
                         labels: RangeLabels(
                           getxController.formatKm(
@@ -1139,21 +1241,22 @@ class HomePage extends StatelessWidget {
                         ),
                         onChanged: (RangeValues values) {
                           final start = values.start.clamp(
-                            getxController.minKms,
-                            getxController.maxKms,
+                            DealerHomeSearchSortFilterHelper.minKms,
+                            DealerHomeSearchSortFilterHelper.maxKms,
                           );
                           final end = values.end.clamp(
-                            getxController.minKms,
-                            getxController.maxKms,
+                            DealerHomeSearchSortFilterHelper.minKms,
+                            DealerHomeSearchSortFilterHelper.maxKms,
                           );
-                          getxController.selectedKmsRange.value = RangeValues(
-                            start,
-                            end,
-                          );
-                          getxController.minKmsController.text =
-                              start.toInt().toString();
-                          getxController.maxKmsController.text =
-                              end.toInt().toString();
+                          DealerHomeSearchSortFilterHelper
+                              .selectedKmsRange
+                              .value = RangeValues(start, end);
+                          DealerHomeSearchSortFilterHelper
+                              .minKmsController
+                              .text = start.toInt().toString();
+                          DealerHomeSearchSortFilterHelper
+                              .maxKmsController
+                              .text = end.toInt().toString();
                         },
                         activeColor: AppColors.green,
                         inactiveColor: AppColors.grey.withValues(alpha: .3),
@@ -1174,7 +1277,8 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Obx(() {
-              final rv = getxController.selectedOwnershipRange.value;
+              final rv =
+                  DealerHomeSearchSortFilterHelper.selectedOwnershipRange.value;
               String _label(double v) {
                 final i = v.round();
                 if (i == 1) return '1st';
@@ -1191,23 +1295,28 @@ class HomePage extends StatelessWidget {
                       rv.start.roundToDouble(),
                       rv.end.roundToDouble(),
                     ),
-                    min: getxController.minOwnership.toDouble(),
-                    max: getxController.maxOwnership.toDouble(),
+                    min:
+                        DealerHomeSearchSortFilterHelper.minOwnership
+                            .toDouble(),
+                    max:
+                        DealerHomeSearchSortFilterHelper.maxOwnership
+                            .toDouble(),
                     divisions:
-                        (getxController.maxOwnership -
-                            getxController.minOwnership),
+                        (DealerHomeSearchSortFilterHelper.maxOwnership -
+                            DealerHomeSearchSortFilterHelper.minOwnership),
                     labels: RangeLabels(_label(rv.start), _label(rv.end)),
                     onChanged: (RangeValues values) {
                       final s = values.start.round().toDouble();
                       final e = values.end.round().toDouble();
-                      getxController.selectedOwnershipRange.value = RangeValues(
-                        s,
-                        e,
-                      );
-                      getxController.minOwnershipController.text =
-                          s.toInt().toString();
-                      getxController.maxOwnershipController.text =
-                          e.toInt().toString();
+                      DealerHomeSearchSortFilterHelper
+                          .selectedOwnershipRange
+                          .value = RangeValues(s, e);
+                      DealerHomeSearchSortFilterHelper
+                          .minOwnershipController
+                          .text = s.toInt().toString();
+                      DealerHomeSearchSortFilterHelper
+                          .maxOwnershipController
+                          .text = e.toInt().toString();
                     },
                     activeColor: AppColors.green,
                     inactiveColor: AppColors.grey.withValues(alpha: .3),
@@ -1231,7 +1340,8 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: TextField(
                                 controller:
-                                    getxController.minOwnershipController,
+                                    DealerHomeSearchSortFilterHelper
+                                        .minOwnershipController,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   labelText: 'Min',
@@ -1251,18 +1361,20 @@ class HomePage extends StatelessWidget {
                                 onChanged: (v) {
                                   final min = int.tryParse(v);
                                   final currentMax =
-                                      getxController
+                                      DealerHomeSearchSortFilterHelper
                                           .selectedOwnershipRange
                                           .value
                                           .end
                                           .toInt();
                                   if (min != null) {
                                     final clampedMin = min.clamp(
-                                      getxController.minOwnership,
-                                      getxController.maxOwnership,
+                                      DealerHomeSearchSortFilterHelper
+                                          .minOwnership,
+                                      DealerHomeSearchSortFilterHelper
+                                          .maxOwnership,
                                     );
                                     if (clampedMin <= currentMax) {
-                                      getxController
+                                      DealerHomeSearchSortFilterHelper
                                           .selectedOwnershipRange
                                           .value = RangeValues(
                                         clampedMin.toDouble(),
@@ -1277,7 +1389,8 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: TextField(
                                 controller:
-                                    getxController.maxOwnershipController,
+                                    DealerHomeSearchSortFilterHelper
+                                        .maxOwnershipController,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   labelText: 'Max',
@@ -1297,18 +1410,20 @@ class HomePage extends StatelessWidget {
                                 onChanged: (v) {
                                   final max = int.tryParse(v);
                                   final currentMin =
-                                      getxController
+                                      DealerHomeSearchSortFilterHelper
                                           .selectedOwnershipRange
                                           .value
                                           .start
                                           .toInt();
                                   if (max != null) {
                                     final clampedMax = max.clamp(
-                                      getxController.minOwnership,
-                                      getxController.maxOwnership,
+                                      DealerHomeSearchSortFilterHelper
+                                          .minOwnership,
+                                      DealerHomeSearchSortFilterHelper
+                                          .maxOwnership,
                                     );
                                     if (clampedMax >= currentMin) {
-                                      getxController
+                                      DealerHomeSearchSortFilterHelper
                                           .selectedOwnershipRange
                                           .value = RangeValues(
                                         currentMin.toDouble(),
@@ -1328,133 +1443,6 @@ class HomePage extends StatelessWidget {
               );
             }),
 
-            // Manufacturing Year
-            // const Text(
-            //   'Manufacturing Year',
-            //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-            // ),
-            // const SizedBox(height: 5),
-
-            // Obx(
-            //   () => Container(
-            //     padding: const EdgeInsets.symmetric(horizontal: 12),
-            //     decoration: BoxDecoration(
-            //       color: AppColors.white,
-            //       border: Border.all(color: AppColors.gray.withValues(alpha: .3)),
-            //       borderRadius: BorderRadius.circular(30),
-            //       boxShadow: [
-            //         BoxShadow(
-            //           color: AppColors.black.withValues(alpha: .05),
-            //           blurRadius: 5,
-            //           offset: Offset(0, 3),
-            //         ),
-            //       ],
-            //     ),
-            //     child: DropdownButtonHideUnderline(
-            //       child: DropdownButton<int>(
-            //         isExpanded: true,
-            //         menuMaxHeight: 300,
-            //         value: getxController.selectedYearFilter.value,
-            //         icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
-            //         style: const TextStyle(fontSize: 13, color: AppColors.black),
-            //         items:
-            //             List.generate(10, (i) => 2025 - i)
-            //                 .map(
-            //                   (year) => DropdownMenuItem(
-            //                     value: year,
-            //                     child: Text(year.toString()),
-            //                   ),
-            //                 )
-            //                 .toList(),
-            //         onChanged: (val) {
-            //           getxController.selectedYearFilter.value = val!;
-            //         },
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(height: 16),
-
-            // // Make
-            // const Text('Make', style: TextStyle(fontWeight: FontWeight.bold)),
-            // Obx(
-            //   () => DropdownButton<String>(
-            //     isExpanded: true,
-            //     value:
-            //         getxController.selectedMakeFilter.value.isEmpty
-            //             ? null
-            //             : getxController.selectedMakeFilter.value,
-            //     hint: const Text("Select Make"),
-            //     items:
-            //         getxController.makesListFilter
-            //             .map(
-            //               (make) =>
-            //                   DropdownMenuItem(value: make, child: Text(make)),
-            //             )
-            //             .toList(),
-            //     onChanged: (val) {
-            //       getxController.selectedMakeFilter.value = val!;
-            //       getxController.selectedModelFilter.value = '';
-            //       getxController.selectedVariantFilter.value = '';
-            //     },
-            //   ),
-            // ),
-            // const SizedBox(height: 16),
-
-            // // Model
-            // const Text('Model', style: TextStyle(fontWeight: FontWeight.bold)),
-            // Obx(
-            //   () => DropdownButton<String>(
-            //     isExpanded: true,
-            //     value:
-            //         getxController.selectedModelFilter.value.isEmpty
-            //             ? null
-            //             : getxController.selectedModelFilter.value,
-            //     hint: const Text("Select Model"),
-            //     items:
-            //         (getxController.modelsListFilter[getxController
-            //                     .selectedMakeFilter
-            //                     .value] ??
-            //                 [])
-            //             .map(
-            //               (model) =>
-            //                   DropdownMenuItem(value: model, child: Text(model)),
-            //             )
-            //             .toList(),
-            //     onChanged: (val) {
-            //       getxController.selectedModelFilter.value = val!;
-            //       getxController.selectedVariantFilter.value = '';
-            //     },
-            //   ),
-            // ),
-            // const SizedBox(height: 16),
-
-            // // Variant
-            // const Text('Variant', style: TextStyle(fontWeight: FontWeight.bold)),
-            // Obx(
-            //   () => DropdownButton<String>(
-            //     isExpanded: true,
-            //     value:
-            //         getxController.selectedVariantFilter.value.isEmpty
-            //             ? null
-            //             : getxController.selectedVariantFilter.value,
-            //     hint: const Text("Select Variant"),
-            //     items:
-            //         (getxController.variantsListFilter[getxController
-            //                     .selectedModelFilter
-            //                     .value] ??
-            //                 [])
-            //             .map(
-            //               (variant) => DropdownMenuItem(
-            //                 value: variant,
-            //                 child: Text(variant),
-            //               ),
-            //             )
-            //             .toList(),
-            //     onChanged:
-            //         (val) => getxController.selectedVariantFilter.value = val!,
-            //   ),
-            // ),
             const SizedBox(height: 24),
 
             // Buttons
@@ -1469,13 +1457,7 @@ class HomePage extends StatelessWidget {
                     isLoading: false.obs,
                     elevation: 5,
                     onTap: () {
-                      // getxController.selectedYearFilter.value = 2022;
-                      // getxController.selectedMakeFilter.value = '';
-                      // getxController.selectedModelFilter.value = '';
-                      // getxController.selectedVariantFilter.value = '';
-                      // Navigator.pop(Get.context!);
-
-                      getxController.resetFilters(); // <— use helper
+                      DealerHomeSearchSortFilterHelper.resetFilters();
                       Navigator.pop(Get.context!);
                     },
                   ),
@@ -1488,9 +1470,7 @@ class HomePage extends StatelessWidget {
                     isLoading: false.obs,
                     elevation: 5,
                     onTap: () {
-                      // handle apply logic here
-                      getxController
-                          .applyFilters(); // <— fire your filter/fetch
+                      DealerHomeSearchSortFilterHelper.applyFilters();
                       Navigator.pop(Get.context!);
                     },
                   ),
@@ -1565,10 +1545,15 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildSortContent() {
-    RxString selectedSort = 'Price Low to High'.obs;
+    // local temp selection (starts from global selection)
+    final tempSelected = RxString(
+      DealerHomeSearchSortFilterHelper.selectedSortLabel.value,
+    );
 
-    return Obx(
-      () => Padding(
+    return Obx(() {
+      final options = DealerHomeSearchSortFilterHelper.sortOptions;
+
+      return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1585,42 +1570,66 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Sort By',
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            ...[
-              'Price Low to High',
-              'Price High to Low',
-              'Newest First',
-              'Oldest First',
-            ].map((option) {
+
+            // Radios
+            ...options.map((option) {
               return RadioListTile<String>(
                 title: Text(option, style: const TextStyle(fontSize: 15)),
                 value: option,
-                groupValue: selectedSort.value,
+                groupValue: tempSelected.value,
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
                 onChanged: (value) {
-                  if (value != null) {
-                    selectedSort.value = value;
-                  }
+                  if (value != null) tempSelected.value = value;
                 },
               );
             }),
+
             const SizedBox(height: 10),
-            ButtonWidget(
-              text: 'Apply',
-              width: double.infinity,
-              isLoading: false.obs,
-              elevation: 5,
-              onTap: () {
-                Navigator.pop(Get.context!);
-              },
+
+            // Row: Clear sort (left) + Apply (right)
+            Row(
+              children: [
+                Expanded(
+                  child: ButtonWidget(
+                    text: 'Clear sort',
+                    // width: 140,
+                    isLoading: false.obs,
+                    elevation: 5,
+                    backgroundColor: AppColors.red,
+                    onTap: () {
+                      // Clear + close
+                      DealerHomeSearchSortFilterHelper.clearSort();
+                      Navigator.pop(Get.context!);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ButtonWidget(
+                    text: 'Apply',
+                    // width: 140,
+                    isLoading: false.obs,
+                    elevation: 5,
+                    onTap: () {
+                      // Persist selection, then mark as applied
+                      DealerHomeSearchSortFilterHelper.setSelectedSortLabel(
+                        tempSelected.value,
+                      );
+                      DealerHomeSearchSortFilterHelper.applySort();
+                      Navigator.pop(Get.context!);
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -6,9 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.otobix_frontend"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = "29.0.13846066"
+    namespace = "com.example.otobix"
+    compileSdk = 36
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -21,11 +21,11 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.otobix_frontend"
+        applicationId = "com.example.otobix"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

@@ -11,6 +11,7 @@ import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
+import 'package:otobix/helpers/dealer_home_search_sort_filter_helper.dart';
 
 class LiveBidsPage extends StatelessWidget {
   LiveBidsPage({super.key});
@@ -27,9 +28,140 @@ class LiveBidsPage extends StatelessWidget {
           const SizedBox(height: 10),
 
           Obx(() {
+            // Rebuild when state filter changes or sort changes
+            // final _s1 = DealerHomeSearchSortFilterHelper.selectedState.value;
+            // final _s2 =
+            //     DealerHomeSearchSortFilterHelper.isStateFilterApplied.value;
+            // final _s3 =
+            //     DealerHomeSearchSortFilterHelper.selectedSortLabel.value;
+            // final _s4 = DealerHomeSearchSortFilterHelper.isSortApplied.value;
+
+            // 1) Search cars using search text
+            final searchTextFilteredCarsList =
+                DealerHomeSearchSortFilterHelper.searchCarsBySearchText(
+                  carsList: getxController.filteredLiveBidsCarsList,
+                  searchText: homeController.searchText.value,
+                );
+
+            // 2) State filter (by default uses `inspectionLocation`)
+            final stateFilteredCarsList =
+                DealerHomeSearchSortFilterHelper.filterCarsByState(
+                  carsList: searchTextFilteredCarsList,
+                  // If your state lives elsewhere, provide a selector:
+                  // stateOf: (c) => c.registrationState ?? c.inspectionLocation ?? '',
+                );
+
+            // 3) filters only if applied
+            final areFilterApplied =
+                DealerHomeSearchSortFilterHelper.isFiltersApplied.value;
+
+            final filtersFilteredCarsList =
+                areFilterApplied
+                    ? DealerHomeSearchSortFilterHelper.applyAllFilters(
+                      source: stateFilteredCarsList,
+
+                      // Fuel
+                      fuelTypes:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedFuelTypes
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedFuelTypes
+                                  .toSet(),
+
+                      // Price (Lacs)
+                      priceRangeLacs:
+                          DealerHomeSearchSortFilterHelper
+                              .appliedPriceRange
+                              .value,
+                      priceOf:
+                          (c) =>
+                              (c.highestBid.toDouble() /
+                                  100000.0), // rupees -> lacs
+                      // Year
+                      manufacturingYear:
+                          (DealerHomeSearchSortFilterHelper.appliedYear.value ==
+                                  0)
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedYear
+                                  .value,
+
+                      // Make/Model/Variant
+                      make:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedMake
+                                  .value
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedMake
+                                  .value,
+                      model:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedModel
+                                  .value
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedModel
+                                  .value,
+                      variant:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedVariant
+                                  .value
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedVariant
+                                  .value,
+
+                      // Transmission
+                      transmissions:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedTransmissions
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedTransmissions
+                                  .toSet(),
+
+                      // KMs
+                      kmsRange:
+                          DealerHomeSearchSortFilterHelper
+                              .appliedKmsRange
+                              .value,
+
+                      // Ownership
+                      ownershipRange:
+                          DealerHomeSearchSortFilterHelper
+                              .appliedOwnershipRange
+                              .value,
+                    )
+                    : stateFilteredCarsList;
+
+            // 4) Sort (uses helper's current selected label)
+            // Make Obx rebuild when sort changes or is cleared
+            // final _label =
+            //     DealerHomeSearchSortFilterHelper.selectedSortLabel.value;
+            // final _applied =
+            //     DealerHomeSearchSortFilterHelper.isSortApplied.value;
+            final sortFilteredCarsList =
+                DealerHomeSearchSortFilterHelper.sortCars(
+                  carsList: filtersFilteredCarsList,
+                  priceOf:
+                      (c) => (c.highestBid.toDouble()), // Live Bids example
+                );
+
+            // Final filtered cars list
+            final finalFilteredCarsList = sortFilteredCarsList;
+
+            // Check if cars list is loading
             if (getxController.isLoading.value) {
               return _buildLoadingWidget();
-            } else if (getxController.filteredLiveBidsCarsList.isEmpty) {
+            } else if (finalFilteredCarsList.isEmpty) {
+              // Check if cars list is empty
               return Expanded(
                 child: Center(
                   child: const EmptyDataWidget(
@@ -39,7 +171,8 @@ class LiveBidsPage extends StatelessWidget {
                 ),
               );
             } else {
-              return _buildCarsList();
+              // Show fetched and filtered cars list
+              return _buildCarsList(finalFilteredCarsList);
             }
           }),
         ],
@@ -47,14 +180,14 @@ class LiveBidsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCarsList() {
+  Widget _buildCarsList(List<CarsListModel> carsList) {
     return Expanded(
       child: ListView.separated(
         // padding: const EdgeInsets.symmetric(horizontal: 10),
-        itemCount: getxController.filteredLiveBidsCarsList.length,
+        itemCount: carsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 15),
         itemBuilder: (context, index) {
-          final car = getxController.filteredLiveBidsCarsList[index];
+          final car = carsList[index];
 
           return InkWell(
             onTap: () {

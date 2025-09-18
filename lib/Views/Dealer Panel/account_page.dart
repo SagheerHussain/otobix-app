@@ -8,9 +8,6 @@ import 'package:otobix/Views/Dealer%20Panel/dealer_guide_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/privacy_policy_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/terms_and_conditions_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/user_preferences_page.dart';
-import 'package:otobix/admin/admin_cars_list_page.dart';
-import 'package:otobix/admin/dummy_car_add_in_upcoming.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -100,92 +97,47 @@ class _AccountPageState extends State<AccountPage> {
                     },
                   ),
 
-                  // if (accountController.userRole.value == UserModel.admin)
-                  //   ProfileOption(
-                  //     icon: Icons.group,
-                  //     color: AppColors.blue,
-                  //     title: "Approved / Rejected Users",
-                  //     description: "Check approved / rejected users list.",
-                  //     onTap: () {
-                  //       Get.to(AdminApprovedRejectedUsersPage());
-                  //     },
-                  //   ),
-                  if (!accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.settings,
-                      color: AppColors.grey,
-                      title: "User Preferences",
-                      description: "Set user preferences.",
-                      onTap: () {
-                        Get.to(UserPreferencesPage());
-                      },
-                    ),
+                  // ProfileOption(
+                  //   icon: Icons.settings,
+                  //   color: AppColors.grey,
+                  //   title: "User Preferences",
+                  //   description: "Set user preferences.",
+                  //   onTap: () {
+                  //     Get.to(UserPreferencesPage());
+                  //   },
+                  // ),
+                  ProfileOption(
+                    icon: Icons.gavel,
+                    color: Colors.blue,
+                    title: "My Bids",
+                    description: "View all your active and past bids.",
+                    onTap: () {
+                      final navController =
+                          Get.find<BottomNavigationController>();
+                      navController.currentIndex.value = 1;
 
-                  // if (accountController.isAdmin)
-                  //   ProfileOption(
-                  //     icon: Icons.timer,
-                  //     color: AppColors.blue,
-                  //     title: "Car Auction Time",
-                  //     description: "Set car auction time.",
-                  //     onTap: () {
-                  //       Get.to(AdminCarAuctionTimerPage());
-                  //     },
-                  //   ),
-                  if (accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.car_rental,
-                      color: AppColors.blue,
-                      title: "Add a Car",
-                      description: "Add a car in upcoming.",
-                      onTap: () {
-                        Get.to(DummyCarAddInUpcoming());
-                      },
-                    ),
-                  if (accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.car_rental,
-                      color: AppColors.green,
-                      title: "Cars List",
-                      description: "View all cars list.",
-                      onTap: () {
-                        Get.to(AdminCarsListPage());
-                      },
-                    ),
+                      final tabBarWidgetController = Get.put(
+                        TabBarWidgetController(tabLength: 3),
+                      );
+                      tabBarWidgetController.setSelectedTab(0);
+                    },
+                  ),
+                  ProfileOption(
+                    icon: Icons.favorite_border,
+                    color: Colors.red,
+                    title: "Wishlist",
+                    description: "See cars you've saved for later.",
+                    onTap: () {
+                      final navController =
+                          Get.find<BottomNavigationController>();
+                      navController.currentIndex.value = 1;
 
-                  if (!accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.gavel,
-                      color: Colors.blue,
-                      title: "My Bids",
-                      description: "View all your active and past bids.",
-                      onTap: () {
-                        final navController =
-                            Get.find<BottomNavigationController>();
-                        navController.currentIndex.value = 1;
-
-                        final tabBarWidgetController = Get.put(
-                          TabBarWidgetController(tabLength: 3),
-                        );
-                        tabBarWidgetController.setSelectedTab(0);
-                      },
-                    ),
-                  if (!accountController.isAdmin)
-                    ProfileOption(
-                      icon: Icons.favorite_border,
-                      color: Colors.red,
-                      title: "Wishlist",
-                      description: "See cars you've saved for later.",
-                      onTap: () {
-                        final navController =
-                            Get.find<BottomNavigationController>();
-                        navController.currentIndex.value = 1;
-
-                        final tabBarWidgetController = Get.put(
-                          TabBarWidgetController(tabLength: 3),
-                        );
-                        tabBarWidgetController.setSelectedTab(2);
-                      },
-                    ),
+                      final tabBarWidgetController = Get.put(
+                        TabBarWidgetController(tabLength: 3),
+                      );
+                      tabBarWidgetController.setSelectedTab(2);
+                    },
+                  ),
                   ProfileOption(
                     icon: Icons.description,
                     color: AppColors.green,

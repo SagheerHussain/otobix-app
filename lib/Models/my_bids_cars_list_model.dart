@@ -12,6 +12,9 @@ class MyBidsCarsListModel {
   final String fuelType;
   final String inspectionLocation;
   final bool isInspected;
+  final String roadTaxValidity;
+  final DateTime? taxValidTill;
+  final int ownerSerialNumber;
 
   MyBidsCarsListModel({
     this.id,
@@ -25,6 +28,9 @@ class MyBidsCarsListModel {
     required this.fuelType,
     required this.inspectionLocation,
     required this.isInspected,
+    required this.roadTaxValidity,
+    required this.taxValidTill,
+    required this.ownerSerialNumber,
   });
 
   // Factory constructor to create a Car from JSON map
@@ -51,6 +57,12 @@ class MyBidsCarsListModel {
       fuelType: data['fuelType'] ?? '',
       inspectionLocation: data['inspectionLocation'],
       isInspected: data['isInspected'] ?? false,
+      roadTaxValidity: data['roadTaxValidity'] ?? '',
+      taxValidTill: parseMongoDbDate(data["taxValidTill"]),
+      ownerSerialNumber:
+          data['ownerSerialNumber'] is int
+              ? data['ownerSerialNumber']
+              : int.tryParse(data['ownerSerialNumber']?.toString() ?? ''),
     );
   }
 
@@ -67,6 +79,9 @@ class MyBidsCarsListModel {
       'fuelType': fuelType,
       'inspectionLocation': inspectionLocation,
       'isInspected': isInspected,
+      'roadTaxValidity': roadTaxValidity,
+      'taxValidTill': taxValidTill,
+      'ownerSerialNumber': ownerSerialNumber,
     };
   }
 }

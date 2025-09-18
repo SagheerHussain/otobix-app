@@ -4,6 +4,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
@@ -12,6 +13,7 @@ import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
+import 'package:otobix/helpers/dealer_home_search_sort_filter_helper.dart';
 import '../Network/api_service.dart';
 
 class HomeController extends GetxController {
@@ -24,8 +26,8 @@ class HomeController extends GetxController {
   // // Timer? _auctionTimer;
 
   TextEditingController searchController = TextEditingController();
-  TextEditingController minPriceController = TextEditingController();
-  TextEditingController maxPriceController = TextEditingController();
+  // TextEditingController minPriceController = TextEditingController();
+  // TextEditingController maxPriceController = TextEditingController();
   TextEditingController searchStateController = TextEditingController();
 
   // Screen types
@@ -34,37 +36,9 @@ class HomeController extends GetxController {
   final String otobuySectionScreen = 'otobuy';
   final String marketplaceSectionScreen = 'marketplace';
 
-  // dummy add/remove cars to favorite
-  // final RxList<CarsListModel> favorites = <CarsListModel>[].obs;
-
-  // final RxList<CarsListModel> marketplaceCars = <CarsListModel>[].obs;
-
-  // dummy add/remove cars to favorite
-  // void changeFavoriteCars(CarsListModel car) {
-  //   car.isFavorite.value = !car.isFavorite.value;
-
-  //   if (car.isFavorite.value) {
-  //     favorites.add(car);
-  //     ToastWidget.show(
-  //       context: Get.context!,
-  //       title: 'Added to wishlist',
-  //       type: ToastType.success,
-  //     );
-  //   } else {
-  //     favorites.remove(car);
-  //     ToastWidget.show(
-  //       context: Get.context!,
-  //       title: 'Removed from wishlist',
-  //       type: ToastType.error,
-  //     );
-  //   }
-  // }
-
-  // single instance of ValueNotifier
-  // RxInt liveCarsCount = 0.obs;
-  // RxInt upcomingCarsCount = 0.obs;
-  // RxInt otoBuyCarsCount = 0.obs;
-  // RxInt marketplaceCarsCount = 0.obs;
+  // Search functionality
+  final RxString searchText = ''.obs;
+  void changeSearchText(String v) => searchText.value = v;
 
   final selectedSegmentNotifier = ValueNotifier<String>('live');
 
@@ -73,71 +47,174 @@ class HomeController extends GetxController {
 
   RxString selectedSegment = 'live'.obs;
 
-  RxString selectedCity = 'All States'.obs;
+  // RxString selectedCity = 'All States'.obs;
 
-  final List<String> cities = ['All States', ...AppConstants.indianStates];
+  // final List<String> cities = ['All States', ...AppConstants.indianStates];
 
-  // TRANSMISSION
-  final List<String> transmissionTypes = const [
-    'Manual',
-    'Automatic',
-    'AMT',
-    'CVT',
-    'DCT',
-  ];
-  final RxList<String> selectedTransmissionFilter = <String>[].obs;
+  // // TRANSMISSION
+  // final List<String> transmissionTypes = const [
+  //   'Manual',
+  //   'Automatic',
+  //   'AMT',
+  //   'CVT',
+  //   'DCT',
+  // ];
+  // final RxList<String> selectedTransmissionFilter = <String>[].obs;
 
-  // KMS
-  final double minKms = 0; // in kms
-  final double maxKms = 300000; // 0–300k kms
-  final Rx<RangeValues> selectedKmsRange = const RangeValues(0, 300000).obs;
-  final TextEditingController minKmsController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController maxKmsController = TextEditingController(
-    text: '300000',
-  );
+  // // KMS
+  // final double minKms = 0; // in kms
+  // final double maxKms = 300000; // 0–300k kms
+  // final Rx<RangeValues> selectedKmsRange = const RangeValues(0, 300000).obs;
+  // final TextEditingController minKmsController = TextEditingController(
+  //   text: '0',
+  // );
+  // final TextEditingController maxKmsController = TextEditingController(
+  //   text: '300000',
+  // );
 
-  // OWNERSHIP (Serial No.)
-  final int minOwnership = 1;
-  final int maxOwnership = 5;
-  final Rx<RangeValues> selectedOwnershipRange =
-      const RangeValues(1, 5).obs; // integers only
-  final TextEditingController minOwnershipController = TextEditingController(
-    text: '1',
-  );
-  final TextEditingController maxOwnershipController = TextEditingController(
-    text: '5',
-  );
+  // // OWNERSHIP (Serial No.)
+  // final int minOwnership = 1;
+  // final int maxOwnership = 5;
+  // final Rx<RangeValues> selectedOwnershipRange =
+  //     const RangeValues(1, 5).obs; // integers only
+  // final TextEditingController minOwnershipController = TextEditingController(
+  //   text: '1',
+  // );
+  // final TextEditingController maxOwnershipController = TextEditingController(
+  //   text: '5',
+  // );
 
   // Optional: central apply/reset helpers
-  void resetFilters() {
-    selectedYearFilter.value = 2022;
-    selectedMakeFilter.value = '';
-    selectedModelFilter.value = '';
-    selectedVariantFilter.value = '';
+  // void resetFilters() {
+  //   selectedYearFilter.value = 2022;
+  //   selectedMakeFilter.value = '';
+  //   selectedModelFilter.value = '';
+  //   selectedVariantFilter.value = '';
 
-    // new ones
-    selectedTransmissionFilter.clear();
+  //   // new ones
+  //   selectedTransmissionFilter.clear();
 
-    selectedKmsRange.value = const RangeValues(0, 300000);
-    minKmsController.text = '0';
-    maxKmsController.text = '300000';
+  //   selectedKmsRange.value = const RangeValues(0, 300000);
+  //   minKmsController.text = '0';
+  //   maxKmsController.text = '300000';
 
-    selectedOwnershipRange.value = const RangeValues(1, 5);
-    minOwnershipController.text = '1';
-    maxOwnershipController.text = '5';
+  //   selectedOwnershipRange.value = const RangeValues(1, 5);
+  //   minOwnershipController.text = '1';
+  //   maxOwnershipController.text = '5';
 
-    // keep your existing price reset if needed:
-    // selectedPriceRange.value = RangeValues(minPrice, maxPrice);
-    // minPriceController.text = minPrice.toInt().toString();
-    // maxPriceController.text = maxPrice.toInt().toString();
-  }
+  //   // keep your existing price reset if needed:
+  //   // selectedPriceRange.value = RangeValues(minPrice, maxPrice);
+  //   // minPriceController.text = minPrice.toInt().toString();
+  //   // maxPriceController.text = maxPrice.toInt().toString();
+  // }
 
-  void applyFilters() {
-    // Call your fetch/filter logic here.
-    // Example predicate if you filter locally:
-    /*
+  // void resetFilters() {
+  //   // Fuel
+  //   selectedFuelTypesFilter.clear();
+
+  //   // Price (Lacs)
+  //   selectedPriceRange.value = RangeValues(minPrice, maxPrice);
+  //   minPriceController.text = minPrice.toInt().toString();
+  //   maxPriceController.text = maxPrice.toInt().toString();
+
+  //   // Year / Make / Model / Variant
+  //   selectedYearFilter.value = null; // or 0 if you prefer
+  //   selectedMakeFilter.value = '';
+  //   selectedModelFilter.value = '';
+  //   selectedVariantFilter.value = '';
+
+  //   // Transmission
+  //   selectedTransmissionFilter.clear();
+
+  //   // KMs
+  //   selectedKmsRange.value = RangeValues(minKms, maxKms);
+  //   minKmsController.text = minKms.toInt().toString();
+  //   maxKmsController.text = maxKms.toInt().toString();
+
+  //   // Ownership
+  //   selectedOwnershipRange.value = RangeValues(
+  //     minOwnership.toDouble(),
+  //     maxOwnership.toDouble(),
+  //   );
+  //   minOwnershipController.text = minOwnership.toString();
+  //   maxOwnershipController.text = maxOwnership.toString();
+
+  //   // (If you use state filter)
+  //   // selectedCity.value = 'All States';
+
+  //   // Re-apply (will effectively clear)
+  //   // applyFilters();
+  // }
+
+  // void applyFilters({required List<CarsListModel> carsList}) {
+  //   // 1) Start from whatever list you show before filtering, e.g. fetched list:
+  //   // final base = carsList; // or marketplace/upcoming/otobuy
+
+  //   // 2) Search (if you do search first)
+  //   // final searched = DealerHomeSearchSortFilterHelper.searchCarsBySearchText(
+  //   //   carsList: base,
+  //   //   searchText: searchText.value, // your existing RxString
+  //   // );
+
+  //   // 3) (Optional) State filter if you have it
+  //   // final byState = DealerHomeSearchSortFilterHelper.filterCarsByState(
+  //   //   carsList: searched,
+  //   //   selectedState: selectedCity.value, // 'All States' => no-op
+  //   //   // stateOf: (c) => c.registrationState ?? c.inspectionLocation ?? '',
+  //   // );
+
+  //   // 4) Apply ALL filters at once
+  //   final filtered = DealerHomeSearchSortFilterHelper.applyAllFilters(
+  //     source: carsList,
+
+  //     // Fuel
+  //     fuelTypes: selectedFuelTypesFilter.toSet(),
+
+  //     // Price (Lacs)
+  //     priceRangeLacs: selectedPriceRange.value,
+  //     priceOf: (c) => (c.highestBid.toDouble()), // LIVE BIDS example
+  //     // For marketplace:
+  //     // priceOf: (c) => (c.priceDiscovery ?? 0),
+  //     // For upcoming:
+  //     // priceOf: (c) => (c.upcomingPrice ?? 0),
+
+  //     // Year
+  //     manufacturingYear:
+  //         selectedYearFilter.value == null || selectedYearFilter.value == 0
+  //             ? null
+  //             : selectedYearFilter.value,
+
+  //     // Make/Model/Variant
+  //     make: selectedMakeFilter.value,
+  //     model: selectedModelFilter.value,
+  //     variant: selectedVariantFilter.value,
+
+  //     // Transmission
+  //     transmissions: selectedTransmissionFilter.toSet(),
+
+  //     // KMs
+  //     kmsRange: selectedKmsRange.value,
+
+  //     // Ownership (serial no.)
+  //     ownershipRange: selectedOwnershipRange.value,
+  //   );
+
+  //   // 5) (Optional) Sort using your existing sort helper
+  //   final finalList = DealerHomeSearchSortFilterHelper.sortCars(
+  //     carsList: filtered,
+  //     priceOf:
+  //         (c) =>
+  //             (c.highestBid.toDouble()), // keep consistent with applyAllFilters
+  //   );
+
+  //   // 6) Assign to the list your page renders (e.g., an RxList you show in Obx)
+  //   visibleLiveBidsCarsList.value = finalList;
+  // }
+
+  // void applyFilters() {
+  // Call your fetch/filter logic here.
+  // Example predicate if you filter locally:
+  /*
   final cars = allCars.where((c) {
     final okFuel = selectedFuelTypesFilter.isEmpty || selectedFuelTypesFilter.contains(c.fuelType);
     final okPrice = c.priceLacs >= selectedPriceRange.value.start && c.priceLacs <= selectedPriceRange.value.end;
@@ -157,19 +234,23 @@ class HomeController extends GetxController {
 
   filteredCars.assignAll(cars);
   */
-  }
+  // }
 
   String formatKm(num n) {
-    if (n >= 1000000)
+    if (n >= 1000000) {
       return '${(n / 1000000).toStringAsFixed((n % 1000000) == 0 ? 0 : 1)}m';
-    if (n >= 1000)
+    }
+    if (n >= 1000) {
       return '${(n / 1000).toStringAsFixed((n % 1000) == 0 ? 0 : 1)}k';
+    }
     return n.toStringAsFixed(0);
   }
 
   @override
   void onInit() async {
     super.onInit();
+
+    DealerHomeSearchSortFilterHelper.initStates(AppConstants.indianStates);
 
     await getUnreadNotificationsCount();
     _listenAndUpdateUnreadNotificationsCount();
@@ -201,37 +282,37 @@ class HomeController extends GetxController {
     });
 
     // Initialize controllers with default values
-    minPriceController.text = selectedPriceRange.value.start.toInt().toString();
-    maxPriceController.text = selectedPriceRange.value.end.toInt().toString();
+    // minPriceController.text = selectedPriceRange.value.start.toInt().toString();
+    // maxPriceController.text = selectedPriceRange.value.end.toInt().toString();
   }
 
-  var selectedMakeFilter = Rx<String?>(null);
-  var selectedModelFilter = Rx<String?>(null);
-  var selectedVariantFilter = Rx<String?>(null);
-  var selectedYearFilter = Rx<int?>(null);
+  // var selectedMakeFilter = Rx<String?>(null);
+  // var selectedModelFilter = Rx<String?>(null);
+  // var selectedVariantFilter = Rx<String?>(null);
+  // var selectedYearFilter = Rx<int?>(null);
 
-  final RxList<String> selectedFuelTypesFilter = <String>[].obs;
+  // final RxList<String> selectedFuelTypesFilter = <String>[].obs;
 
-  final Rx<RangeValues> selectedPriceRange = RangeValues(0, 20).obs; // in Lacs
-  final double minPrice = 0;
-  final double maxPrice = 50; // Lacs
+  // final Rx<RangeValues> selectedPriceRange = RangeValues(0, 20).obs; // in Lacs
+  // final double minPrice = 0;
+  // final double maxPrice = 50; // Lacs
 
-  final List<String> makesListFilter = ['Toyota', 'Honda', 'Hyundai'];
+  // final List<String> makesListFilter = ['Toyota', 'Honda', 'Hyundai'];
 
-  final Map<String, List<String>> modelsListFilter = {
-    'Toyota': ['Corolla', 'Yaris'],
-    'Honda': ['Civic', 'City'],
-    'Hyundai': ['i20', 'Creta'],
-  };
+  // final Map<String, List<String>> modelsListFilter = {
+  //   'Toyota': ['Corolla', 'Yaris'],
+  //   'Honda': ['Civic', 'City'],
+  //   'Hyundai': ['i20', 'Creta'],
+  // };
 
-  final Map<String, List<String>> variantsListFilter = {
-    'Corolla': ['XLi', 'GLi'],
-    'Yaris': ['1.3L', '1.5L'],
-    'Civic': ['Oriel', 'Turbo'],
-    'City': ['Aspire', 'i-VTEC'],
-    'i20': ['Sportz', 'Asta'],
-    'Creta': ['EX', 'SX'],
-  };
+  // final Map<String, List<String>> variantsListFilter = {
+  //   'Corolla': ['XLi', 'GLi'],
+  //   'Yaris': ['1.3L', '1.5L'],
+  //   'Civic': ['Oriel', 'Turbo'],
+  //   'City': ['Aspire', 'i-VTEC'],
+  //   'i20': ['Sportz', 'Asta'],
+  //   'Creta': ['EX', 'SX'],
+  // };
 
   // final RxList<CarsListModel> filteredCars = <CarsListModel>[].obs;
 
@@ -381,6 +462,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
+    searchController.dispose();
     // for (var car in carsList) {
     //   car.auctionTimer?.cancel();
     // }

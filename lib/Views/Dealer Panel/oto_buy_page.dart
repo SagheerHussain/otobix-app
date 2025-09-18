@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/oto_buy_controller.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
@@ -10,6 +11,7 @@ import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
+import 'package:otobix/helpers/dealer_home_search_sort_filter_helper.dart';
 
 class OtoBuyPage extends StatelessWidget {
   OtoBuyPage({super.key});
@@ -25,9 +27,138 @@ class OtoBuyPage extends StatelessWidget {
           SizedBox(height: 10),
 
           Obx(() {
+            // Rebuild when state filter changes or sort changes
+            // final _s1 = DealerHomeSearchSortFilterHelper.selectedState.value;
+            // final _s2 =
+            //     DealerHomeSearchSortFilterHelper.isStateFilterApplied.value;
+            // final _s3 =
+            //     DealerHomeSearchSortFilterHelper.selectedSortLabel.value;
+            // final _s4 = DealerHomeSearchSortFilterHelper.isSortApplied.value;
+
+            // 1) Search cars using search text
+            final searchTextFilteredCarsList =
+                DealerHomeSearchSortFilterHelper.searchCarsBySearchText(
+                  carsList: otoBuyController.filteredOtoBuyCarsList,
+                  searchText: homeController.searchText.value,
+                );
+
+            // 2) State filter (by default uses `inspectionLocation`)
+            final stateFilteredCarsList =
+                DealerHomeSearchSortFilterHelper.filterCarsByState(
+                  carsList: searchTextFilteredCarsList,
+                  // If your state lives elsewhere, provide a selector:
+                  // stateOf: (c) => c.registrationState ?? c.inspectionLocation ?? '',
+                );
+
+            // 3) filters only if applied
+            final areFilterApplied =
+                DealerHomeSearchSortFilterHelper.isFiltersApplied.value;
+
+            final filtersFilteredCarsList =
+                areFilterApplied
+                    ? DealerHomeSearchSortFilterHelper.applyAllFilters(
+                      source: stateFilteredCarsList,
+
+                      // Fuel
+                      fuelTypes:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedFuelTypes
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedFuelTypes
+                                  .toSet(),
+
+                      // Price (Lacs)
+                      priceRangeLacs:
+                          DealerHomeSearchSortFilterHelper
+                              .appliedPriceRange
+                              .value,
+                      priceOf:
+                          (c) =>
+                              (c.highestBid.toDouble() /
+                                  100000.0), // rupees -> lacs
+                      // Year
+                      manufacturingYear:
+                          (DealerHomeSearchSortFilterHelper.appliedYear.value ==
+                                  0)
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedYear
+                                  .value,
+
+                      // Make/Model/Variant
+                      make:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedMake
+                                  .value
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedMake
+                                  .value,
+                      model:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedModel
+                                  .value
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedModel
+                                  .value,
+                      variant:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedVariant
+                                  .value
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedVariant
+                                  .value,
+
+                      // Transmission
+                      transmissions:
+                          DealerHomeSearchSortFilterHelper
+                                  .appliedTransmissions
+                                  .isEmpty
+                              ? null
+                              : DealerHomeSearchSortFilterHelper
+                                  .appliedTransmissions
+                                  .toSet(),
+
+                      // KMs
+                      kmsRange:
+                          DealerHomeSearchSortFilterHelper
+                              .appliedKmsRange
+                              .value,
+
+                      // Ownership
+                      ownershipRange:
+                          DealerHomeSearchSortFilterHelper
+                              .appliedOwnershipRange
+                              .value,
+                    )
+                    : stateFilteredCarsList;
+
+            // 4) Sort (uses helper's current selected label)
+            // Make Obx rebuild when sort changes or is cleared
+            // final _label =
+            //     DealerHomeSearchSortFilterHelper.selectedSortLabel.value;
+            // final _applied =
+            //     DealerHomeSearchSortFilterHelper.isSortApplied.value;
+            final sortFilteredCarsList =
+                DealerHomeSearchSortFilterHelper.sortCars(
+                  carsList: filtersFilteredCarsList,
+                  priceOf:
+                      (c) => (c.highestBid.toDouble()), // Live Bids example
+                );
+
+            // Final filtered cars list
+            final finalFilteredCarsList = sortFilteredCarsList;
+
             if (otoBuyController.isLoading.value) {
               return _buildLoadingWidget();
-            } else if (otoBuyController.filteredOtoBuyCarsList.isEmpty) {
+            } else if (finalFilteredCarsList.isEmpty) {
               return Expanded(
                 child: Center(
                   child: const EmptyDataWidget(
@@ -37,7 +168,7 @@ class OtoBuyPage extends StatelessWidget {
                 ),
               );
             } else {
-              return _buildCarsList();
+              return _buildCarsList(finalFilteredCarsList);
             }
           }),
         ],
@@ -45,14 +176,14 @@ class OtoBuyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCarsList() {
+  Widget _buildCarsList(List<CarsListModel> finalFilteredCarsList) {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
-        itemCount: otoBuyController.filteredOtoBuyCarsList.length,
+        itemCount: finalFilteredCarsList.length,
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
-          final car = otoBuyController.filteredOtoBuyCarsList[index];
+          final car = finalFilteredCarsList[index];
           // InkWell for car card
           return InkWell(
             onTap: () {
@@ -228,12 +359,18 @@ class OtoBuyPage extends StatelessWidget {
                                           _buildIconAndTextWidget(
                                             icon: Icons.receipt_long,
                                             text:
-                                                GlobalFunctions.getFormattedDate(
-                                                  date: car.taxValidTill,
-                                                  type:
-                                                      GlobalFunctions.monthYear,
-                                                ) ??
-                                                'N/A',
+                                                car.roadTaxValidity == 'LTT' ||
+                                                        car.roadTaxValidity ==
+                                                            'OTT'
+                                                    ? car.roadTaxValidity
+                                                    : GlobalFunctions.getFormattedDate(
+                                                          date:
+                                                              car.taxValidTill,
+                                                          type:
+                                                              GlobalFunctions
+                                                                  .monthYear,
+                                                        ) ??
+                                                        'N/A',
                                           ),
                                           _buildIconAndTextWidget(
                                             icon: Icons.person,

@@ -41,6 +41,8 @@ class AppConstants {
     "Ladakh",
     "Lakshadweep",
     "Puducherry",
+    "Patna",
+    "Kolkata",
   ];
 }
 

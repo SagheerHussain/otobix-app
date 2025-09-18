@@ -95,7 +95,7 @@ class CarsListModel {
       odometerReadingInKms:
           data['odometerReadingInKms'] is int
               ? data['odometerReadingInKms']
-              : int.tryParse(data['odometerReadingInKms']?.toString() ?? ''),
+              : int.tryParse(data['odometerReadingInKms']?.toString() ?? '0'),
       ownerSerialNumber:
           data['ownerSerialNumber'] is int
               ? data['ownerSerialNumber']

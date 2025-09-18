@@ -40,17 +40,25 @@ class MyCarsPage extends StatelessWidget {
               child: Obx(() {
                 //  Lengths of each tab
                 final myBidsCarsLength = myBids.myBidCarsIds.length;
-                final ocbNegoCarsLength = 2;
+                // final ocbNegoCarsLength = 2;
                 final wishlistCarsLength = wishlist.wishlistCarsIds.length;
 
                 return TabBarWidget(
-                  titles: ['My Bids', 'Ocb Nego', 'Wishlist'],
+                  titles: [
+                    'My Bids',
+                    //  'Ocb Nego',
+                    'Wishlist',
+                  ],
                   counts: [
                     myBidsCarsLength,
-                    ocbNegoCarsLength,
+                    // ocbNegoCarsLength,
                     wishlistCarsLength,
                   ],
-                  screens: [MyBidsPage(), OcbNegoPage(), WishlistPage()],
+                  screens: [
+                    MyBidsPage(),
+                    //  OcbNegoPage(),
+                    WishlistPage(),
+                  ],
                   titleSize: 10,
                   countSize: 8,
                   spaceFromSides: 10,

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:otobix/Services/notification_sevice.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
@@ -251,6 +252,8 @@ class AccountController extends GetxController {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
+        // unlink the device from the current user (call on sign-out)
+        NotificationService.instance.logout();
         await SharedPrefsHelper.remove(SharedPrefsHelper.tokenKey);
         await SharedPrefsHelper.remove(SharedPrefsHelper.userKey);
         await SharedPrefsHelper.remove(SharedPrefsHelper.userTypeKey);

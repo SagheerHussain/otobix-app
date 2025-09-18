@@ -1,9 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Models/user_model.dart';
 import 'package:otobix/Network/socket_service.dart';
+import 'package:otobix/Services/fcm_service.dart';
+import 'package:otobix/Services/notification_sevice.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/app_urls.dart';
@@ -27,6 +30,7 @@ import 'package:otobix/Widgets/offline_banner_widget.dart';
 import 'package:otobix/admin/admin_approved_rejected_users_page.dart';
 import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/admin/admin_home.dart';
+import 'package:otobix/firebase_options.dart';
 import 'package:otobix/helpers/Preferences_helper.dart';
 import 'package:otobix/Utils/app_bindings.dart';
 import 'package:otobix/Network/connectivity_service.dart';
@@ -34,7 +38,19 @@ import 'package:otobix/Network/connectivity_service.dart';
 void main() async {
   Get.config(enableLog: false);
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // init OneSignal
+  await NotificationService.instance.init(
+    'd3db5987-cede-44d4-8baa-92caf20bca1b',
+  );
+
+  // await FCMService.instance
+  //     .initialize(); // All Firebase/FCM wiring happens here
   await SharedPrefsHelper.init();
+
+  final userId = await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey);
+  debugPrint('userId: $userId');
+
   // Initialize socket connection globally
   SocketService.instance.initSocket(AppUrls.socketBaseUrl);
   // // await Get.putAsync<ConnectivityService>(() => ConnectivityService().init());
