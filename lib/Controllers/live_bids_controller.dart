@@ -93,7 +93,9 @@ class LiveBidsController extends GetxController {
             //  &&  car.auctionEndTime != null &&
             // car.auctionEndTime!.isAfter(currentTime),
           ),
-        ); // ✅ stays growable
+        );
+
+        _showLessRemainingTimeCarsOnTop();
         // filteredLiveBidsCarsList.value = liveBidsCarsList
         //     .where((car) {
         //       return car.auctionEndTime != null &&
@@ -321,6 +323,7 @@ class LiveBidsController extends GetxController {
         filteredLiveBidsCarsList.removeWhere(
           (c) => c.id == id,
         ); // simple & growable-safe
+        _showLessRemainingTimeCarsOnTop();
         liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
         return;
       }
@@ -519,5 +522,27 @@ class LiveBidsController extends GetxController {
     // prime and schedule
     tick();
     _timers[carId] = Timer.periodic(const Duration(seconds: 1), (_) => tick());
+    _showLessRemainingTimeCarsOnTop();
+  }
+
+  // Sort Live Bids by less remaining auction time car on top
+  void _showLessRemainingTimeCarsOnTop() {
+    DateTime? liveEnd(CarsListModel c) {
+      if (c.auctionEndTime != null) return c.auctionEndTime!.toLocal();
+      final start = c.auctionStartTime?.toLocal();
+      if (start == null) return null;
+      return start.add(Duration(hours: c.auctionDuration));
+    }
+
+    Duration remaining(CarsListModel c) {
+      final end = liveEnd(c);
+      if (end == null) return const Duration(days: 9999); // push unknowns down
+      final d = end.difference(DateTime.now());
+      return d.isNegative ? Duration.zero : d;
+    }
+
+    filteredLiveBidsCarsList.sort(
+      (a, b) => remaining(a).compareTo(remaining(b)),
+    );
   }
 }

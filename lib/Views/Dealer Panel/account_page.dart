@@ -117,7 +117,7 @@ class _AccountPageState extends State<AccountPage> {
                       navController.currentIndex.value = 1;
 
                       final tabBarWidgetController = Get.put(
-                        TabBarWidgetController(tabLength: 3),
+                        TabBarWidgetController(tabLength: 2),
                       );
                       tabBarWidgetController.setSelectedTab(0);
                     },
@@ -133,9 +133,9 @@ class _AccountPageState extends State<AccountPage> {
                       navController.currentIndex.value = 1;
 
                       final tabBarWidgetController = Get.put(
-                        TabBarWidgetController(tabLength: 3),
+                        TabBarWidgetController(tabLength: 2),
                       );
-                      tabBarWidgetController.setSelectedTab(2);
+                      tabBarWidgetController.setSelectedTab(1);
                     },
                   ),
                   ProfileOption(

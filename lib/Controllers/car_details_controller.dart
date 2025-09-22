@@ -72,6 +72,7 @@ class CarDetailsController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    // currentHighestBidAmount.value == 0  ? currentHighestBidAmount.value =  carDetails?.priceDiscovery.toDouble() ?? 0 : currentHighestBidAmount.value;
     await fetchCarDetails(carId: carId);
     listenUpdatedBidAndChangeHighestBidLocally();
     // await fetchCarDetails(carId: '68821747968635d593293346');
@@ -216,12 +217,6 @@ class CarDetailsController extends GetxController {
   //     }
   //   });
   // }
-
-  @override
-  void onClose() {
-    // _timer?.cancel();
-    super.onClose();
-  }
 
   bool isValidComment(String? comment) {
     final val = comment?.trim().toLowerCase() ?? '';
@@ -634,5 +629,11 @@ class CarDetailsController extends GetxController {
       }
     }
     return fallbackUrl; // final fallback (e.g., picsum or your CDN placeholder)
+  }
+
+  @override
+  void onClose() {
+    // _timer?.cancel();
+    super.onClose();
   }
 }

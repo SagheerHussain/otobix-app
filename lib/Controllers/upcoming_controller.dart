@@ -74,6 +74,9 @@ class UpcomingController extends GetxController {
         // for (var car in upcomingCarsList) {
         //   await startAuctionCountdown(car);
         // }
+        for (var car in filteredUpcomingCarsList) {
+          debugPrint('Upcoming cars list: ${car.toJson()}');
+        }
       } else {
         filteredUpcomingCarsList.value = [];
         upcomingCarsCount.value = 0;

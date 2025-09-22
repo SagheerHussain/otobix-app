@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDMjfSy6Qr7NZTZOfOVRDToGXqI77_vtkg',
-    appId: '1:778516764210:android:605f5f02641cbb2ce54e2b',
+    appId: '1:778516764210:android:ac142b908eae9038e54e2b',
     messagingSenderId: '778516764210',
     projectId: 'otobix-firebase-project',
     storageBucket: 'otobix-firebase-project.firebasestorage.app',
@@ -72,4 +72,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'otobix-firebase-project.firebasestorage.app',
     iosBundleId: 'com.example.otobixFrontend',
   );
+
 }

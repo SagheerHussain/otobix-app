@@ -189,6 +189,9 @@ class LiveBidsPage extends StatelessWidget {
         itemBuilder: (context, index) {
           final car = carsList[index];
 
+          final String yearofManufacture =
+              '${GlobalFunctions.getFormattedDate(date: car.yearMonthOfManufacture, type: GlobalFunctions.year)} ';
+
           return InkWell(
             onTap: () {
               Get.to(
@@ -289,7 +292,7 @@ class LiveBidsPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${car.make} ${car.model} ${car.variant}',
+                          '$yearofManufacture${car.make} ${car.model} ${car.variant}',
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,

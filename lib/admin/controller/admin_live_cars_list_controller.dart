@@ -19,6 +19,10 @@ class AdminLiveCarsListController extends GetxController {
 
   final RxSet<String> wishlistCarsIds = <String>{}.obs;
 
+  final reasonText = ''.obs;
+  final isRemoveButtonLoading = false.obs;
+  final reasontextController = TextEditingController();
+
   @override
   void onInit() async {
     super.onInit();
@@ -91,6 +95,7 @@ class AdminLiveCarsListController extends GetxController {
             // car.auctionEndTime!.isAfter(currentTime),
           ),
         ); // ✅ stays growable
+        _showLessRemainingTimeCarsOnTop();
         // filteredLiveBidsCarsList.value = liveBidsCarsList
         //     .where((car) {
         //       return car.auctionEndTime != null &&
@@ -332,10 +337,74 @@ class AdminLiveCarsListController extends GetxController {
           filteredLiveBidsCarsList[idx] = incoming;
           await startAuctionCountdown(filteredLiveBidsCarsList[idx]);
         }
+        _showLessRemainingTimeCarsOnTop();
+
         // ✅ update count after mutation
         liveCarsCount.value = filteredLiveBidsCarsList.length;
         return;
       }
     });
+  }
+
+  // Sort Live Bids by less remaining auction time car on top
+  void _showLessRemainingTimeCarsOnTop() {
+    DateTime? liveEnd(CarsListModel c) {
+      if (c.auctionEndTime != null) return c.auctionEndTime!.toLocal();
+      final start = c.auctionStartTime?.toLocal();
+      if (start == null) return null;
+      return start.add(Duration(hours: c.auctionDuration));
+    }
+
+    Duration remaining(CarsListModel c) {
+      final end = liveEnd(c);
+      if (end == null) return const Duration(days: 9999); // push unknowns down
+      final d = end.difference(DateTime.now());
+      return d.isNegative ? Duration.zero : d;
+    }
+
+    filteredLiveBidsCarsList.sort(
+      (a, b) => remaining(a).compareTo(remaining(b)),
+    );
+  }
+
+  // Remove Car
+  Future<void> removeCar({required String carId}) async {
+    isRemoveButtonLoading.value = true;
+    try {
+      final String userId =
+          await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+
+      final response = await ApiService.post(
+        endpoint: AppUrls.removeCar,
+        body: {
+          'carId': carId,
+          'reasonOfRemoval': reasonText.value,
+          'removedBy': userId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Car removed successfully',
+          type: ToastType.success,
+        );
+        Get.back();
+      } else {
+        debugPrint('Failed to remove car ${response.body}');
+      }
+    } catch (error) {
+      debugPrint('Error removing car: $error');
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'Error removing car',
+        type: ToastType.error,
+      );
+    } finally {
+      // optional: clear UI state
+      reasontextController.clear();
+      reasonText.value = '';
+      isRemoveButtonLoading.value = false;
+    }
   }
 }

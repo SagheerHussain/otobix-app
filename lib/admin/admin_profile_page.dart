@@ -5,7 +5,6 @@ import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/admin/admin_cars_list_page.dart';
 import 'package:otobix/admin/admin_settings_page.dart';
 import 'package:otobix/admin/controller/admin_profile_controller.dart';
-import 'package:otobix/admin/dummy_car_add_in_upcoming.dart';
 
 class AdminProfilePage extends StatefulWidget {
   const AdminProfilePage({super.key});
@@ -83,7 +82,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
 
                   ProfileOption(
                     icon: Icons.edit,
-                    color: Colors.green,
+                    color: AppColors.grey,
                     title: "Edit Profile",
                     description: "Change your name, email, and more.",
                     onTap: () {
@@ -91,16 +90,15 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
                     },
                   ),
 
-                  ProfileOption(
-                    icon: Icons.car_rental,
-                    color: AppColors.blue,
-                    title: "Add a Car",
-                    description: "Add a car in upcoming.",
-                    onTap: () {
-                      Get.to(DummyCarAddInUpcoming());
-                    },
-                  ),
-
+                  // ProfileOption(
+                  //   icon: Icons.car_rental,
+                  //   color: AppColors.blue,
+                  //   title: "Add a Car",
+                  //   description: "Add a car in upcoming.",
+                  //   onTap: () {
+                  //     Get.to(DummyCarAddInUpcoming());
+                  //   },
+                  // ),
                   ProfileOption(
                     icon: Icons.car_rental,
                     color: AppColors.green,

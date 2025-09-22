@@ -365,20 +365,129 @@ class AdminAuctionCompletedCarsListPage extends StatelessWidget {
 
         Expanded(
           child: TabBarWidget(
-            titles: ['Move to Otobuy', 'Make Live Again'],
-            counts: [0, 0],
+            titles: ['Move to Otobuy', 'Make Live Again', 'Remove Car'],
+            counts: [0, 0, 0],
             showCount: false,
             screens: [
               _buildMoveToOtobuyWidget(car),
               _buildMakeLiveWidget(car, Get.context!),
+              _buildRemoveScreen(car),
             ],
-            titleSize: 11,
+            titleSize: 10,
             countSize: 0,
             spaceFromSides: 10,
             tabsHeight: 30,
           ),
         ),
       ],
+    );
+  }
+
+  // Remove screen
+  Widget _buildRemoveScreen(final CarsListModel car) {
+    return GetX<AdminAuctionCompletedCarsListController>(
+      init: AdminAuctionCompletedCarsListController(),
+      builder: (completedController) {
+        final canRemove =
+            completedController.reasonText.value.trim().isNotEmpty &&
+            !completedController.isRemoveButtonLoading.value;
+
+        return Column(
+          children: [
+            const SizedBox(height: 20),
+
+            // Remove Car Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Reason of Removal',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 10),
+
+                  TextField(
+                    controller: completedController.reasontextController,
+                    maxLines: 3,
+                    onChanged: (v) => completedController.reasonText.value = v,
+                    keyboardType: TextInputType.multiline,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter reason (required)',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AbsorbPointer(
+                          absorbing: !canRemove, // block taps when not allowed
+                          child: Opacity(
+                            opacity: canRemove ? 1 : 0.6,
+                            child: ButtonWidget(
+                              text: 'Remove Car',
+                              height: 40,
+                              fontSize: 12,
+                              isLoading:
+                                  completedController.isRemoveButtonLoading,
+                              onTap: () async {
+                                final reason =
+                                    completedController.reasonText.value.trim();
+
+                                final ok =
+                                    await Get.dialog<bool>(
+                                      AlertDialog(
+                                        title: const Text('Confirm removal'),
+                                        content: Text(
+                                          'Remove this car from live bids?\n\nReason:\n$reason',
+                                        ),
+                                        actions: [
+                                          ButtonWidget(
+                                            text: 'Cancel',
+                                            height: 35,
+                                            fontSize: 12,
+                                            backgroundColor: AppColors.grey,
+
+                                            isLoading: false.obs,
+                                            onTap:
+                                                () => Get.back(result: false),
+                                          ),
+                                          ButtonWidget(
+                                            text: 'Remove',
+                                            height: 35,
+                                            fontSize: 12,
+                                            backgroundColor: AppColors.red,
+                                            isLoading: false.obs,
+                                            onTap: () => Get.back(result: true),
+                                          ),
+                                        ],
+                                      ),
+                                    ) ??
+                                    false;
+                                if (!ok) return;
+
+                                // 👇 call your API / controller method
+                                await completedController.removeCar(
+                                  carId: car.id,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

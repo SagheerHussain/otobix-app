@@ -71,6 +71,7 @@ class AuctionStatuses {
   final String liveAuctionEnded = 'liveAuctionEnded';
   final String sold = 'sold';
   final String otobuyEnded = 'otobuyEnded';
+  final String removed = 'removed';
 
   // List<String> get all => [
   //   upcoming,

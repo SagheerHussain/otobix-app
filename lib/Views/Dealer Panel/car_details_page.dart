@@ -71,6 +71,16 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         [CarsListTitleAndImage(title: 'Main Image', url: widget.car.imageUrl)];
     getxController.setImageUrls(imageUrls);
     getxController.oneClickPriceAmount.value = widget.car.oneClickPrice;
+    _setCurrentHighestBid();
+  }
+
+  void _setCurrentHighestBid() {
+    // if highestBid is RxDouble (or RxDouble?)
+    final double hb = (widget.car.highestBid).value; // no cast to num
+    final double pd = widget.car.priceDiscovery;
+
+    final double current = (hb == 0.0) ? pd * 0.75 : hb;
+    getxController.currentHighestBidAmount.value = current;
   }
 
   @override
@@ -84,8 +94,9 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     final pageController = PageController();
 
     // Set current bid amount
-    getxController.currentHighestBidAmount.value =
-        double.tryParse(widget.car.highestBid.toString()) ?? 0.0;
+    // getxController.currentHighestBidAmount.value =
+    //     double.tryParse(widget.car.highestBid.toString()) ?? 0.0;
+
     // Set one click price amount
     // getxController.oneClickPriceAmount.value =
     //     getxController.currentHighestBidAmount.value + 10000;
@@ -2387,17 +2398,18 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Obx(
-                () => Text(
-                  // getxController.remainingTime.value,
-                  remainingAuctionTime.value,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppColors.red,
-                    fontWeight: FontWeight.bold,
+              if (currentOpenSection != homeController.otobuySectionScreen)
+                Obx(
+                  () => Text(
+                    // getxController.remainingTime.value,
+                    remainingAuctionTime.value,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
               const SizedBox(height: 20),
 
               /// LOGIC: check if type is marketplace

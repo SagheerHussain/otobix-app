@@ -130,20 +130,38 @@ class AdminUpcomingCarsListController extends GetxController {
 
       if (action == 'removed') {
         final String id = '${data['id']}';
-
-        // cancel controller-owned timer & remove readable time
+        debugPrint('Removed car: $id');
+        // stop and forget timer
         _timers[id]?.cancel();
         _timers.remove(id);
-        remainingTimes.remove(id);
 
-        // remove from list
-        filteredUpcomingCarsList.value =
-            filteredUpcomingCarsList.where((c) => c.id != id).toList();
+        // ✅ mutate RxList in-place so GetX emits
+        filteredUpcomingCarsList.removeWhere((c) => c.id == id);
 
-        // update count
+        // refresh countdowns after the list changed
+        setupCountdowns(filteredUpcomingCarsList);
+
+        // keep any bound counters in sync
         upcomingCarsCount.value = filteredUpcomingCarsList.length;
         return;
       }
+
+      // if (action == 'removed') {
+      //   final String id = '${data['id']}';
+
+      //   // cancel controller-owned timer & remove readable time
+      //   _timers[id]?.cancel();
+      //   _timers.remove(id);
+      //   remainingTimes.remove(id);
+
+      //   // remove from list
+      //   filteredUpcomingCarsList.value =
+      //       filteredUpcomingCarsList.where((c) => c.id != id).toList();
+
+      //   // update count
+      //   upcomingCarsCount.value = filteredUpcomingCarsList.length;
+      //   return;
+      // }
 
       if (action == 'added') {
         final String id = '${data['id']}';

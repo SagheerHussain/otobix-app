@@ -10,6 +10,7 @@ import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
+import 'package:otobix/helpers/Preferences_helper.dart';
 
 class AdminAuctionCompletedCarsListController extends GetxController {
   RxInt auctionCompletedCarsCount = 0.obs;
@@ -18,6 +19,10 @@ class AdminAuctionCompletedCarsListController extends GetxController {
 
   final RxList<CarsListModel> filteredAuctionCompletedCarsList =
       <CarsListModel>[].obs;
+
+  final reasonText = ''.obs;
+  final isRemoveButtonLoading = false.obs;
+  final reasontextController = TextEditingController();
 
   @override
   void onInit() async {
@@ -152,6 +157,47 @@ class AdminAuctionCompletedCarsListController extends GetxController {
         title: 'Error moving to otobuy',
         type: ToastType.error,
       );
+    }
+  }
+
+  // Remove Car
+  Future<void> removeCar({required String carId}) async {
+    isRemoveButtonLoading.value = true;
+    try {
+      final String userId =
+          await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+
+      final response = await ApiService.post(
+        endpoint: AppUrls.removeCar,
+        body: {
+          'carId': carId,
+          'reasonOfRemoval': reasonText.value,
+          'removedBy': userId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Car removed successfully',
+          type: ToastType.success,
+        );
+        Get.back();
+      } else {
+        debugPrint('Failed to remove car ${response.body}');
+      }
+    } catch (error) {
+      debugPrint('Error removing car: $error');
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'Error removing car',
+        type: ToastType.error,
+      );
+    } finally {
+      // optional: clear UI state
+      reasontextController.clear();
+      reasonText.value = '';
+      isRemoveButtonLoading.value = false;
     }
   }
 

@@ -203,42 +203,42 @@ class _UserNotificationDetailsPageState
                       const SizedBox(height: 12),
 
                       // Data (if any)
-                      if (item!.data.isNotEmpty) ...[
-                        // const SizedBox(height: 16),
-                        // Text('Details', style: theme.textTheme.titleMedium),
-                        // const SizedBox(height: 8),
-                        Card(
-                          color: AppColors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Details',
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Divider(),
+                      // if (item!.data.isNotEmpty) ...[
+                      //   // const SizedBox(height: 16),
+                      //   // Text('Details', style: theme.textTheme.titleMedium),
+                      //   // const SizedBox(height: 8),
+                      //   Card(
+                      //     color: AppColors.white,
+                      //     elevation: 0,
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //     child: Padding(
+                      //       padding: const EdgeInsets.all(15),
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text(
+                      //             'Details',
+                      //             style: const TextStyle(
+                      //               fontSize: 15,
+                      //               fontWeight: FontWeight.bold,
+                      //             ),
+                      //           ),
+                      //           Divider(),
 
-                                ...item!.data.entries.map((e) {
-                                  return ListTile(
-                                    dense: true,
-                                    title: Text(e.key),
-                                    subtitle: Text('${e.value}'),
-                                  );
-                                }),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                      //           ...item!.data.entries.map((e) {
+                      //             return ListTile(
+                      //               dense: true,
+                      //               title: Text(e.key),
+                      //               subtitle: Text('${e.value}'),
+                      //             );
+                      //           }),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ],
 
                       // Optional CTA if carId present in data
                       // if ((item!.data['carId'] ?? '').toString().isNotEmpty)

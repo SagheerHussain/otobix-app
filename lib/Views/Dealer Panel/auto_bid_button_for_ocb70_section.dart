@@ -67,22 +67,22 @@ void autoBidButtonForOtobuySection(
                         color: AppColors.black,
                       ),
                     ),
-                    Row(
-                      children: [
-                        Icon(Icons.access_time, color: AppColors.red, size: 15),
-                        SizedBox(width: 4),
-                        Obx(
-                          () => Text(
-                            remainingAuctionTime.value,
-                            style: TextStyle(
-                              color: AppColors.red,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Icon(Icons.access_time, color: AppColors.red, size: 15),
+                    //     SizedBox(width: 4),
+                    //     Obx(
+                    //       () => Text(
+                    //         remainingAuctionTime.value,
+                    //         style: TextStyle(
+                    //           color: AppColors.red,
+                    //           fontSize: 12,
+                    //           fontWeight: FontWeight.w600,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
                 SizedBox(height: 20),
