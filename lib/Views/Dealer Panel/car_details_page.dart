@@ -72,6 +72,17 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     getxController.setImageUrls(imageUrls);
     getxController.oneClickPriceAmount.value = widget.car.oneClickPrice;
     _setCurrentHighestBid();
+
+    // Close screen when timer ends
+    getxController.watchAndCloseOnTimerEnd(
+      remainingAuctionTime:
+          widget.currentOpenSection == homeController.upcomingSectionScreen ||
+                  widget.currentOpenSection ==
+                      homeController.liveBidsSectionScreen
+              ? widget.remainingAuctionTime
+              : null,
+      currentOpenSection: widget.currentOpenSection,
+    );
   }
 
   void _setCurrentHighestBid() {

@@ -96,10 +96,16 @@ class AdminUpcomingCarsListController extends GetxController {
 
       void tick() {
         final diff = until.difference(DateTime.now());
-        if (diff.isNegative) {
+        if (diff.isNegative || diff.inSeconds <= 0) {
           remainingTimes[car.id] = '00h : 00m : 00s';
           _timers[car.id]?.cancel();
           _timers.remove(car.id);
+
+          // Remove the car from the list when timer becomes less than zero
+          remainingTimes.remove(car.id);
+          filteredUpcomingCarsList.removeWhere((c) => c.id == car.id);
+          upcomingCarsCount.value = filteredUpcomingCarsList.length;
+
           return;
         }
         remainingTimes[car.id] = fmt(diff);
@@ -130,38 +136,20 @@ class AdminUpcomingCarsListController extends GetxController {
 
       if (action == 'removed') {
         final String id = '${data['id']}';
-        debugPrint('Removed car: $id');
-        // stop and forget timer
+
+        // cancel controller-owned timer & remove readable time
         _timers[id]?.cancel();
         _timers.remove(id);
+        remainingTimes.remove(id);
 
-        // ✅ mutate RxList in-place so GetX emits
-        filteredUpcomingCarsList.removeWhere((c) => c.id == id);
+        // remove from list
+        filteredUpcomingCarsList.value =
+            filteredUpcomingCarsList.where((c) => c.id != id).toList();
 
-        // refresh countdowns after the list changed
-        setupCountdowns(filteredUpcomingCarsList);
-
-        // keep any bound counters in sync
+        // update count
         upcomingCarsCount.value = filteredUpcomingCarsList.length;
         return;
       }
-
-      // if (action == 'removed') {
-      //   final String id = '${data['id']}';
-
-      //   // cancel controller-owned timer & remove readable time
-      //   _timers[id]?.cancel();
-      //   _timers.remove(id);
-      //   remainingTimes.remove(id);
-
-      //   // remove from list
-      //   filteredUpcomingCarsList.value =
-      //       filteredUpcomingCarsList.where((c) => c.id != id).toList();
-
-      //   // update count
-      //   upcomingCarsCount.value = filteredUpcomingCarsList.length;
-      //   return;
-      // }
 
       if (action == 'added') {
         final String id = '${data['id']}';

@@ -248,12 +248,18 @@ class AdminUpcomingCarsListPage extends StatelessWidget {
                                           _buildIconAndTextWidget(
                                             icon: Icons.receipt_long,
                                             text:
-                                                GlobalFunctions.getFormattedDate(
-                                                  date: car.taxValidTill,
-                                                  type:
-                                                      GlobalFunctions.monthYear,
-                                                ) ??
-                                                'N/A',
+                                                car.roadTaxValidity == 'LTT' ||
+                                                        car.roadTaxValidity ==
+                                                            'OTT'
+                                                    ? car.roadTaxValidity
+                                                    : GlobalFunctions.getFormattedDate(
+                                                          date:
+                                                              car.taxValidTill,
+                                                          type:
+                                                              GlobalFunctions
+                                                                  .monthYear,
+                                                        ) ??
+                                                        'N/A',
                                           ),
                                           _buildIconAndTextWidget(
                                             icon: Icons.person,

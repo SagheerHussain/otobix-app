@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
@@ -65,8 +67,10 @@ class CarDetailsController extends GetxController {
 
   CarModel? carDetails;
 
-  final String carId;
+  Worker? _timerWatcher;
+  bool _closedOnce = false;
 
+  final String carId;
   CarDetailsController(this.carId);
 
   @override
@@ -631,9 +635,62 @@ class CarDetailsController extends GetxController {
     return fallbackUrl; // final fallback (e.g., picsum or your CDN placeholder)
   }
 
+  /// Call this once (e.g., from the view) and pass the RxString that displays the timer.
+  /// If [remainingAuctionTime] is null, this does nothing.
+  void watchAndCloseOnTimerEnd({
+    RxString? remainingAuctionTime,
+    required String currentOpenSection,
+  }) {
+    // No timer? Nothing to watch.
+    if (remainingAuctionTime == null) return;
+
+    bool _isZero(String s) => s.trim() == '00h : 00m : 00s';
+
+    void _maybeClose() {
+      if (_closedOnce) return;
+      _closedOnce = true;
+      // If you’re using GetX navigation:
+      Get.back<void>();
+
+      // Show toast
+      final homeController = Get.find<HomeController>();
+      if (currentOpenSection == homeController.upcomingSectionScreen) {
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Car is live now.",
+          type: ToastType.success,
+        );
+      }
+      if (currentOpenSection == homeController.liveBidsSectionScreen) {
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Auction ended.",
+          type: ToastType.error,
+        );
+      }
+      // If you prefer Navigator:
+      // if (Get.context != null) Navigator.of(Get.context!).maybePop();
+    }
+
+    // Immediate defensive check (in case it's already zero)
+    if (_isZero(remainingAuctionTime.value)) {
+      _maybeClose();
+      return;
+    }
+
+    // Watch future changes
+    _timerWatcher?.dispose(); // ensure only one watcher
+    _timerWatcher = ever<String>(remainingAuctionTime, (val) {
+      if (_isZero(val)) {
+        _maybeClose();
+      }
+    });
+  }
+
   @override
   void onClose() {
     // _timer?.cancel();
+    _timerWatcher?.dispose();
     super.onClose();
   }
 }

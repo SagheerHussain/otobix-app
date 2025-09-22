@@ -277,10 +277,16 @@ class UpcomingController extends GetxController {
 
       void tick() {
         final diff = until.difference(DateTime.now());
-        if (diff.isNegative) {
+        if (diff.isNegative || diff.inSeconds <= 0) {
           getCarRemainingTimeForNextScreen(car.id).value = '00h : 00m : 00s';
           _timers[car.id]?.cancel();
           _timers.remove(car.id);
+
+          // Remove the car from the list when timer becomes less than zero
+          remainingTimes.remove(car.id);
+          filteredUpcomingCarsList.removeWhere((c) => c.id == car.id);
+          upcomingCarsCount.value = filteredUpcomingCarsList.length;
+
           return;
         }
         getCarRemainingTimeForNextScreen(car.id).value = fmt(diff);

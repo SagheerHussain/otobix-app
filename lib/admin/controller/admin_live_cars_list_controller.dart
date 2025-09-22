@@ -155,10 +155,14 @@ class AdminLiveCarsListController extends GetxController {
       final endAt = getAuctionEndTime();
       final diff = endAt.difference(now);
 
-      if (diff.isNegative) {
+      if (diff.isNegative || diff.inSeconds <= 0) {
         // stop at zero instead of silently rolling another 12h
         car.remainingAuctionTime.value = '00h : 00m : 00s';
         car.auctionTimer?.cancel();
+
+        // Remove the car from the list when timer becomes less than zero
+        filteredLiveBidsCarsList.removeWhere((c) => c.id == car.id);
+        liveCarsCount.value = filteredLiveBidsCarsList.length;
         return;
       }
 

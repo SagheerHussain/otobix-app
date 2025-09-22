@@ -397,10 +397,15 @@ class LiveBidsController extends GetxController {
 
       void tick() {
         final diff = endAt.difference(DateTime.now());
-        if (diff.isNegative) {
+        if (diff.isNegative || diff.inSeconds <= 0) {
           getCarRemainingTimeForNextScreen(car.id).value = '00h : 00m : 00s';
           _timers[car.id]?.cancel();
           _timers.remove(car.id);
+
+          // Remove the car from the list when timer becomes less than zero
+          remainingTimes.remove(car.id);
+          filteredLiveBidsCarsList.removeWhere((c) => c.id == car.id);
+          liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
           return;
         }
         getCarRemainingTimeForNextScreen(car.id).value = fmt(diff);
