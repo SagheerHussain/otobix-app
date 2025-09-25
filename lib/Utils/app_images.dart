@@ -49,4 +49,6 @@ class AppImages {
   static const String suspensionFallback =
       'lib/assets/images/carSuspension.jpg';
   static const String acFallback = 'lib/assets/images/carAc.jpg';
+  static const String tyreFallback = 'lib/assets/images/carTyre.jpg';
+  static const String damagesFallback = 'lib/assets/images/carDamages.jpg';
 }

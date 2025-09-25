@@ -65,14 +65,17 @@ class AdminApprovedUsersListController extends GetxController {
   Future<void> updateUserThroughAdmin({
     required String userId,
     required String status,
-    required String password,
+    // required String password,
   }) async {
     isLoadingUpdateUserThroughAdmin.value = true;
 
     try {
       final response = await ApiService.put(
         endpoint: AppUrls.updateUserThroughAdmin(userId),
-        body: {'password': password, 'approvalStatus': status},
+        body: {
+          // 'password': password,
+          'approvalStatus': status,
+        },
       );
 
       // Check for valid JSON response

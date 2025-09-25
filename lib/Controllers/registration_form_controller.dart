@@ -40,6 +40,9 @@ class RegistrationFormController extends GetxController {
     // dealerNameController.addListener(() {
     //   validateUsername();
     // });
+
+    // NEW: load entity names for dropdown
+    fetchEntityNames();
   }
 
   @override
@@ -72,6 +75,8 @@ class RegistrationFormController extends GetxController {
 
   RxBool isLoading = false.obs;
   String? selectedState;
+
+  final RxList<String> entityTypes = <String>[].obs; // used by dropdown
   String? selectedEntityType;
 
   List<String> filteredStates = [];
@@ -115,16 +120,6 @@ class RegistrationFormController extends GetxController {
     update();
   }
 
-  final List<String> entityTypes = [
-    'Individual',
-    'Proprietary',
-    'HUF',
-    'Partnership',
-    'LLP',
-    'Ltd/Private Limited',
-    'One person Company',
-  ];
-
   void addAddressField() {
     addressControllers.add(TextEditingController());
     update();
@@ -134,63 +129,6 @@ class RegistrationFormController extends GetxController {
     addressControllers.removeAt(index);
     update();
   }
-
-  final Map<String, List<String>> entityDocuments = {
-    'Individual': [
-      'Pan Card (self attested)',
-      'Adhar Card (self attested)',
-      'GST (individual name, self attested)',
-      'Cancelled Cheque',
-    ],
-    'Proprietary': [
-      'Pan Card (self attested)',
-      'Adhar Card (self attested)',
-      'Trade license (sign & stamp)',
-      'GST (sign & stamp)',
-      'Cancelled Cheque',
-    ],
-    'Huf': [
-      'Huf Deed (signed & stamped by Karta)',
-      'Huf Pan (signed & stamped by Karta)',
-      'Pan card of Karta (self attested)',
-      'Adhar card of Karta (self attested)',
-      'Huf Cancelled Cheque',
-    ],
-    'Partnership': [
-      'Partnership Deed copy (signed & stamped by partner)',
-      'Partnership pan card (signed & stamped by partner)',
-      'Trade license (signed & stamped by partner)',
-      'GST (signed & stamped by partner)',
-      'KYC of partners (self attested)',
-      'Cancelled cheque',
-    ],
-    'LLP': [
-      'Partnership Deed copy (signed & stamped by partner)',
-      'Partnership pan card (signed & stamped by partner)',
-      'Trade license (signed & stamped by partner)',
-      'GST (signed & stamped by partner)',
-      'KYC of partners (self attested)',
-      'Cancelled cheque',
-    ],
-    'Ltd/Private Limited': [
-      'Company PAN card (Signed & stamped by authorised director)',
-      'Company trade license (Signed & stamped by authorised director)',
-      'Company GST (Signed & stamped by authorised director)',
-      'Board resolution Original ( To be Signed & stamped by more than 50% director. In case of Ltd companies, Company secretary can sign the board resolution and authorised anyone in the organisation to sign)',
-      'KYC of directors (self attested)',
-      'List of Directors MCA - (Signed & stamped by authorised director)',
-      'Cancelled Cheque',
-    ],
-    'One person Company': [
-      'Company PAN card (Signed & stamped by sole director)',
-      'Company trade license (Signed & stamped by sole director)',
-      'Company GST (Signed & stamped by sole director)',
-      'Board resolution Original (Signed & stamped by sole director)',
-      'KYC of director (self attested)',
-      'List of Directors MCA (Signed & stamped by sole director)',
-      'Cancelled Cheque',
-    ],
-  };
 
   Future<void> submitForm({
     required String userRole,
@@ -238,7 +176,7 @@ class RegistrationFormController extends GetxController {
         entityType: selectedEntityType ?? "",
         primaryContactPerson: primaryContactPersonController.text,
         primaryContactNumber: primaryMobileController.text,
-        password: passwordController.text,
+        // password: passwordController.text,
         phoneNumber: contactNumber,
         secondaryContactPerson:
             secondaryContactPersonController.text.isEmpty
@@ -265,13 +203,20 @@ class RegistrationFormController extends GetxController {
       // debugPrint("Status Code → ${response.statusCode}");
       // debugPrint("Response → ${response.body}");
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         ToastWidget.show(
           context: Get.context!,
           title: "registered successfully!",
           type: ToastType.success,
         );
         Get.to(() => LoginPage());
+        // Optional if want to navigate to waiting page
+        // final chosen = selectedEntityType ?? '';
+        // final docs = chosen.isNotEmpty ? await _fetchEntityDocuments(chosen) : const <String>[];
+        // Get.to(() => WaitingForApprovalPage(
+        //       documents: docs.isNotEmpty ? docs : const <String>['No documents found'],
+        //       userRole: userRole,
+        //     ));
       } else if (response.statusCode == 400) {
         Map<String, dynamic> responseBody = json.decode(response.body);
         String errorMessage = responseBody['message'];
@@ -310,11 +255,12 @@ class RegistrationFormController extends GetxController {
     try {
       isLoading.value = true;
       await Future.delayed(const Duration(seconds: 2));
+      final docs = await _fetchEntityDocuments(selectedEntityType ?? '');
       Get.to(
         () => WaitingForApprovalPage(
-          documents:
-              entityDocuments[selectedEntityType ?? 'Individual'] ??
-              entityDocuments['Individual']!,
+          // documents:  entityDocuments[selectedEntityType ?? 'Individual'] ??
+          //   entityDocuments['Individual']!,
+          documents: docs,
           userRole: userRole,
         ),
       );
@@ -421,6 +367,7 @@ class RegistrationFormController extends GetxController {
     String title = 'Terms & Conditions';
     String html = '';
     try {
+      isLoading.value = true;
       final resp = await ApiService.get(
         endpoint: AppUrls.getLatestTermsAndConditions,
       );
@@ -437,6 +384,8 @@ class RegistrationFormController extends GetxController {
       }
     } catch (e) {
       debugPrint('Failed to load terms: $e');
+    } finally {
+      isLoading.value = false;
     }
 
     // If no terms & conditions found in database, submit form directly
@@ -459,5 +408,70 @@ class RegistrationFormController extends GetxController {
       ignoreSafeArea: false,
       backgroundColor: Colors.transparent,
     );
+  }
+
+  // Fetch entity names from API
+  Future<void> fetchEntityNames() async {
+    try {
+      final resp = await ApiService.get(endpoint: AppUrls.getEntityNamesList);
+      if (resp.statusCode == 200) {
+        final json = jsonDecode(resp.body) as Map<String, dynamic>;
+        final List list = (json['data'] ?? []) as List;
+        final names = list.map<String>((e) => '${e['name']}').toList();
+        entityTypes.assignAll(names);
+      } else {
+        // optional fallback
+        entityTypes.assignAll([
+          'Individual',
+          'Proprietary',
+          'HUF',
+          'Partnership',
+          'LLP',
+          'Ltd/Private Limited',
+          'One person Company',
+        ]);
+      }
+    } catch (e) {
+      // optional fallback
+      entityTypes.assignAll([
+        'Individual',
+        'Proprietary',
+        'HUF',
+        'Partnership',
+        'LLP',
+        'Ltd/Private Limited',
+        'One person Company',
+      ]);
+    }
+    update(); // refresh GetBuilder
+  }
+
+  // Fetch entity documents
+  Future<List<String>> _fetchEntityDocuments(String? entityType) async {
+    final fallback = <String>[
+      // optional: keep empty list if you don't want a fallback
+      'No documents found',
+    ];
+
+    if (entityType == null || entityType.trim().isEmpty) return fallback;
+
+    try {
+      final response = await ApiService.get(
+        endpoint: AppUrls.getEntityDocumentsByName(
+          entityName: entityType.trim(),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = (json['data'] ?? {}) as Map<String, dynamic>;
+        final docs = (data['documents'] ?? []) as List;
+        return docs.map((e) => '$e').toList();
+      }
+    } catch (error) {
+      // ignore and use fallback
+      debugPrint("Error: $error");
+    }
+    return fallback;
   }
 }

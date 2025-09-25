@@ -246,8 +246,8 @@ class AdminRejectedUsersListPage extends StatelessWidget {
                   _infoTile("Role", user.userRole),
                   if (user.userName.isNotEmpty)
                     _infoTile("User Name", user.userName),
-                  if (user.password.isNotEmpty)
-                    _infoTile("Password", user.password),
+                  // if (user.password.isNotEmpty)
+                  //   _infoTile("Password", user.password),
                   _infoTile("Phone", user.phoneNumber),
                   _infoTile("Location", user.location),
                   if (user.dealershipName != null &&
@@ -374,7 +374,7 @@ class AdminRejectedUsersListPage extends StatelessWidget {
   // Show Edit Profile Dialog
   void _showEditDialog(UserModel user) {
     getxController.obscurePasswordText.value = true;
-    final passwordController = TextEditingController(text: user.password);
+    // final passwordController = TextEditingController(text: user.password);
     final statusOptions = [
       AppConstants.roles.userStatusPending,
       AppConstants.roles.userStatusApproved,
@@ -410,8 +410,8 @@ class AdminRejectedUsersListPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                _labeledField("Password", passwordController),
-                const SizedBox(height: 10),
+                // _labeledField("Password", passwordController),
+                // const SizedBox(height: 10),
                 const Text(
                   "Status",
                   style: TextStyle(
@@ -472,22 +472,22 @@ class AdminRejectedUsersListPage extends StatelessWidget {
                         elevation: 3,
                         fontSize: 12,
                         onTap: () async {
-                          if (getxController.formKey.currentState!.validate()) {
-                            await getxController.updateUserThroughAdmin(
-                              userId: user.id,
-                              status: selectedStatus.value,
-                              password: passwordController.text,
-                            );
-                            Get.back(); // Close the dialog
-                            // await getxController.fetchRejectedUsersList();
+                          // if (getxController.formKey.currentState!.validate()) {
+                          await getxController.updateUserThroughAdmin(
+                            userId: user.id,
+                            status: selectedStatus.value,
+                            // password: passwordController.text,
+                          );
+                          Get.back(); // Close the dialog
+                          // await getxController.fetchRejectedUsersList();
 
-                            // //Temp for now
-                            // await Get.find<AdminApprovedUsersListController>()
-                            //     .fetchApprovedUsersList();
-                            // await Get.find<AdminPendingUsersListController>()
-                            //     .fetchPendingUsersList();
-                            //////////////
-                          }
+                          // //Temp for now
+                          // await Get.find<AdminApprovedUsersListController>()
+                          //     .fetchApprovedUsersList();
+                          // await Get.find<AdminPendingUsersListController>()
+                          //     .fetchPendingUsersList();
+                          //////////////
+                          // }
                         },
                       ),
                     ),

@@ -159,7 +159,12 @@ class AccountController extends GetxController {
       final token = prefs.getString('token');
 
       if (token == null) {
-        Get.snackbar('Error', 'User not logged in');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Error',
+          subtitle: 'User not logged in',
+          type: ToastType.error,
+        );
         return;
       }
 
@@ -214,7 +219,12 @@ class AccountController extends GetxController {
       debugPrint(response.body);
 
       if (response.statusCode == 200) {
-        Get.snackbar('Success', 'Profile updated successfully');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Success',
+          subtitle: 'Profile updated successfully',
+          type: ToastType.success,
+        );
         imageFile.value = null;
         // getUserProfile();
 
@@ -225,11 +235,21 @@ class AccountController extends GetxController {
           type: ToastType.success,
         );
       } else {
-        Get.snackbar('Error', 'Failed to update profile');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Error',
+          subtitle: 'Failed to update profile',
+          type: ToastType.error,
+        );
       }
     } catch (e) {
       debugPrint('Update Exception: $e');
-      Get.snackbar('Error', 'Something went wrong');
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'Error',
+        subtitle: 'Something went wrong',
+        type: ToastType.error,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -243,7 +263,12 @@ class AccountController extends GetxController {
         SharedPrefsHelper.userIdKey,
       );
       if (userId == null) {
-        Get.snackbar('Error', 'User ID not found');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Error',
+          subtitle: 'User ID not found',
+          type: ToastType.error,
+        );
         return;
       }
 
@@ -267,11 +292,21 @@ class AccountController extends GetxController {
 
         Get.offAll(() => LoginPage());
       } else {
-        Get.snackbar('Logout Failed', data['message'] ?? 'Server error');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Logout Failed',
+          subtitle: data['message'] ?? 'Server error',
+          type: ToastType.error,
+        );
       }
     } catch (e) {
       debugPrint('Logout Exception: $e');
-      Get.snackbar('Error', 'Something went wrong');
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'Error',
+        subtitle: 'Something went wrong',
+        type: ToastType.error,
+      );
     } finally {
       isLoading.value = false;
     }

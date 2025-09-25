@@ -75,6 +75,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
 
     // Close screen when timer ends
     getxController.watchAndCloseOnTimerEnd(
+      carName: '${widget.car.make} ${widget.car.model} ${widget.car.variant}',
       remainingAuctionTime:
           widget.currentOpenSection == homeController.upcomingSectionScreen ||
                   widget.currentOpenSection ==
@@ -174,6 +175,10 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                                                   .imagesSectionKey],
                                           child: _buildImagesSection(
                                             car: getxController.carDetails!,
+                                            currentOpenSection:
+                                                widget.currentOpenSection,
+                                            remainingAuctionTime:
+                                                widget.remainingAuctionTime,
                                           ),
                                         ),
                                         Container(
@@ -545,21 +550,21 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       // iconDetail(Icons.directions_car, 'Model', 'Scorpio'),
       // iconDetail(Icons.confirmation_number, 'Variant', '[2014–2017]'),
       iconDetail(
+        Icons.calendar_month,
+        'Year of Manufacture',
+        GlobalFunctions.getFormattedDate(
+              date: carDetails.yearMonthOfManufacture,
+              type: GlobalFunctions.monthYear,
+            ) ??
+            'N/A',
+      ),
+      iconDetail(
         Icons.speed,
         'Odometer Reading in Kms',
         '${NumberFormat.decimalPattern('en_IN').format(carDetails.odometerReadingInKms)} km',
       ),
       iconDetail(Icons.local_gas_station, 'Fuel Type', carDetails.fuelType),
 
-      // iconDetail(
-      //   Icons.calendar_month,
-      //   'Year of Manufacture',
-      //   GlobalFunctions.getFormattedDate(
-      //         date: carDetails.yearMonthOfManufacture,
-      //         type: GlobalFunctions.year,
-      //       ) ??
-      //       'N/A',
-      // ),
       iconDetail(
         Icons.settings,
         'Transmission',
@@ -585,14 +590,13 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 'N/A',
       ),
 
-      iconDetail(
-        Icons.science,
-        'Cubic Capacity',
-        carDetails.cubicCapacity != 0
-            ? '${carDetails.cubicCapacity} cc'
-            : 'N/A',
-      ),
-
+      // iconDetail(
+      //   Icons.science,
+      //   'Cubic Capacity',
+      //   carDetails.cubicCapacity != 0
+      //       ? '${carDetails.cubicCapacity} cc'
+      //       : 'N/A',
+      // ),
       iconDetail(Icons.location_on, 'Inspection Location', carDetails.city),
       iconDetail(
         Icons.directions_car_filled,
@@ -636,7 +640,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                     '${GlobalFunctions.getFormattedDate(date: carDetails.yearMonthOfManufacture, type: GlobalFunctions.year)} ${carDetails.make} ${carDetails.model} ${carDetails.variant}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -681,7 +685,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 Text(
                   highestBidText,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     // color: AppColors.grey,
                     fontWeight: FontWeight.bold,
                   ),
@@ -694,7 +698,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                     // key: ValueKey(getxController.currentHighestBidAmount.value),
                     key: ValueKey(highestBidValue.value),
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       color: AppColors.green,
                       fontWeight: FontWeight.w600,
                     ),
@@ -2021,6 +2025,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     required CarModel carDetails,
     required CarDetailsController getxController,
   }) {
+    ////
     Widget buildExteriorItem(
       String title,
       String value, {
@@ -2032,7 +2037,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
+              SizedBox(
+                width: 100,
                 child: Text(
                   title,
                   maxLines: 3,
@@ -2040,6 +2046,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   style: const TextStyle(fontSize: 12),
                 ),
               ),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   value,
@@ -2056,6 +2063,43 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         ],
       );
     }
+
+    ////
+    // Widget buildExteriorItem1(
+    //   String title,
+    //   String value, {
+    //   bool isLast = false,
+    //   List<String> imageUrls = const [],
+    // }) {
+    //   return Column(
+    //     children: [
+    //       Row(
+    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //         children: [
+    //           Expanded(
+    //             child: Text(
+    //               title,
+    //               maxLines: 3,
+    //               overflow: TextOverflow.ellipsis,
+    //               style: const TextStyle(fontSize: 12),
+    //             ),
+    //           ),
+    //           Expanded(
+    //             child: Text(
+    //               value,
+    //               maxLines: 3,
+    //               overflow: TextOverflow.ellipsis,
+    //               style: const TextStyle(fontSize: 12),
+    //             ),
+    //           ),
+    //           const SizedBox(width: 10),
+    //           if (imageUrls.isNotEmpty) _buildSideImages(imageUrls: imageUrls),
+    //         ],
+    //       ),
+    //       if (!isLast) Divider(color: AppColors.grey.withValues(alpha: 0.1)),
+    //     ],
+    //   );
+    // }
 
     Widget buildSection({
       required String title,
@@ -2415,7 +2459,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                     // getxController.remainingTime.value,
                     remainingAuctionTime.value,
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 15,
                       color: AppColors.red,
                       fontWeight: FontWeight.bold,
                     ),
@@ -3228,41 +3272,25 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
 }
 
 // Images Section
-Widget _buildImagesSection({required CarModel car}) {
+Widget _buildImagesSection({
+  required CarModel car,
+  required String currentOpenSection,
+  required RxString remainingAuctionTime,
+}) {
   final getxController = Get.find<CarDetailsController>();
   // 1) Per-section fallbacks (assets or CDN placeholders)
   final fallbackBySection = <String, String>{
     AppConstants.imagesSectionIds.exterior: AppImages.exteriorFallback,
     AppConstants.imagesSectionIds.interior: AppImages.interiorFallback,
     AppConstants.imagesSectionIds.engine: AppImages.engineFallback,
-    AppConstants.imagesSectionIds.suspension: AppImages.suspensionFallback,
-    AppConstants.imagesSectionIds.ac: AppImages.acFallback,
+    AppConstants.imagesSectionIds.tyres: AppImages.tyreFallback,
+    // AppConstants.imagesSectionIds.damages: AppImages.damagesFallback,
+    // AppConstants.imagesSectionIds.suspension: AppImages.suspensionFallback,
+    // AppConstants.imagesSectionIds.ac: AppImages.acFallback,
   };
 
   // 2) Your items, using your picker (primary → alts → fallback)
   final imageSections = <Map<String, String>>[
-    {
-      'id': AppConstants.imagesSectionIds.interior,
-      'title': 'Interior',
-      'thumb': getxController.pickImageForImagesSection(
-        car.airbags,
-        fallbackUrl: AppImages.interiorFallback,
-      ),
-    },
-    {
-      'id': AppConstants.imagesSectionIds.suspension,
-      'title': 'Suspension',
-      'thumb': AppImages.suspensionFallback,
-    },
-
-    {
-      'id': AppConstants.imagesSectionIds.engine,
-      'title': 'Engine',
-      'thumb': getxController.pickImageForImagesSection(
-        car.apronLhsRhs,
-        fallbackUrl: AppImages.engineFallback,
-      ),
-    },
     {
       'id': AppConstants.imagesSectionIds.exterior,
       'title': 'Exterior',
@@ -3273,11 +3301,38 @@ Widget _buildImagesSection({required CarModel car}) {
         fallbackUrl: AppImages.exteriorFallback,
       ),
     },
+    {
+      'id': AppConstants.imagesSectionIds.interior,
+      'title': 'Interior',
+      'thumb': getxController.pickImageForImagesSection(
+        car.airbags,
+        fallbackUrl: AppImages.interiorFallback,
+      ),
+    },
+    {
+      'id': AppConstants.imagesSectionIds.engine,
+      'title': 'Engine',
+      'thumb': getxController.pickImageForImagesSection(
+        car.apronLhsRhs,
+        fallbackUrl: AppImages.engineFallback,
+      ),
+    },
+    {
+      'id': AppConstants.imagesSectionIds.tyres,
+      'title': 'Tyres',
+      'thumb': AppImages.tyreFallback,
+    },
 
     // {
-    //   'id': AppConstants.imagesSectionIds.ac,
-    //   'title': 'AC',
-    //   'thumb': AppImages.acFallback,
+    //   'id': AppConstants.imagesSectionIds.suspension,
+    //   'title': 'Suspension',
+    //   'thumb': AppImages.suspensionFallback,
+    // },
+
+    // {
+    //   'id': AppConstants.imagesSectionIds.damages,
+    //   'title': 'Damages',
+    //   'thumb': AppImages.damagesFallback,
     // },
   ];
 
@@ -3288,8 +3343,8 @@ Widget _buildImagesSection({required CarModel car}) {
       scrollDirection: Axis.horizontal,
       itemCount: imageSections.length,
       separatorBuilder: (_, __) => const SizedBox(width: 10),
-      itemBuilder: (_, i) {
-        final section = imageSections[i];
+      itemBuilder: (_, index) {
+        final section = imageSections[index];
         final title = section['title'] ?? '';
         final thumb = section['thumb'] ?? '';
         final sectionId = section['id'] ?? '';
@@ -3301,7 +3356,9 @@ Widget _buildImagesSection({required CarModel car}) {
               () => CarImagesGalleryPage(
                 car: car,
                 initialSectionId: sectionId,
-                initialSectionIndex: i,
+                initialSectionIndex: index,
+                currentOpenSection: currentOpenSection,
+                remainingAuctionTime: remainingAuctionTime,
               ),
 
               // arguments: {'sectionId': id},

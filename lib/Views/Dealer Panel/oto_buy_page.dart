@@ -184,6 +184,8 @@ class OtoBuyPage extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
           final car = finalFilteredCarsList[index];
+          final String yearofManufacture =
+              '${GlobalFunctions.getFormattedDate(date: car.yearMonthOfManufacture, type: GlobalFunctions.year)} ';
           // InkWell for car card
           return InkWell(
             onTap: () {
@@ -265,7 +267,7 @@ class OtoBuyPage extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              '${car.make} ${car.model} ${car.variant}',
+                                              '$yearofManufacture${car.make} ${car.model} ${car.variant}',
                                               maxLines: 3,
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(

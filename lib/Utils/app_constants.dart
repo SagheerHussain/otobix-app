@@ -3,6 +3,8 @@ class AppConstants {
   static final Roles roles = Roles();
   static final AuctionStatuses auctionStatuses = AuctionStatuses();
   static final ImagesSectionIds imagesSectionIds = ImagesSectionIds();
+  static final TabBarWidgetControllerTags tabBarWidgetControllerTags =
+      TabBarWidgetControllerTags();
 
   static const List<String> indianStates = [
     "Andhra Pradesh",
@@ -90,6 +92,16 @@ class ImagesSectionIds {
   final String engine = 'engine';
   final String suspension = 'suspension';
   final String ac = 'ac';
+  final String tyres = 'tyres';
+  final String damages = 'damages';
 
   List<String> get all => [exterior, interior, engine, suspension, ac];
+}
+
+//  TabBarWidgetController tags
+class TabBarWidgetControllerTags {
+  final String homeTabs = 'home_tabs';
+  final String myCarsTabs = 'mycars_tabs';
+
+  List<String> get all => [homeTabs, myCarsTabs];
 }

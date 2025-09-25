@@ -603,14 +603,19 @@ class AdminLiveCarsListPage extends StatelessWidget {
                                 final ok =
                                     await Get.dialog<bool>(
                                       AlertDialog(
-                                        title: const Text('Confirm removal'),
-                                        content: Text(
-                                          'Remove this car from live bids?\n\nReason:\n$reason',
+                                        title: const Text(
+                                          'Confirm removal',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
+                                        content: Text('Reason:\n$reason'),
                                         actions: [
                                           ButtonWidget(
                                             text: 'Cancel',
                                             height: 35,
+                                            width: 80,
                                             fontSize: 12,
                                             backgroundColor: AppColors.grey,
 
@@ -621,6 +626,7 @@ class AdminLiveCarsListPage extends StatelessWidget {
                                           ButtonWidget(
                                             text: 'Remove',
                                             height: 35,
+                                            width: 80,
                                             fontSize: 12,
                                             backgroundColor: AppColors.red,
                                             isLoading: false.obs,

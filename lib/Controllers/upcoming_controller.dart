@@ -35,6 +35,7 @@ class UpcomingController extends GetxController {
     // Listen to realtime wishlist updates
     _listenWishlistRealtime();
     _listenUpcomingCarsSectionRealtime();
+    _listenUpdatedBidAndChangeHighestBidLocally();
   }
 
   final RxList<CarsListModel> filteredUpcomingCarsList = <CarsListModel>[].obs;
@@ -354,6 +355,21 @@ class UpcomingController extends GetxController {
         upcomingCarsCount.value = filteredUpcomingCarsList.length;
         return;
       }
+    });
+  }
+
+  // Listen and Update Bid locally
+  void _listenUpdatedBidAndChangeHighestBidLocally() {
+    SocketService.instance.on(SocketEvents.bidUpdated, (data) {
+      final String carId = data['carId'];
+      final int highestBid = data['highestBid'];
+
+      final index = filteredUpcomingCarsList.indexWhere((c) => c.id == carId);
+      if (index != -1) {
+        filteredUpcomingCarsList[index].highestBid.value =
+            highestBid.toDouble(); // ✅ this is the real-time field
+      }
+      debugPrint('📢 Bid update received: $data');
     });
   }
 

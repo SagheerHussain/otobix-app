@@ -6,6 +6,7 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/controller/admin_approved_users_list_controller.dart';
 import 'package:otobix/admin/controller/admin_pending_users_list_controller.dart';
 import 'package:otobix/admin/controller/admin_rejected_users_list_controller.dart';
@@ -304,11 +305,11 @@ class AdminPendingUsersListPage extends StatelessWidget {
                 final comment = commentController.text.trim();
 
                 if (comment.isEmpty) {
-                  Get.snackbar(
-                    "Validation",
-                    "Comment cannot be empty.",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.red.shade50,
+                  ToastWidget.show(
+                    context: Get.context!,
+                    title: "Validation",
+                    subtitle: "Comment cannot be empty.",
+                    type: ToastType.error,
                   );
                   return;
                 }
@@ -470,7 +471,7 @@ class AdminPendingUsersListPage extends StatelessWidget {
 
                   _infoTile("Role", user.userRole),
                   _infoTile("User Name", user.userName),
-                  _infoTile("Password", user.password),
+                  // _infoTile("Password", user.password),
                   _infoTile("Phone", user.phoneNumber),
                   _infoTile("Location", user.location),
                   if (user.dealershipName != null &&

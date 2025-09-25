@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Widgets/empty_page_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:otobix/controllers/terms_and_conditions_controller.dart';
 
@@ -46,15 +47,21 @@ class TermsAndConditionsPage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    termsAndConditionsController.error.value!,
-                    textAlign: TextAlign.center,
+                  EmptyPageWidget(
+                    icon: Icons.description,
+                    iconColor: AppColors.red,
+                    title: 'Terms & Conditions',
+                    description: 'Error loading terms & conditions.',
                   ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: termsAndConditionsController.reload,
-                    child: const Text('Retry'),
-                  ),
+                  // Text(
+                  //   termsAndConditionsController.error.value!,
+                  //   textAlign: TextAlign.center,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // ElevatedButton(
+                  //   onPressed: termsAndConditionsController.reload,
+                  //   child: const Text('Retry'),
+                  // ),
                 ],
               ),
             ),

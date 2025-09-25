@@ -41,7 +41,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // init OneSignal
   await NotificationService.instance.init(
-    'd3db5987-cede-44d4-8baa-92caf20bca1b',
+    // 'd3db5987-cede-44d4-8baa-92caf20bca1b', // old
+    '486e2dde-844f-46a7-be61-1890b79125ef', // new
   );
 
   // await FCMService.instance

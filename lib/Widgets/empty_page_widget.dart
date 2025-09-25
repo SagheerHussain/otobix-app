@@ -3,6 +3,7 @@ import 'package:otobix/Utils/app_colors.dart';
 
 class EmptyPageWidget extends StatelessWidget {
   final IconData icon;
+  final Color? iconColor;
   final String title;
   final String description;
   final String? buttonText;
@@ -11,6 +12,7 @@ class EmptyPageWidget extends StatelessWidget {
   const EmptyPageWidget({
     super.key,
     required this.icon,
+    this.iconColor,
     required this.title,
     required this.description,
     this.buttonText,
@@ -29,10 +31,17 @@ class EmptyPageWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.green.withValues(alpha: .2),
+                color:
+                    iconColor != null
+                        ? iconColor!.withValues(alpha: .2)
+                        : AppColors.green.withValues(alpha: .2),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 50, color: AppColors.green),
+              child: Icon(
+                icon,
+                size: 50,
+                color: iconColor != null ? iconColor! : AppColors.green,
+              ),
             ),
 
             const SizedBox(height: 20),

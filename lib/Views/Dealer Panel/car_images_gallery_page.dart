@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/car_images_gallery_controller.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Models/car_gallery_sections_model.dart';
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
@@ -13,17 +14,28 @@ class CarImagesGalleryPage extends StatelessWidget {
   final CarModel car;
   final String initialSectionId;
   final int initialSectionIndex;
+  final String currentOpenSection;
+  final RxString remainingAuctionTime;
+
   const CarImagesGalleryPage({
     super.key,
     required this.car,
     required this.initialSectionId,
     required this.initialSectionIndex,
+    required this.currentOpenSection,
+    required this.remainingAuctionTime,
   });
 
   @override
   Widget build(BuildContext context) {
     final getxController = Get.put(
-      CarImagesGalleryController(car, initialSectionId, initialSectionIndex),
+      CarImagesGalleryController(
+        car,
+        initialSectionId,
+        initialSectionIndex,
+        currentOpenSection,
+        remainingAuctionTime,
+      ),
     );
 
     return Scaffold(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/tab_bar_widget.dart';
 import 'package:otobix/admin/admin_upload_policies_page.dart';
 import 'package:otobix/admin/admin_upload_terms_page.dart';
@@ -9,31 +10,37 @@ class AdminSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          children: [
-            // SizedBox(height: 20),
-            // _buildSearchBar(context),
-            SizedBox(height: 20),
-
-            Expanded(
-              child: TabBarWidget(
-                titles: ['Terms', 'Policies', 'User Guide'],
-                counts: [0, 0, 0],
-                screens: [
-                  AdminUploadTermsPage(),
-                  AdminUploadPoliciesPage(),
-                  AdminUploadUserGuidePage(),
-                ],
-                titleSize: 9,
-                countSize: 7,
-                spaceFromSides: 10,
-                tabsHeight: 30,
-              ),
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Settings',
+          style: TextStyle(fontSize: 16, color: AppColors.white),
         ),
+        backgroundColor: AppColors.green,
+        iconTheme: const IconThemeData(color: AppColors.white),
+      ),
+      body: Column(
+        children: [
+          // SizedBox(height: 20),
+          // _buildSearchBar(context),
+          SizedBox(height: 30),
+
+          Expanded(
+            child: TabBarWidget(
+              titles: ['Terms', 'Policies', 'User Guide'],
+              counts: [0, 0, 0],
+              screens: [
+                AdminUploadTermsPage(),
+                AdminUploadPoliciesPage(),
+                AdminUploadUserGuidePage(),
+              ],
+              titleSize: 9,
+              countSize: 7,
+              spaceFromSides: 10,
+              tabsHeight: 30,
+            ),
+          ),
+        ],
       ),
     );
   }

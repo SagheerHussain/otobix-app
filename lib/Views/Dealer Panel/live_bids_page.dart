@@ -473,6 +473,15 @@ class LiveBidsPage extends StatelessWidget {
       // iconDetail(Icons.directions_car, 'Model', 'Scorpio'),
       // iconDetail(Icons.confirmation_number, 'Variant', '[2014–2017]'),
       iconDetail(
+        Icons.calendar_month,
+        'Year of Manufacture',
+        GlobalFunctions.getFormattedDate(
+              date: car.yearMonthOfManufacture,
+              type: GlobalFunctions.monthYear,
+            ) ??
+            'N/A',
+      ),
+      iconDetail(
         Icons.speed,
         'Odometer Reading in Kms',
         '${NumberFormat.decimalPattern('en_IN').format(car.odometerReadingInKms)} km',
@@ -508,12 +517,11 @@ class LiveBidsPage extends StatelessWidget {
                 'N/A',
       ),
 
-      iconDetail(
-        Icons.science,
-        'Cubic Capacity',
-        car.cubicCapacity != 0 ? '${car.cubicCapacity} cc' : 'N/A',
-      ),
-
+      // iconDetail(
+      //   Icons.science,
+      //   'Cubic Capacity',
+      //   car.cubicCapacity != 0 ? '${car.cubicCapacity} cc' : 'N/A',
+      // ),
       iconDetail(
         Icons.location_on,
         'Inspection Location',
@@ -557,6 +565,11 @@ class LiveBidsPage extends StatelessWidget {
   }
 
   Widget _buildCarCardFooter(CarsListModel car) {
+    final double hb = (car.highestBid).value;
+    final double pd = car.priceDiscovery;
+    final double highestBid = (hb == 0.0) ? pd * 0.75 : hb;
+    car.highestBid.value = highestBid;
+
     return Column(
       children: [
         Divider(),

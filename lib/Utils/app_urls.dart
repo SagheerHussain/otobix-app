@@ -1,8 +1,10 @@
 class AppUrls {
   // static const String baseUrl = "http://localhost:4000/api/";
-  static const String baseUrl = "https://otobix-app-backend.onrender.com/api/";
-  // static const String baseUrl =
-  //     "http://192.168.100.99:4000/api/"; // For Mobile Testing
+  // static const String baseUrlOld = "https://otobix-app-backend.onrender.com/api/";
+  static const String baseUrl =
+      "https://otobix-app-backend-rq8m.onrender.com/api/";
+  //   static const String baseUrl =
+  //   "http://192.168.100.99:4000/api/"; // For Mobile Testing
 
   static final String socketBaseUrl = _extractSocketBaseUrl(
     baseUrl,
@@ -132,6 +134,13 @@ class AppUrls {
   static const String markCarAsSold = "${baseUrl}otobuy/mark-car-as-sold";
 
   static const String removeCar = "${baseUrl}car/remove-car";
+
+  static const String getEntityNamesList =
+      "${baseUrl}entity-documents/get-entity-names-list";
+
+  // GET one entity (with documents) by name
+  static String getEntityDocumentsByName({required String entityName}) =>
+      "${baseUrl}entity-documents/get-entity-documents-by-name/${Uri.encodeComponent(entityName)}";
 
   // Socket URL Extraction
   static String _extractSocketBaseUrl(String url) {

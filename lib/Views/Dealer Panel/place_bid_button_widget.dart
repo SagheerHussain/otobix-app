@@ -72,8 +72,8 @@ class PlaceBidButtonWidget extends StatelessWidget {
         }
       },
       isLoading: getxController.isLoading,
-      height: 30,
-      fontSize: 10,
+      height: 35,
+      fontSize: 12,
       elevation: 10,
     );
   }

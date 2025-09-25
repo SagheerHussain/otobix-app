@@ -47,29 +47,29 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAuNAq2RDdjYbW-tF9NLDF471113CrptOw',
-    appId: '1:778516764210:web:67b95b01a67f0f13e54e2b',
-    messagingSenderId: '778516764210',
-    projectId: 'otobix-firebase-project',
-    authDomain: 'otobix-firebase-project.firebaseapp.com',
-    storageBucket: 'otobix-firebase-project.firebasestorage.app',
-    measurementId: 'G-D7B18WKCFL',
+    apiKey: 'AIzaSyCFQhwUma78s5ZoBYcQt72sJYSzIorfR6E',
+    appId: '1:349730100681:web:692a6862c415324d5f0418',
+    messagingSenderId: '349730100681',
+    projectId: 'otobix-auction-app',
+    authDomain: 'otobix-auction-app.firebaseapp.com',
+    storageBucket: 'otobix-auction-app.firebasestorage.app',
+    measurementId: 'G-PX3N2JK5KD',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDMjfSy6Qr7NZTZOfOVRDToGXqI77_vtkg',
-    appId: '1:778516764210:android:ac142b908eae9038e54e2b',
-    messagingSenderId: '778516764210',
-    projectId: 'otobix-firebase-project',
-    storageBucket: 'otobix-firebase-project.firebasestorage.app',
+    apiKey: 'AIzaSyCkjgRe_95A3dz7gFh0VctlK3nS_XLEhA4',
+    appId: '1:349730100681:android:6df6b765a538e9985f0418',
+    messagingSenderId: '349730100681',
+    projectId: 'otobix-auction-app',
+    storageBucket: 'otobix-auction-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAWmkVtVwp6-rLv5_xvBvvDCWWN2Zd33RM',
-    appId: '1:778516764210:ios:e15746782fbfebb0e54e2b',
-    messagingSenderId: '778516764210',
-    projectId: 'otobix-firebase-project',
-    storageBucket: 'otobix-firebase-project.firebasestorage.app',
+    apiKey: 'AIzaSyCgHQPGIBrufqVQbei3Rb-Z6mG_a8hDCBs',
+    appId: '1:349730100681:ios:16922e77f531379e5f0418',
+    messagingSenderId: '349730100681',
+    projectId: 'otobix-auction-app',
+    storageBucket: 'otobix-auction-app.firebasestorage.app',
     iosBundleId: 'com.example.otobixFrontend',
   );
 

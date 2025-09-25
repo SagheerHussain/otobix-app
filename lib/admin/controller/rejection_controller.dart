@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 class UserCommentController extends GetxController {
   /// loading indicator
@@ -32,21 +33,21 @@ class UserCommentController extends GetxController {
         debugPrint("Failed to fetch comment: ${data['message']}");
         rejectionComment.value = "";
 
-        Get.snackbar(
-          "Error",
-          data['message'] ?? "Failed to fetch comment.",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.shade100,
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Error",
+          subtitle: data['message'] ?? "Failed to fetch comment.",
+          type: ToastType.error,
         );
       }
     } catch (e) {
       debugPrint("Error fetching comment: $e");
       rejectionComment.value = "";
-      Get.snackbar(
-        "Error",
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade100,
+      ToastWidget.show(
+        context: Get.context!,
+        title: "Error",
+        subtitle: "Error fetching comment.",
+        type: ToastType.error,
       );
     } finally {
       isLoading.value = false;

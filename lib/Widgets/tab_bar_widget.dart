@@ -13,6 +13,9 @@ class TabBarWidget extends StatelessWidget {
   final double spaceFromSides;
   final bool showCount;
 
+  /// Tag so that we can find which tab bar widget is used where like home, my cars, etc.
+  final String? controllerTag;
+
   const TabBarWidget({
     super.key,
     required this.titles,
@@ -23,6 +26,7 @@ class TabBarWidget extends StatelessWidget {
     this.tabsHeight = 35,
     this.spaceFromSides = 15,
     this.showCount = true,
+    this.controllerTag,
   });
 
   @override
@@ -32,7 +36,7 @@ class TabBarWidget extends StatelessWidget {
 
     final tabController = Get.put(
       TabBarWidgetController(tabLength: titles.length),
-      tag: tag,
+      tag: controllerTag ?? tag,
     );
 
     return Obx(

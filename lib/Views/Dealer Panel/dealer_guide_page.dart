@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/dealer_guide_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Widgets/empty_page_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class DealerGuidePage extends StatelessWidget {
@@ -44,15 +45,21 @@ class DealerGuidePage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    dealerGuideController.error.value!,
-                    textAlign: TextAlign.center,
+                  EmptyPageWidget(
+                    icon: Icons.menu_book,
+                    iconColor: AppColors.red,
+                    title: 'Dealer Guide',
+                    description: 'Error loading dealer guide.',
                   ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: dealerGuideController.reload,
-                    child: const Text('Retry'),
-                  ),
+                  // Text(
+                  //   dealerGuideController.error.value!,
+                  //   textAlign: TextAlign.center,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // ElevatedButton(
+                  //   onPressed: dealerGuideController.reload,
+                  //   child: const Text('Retry'),
+                  // ),
                 ],
               ),
             ),

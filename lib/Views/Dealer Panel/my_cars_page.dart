@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Controllers/my_bids_controller.dart';
 import 'package:otobix/Controllers/my_cars_controller.dart';
-import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
 import 'package:otobix/Controllers/wishlist_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Dealer%20Panel/my_bids_page.dart';
-import 'package:otobix/Views/Dealer%20Panel/ocb_nego_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_notifications_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/wishlist_page.dart';
 import 'package:otobix/Widgets/tab_bar_widget.dart';
@@ -45,6 +44,8 @@ class MyCarsPage extends StatelessWidget {
                 final wishlistCarsLength = wishlist.wishlistCarsIds.length;
 
                 return TabBarWidget(
+                  controllerTag:
+                      AppConstants.tabBarWidgetControllerTags.myCarsTabs,
                   titles: [
                     'My Bids',
                     //  'Ocb Nego',

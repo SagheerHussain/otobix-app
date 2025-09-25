@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import '../Models/car_gallery_sections_model.dart';
@@ -9,12 +10,16 @@ class CarImagesGalleryController extends GetxController {
   final CarModel car;
   final String initialSectionId;
   final int initialSectionIndex;
+  final String currentOpenSection;
+  final RxString remainingAuctionTime;
 
   // Constructor to get car details, initial section id and index
   CarImagesGalleryController(
     this.car,
     this.initialSectionId,
     this.initialSectionIndex,
+    this.currentOpenSection,
+    this.remainingAuctionTime,
   );
 
   // Observables
@@ -31,6 +36,9 @@ class CarImagesGalleryController extends GetxController {
 
   bool _updatingFromTap = false;
 
+  Worker? _timerWatcher;
+  bool _closedOnce = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -38,6 +46,16 @@ class CarImagesGalleryController extends GetxController {
     _seedDemoData();
     _initKeys();
     scrollController.addListener(_onScrollUpdateActiveChip);
+
+    // Close screen when timer ends
+    final homeController = Get.find<HomeController>();
+    watchAndCloseOnTimerEnd(
+      remainingAuctionTime:
+          currentOpenSection == homeController.upcomingSectionScreen ||
+                  currentOpenSection == homeController.liveBidsSectionScreen
+              ? remainingAuctionTime
+              : null,
+    );
   }
 
   @override
@@ -55,42 +73,6 @@ class CarImagesGalleryController extends GetxController {
   void _seedDemoData() {
     sections.value = [
       CarGallerySectionsModel(
-        id: AppConstants.imagesSectionIds.interior,
-        title: 'Interior',
-        images: [
-          ...car.frontSeatsFromDriverSideDoorOpen,
-          ...car.rearSeatsFromRightSideDoorOpen,
-          ...car.dashboardFromRearSeat,
-        ],
-      ),
-
-      CarGallerySectionsModel(
-        id: AppConstants.imagesSectionIds.suspension,
-        title: 'Suspension',
-        images: [
-          ...car.lhsFrontAlloyImages,
-          ...car.rhsFrontAlloyImages,
-          ...car.lhsRearAlloyImages,
-          ...car.rhsRearAlloyImages,
-          ...car.lhsFrontTyreImages,
-          ...car.rhsFrontTyreImages,
-          ...car.lhsRearTyreImages,
-          ...car.rhsRearTyreImages,
-        ],
-      ),
-
-      CarGallerySectionsModel(
-        id: AppConstants.imagesSectionIds.engine,
-        title: 'Engine',
-        images: [
-          ...car.engineBay,
-          ...car.batteryImages,
-          // ...car.exhaustSmokeImages,
-          ...car.apronLhsRhs,
-        ],
-      ),
-
-      CarGallerySectionsModel(
         id: AppConstants.imagesSectionIds.exterior,
         title: 'Exterior',
         images: [
@@ -107,11 +89,51 @@ class CarImagesGalleryController extends GetxController {
           ...car.rhsOrvmImages,
         ],
       ),
+      CarGallerySectionsModel(
+        id: AppConstants.imagesSectionIds.interior,
+        title: 'Interior',
+        images: [
+          ...car.frontSeatsFromDriverSideDoorOpen,
+          ...car.rearSeatsFromRightSideDoorOpen,
+          ...car.dashboardFromRearSeat,
+        ],
+      ),
+
+      CarGallerySectionsModel(
+        id: AppConstants.imagesSectionIds.engine,
+        title: 'Engine',
+        images: [...car.engineBay, ...car.batteryImages, ...car.apronLhsRhs],
+      ),
+      CarGallerySectionsModel(
+        id: AppConstants.imagesSectionIds.tyres,
+        title: 'Tyres',
+        images: [
+          ...car.spareTyreImages,
+          ...car.lhsRearTyreImages,
+          ...car.rhsRearTyreImages,
+          ...car.lhsFrontTyreImages,
+          ...car.rhsFrontTyreImages,
+        ],
+      ),
+      // CarGallerySectionsModel(
+      //   id: AppConstants.imagesSectionIds.suspension,
+      //   title: 'Suspension',
+      //   images: [
+      //     ...car.lhsFrontAlloyImages,
+      //     ...car.rhsFrontAlloyImages,
+      //     ...car.lhsRearAlloyImages,
+      //     ...car.rhsRearAlloyImages,
+      //     ...car.lhsFrontTyreImages,
+      //     ...car.rhsFrontTyreImages,
+      //     ...car.lhsRearTyreImages,
+      //     ...car.rhsRearTyreImages,
+      //   ],
+      // ),
 
       // CarGallerySectionsModel(
-      //   id: AppConstants.imagesSectionIds.ac,
-      //   title: 'AC',
-      //   images: [...car.lhsFrontAlloyImages], // Sample section data
+      //   id: AppConstants.imagesSectionIds.damages,
+      //   title: 'Damages',
+      //   images: [...car.damangesImages],
       // ),
     ];
   }
@@ -193,10 +215,41 @@ class CarImagesGalleryController extends GetxController {
     return (box?.attached ?? false) ? box!.size.height : 0;
   }
 
+  /// Call this once (e.g., from the view) and pass the RxString that displays the timer.
+  void watchAndCloseOnTimerEnd({RxString? remainingAuctionTime}) {
+    // No timer? Nothing to watch.
+    if (remainingAuctionTime == null) return;
+
+    bool _isZero(String s) => s.trim() == '00h : 00m : 00s';
+
+    void _maybeClose() {
+      if (_closedOnce) return;
+      _closedOnce = true;
+
+      // Close the current screen
+      Get.back<void>();
+    }
+
+    // Immediate defensive check (in case it's already zero)
+    if (_isZero(remainingAuctionTime.value)) {
+      _maybeClose();
+      return;
+    }
+
+    // Watch future changes
+    _timerWatcher?.dispose(); // ensure only one watcher
+    _timerWatcher = ever<String>(remainingAuctionTime, (val) {
+      if (_isZero(val)) {
+        _maybeClose();
+      }
+    });
+  }
+
   @override
   void onClose() {
     scrollController.removeListener(_onScrollUpdateActiveChip);
     scrollController.dispose();
+    _timerWatcher?.dispose();
     super.onClose();
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/account_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 
 class EditProfileScreen extends StatelessWidget {
   EditProfileScreen({super.key});
@@ -52,25 +53,28 @@ class EditProfileScreen extends StatelessWidget {
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                  Obx(() {
-  final imageUrl = controller.imageUrl.value;
-  final imageFile = controller.imageFile.value;
+                    Obx(() {
+                      final imageUrl = controller.imageUrl.value;
+                      final imageFile = controller.imageFile.value;
 
-  return CircleAvatar(
-    radius: 55,
-    backgroundImage: imageFile != null
-        ? FileImage(imageFile) as ImageProvider
-        : (imageUrl.isNotEmpty
-            ? NetworkImage(
-                imageUrl.startsWith('http') ? imageUrl : imageUrl,
-              )
-            : null),
-    child: imageFile == null && imageUrl.isEmpty
-        ? const Icon(Icons.person, size: 55)
-        : null,
-  );
-}),
-
+                      return CircleAvatar(
+                        radius: 55,
+                        backgroundImage:
+                            imageFile != null
+                                ? FileImage(imageFile) as ImageProvider
+                                : (imageUrl.isNotEmpty
+                                    ? NetworkImage(
+                                      imageUrl.startsWith('http')
+                                          ? imageUrl
+                                          : imageUrl,
+                                    )
+                                    : null),
+                        child:
+                            imageFile == null && imageUrl.isEmpty
+                                ? const Icon(Icons.person, size: 55)
+                                : null,
+                      );
+                    }),
 
                     Positioned(
                       bottom: 0,
@@ -97,14 +101,14 @@ class EditProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                _buildTextField('Name', controller.userName),
+                // _buildTextField('Name', controller.userName),
                 _buildTextField('Email', controller.userEmail),
-                _buildTextField('Phone Number', controller.phoneNumber),
+                // _buildTextField('Phone Number', controller.phoneNumber),
                 _buildTextField('Location', controller.location),
 
                 if (controller.userRole.value == 'Dealer') ...[
                   _buildTextField('Dealership Name', controller.dealershipName),
-                  _buildTextField('Entity Type', controller.entityType),
+                  // _buildTextField('Entity Type', controller.entityType),
                   _buildTextField(
                     'Primary Contact Person',
                     controller.primaryContactPerson,
@@ -124,9 +128,9 @@ class EditProfileScreen extends StatelessWidget {
                 ],
 
                 if ([
-                  'Dealer',
-                  'customer',
-                  'sales manager',
+                  AppConstants.roles.dealer,
+                  AppConstants.roles.customer,
+                  AppConstants.roles.salesManager,
                 ].contains(controller.userRole.value))
                   _buildAddressList(controller),
 

@@ -51,6 +51,8 @@ class WishlistPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         itemBuilder: (context, index) {
           final car = getxController.carsList[index];
+          final String yearofManufacture =
+              '${GlobalFunctions.getFormattedDate(date: car.yearMonthOfManufacture, type: GlobalFunctions.year)} ';
           // InkWell for car card
           return GestureDetector(
             onTap: () {
@@ -128,7 +130,7 @@ class WishlistPage extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              '${car.make} ${car.model} ${car.variant}',
+                                              '$yearofManufacture${car.make} ${car.model} ${car.variant}',
                                               maxLines: 3,
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(

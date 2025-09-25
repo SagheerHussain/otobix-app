@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:otobix/Utils/app_urls.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 class AdminUploadTermsController extends GetxController {
   /// UI State
@@ -29,7 +30,12 @@ class AdminUploadTermsController extends GetxController {
   Future<void> upload() async {
     final file = pickedFile.value;
     if (file == null) {
-      Get.snackbar('Missing file', 'Please choose a .docx or .pdf first.');
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'Missing file',
+        subtitle: 'Please choose a .docx or .pdf first.',
+        type: ToastType.error,
+      );
       return;
     }
 
@@ -60,7 +66,12 @@ class AdminUploadTermsController extends GetxController {
     if (kIsWeb) {
       final bytes = file.bytes;
       if (bytes == null) {
-        Get.snackbar('Error', 'Could not read file bytes on web.');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Error',
+          subtitle: 'Could not read file bytes on web.',
+          type: ToastType.error,
+        );
         return;
       }
       multipart = http.MultipartFile.fromBytes(
@@ -72,7 +83,12 @@ class AdminUploadTermsController extends GetxController {
     } else {
       final path = file.path;
       if (path == null) {
-        Get.snackbar('Error', 'Invalid file path.');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Error',
+          subtitle: 'Invalid file path.',
+          type: ToastType.error,
+        );
         return;
       }
       multipart = await http.MultipartFile.fromPath(
@@ -93,16 +109,28 @@ class AdminUploadTermsController extends GetxController {
       if (resp.statusCode >= 200 && resp.statusCode < 300) {
         final data = resp.body.isNotEmpty ? resp.body : '{}';
         lastResponse.value = {'statusCode': resp.statusCode, 'body': data};
-        Get.snackbar('Success', 'Terms uploaded successfully.');
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Success',
+          subtitle: 'Terms uploaded successfully.',
+          type: ToastType.success,
+        );
       } else {
         lastResponse.value = {'statusCode': resp.statusCode, 'body': resp.body};
-        Get.snackbar(
-          'Upload failed',
-          'Server responded with ${resp.statusCode}. Check logs.',
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Upload failed',
+          subtitle: 'Server responded with ${resp.statusCode}. Check logs.',
+          type: ToastType.error,
         );
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'Error',
+        subtitle: e.toString(),
+        type: ToastType.error,
+      );
       rethrow;
     } finally {
       isUploading.value = false;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/privacy_policy_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Widgets/empty_page_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
@@ -44,15 +45,21 @@ class PrivacyPolicyPage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    privacyPolicyController.error.value!,
-                    textAlign: TextAlign.center,
+                  EmptyPageWidget(
+                    icon: Icons.lock,
+                    iconColor: AppColors.red,
+                    title: 'Privacy Policy',
+                    description: 'Error loading privacy policy.',
                   ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: privacyPolicyController.reload,
-                    child: const Text('Retry'),
-                  ),
+                  // Text(
+                  //   privacyPolicyController.error.value!,
+                  //   textAlign: TextAlign.center,
+                  // ),
+                  // const SizedBox(height: 12),
+                  // ElevatedButton(
+                  //   onPressed: privacyPolicyController.reload,
+                  //   child: const Text('Retry'),
+                  // ),
                 ],
               ),
             ),

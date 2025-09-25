@@ -184,6 +184,14 @@ class UpcomingPage extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
           final car = finalFilteredCarsList[index];
+          final String yearofManufacture =
+              '${GlobalFunctions.getFormattedDate(date: car.yearMonthOfManufacture, type: GlobalFunctions.year)} ';
+
+          final double hb = (car.highestBid).value;
+          final double pd = car.priceDiscovery;
+          final double highestBid = (hb == 0.0) ? pd * 0.75 : hb;
+          car.highestBid.value = highestBid;
+
           // InkWell for car card
           return InkWell(
             onTap: () {
@@ -266,7 +274,7 @@ class UpcomingPage extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              '${car.make} ${car.model} ${car.variant}',
+                                              '$yearofManufacture${car.make} ${car.model} ${car.variant}',
                                               maxLines: 3,
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
@@ -286,15 +294,21 @@ class UpcomingPage extends StatelessWidget {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                Text(
-                                                  'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: AppColors.green,
-                                                    fontWeight: FontWeight.bold,
+                                                Obx(
+                                                  () => Text(
+                                                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(
+                                                      // car.priceDiscovery,
+                                                      car.highestBid.value,
+                                                    )}/-',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: AppColors.green,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
                                               ],

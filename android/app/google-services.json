@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "778516764210",
-    "project_id": "otobix-firebase-project",
-    "storage_bucket": "otobix-firebase-project.firebasestorage.app"
+    "project_number": "349730100681",
+    "project_id": "otobix-auction-app",
+    "storage_bucket": "otobix-auction-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:778516764210:android:ac142b908eae9038e54e2b",
+        "mobilesdk_app_id": "1:349730100681:android:6df6b765a538e9985f0418",
         "android_client_info": {
           "package_name": "com.example.otobix"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDMjfSy6Qr7NZTZOfOVRDToGXqI77_vtkg"
+          "current_key": "AIzaSyCkjgRe_95A3dz7gFh0VctlK3nS_XLEhA4"
         }
       ],
       "services": {

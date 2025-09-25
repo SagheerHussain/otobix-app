@@ -5,6 +5,7 @@ class SharedPrefsHelper {
   static const String userTypeKey = 'userType';
   static const String userKey = 'user';
   static const String userIdKey = 'id';
+  static const String entityTypeKey = 'entityType';
 
   static SharedPreferences? _prefs;
 
@@ -19,10 +20,9 @@ class SharedPrefsHelper {
   }
 
   /// Get string
-static Future<String?> getString(String key) async {
-  return _prefs?.getString(key);
-}
-
+  static Future<String?> getString(String key) async {
+    return _prefs?.getString(key);
+  }
 
   /// Save boolean
   static Future<void> saveBool(String key, bool value) async {

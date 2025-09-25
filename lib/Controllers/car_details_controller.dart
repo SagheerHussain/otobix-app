@@ -9,7 +9,6 @@ import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
-import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
@@ -25,9 +24,9 @@ class CarDetailsController extends GetxController {
   static const String engineBaySectionKey = 'engineBay';
   static const String steeringBrakesAndSuspensionSectionKey =
       'steeringBrakesAndSuspension';
+  static const String airConditioningSectionKey = 'airConditioning';
   static const String interiorAndElectricalsSectionKey =
       'interiorAndElectricals';
-  static const String airConditioningSectionKey = 'airConditioning';
 
   final sectionKeys = {
     imagesSectionKey: GlobalKey(),
@@ -36,14 +35,14 @@ class CarDetailsController extends GetxController {
     exteriorSectionKey: GlobalKey(),
     engineBaySectionKey: GlobalKey(),
     steeringBrakesAndSuspensionSectionKey: GlobalKey(),
-    interiorAndElectricalsSectionKey: GlobalKey(),
     airConditioningSectionKey: GlobalKey(),
+    interiorAndElectricalsSectionKey: GlobalKey(),
   };
 
   final ScrollController scrollController = ScrollController();
   final sectionTabScrollController = ScrollController();
   final sectionTabKeys = <String, GlobalKey>{};
-  RxString currentSection = basicDetailsSectionKey.obs;
+  RxString currentSection = imagesSectionKey.obs;
 
   final currentIndex = 0.obs;
   // final imageUrls = <String>[].obs;
@@ -93,11 +92,17 @@ class CarDetailsController extends GetxController {
           final position = box.localToGlobal(Offset.zero, ancestor: null).dy;
 
           // Adjust 100 based on height of sticky headers
-          if (position < MediaQuery.of(Get.context!).padding.top + 210 &&
-              position > 0) {
-            currentSection.value = entry.key;
+          // if (position < MediaQuery.of(Get.context!).padding.top + 210 &&
+          //     position > 0) {
+          //   currentSection.value = entry.key;
 
-            // Scroll horizontal tab bar
+          //   // Scroll horizontal tab bar
+          //   scrollToSectionTab(entry.key);
+          //   break;
+          // }
+          // Only mark section active if its top is at least 20px below the top
+          if (position >= 20 && position < Get.context!.size!.height / 2) {
+            currentSection.value = entry.key;
             scrollToSectionTab(entry.key);
             break;
           }
@@ -636,8 +641,8 @@ class CarDetailsController extends GetxController {
   }
 
   /// Call this once (e.g., from the view) and pass the RxString that displays the timer.
-  /// If [remainingAuctionTime] is null, this does nothing.
   void watchAndCloseOnTimerEnd({
+    required String carName,
     RxString? remainingAuctionTime,
     required String currentOpenSection,
   }) {
@@ -664,7 +669,7 @@ class CarDetailsController extends GetxController {
       if (currentOpenSection == homeController.liveBidsSectionScreen) {
         ToastWidget.show(
           context: Get.context!,
-          title: "Auction ended.",
+          title: "Auction ended for $carName.",
           type: ToastType.error,
         );
       }

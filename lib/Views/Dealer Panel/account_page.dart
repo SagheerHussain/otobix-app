@@ -4,6 +4,7 @@ import 'package:otobix/Controllers/tab_bar_widget_controller.dart';
 import 'package:otobix/Controllers/account_controller.dart';
 import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Dealer%20Panel/dealer_guide_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/privacy_policy_page.dart';
@@ -112,14 +113,26 @@ class _AccountPageState extends State<AccountPage> {
                     title: "My Bids",
                     description: "View all your active and past bids.",
                     onTap: () {
-                      final navController =
-                          Get.find<BottomNavigationController>();
-                      navController.currentIndex.value = 1;
+                      // final navController =
+                      //     Get.find<BottomNavigationController>();
+                      // navController.currentIndex.value = 1;
 
-                      final tabBarWidgetController = Get.put(
-                        TabBarWidgetController(tabLength: 2),
-                      );
-                      tabBarWidgetController.setSelectedTab(0);
+                      // final tabBarWidgetController = Get.put(
+                      //   TabBarWidgetController(tabLength: 2),
+                      // );
+                      // tabBarWidgetController.setSelectedTab(0);
+                      final nav = Get.find<BottomNavigationController>();
+                      nav.currentIndex.value = 1;
+                      Future.microtask(() {
+                        final tabs = Get.put(
+                          TabBarWidgetController(tabLength: 2),
+                          tag:
+                              AppConstants
+                                  .tabBarWidgetControllerTags
+                                  .myCarsTabs,
+                        );
+                        tabs.setSelectedTab(0); // 0 = My Bids, 1 = Wishlist
+                      });
                     },
                   ),
                   ProfileOption(
@@ -128,14 +141,18 @@ class _AccountPageState extends State<AccountPage> {
                     title: "Wishlist",
                     description: "See cars you've saved for later.",
                     onTap: () {
-                      final navController =
-                          Get.find<BottomNavigationController>();
-                      navController.currentIndex.value = 1;
-
-                      final tabBarWidgetController = Get.put(
-                        TabBarWidgetController(tabLength: 2),
-                      );
-                      tabBarWidgetController.setSelectedTab(1);
+                      final nav = Get.find<BottomNavigationController>();
+                      nav.currentIndex.value = 1;
+                      Future.microtask(() {
+                        final tabs = Get.put(
+                          TabBarWidgetController(tabLength: 2),
+                          tag:
+                              AppConstants
+                                  .tabBarWidgetControllerTags
+                                  .myCarsTabs,
+                        );
+                        tabs.setSelectedTab(1); // 0 = My Bids, 1 = Wishlist
+                      });
                     },
                   ),
                   ProfileOption(
