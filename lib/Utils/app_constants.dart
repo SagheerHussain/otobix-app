@@ -3,7 +3,7 @@ enum DeploymentEnvironment { local, dev, prod }
 class AppConstants {
   // ---- Deploy on Production or Development by changing this ----
   static const DeploymentEnvironment deploymentEnvironment =
-      DeploymentEnvironment.local;
+      DeploymentEnvironment.prod;
 
   // Other constant classes
   static final Roles roles = Roles();
@@ -74,10 +74,10 @@ class AppConstants {
 
   static _EnvConfig get env =>
       deploymentEnvironment == DeploymentEnvironment.prod
-          ? _prodConfiguration
-          : deploymentEnvironment == DeploymentEnvironment.dev
-          ? _devConfiguration
-          : _localConfiguration;
+      ? _prodConfiguration
+      : deploymentEnvironment == DeploymentEnvironment.dev
+      ? _devConfiguration
+      : _localConfiguration;
 
   // convenience getters
   static String get envName => env.deploymentEnvironmentName; // 'dev' | 'prod'
