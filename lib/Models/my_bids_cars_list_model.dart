@@ -15,6 +15,9 @@ class MyBidsCarsListModel {
   final String roadTaxValidity;
   final DateTime? taxValidTill;
   final int ownerSerialNumber;
+  final String commentsOnTransmission;
+  final String registrationNumber;
+  final String registeredRto;
 
   MyBidsCarsListModel({
     this.id,
@@ -31,6 +34,9 @@ class MyBidsCarsListModel {
     required this.roadTaxValidity,
     required this.taxValidTill,
     required this.ownerSerialNumber,
+    required this.commentsOnTransmission,
+    required this.registrationNumber,
+    required this.registeredRto,
   });
 
   // Factory constructor to create a Car from JSON map
@@ -63,6 +69,9 @@ class MyBidsCarsListModel {
           data['ownerSerialNumber'] is int
               ? data['ownerSerialNumber']
               : int.tryParse(data['ownerSerialNumber']?.toString() ?? ''),
+      commentsOnTransmission: data['commentsOnTransmission'] ?? '',
+      registrationNumber: data['registrationNumber'] ?? '',
+      registeredRto: data['registeredRto'] ?? '',
     );
   }
 
@@ -82,6 +91,9 @@ class MyBidsCarsListModel {
       'roadTaxValidity': roadTaxValidity,
       'taxValidTill': taxValidTill,
       'ownerSerialNumber': ownerSerialNumber,
+      'commentsOnTransmission': commentsOnTransmission,
+      'registrationNumber': registrationNumber,
+      'registeredRto': registeredRto,
     };
   }
 }

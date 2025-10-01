@@ -6,6 +6,7 @@ import 'package:otobix/Controllers/wishlist_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
+import 'package:otobix/Widgets/car_deck_view_for_mybids_and_wishlist_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 
@@ -42,7 +43,29 @@ class WishlistPage extends StatelessWidget {
   }
 
   // Wishlist List
+
   Widget _buildWishlistList() {
+    return Expanded(
+      child: ListView.separated(
+        shrinkWrap: true,
+        itemCount: getxController.carsList.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        itemBuilder: (context, index) {
+          final car = getxController.carsList[index];
+
+          return CarDeckViewForMyBidsAndWishlistWidget(
+            car: car,
+            footer: SizedBox(),
+            onCarTap: () {},
+            toggleFavorite: () => getxController.toggleFavoriteById(car.id!),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildWishlistList1() {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,

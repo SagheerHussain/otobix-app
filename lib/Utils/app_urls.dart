@@ -1,36 +1,40 @@
+import 'package:otobix/Utils/app_constants.dart';
+
 class AppUrls {
   // static const String baseUrl = "http://localhost:4000/api/";
   // static const String baseUrlOld = "https://otobix-app-backend.onrender.com/api/";
-  static const String baseUrl =
-      "https://otobix-app-backend-rq8m.onrender.com/api/";
+  // static const String baseUrl =
+  //     "https://otobix-app-backend-rq8m.onrender.com/api/";
   //   static const String baseUrl =
   //   "http://192.168.100.99:4000/api/"; // For Mobile Testing
+
+  static String get baseUrl => AppConstants.renderBaseUrl;
 
   static final String socketBaseUrl = _extractSocketBaseUrl(
     baseUrl,
   ); // Socket base URL
 
-  static const String sendOtp = "${baseUrl}send-otp";
+  static String get sendOtp => "${baseUrl}send-otp";
 
-  static const String verifyOtp = "${baseUrl}verify-otp";
+  static String get verifyOtp => "${baseUrl}verify-otp";
 
-  static const String login = "${baseUrl}user/login";
+  static String get login => "${baseUrl}user/login";
 
-  static const String register = "${baseUrl}user/register";
+  static String get register => "${baseUrl}user/register";
 
-  static const String allUsersList = "${baseUrl}user/all-users-list";
+  static String get allUsersList => "${baseUrl}user/all-users-list";
 
-  static const String approvedUsersList = "${baseUrl}user/approved-users-list";
+  static String get approvedUsersList => "${baseUrl}user/approved-users-list";
 
-  static const String pendingUsersList = "${baseUrl}user/pending-users-list";
+  static String get pendingUsersList => "${baseUrl}user/pending-users-list";
 
-  static const String rejectedUsersList = "${baseUrl}user/rejected-users-list";
+  static String get rejectedUsersList => "${baseUrl}user/rejected-users-list";
 
-  static const String usersLength = "${baseUrl}user/users-length";
+  static String get usersLength => "${baseUrl}user/users-length";
 
-  static const String updateProfile = "${baseUrl}user/update-profile";
+  static String get updateProfile => "${baseUrl}user/update-profile";
 
-  static const String getUserProfile = "${baseUrl}user/user-profile";
+  static String get getUserProfile => "${baseUrl}user/user-profile";
 
   static String checkUsernameExists(String username) =>
       "${baseUrl}user/check-username?username=$username";
@@ -51,20 +55,19 @@ class AppUrls {
   static String updateUserThroughAdmin(String userId) =>
       "${baseUrl}user/update-user-through-admin/?userId=$userId";
 
-  static const String updateCarBid = "${baseUrl}car/update-bid";
+  static String get updateCarBid => "${baseUrl}car/update-bid";
 
-  static const String updateCarAuctionTime =
-      "${baseUrl}car/update-auction-time";
+  static String get updateCarAuctionTime => "${baseUrl}car/update-auction-time";
 
-  static const String schedulAuction =
+  static String get schedulAuction =>
       "${baseUrl}upcoming/update-car-auction-time";
 
-  static const String checkHighestBidder = "${baseUrl}car/check-highest-bidder";
+  static String get checkHighestBidder => "${baseUrl}car/check-highest-bidder";
 
-  static const String submitAutoBidForLiveSection =
+  static String get submitAutoBidForLiveSection =>
       "${baseUrl}car/submit-auto-bid-for-live-section";
 
-  static const String userNotifications =
+  static String get userNotifications =>
       "${baseUrl}user/notifications/create-notification";
 
   static String userNotificationsList({
@@ -80,10 +83,10 @@ class AppUrls {
   }) =>
       "${baseUrl}user/notifications/notification-details?userId=$userId&notificationId=$notificationId";
 
-  static const String userNotificationsMarkRead =
+  static String get userNotificationsMarkRead =>
       "${baseUrl}user/notifications/mark-notification-as-read";
 
-  static const String userNotificationsMarkAllRead =
+  static String get userNotificationsMarkAllRead =>
       "${baseUrl}user/notifications/mark-all-notifications-as-read";
 
   static String userNotificationsUnreadNotificationsCount({
@@ -94,10 +97,9 @@ class AppUrls {
   static String getUserWishlist({required String userId}) =>
       "${baseUrl}user/get-user-wishlist?userId=$userId";
 
-  static const String addToWishlist = "${baseUrl}user/add-to-wishlist";
+  static String get addToWishlist => "${baseUrl}user/add-to-wishlist";
 
-  static const String removeFromWishlist =
-      "${baseUrl}user/remove-from-wishlist";
+  static String get removeFromWishlist => "${baseUrl}user/remove-from-wishlist";
 
   static String getUserWishlistCarsList({required String userId}) =>
       "${baseUrl}user/get-user-wishlist-cars-list?userId=$userId";
@@ -105,37 +107,36 @@ class AppUrls {
   static String getUserMyBidsList({required String userId}) =>
       "${baseUrl}user/get-user-my-bids?userId=$userId";
 
-  static const String addToMyBids = "${baseUrl}user/add-to-my-bids";
+  static String get addToMyBids => "${baseUrl}user/add-to-my-bids";
 
-  static const String removeFromMyBids = "${baseUrl}user/remove-from-my-bids";
+  static String get removeFromMyBids => "${baseUrl}user/remove-from-my-bids";
 
   static String getUserMyBidsCarsList({required String userId}) =>
       "${baseUrl}user/get-user-my-bids-cars-list?userId=$userId";
 
-  static const String uploadTermsAndConditions = "${baseUrl}terms/upload";
+  static String get uploadTermsAndConditions => "${baseUrl}terms/upload";
 
-  static const String getLatestTermsAndConditions = "${baseUrl}terms/latest";
+  static String get getLatestTermsAndConditions => "${baseUrl}terms/latest";
 
-  static const String uploadPrivacyPolicy = "${baseUrl}privacy-policy/upload";
+  static String get uploadPrivacyPolicy => "${baseUrl}privacy-policy/upload";
 
-  static const String getLatestPrivacyPolicy =
-      "${baseUrl}privacy-policy/latest";
+  static String get getLatestPrivacyPolicy => "${baseUrl}privacy-policy/latest";
 
-  static const String uploadDealerGuide = "${baseUrl}dealer-guide/upload";
+  static String get uploadDealerGuide => "${baseUrl}dealer-guide/upload";
 
-  static const String getLatestDealerGuide = "${baseUrl}dealer-guide/latest";
+  static String get getLatestDealerGuide => "${baseUrl}dealer-guide/latest";
 
-  static const String moveCarToOtobuy = "${baseUrl}otobuy/move-car-to-otobuy";
+  static String get moveCarToOtobuy => "${baseUrl}otobuy/move-car-to-otobuy";
 
-  static const String buyCar = "${baseUrl}otobuy/buy-car";
+  static String get buyCar => "${baseUrl}otobuy/buy-car";
 
-  static const String makeOfferForCar = "${baseUrl}otobuy/make-offer-for-car";
+  static String get makeOfferForCar => "${baseUrl}otobuy/make-offer-for-car";
 
-  static const String markCarAsSold = "${baseUrl}otobuy/mark-car-as-sold";
+  static String get markCarAsSold => "${baseUrl}otobuy/mark-car-as-sold";
 
-  static const String removeCar = "${baseUrl}car/remove-car";
+  static String get removeCar => "${baseUrl}car/remove-car";
 
-  static const String getEntityNamesList =
+  static String get getEntityNamesList =>
       "${baseUrl}entity-documents/get-entity-names-list";
 
   // GET one entity (with documents) by name

@@ -1,4 +1,10 @@
+enum DeploymentEnvironment { local, dev, prod }
+
 class AppConstants {
+  // ---- Deploy on Production or Development by changing this ----
+  static const DeploymentEnvironment deploymentEnvironment =
+      DeploymentEnvironment.local;
+
   // Other constant classes
   static final Roles roles = Roles();
   static final AuctionStatuses auctionStatuses = AuctionStatuses();
@@ -46,6 +52,40 @@ class AppConstants {
     "Patna",
     "Kolkata",
   ];
+
+  // ---- configuration per environment ----
+  static const _localConfiguration = _EnvConfig(
+    deploymentEnvironmentName: 'local',
+    renderBaseUrl: 'http://192.168.100.99:4000/api/',
+    oneSignalAppId: '486e2dde-844f-46a7-be61-1890b79125ef',
+  );
+
+  static const _devConfiguration = _EnvConfig(
+    deploymentEnvironmentName: 'dev',
+    renderBaseUrl: 'https://otobix-app-backend-development.onrender.com/api/',
+    oneSignalAppId: '486e2dde-844f-46a7-be61-1890b79125ef',
+  );
+
+  static const _prodConfiguration = _EnvConfig(
+    deploymentEnvironmentName: 'prod',
+    renderBaseUrl: 'https://otobix-app-backend-rq8m.onrender.com/api/',
+    oneSignalAppId: '486e2dde-844f-46a7-be61-1890b79125ef',
+  );
+
+  static _EnvConfig get env =>
+      deploymentEnvironment == DeploymentEnvironment.prod
+          ? _prodConfiguration
+          : deploymentEnvironment == DeploymentEnvironment.dev
+          ? _devConfiguration
+          : _localConfiguration;
+
+  // convenience getters
+  static String get envName => env.deploymentEnvironmentName; // 'dev' | 'prod'
+  static bool get isProd => deploymentEnvironment == DeploymentEnvironment.prod;
+  static String get renderBaseUrl => env.renderBaseUrl;
+  static String get oneSignalAppId => env.oneSignalAppId;
+  static String externalIdForNotifications(String mongoUserId) =>
+      '$envName:$mongoUserId';
 }
 
 // User roles class
@@ -104,4 +144,16 @@ class TabBarWidgetControllerTags {
   final String myCarsTabs = 'mycars_tabs';
 
   List<String> get all => [homeTabs, myCarsTabs];
+}
+
+// Environments Configuration class
+class _EnvConfig {
+  final String deploymentEnvironmentName; // 'dev' or 'prod'
+  final String renderBaseUrl;
+  final String oneSignalAppId;
+  const _EnvConfig({
+    required this.deploymentEnvironmentName,
+    required this.renderBaseUrl,
+    required this.oneSignalAppId,
+  });
 }

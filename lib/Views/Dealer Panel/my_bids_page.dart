@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/my_bids_controller.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
+import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
+import 'package:otobix/Widgets/car_deck_view_card_widget.dart';
+import 'package:otobix/Widgets/car_deck_view_for_mybids_and_wishlist_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 
@@ -41,8 +45,30 @@ class MyBidsPage extends StatelessWidget {
     );
   }
 
-  // My Bids List
   Widget _buildMyBidsList() {
+    return Expanded(
+      child: ListView.separated(
+        shrinkWrap: true,
+        itemCount: getxController.myBidCarsList.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        itemBuilder: (context, index) {
+          final car = getxController.myBidCarsList[index];
+
+          return CarDeckViewForMyBidsAndWishlistWidget(
+            car: car,
+            footer: SizedBox(),
+            onCarTap: () {},
+            showAddToWishlistIcon: false,
+            toggleFavorite: () {},
+          );
+        },
+      ),
+    );
+  }
+
+  // My Bids List
+  Widget _buildMyBidsList1() {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,

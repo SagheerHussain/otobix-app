@@ -8,6 +8,7 @@ import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Services/fcm_service.dart';
 import 'package:otobix/Services/notification_sevice.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/app_urls.dart';
 
@@ -42,7 +43,7 @@ void main() async {
   // init OneSignal
   await NotificationService.instance.init(
     // 'd3db5987-cede-44d4-8baa-92caf20bca1b', // old
-    '486e2dde-844f-46a7-be61-1890b79125ef', // new
+    // '486e2dde-844f-46a7-be61-1890b79125ef', // new
   );
 
   // await FCMService.instance
@@ -50,7 +51,10 @@ void main() async {
   await SharedPrefsHelper.init();
 
   final userId = await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey);
-  debugPrint('userId: $userId');
+  if (userId != null && userId.isNotEmpty) {
+    await NotificationService.instance.login(userId);
+  }
+  // debugPrint('userId: $userId');
 
   // Initialize socket connection globally
   SocketService.instance.initSocket(AppUrls.socketBaseUrl);

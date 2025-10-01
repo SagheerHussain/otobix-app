@@ -9,6 +9,7 @@ import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Controllers/home_controller.dart';
+import 'package:otobix/Widgets/car_deck_view_card_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 import 'package:otobix/helpers/dealer_home_search_sort_filter_helper.dart';
@@ -177,6 +178,41 @@ class UpcomingPage extends StatelessWidget {
   }
 
   Widget _buildCarsList(List<CarsListModel> finalFilteredCarsList) {
+    return Expanded(
+      child: ListView.separated(
+        shrinkWrap: true,
+        itemCount: finalFilteredCarsList.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        itemBuilder: (context, index) {
+          final car = finalFilteredCarsList[index];
+
+          // Set highest bid to 75% of price discovery if highest bid is 0
+          // final double hb = (car.highestBid).value;
+          // final double pd = car.priceDiscovery;
+          // final double highestBid = (hb == 0.0) ? pd * 0.75 : hb;
+          // car.highestBid.value = highestBid;
+
+          return CarDeckViewCardWidget(
+            car: car,
+            footer: _buildCarCardFooter(car),
+            onCarTap: () {
+              Get.to(
+                () => CarDetailsPage(
+                  carId: car.id,
+                  car: car,
+                  currentOpenSection: homeController.upcomingSectionScreen,
+                  remainingAuctionTime: upcomingController
+                      .getCarRemainingTimeForNextScreen(car.id),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCarsList1(List<CarsListModel> finalFilteredCarsList) {
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,
@@ -560,6 +596,66 @@ class UpcomingPage extends StatelessWidget {
         Icon(icon, size: 14, color: AppColors.grey),
         const SizedBox(width: 5),
         Text(text, style: const TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
+  Widget _buildCarCardFooter(CarsListModel car) {
+    // Set highest bid to 75% of price discovery if highest bid is 0
+    // final double hb = (car.highestBid).value;
+    // final double pd = car.priceDiscovery;
+    // final double highestBid = (hb == 0.0) ? pd * 0.75 : hb;
+    // car.highestBid.value = highestBid;
+
+    return Column(
+      children: [
+        Divider(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Pre Bid: ',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Obx(
+                  () => Text(
+                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
+                    key: ValueKey(car.highestBid.value),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.green,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Text(
+            //   'Fair Market Value: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
+            //   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            // ),
+            const SizedBox(width: 10),
+            Obx(
+              () => Text(
+                // car.remainingAuctionTime.value,
+                upcomingController
+                    .getCarRemainingTimeForNextScreen(car.id)
+                    .value,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

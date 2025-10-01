@@ -14,12 +14,14 @@ class PlaceBidButtonWidget extends StatelessWidget {
   final String currentOpenSection;
   final CarDetailsController getxController;
   final RxString remainingAuctionTime;
+  final double priceDiscovery;
 
   PlaceBidButtonWidget({
     super.key,
     required this.currentOpenSection,
     required this.getxController,
     required this.remainingAuctionTime,
+    required this.priceDiscovery,
   });
 
   final HomeController homeController = Get.put(HomeController());
@@ -43,12 +45,14 @@ class PlaceBidButtonWidget extends StatelessWidget {
             context,
             getxController.carId,
             remainingAuctionTime,
+            priceDiscovery,
           );
         } else if (currentOpenSection == homeController.upcomingSectionScreen) {
           placeBidButtonForUpcomingSection(
             context,
             getxController.carId,
             remainingAuctionTime,
+            priceDiscovery,
           );
         } else if (currentOpenSection == homeController.otobuySectionScreen) {
           placeBidButtonForOtobuySection(

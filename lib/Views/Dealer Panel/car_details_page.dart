@@ -71,7 +71,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         [CarsListTitleAndImage(title: 'Main Image', url: widget.car.imageUrl)];
     getxController.setImageUrls(imageUrls);
     getxController.oneClickPriceAmount.value = widget.car.oneClickPrice;
-    _setCurrentHighestBid();
+    // _setCurrentHighestBid();
 
     // Close screen when timer ends
     getxController.watchAndCloseOnTimerEnd(
@@ -181,16 +181,16 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                                                 widget.remainingAuctionTime,
                                           ),
                                         ),
-                                        Container(
-                                          key:
-                                              getxController
-                                                  .sectionKeys[CarDetailsController
-                                                  .basicDetailsSectionKey],
-                                          child: _buildBasicDetails(
-                                            carDetails:
-                                                getxController.carDetails!,
-                                          ),
-                                        ),
+                                        // Container(
+                                        //   key:
+                                        //       getxController
+                                        //           .sectionKeys[CarDetailsController
+                                        //           .basicDetailsSectionKey],
+                                        //   child: _buildBasicDetails(
+                                        //     carDetails:
+                                        //         getxController.carDetails!,
+                                        //   ),
+                                        // ),
                                         Container(
                                           key:
                                               getxController
@@ -235,12 +235,13 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                                                     getxController.carDetails!,
                                               ),
                                         ),
+
                                         Container(
                                           key:
                                               getxController
                                                   .sectionKeys[CarDetailsController
-                                                  .airConditioningSectionKey],
-                                          child: _buildAirCondition(
+                                                  .interiorAndElectricalsSectionKey],
+                                          child: _buildInteriorAndElectricals(
                                             carDetails:
                                                 getxController.carDetails!,
                                             getxController: getxController,
@@ -250,8 +251,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                                           key:
                                               getxController
                                                   .sectionKeys[CarDetailsController
-                                                  .interiorAndElectricalsSectionKey],
-                                          child: _buildInteriorAndElectricals(
+                                                  .airConditioningSectionKey],
+                                          child: _buildAirCondition(
                                             carDetails:
                                                 getxController.carDetails!,
                                             getxController: getxController,
@@ -463,8 +464,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           // const SizedBox(height: 20),
           // _buildIconAndTextDetails(carDetails: carDetails),
           // const SizedBox(height: 20),
-          _buildBasicDetails(carDetails: carDetails),
-          const SizedBox(height: 10),
+          // _buildBasicDetails(carDetails: carDetails),
+          // const SizedBox(height: 10),
           _buildDocumentDetails(
             carDetails: carDetails,
             getxController: getxController,
@@ -919,12 +920,14 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
           buildRow('Duplicate Key', carDetails.duplicateKey),
           buildRow('RTO NOC', carDetails.rtoNoc),
           buildRow('Party Peshi', carDetails.partyPeshi),
-          if (getxController.isValidComment(carDetails.comments))
-            _buildCommentsCard(
-              title: 'Comments',
-              comment: carDetails.comments,
-              icon: Icons.comment,
-            ),
+          buildRow('Additional Details', carDetails.additionalDetails),
+          // if (getxController.isValidComment(carDetails.comments))
+          //   _buildCommentsCard(
+          //     title: 'Comments',
+          //     comment: carDetails.comments,
+          //     icon: Icons.comment,
+          //   ),
+
           // buildRow('Registered Owner', carDetails.registeredOwner),
           // buildRow('Registered Address', carDetails.registeredAddressAsPerRc),
           // buildRow('To Be Scrapped', carDetails.toBeScrapped),
@@ -1344,6 +1347,15 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 imageUrls: (item['imageUrls'] as List<String>?) ?? [],
               );
             }),
+            if (carDetails.additionalImages.isNotEmpty)
+              buildItem(
+                icon: Icons.collections_outlined,
+                label: 'Additional Images',
+                trailing: engineBayValue(
+                  carDetails.additionalImages.length.toString(),
+                ),
+                imageUrls: carDetails.additionalImages,
+              ),
 
             // LayoutGrid(
             //   columnSizes: [1.fr, 1.fr],
@@ -1392,6 +1404,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             ),
             const Divider(),
             const SizedBox(height: 10),
+            // if no comments on any of the fields
             if (!getxController.isValidComment(carDetails.commentsOnEngine) &&
                 !getxController.isValidComment(
                   carDetails.commentsOnEngineOil,
@@ -1400,12 +1413,14 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   carDetails.commentsOnTransmission,
                 ) &&
                 !getxController.isValidComment(carDetails.commentsOnRadiator) &&
-                !getxController.isValidComment(carDetails.commentsOnOthers) &&
-                !getxController.isValidComment(carDetails.commentsOnTowing))
+                !getxController.isValidComment(carDetails.commentsOnTowing) &&
+                !getxController.isValidComment(carDetails.commentsOnOthers))
               Text(
                 'No Comments',
                 style: TextStyle(fontSize: 12, color: AppColors.grey),
               ),
+
+            // else show comments on each field
             if (getxController.isValidComment(carDetails.commentsOnEngine))
               _buildCommentsCard(
                 title: 'Comments on Engine',
@@ -1432,17 +1447,17 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 comment: carDetails.commentsOnRadiator,
                 icon: Icons.water_drop, // fluid/coolant
               ),
-            if (getxController.isValidComment(carDetails.commentsOnOthers))
-              _buildCommentsCard(
-                title: 'Comments on Others',
-                comment: carDetails.commentsOnOthers,
-                icon: Icons.info_outline, // general purpose
-              ),
             if (getxController.isValidComment(carDetails.commentsOnTowing))
               _buildCommentsCard(
                 title: 'Comments on Towing',
                 comment: carDetails.commentsOnTowing,
                 icon: Icons.local_shipping, // towing/truck metaphor
+              ),
+            if (getxController.isValidComment(carDetails.commentsOnOthers))
+              _buildCommentsCard(
+                title: 'Comments on Others',
+                comment: carDetails.commentsOnOthers,
+                icon: Icons.info_outline, // general purpose
               ),
           ],
         ),
@@ -1847,6 +1862,16 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             trailing: interiorFeatureValue(carDetails.fabricSeats),
           ),
 
+          if (carDetails.additionalImages2.isNotEmpty)
+            item(
+              icon: Icons.collections_outlined,
+              label: 'Additional Images',
+              trailing: interiorFeatureValue(
+                carDetails.additionalImages2.length.toString(),
+              ),
+              imageUrls: carDetails.additionalImages2,
+            ),
+
           const SizedBox(height: 10),
 
           if (getxController.isValidComment(carDetails.commentsOnElectricals))
@@ -2016,6 +2041,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
               comment: carDetails.commentsOnAc,
               icon: Icons.electrical_services,
             ),
+
+          SizedBox(height: 300),
         ],
       ),
     );
@@ -2502,11 +2529,13 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                       currentOpenSection: currentOpenSection,
                       getxController: getxController,
                       remainingAuctionTime: widget.remainingAuctionTime,
+                      priceDiscovery: car.priceDiscovery,
                     ),
                     StartAutoBidButtonWidget(
                       currentOpenSection: currentOpenSection,
                       carId: getxController.carId,
                       remainingAuctionTime: widget.remainingAuctionTime,
+                      priceDiscovery: car.priceDiscovery,
                     ),
                   ],
                 ),
@@ -3169,23 +3198,23 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
   Widget _buildStickyTabs(CarDetailsController getxController) {
     final sectionNames = [
       'Images',
-      'Basic',
+      // 'Basic',
       'Documents',
       'Exterior',
       'Engine',
       'Suspension',
-      'AC',
       'Interior',
+      'AC',
     ];
     final keys = [
       CarDetailsController.imagesSectionKey,
-      CarDetailsController.basicDetailsSectionKey,
+      // CarDetailsController.basicDetailsSectionKey,
       CarDetailsController.documentDetailsSectionKey,
       CarDetailsController.exteriorSectionKey,
       CarDetailsController.engineBaySectionKey,
       CarDetailsController.steeringBrakesAndSuspensionSectionKey,
-      CarDetailsController.airConditioningSectionKey,
       CarDetailsController.interiorAndElectricalsSectionKey,
+      CarDetailsController.airConditioningSectionKey,
     ];
 
     return
@@ -3203,6 +3232,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
             final isSelected = getxController.currentSection.value == keys[i];
             return GestureDetector(
               onTap: () => getxController.scrollToSection(keys[i]),
+
               child: Container(
                 key: getxController.sectionTabKeys[keys[i]],
                 padding: const EdgeInsets.symmetric(
@@ -3284,7 +3314,7 @@ Widget _buildImagesSection({
     AppConstants.imagesSectionIds.interior: AppImages.interiorFallback,
     AppConstants.imagesSectionIds.engine: AppImages.engineFallback,
     AppConstants.imagesSectionIds.tyres: AppImages.tyreFallback,
-    // AppConstants.imagesSectionIds.damages: AppImages.damagesFallback,
+    AppConstants.imagesSectionIds.damages: AppImages.damagesFallback,
     // AppConstants.imagesSectionIds.suspension: AppImages.suspensionFallback,
     // AppConstants.imagesSectionIds.ac: AppImages.acFallback,
   };
@@ -3328,12 +3358,11 @@ Widget _buildImagesSection({
     //   'title': 'Suspension',
     //   'thumb': AppImages.suspensionFallback,
     // },
-
-    // {
-    //   'id': AppConstants.imagesSectionIds.damages,
-    //   'title': 'Damages',
-    //   'thumb': AppImages.damagesFallback,
-    // },
+    {
+      'id': AppConstants.imagesSectionIds.damages,
+      'title': 'Damages',
+      'thumb': AppImages.damagesFallback,
+    },
   ];
 
   return SizedBox(

@@ -18,25 +18,25 @@ import 'package:otobix/helpers/Preferences_helper.dart';
 
 class CarDetailsController extends GetxController {
   static const String imagesSectionKey = 'images';
-  static const String basicDetailsSectionKey = 'basic';
+  // static const String basicDetailsSectionKey = 'basic';
   static const String documentDetailsSectionKey = 'document';
   static const String exteriorSectionKey = 'exterior';
   static const String engineBaySectionKey = 'engineBay';
   static const String steeringBrakesAndSuspensionSectionKey =
       'steeringBrakesAndSuspension';
-  static const String airConditioningSectionKey = 'airConditioning';
   static const String interiorAndElectricalsSectionKey =
       'interiorAndElectricals';
+  static const String airConditioningSectionKey = 'airConditioning';
 
   final sectionKeys = {
     imagesSectionKey: GlobalKey(),
-    basicDetailsSectionKey: GlobalKey(),
+    // basicDetailsSectionKey: GlobalKey(),
     documentDetailsSectionKey: GlobalKey(),
     exteriorSectionKey: GlobalKey(),
     engineBaySectionKey: GlobalKey(),
     steeringBrakesAndSuspensionSectionKey: GlobalKey(),
-    airConditioningSectionKey: GlobalKey(),
     interiorAndElectricalsSectionKey: GlobalKey(),
+    airConditioningSectionKey: GlobalKey(),
   };
 
   final ScrollController scrollController = ScrollController();

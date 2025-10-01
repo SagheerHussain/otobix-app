@@ -14,12 +14,14 @@ class StartAutoBidButtonWidget extends StatelessWidget {
   final String carId;
   final HomeController homeController = Get.put(HomeController());
   final RxString remainingAuctionTime;
+  final double priceDiscovery;
 
   StartAutoBidButtonWidget({
     super.key,
     required this.currentOpenSection,
     required this.carId,
     required this.remainingAuctionTime,
+    required this.priceDiscovery,
   });
 
   @override
@@ -40,9 +42,17 @@ class StartAutoBidButtonWidget extends StatelessWidget {
               : 'Submit Auto Bid',
       onTap: () {
         if (currentOpenSection == homeController.liveBidsSectionScreen) {
-          autoBidButtonForLiveBidsSection(carId, remainingAuctionTime);
+          autoBidButtonForLiveBidsSection(
+            carId,
+            remainingAuctionTime,
+            priceDiscovery,
+          );
         } else if (currentOpenSection == homeController.upcomingSectionScreen) {
-          autoBidButtonForUpcomingSection(carId, remainingAuctionTime);
+          autoBidButtonForUpcomingSection(
+            carId,
+            remainingAuctionTime,
+            priceDiscovery,
+          );
         } else if (currentOpenSection == homeController.otobuySectionScreen) {
           autoBidButtonForOtobuySection(carId, remainingAuctionTime);
         } else if (currentOpenSection ==

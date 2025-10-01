@@ -1,0 +1,65 @@
+name: Flutter Build APK & IPA
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+      - uses: actions/checkout@v3
+
+      # Setup Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.0" # change to your version
+
+      # Install dependencies
+      - run: flutter pub get
+
+      # Build APK
+      - run: flutter build apk --release
+
+      # Upload APK artifact
+      - uses: actions/upload-artifact@v3
+        with:
+          name: android-apk-${{ github.ref_name }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  build-ios:
+    name: Build iOS IPA
+    runs-on: macos-latest
+    steps:
+      # Checkout code
+      - uses: actions/checkout@v3
+
+      # Setup Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.0"
+
+      # Install dependencies
+      - run: flutter pub get
+
+      # Build iOS IPA (no signing)
+      - run: flutter build ios --release --no-codesign
+
+      # Package IPA (Xcode required step)
+      - name: Export IPA
+        run: |
+          mkdir -p build/ios/ipa
+          xcodebuild -exportArchive \
+            -archivePath build/ios/archive/MyApp.xcarchive \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist ExportOptions.plist || true
+
+      # Upload IPA artifact
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ios-ipa-${{ github.ref_name }}
+          path: build/ios/ipa

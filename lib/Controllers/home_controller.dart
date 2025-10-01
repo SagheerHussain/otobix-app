@@ -268,7 +268,7 @@ class HomeController extends GetxController {
     // await _fetchAndApplyWishlist(userId: userId);
 
     // 3) Listen to realtime wishlist updates
-    // _listenWishlistRealtime();
+    _listenWishlistRealtime();
 
     // 4) 🌟 LIVE LIST: join room + listen for patches
     // _listenLiveBidsSectionRealtime();
@@ -692,89 +692,89 @@ class HomeController extends GetxController {
   //   }
   // }
 
-  // Future<void> _fetchAndApplyWishlist({required String userId}) async {
-  //   try {
-  //     final url = AppUrls.getUserWishlist(userId: userId);
-  //     final response = await ApiService.get(endpoint: url);
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       final List<dynamic> ids = data['wishlist'] ?? [];
+  Future<void> _fetchAndApplyWishlist({required String userId}) async {
+    try {
+      final url = AppUrls.getUserWishlist(userId: userId);
+      final response = await ApiService.get(endpoint: url);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> ids = data['wishlist'] ?? [];
 
-  //       wishlistCarsIds
-  //         ..clear()
-  //         ..addAll(ids.map((e) => '$e'));
-  //     }
-  //   } catch (e) {
-  //     debugPrint('_fetchAndApplyWishlist error: $e');
-  //   }
-  // }
+        wishlistCarsIds
+          ..clear()
+          ..addAll(ids.map((e) => '$e'));
+      }
+    } catch (e) {
+      debugPrint('_fetchAndApplyWishlist error: $e');
+    }
+  }
 
-  // void _listenWishlistRealtime() {
-  //   SocketService.instance.on(SocketEvents.wishlistUpdated, (data) {
-  //     final String action = '${data['action']}';
-  //     final String carId = '${data['carId']}';
+  void _listenWishlistRealtime() {
+    SocketService.instance.on(SocketEvents.wishlistUpdated, (data) {
+      final String action = '${data['action']}';
+      final String carId = '${data['carId']}';
 
-  //     if (action == 'add') {
-  //       wishlistCarsIds.add(carId);
-  //     } else if (action == 'remove') {
-  //       wishlistCarsIds.remove(carId);
-  //     }
-  //   });
-  // }
+      if (action == 'add') {
+        wishlistCarsIds.add(carId);
+      } else if (action == 'remove') {
+        wishlistCarsIds.remove(carId);
+      }
+    });
+  }
 
   // /// Toggle (optimistic UI + rollback on error)
-  // Future<void> toggleFavorite(CarsListModel car) async {
-  //   final userId =
-  //       await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
-  //   final isFav = wishlistCarsIds.contains(car.id);
+  Future<void> toggleFavorite(CarsListModel car) async {
+    final userId =
+        await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
+    final isFav = wishlistCarsIds.contains(car.id);
 
-  //   // optimistic
-  //   if (isFav) {
-  //     wishlistCarsIds.remove(car.id);
-  //   } else {
-  //     wishlistCarsIds.add(car.id);
-  //   }
+    // optimistic
+    if (isFav) {
+      wishlistCarsIds.remove(car.id);
+    } else {
+      wishlistCarsIds.add(car.id);
+    }
 
-  //   try {
-  //     if (isFav) {
-  //       final res = await ApiService.post(
-  //         endpoint: AppUrls.removeFromWishlist,
-  //         body: {'userId': userId, 'carId': car.id},
-  //       );
-  //       if (res.statusCode != 200) throw Exception(res.body);
-  //       ToastWidget.show(
-  //         context: Get.context!,
-  //         title: 'Removed from wishlist',
-  //         type: ToastType.error,
-  //       );
-  //     } else {
-  //       final res = await ApiService.post(
-  //         endpoint: AppUrls.addToWishlist,
-  //         body: {'userId': userId, 'carId': car.id},
-  //       );
-  //       if (res.statusCode != 200) throw Exception(res.body);
-  //       ToastWidget.show(
-  //         context: Get.context!,
-  //         title: 'Added to wishlist',
-  //         type: ToastType.success,
-  //       );
-  //     }
-  //     // Server will also emit wishlist:updated → sync other devices.
-  //   } catch (e) {
-  //     debugPrint('Failed to update wishlist: $e');
-  //     // rollback
-  //     if (isFav) {
-  //       wishlistCarsIds.add(car.id);
-  //     } else {
-  //       wishlistCarsIds.remove(car.id);
-  //     }
-  //     ToastWidget.show(
-  //       context: Get.context!,
-  //       title: 'Failed to update wishlist',
-  //       type: ToastType.error,
-  //     );
-  //   }
-  // }
+    try {
+      if (isFav) {
+        final res = await ApiService.post(
+          endpoint: AppUrls.removeFromWishlist,
+          body: {'userId': userId, 'carId': car.id},
+        );
+        if (res.statusCode != 200) throw Exception(res.body);
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Removed from wishlist',
+          type: ToastType.error,
+        );
+      } else {
+        final res = await ApiService.post(
+          endpoint: AppUrls.addToWishlist,
+          body: {'userId': userId, 'carId': car.id},
+        );
+        if (res.statusCode != 200) throw Exception(res.body);
+        ToastWidget.show(
+          context: Get.context!,
+          title: 'Added to wishlist',
+          type: ToastType.success,
+        );
+      }
+      // Server will also emit wishlist:updated → sync other devices.
+    } catch (e) {
+      debugPrint('Failed to update wishlist: $e');
+      // rollback
+      if (isFav) {
+        wishlistCarsIds.add(car.id);
+      } else {
+        wishlistCarsIds.remove(car.id);
+      }
+      ToastWidget.show(
+        context: Get.context!,
+        title: 'Failed to update wishlist',
+        type: ToastType.error,
+      );
+    }
+  }
 
   // // Listen to live bids section realtime
   // void _listenLiveBidsSectionRealtime() {

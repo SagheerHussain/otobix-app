@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/car_images_gallery_controller.dart';
-import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Models/car_gallery_sections_model.dart';
 import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Utils/app_colors.dart';

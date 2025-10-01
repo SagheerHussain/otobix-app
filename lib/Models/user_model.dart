@@ -22,7 +22,7 @@ class UserModel {
   final String? secondaryContactNumber;
   final List<String> addressList;
   final String? image;
-  // final String password;
+  final String password;
   final String phoneNumber;
   final String approvalStatus;
   final DateTime? createdAt;
@@ -43,7 +43,7 @@ class UserModel {
     this.secondaryContactNumber,
     required this.addressList,
     this.image,
-    // required this.password,
+    required this.password,
     required this.phoneNumber,
     required this.approvalStatus,
     this.createdAt,
@@ -66,7 +66,7 @@ class UserModel {
       secondaryContactNumber: json['secondaryContactNumber'],
       addressList: List<String>.from(json['addressList'] ?? []),
       image: json['image'],
-      // password: json['password'] ?? '',
+      password: json['password'] ?? '',
       phoneNumber: json['phoneNumber'],
       approvalStatus: json['approvalStatus'] ?? '',
       createdAt:
@@ -92,7 +92,7 @@ class UserModel {
       'secondaryContactNumber': secondaryContactNumber,
       'addressList': addressList,
       'image': image,
-      // 'password': password,
+      'password': password,
       'phoneNumber': phoneNumber,
       'approvalStatus': approvalStatus,
       'createdAt': createdAt?.toIso8601String(),

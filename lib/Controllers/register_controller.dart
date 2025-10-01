@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Register/register_pin_code_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
@@ -29,12 +30,13 @@ class RegisterController extends GetxController {
       //         : '+92$phoneNumber';
 
       if (selectedRole.value.isEmpty) {
-        ToastWidget.show(
-          context: Get.context!,
-          title: "Please select a role",
-          type: ToastType.error,
-        );
-        return;
+        // ToastWidget.show(
+        //   context: Get.context!,
+        //   title: "Please select a role",
+        //   type: ToastType.error,
+        // );
+        // return;
+        selectedRole.value = AppConstants.roles.dealer;
       }
       // if (selectedRole.value == 'Customer' ||
       //     selectedRole.value == 'Sales\nManager') {
@@ -84,15 +86,16 @@ class RegisterController extends GetxController {
 
   Future<void> dummySendOtp({required String phoneNumber}) async {
     isLoading.value = true;
-    debugPrint("Sending OTP to $phoneNumber");
+    // debugPrint("Sending OTP to $phoneNumber");
     try {
       if (selectedRole.value.isEmpty) {
-        ToastWidget.show(
-          context: Get.context!,
-          title: "Please select a role",
-          type: ToastType.error,
-        );
-        return;
+        //   ToastWidget.show(
+        //     context: Get.context!,
+        //     title: "Please select a role",
+        //     type: ToastType.error,
+        //   );
+        //   return;
+        selectedRole.value = AppConstants.roles.dealer;
       }
 
       // For indian numbers only

@@ -86,15 +86,26 @@ class LiveBidsController extends GetxController {
         //     )
         //     .toList(growable: false);
 
-        // Only keep cars with future auctionEndTime
-        filteredLiveBidsCarsList.assignAll(
-          liveBidsCarsList.where(
-            (car) => car.auctionStatus == AppConstants.auctionStatuses.live,
-            //  &&  car.auctionEndTime != null &&
-            // car.auctionEndTime!.isAfter(currentTime),
-          ),
-        );
+        // Only keep cars with live status
+        final filtered =
+            liveBidsCarsList
+                .where(
+                  (car) =>
+                      car.auctionStatus == AppConstants.auctionStatuses.live,
+                )
+                .toList(); // <-- materialize snapshot
 
+        filteredLiveBidsCarsList.assignAll(filtered);
+
+        // filteredLiveBidsCarsList.assignAll(
+        //   liveBidsCarsList.where(
+        //     (car) => car.auctionStatus == AppConstants.auctionStatuses.live,
+        //     //  &&  car.auctionEndTime != null &&
+        //     // car.auctionEndTime!.isAfter(currentTime),
+        //   ),
+        // );
+
+        // Sort
         _showLessRemainingTimeCarsOnTop();
         // filteredLiveBidsCarsList.value = liveBidsCarsList
         //     .where((car) {
@@ -104,10 +115,10 @@ class LiveBidsController extends GetxController {
         //     })
         //     .toList(growable: false);
 
-        liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
-
         // 🔁 one entry-point to handle every timer:
-        setupCountdowns(filteredLiveBidsCarsList);
+        setupCountdowns(filtered.toList());
+
+        liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
 
         // for (var car in liveBidsCarsList) {
         // for (var car in filteredLiveBidsCarsList) {
@@ -120,7 +131,7 @@ class LiveBidsController extends GetxController {
         debugPrint('Failed to fetch data ${response.body}');
       }
     } catch (error) {
-      debugPrint('Failed to fetch data: $error');
+      debugPrint('Error fetching data: $error');
       filteredLiveBidsCarsList.value = <CarsListModel>[];
       liveBidsCarsCount.value = 0;
     } finally {

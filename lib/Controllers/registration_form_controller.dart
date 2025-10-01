@@ -176,7 +176,7 @@ class RegistrationFormController extends GetxController {
         entityType: selectedEntityType ?? "",
         primaryContactPerson: primaryContactPersonController.text,
         primaryContactNumber: primaryMobileController.text,
-        // password: passwordController.text,
+        password: passwordController.text,
         phoneNumber: contactNumber,
         secondaryContactPerson:
             secondaryContactPersonController.text.isEmpty
@@ -193,7 +193,7 @@ class RegistrationFormController extends GetxController {
         updatedAt: DateTime.now(),
       );
 
-      debugPrint("Sending payload → ${userModel.toJson()}");
+      // debugPrint("Sending payload → ${userModel.toJson()}");
 
       final response = await ApiService.post(
         endpoint: AppUrls.register,

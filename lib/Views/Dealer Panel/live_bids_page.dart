@@ -565,10 +565,11 @@ class LiveBidsPage extends StatelessWidget {
   }
 
   Widget _buildCarCardFooter(CarsListModel car) {
-    final double hb = (car.highestBid).value;
-    final double pd = car.priceDiscovery;
-    final double highestBid = (hb == 0.0) ? pd * 0.75 : hb;
-    car.highestBid.value = highestBid;
+    // Set highest bid to 75% of price discovery if highest bid is 0
+    // final double hb = (car.highestBid).value;
+    // final double pd = car.priceDiscovery;
+    // final double highestBid = (hb == 0.0) ? pd * 0.75 : hb;
+    // car.highestBid.value = highestBid;
 
     return Column(
       children: [

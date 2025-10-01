@@ -9,6 +9,7 @@ void placeBidButtonForUpcomingSection(
   BuildContext context,
   String carId,
   RxString remainingAuctionTime,
+  double priceDiscovery,
 ) {
   final CarDetailsController bidController = Get.put(
     CarDetailsController(carId),
@@ -108,16 +109,23 @@ void placeBidButtonForUpcomingSection(
                             ),
                           ),
                           SizedBox(height: 4),
-                          Obx(
-                            () => Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.currentHighestBidAmount.value)}",
+                          Obx(() {
+                            final highestBid =
+                                bidController.currentHighestBidAmount.value == 0
+                                    ? priceDiscovery * 0.75
+                                    : bidController
+                                        .currentHighestBidAmount
+                                        .value;
+
+                            return Text(
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(highestBid)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                                 color: AppColors.black,
                               ),
-                            ),
-                          ),
+                            );
+                          }),
                         ],
                       ),
                       Container(width: 1, height: 30, color: AppColors.grey),
@@ -133,16 +141,22 @@ void placeBidButtonForUpcomingSection(
                             ),
                           ),
                           SizedBox(height: 4),
-                          Obx(
-                            () => Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                          Obx(() {
+                            final pd = priceDiscovery * 0.75;
+                            final yourOffer =
+                                bidController.currentHighestBidAmount.value == 0
+                                    ? pd + bidController.yourOfferAmount.value
+                                    : bidController.yourOfferAmount.value;
+
+                            return Text(
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                                 color: AppColors.black,
                               ),
-                            ),
-                          ),
+                            );
+                          }),
                         ],
                       ),
                     ],
@@ -174,11 +188,16 @@ void placeBidButtonForUpcomingSection(
                       ),
                       SizedBox(width: 30),
                       // Bid Value
-                      Obx(
-                        () => Column(
+                      Obx(() {
+                        final pd = priceDiscovery * 0.75;
+                        final yourOffer =
+                            bidController.currentHighestBidAmount.value == 0
+                                ? pd + bidController.yourOfferAmount.value
+                                : bidController.yourOfferAmount.value;
+                        return Column(
                           children: [
                             Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -194,8 +213,8 @@ void placeBidButtonForUpcomingSection(
                               ),
                             ),
                           ],
-                        ),
-                      ),
+                        );
+                      }),
                       SizedBox(width: 30),
                       // Plus
                       GestureDetector(
@@ -227,9 +246,15 @@ void placeBidButtonForUpcomingSection(
                         text: "Set Pre-Bid",
                         isLoading: bidController.isPreBidButtonLoading,
                         onTap: () {
+                          final pd = priceDiscovery * 0.75;
+                          final yourOffer =
+                              bidController.currentHighestBidAmount.value == 0
+                                  ? pd + bidController.yourOfferAmount.value
+                                  : bidController.yourOfferAmount.value;
+
                           bidController.preBid(
                             carId: carId,
-                            newBidAmount: bidController.yourOfferAmount.value,
+                            newBidAmount: yourOffer,
                           );
                           Get.back();
                           // Get.back();

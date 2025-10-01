@@ -9,6 +9,7 @@ void placeBidButtonForLiveBidsSection(
   BuildContext context,
   String carId,
   RxString remainingAuctionTime,
+  double priceDiscovery,
 ) {
   final CarDetailsController bidController = Get.put(
     CarDetailsController(carId),
@@ -131,16 +132,22 @@ void placeBidButtonForLiveBidsSection(
                             ),
                           ),
                           SizedBox(height: 4),
-                          Obx(
-                            () => Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                          Obx(() {
+                            final newPriceDiscovery = priceDiscovery * 0.75;
+                            final yourOffer =
+                                bidController.currentHighestBidAmount.value == 0
+                                    ? newPriceDiscovery +
+                                        bidController.yourOfferAmount.value
+                                    : bidController.yourOfferAmount.value;
+                            return Text(
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                                 color: AppColors.black,
                               ),
-                            ),
-                          ),
+                            );
+                          }),
                         ],
                       ),
                     ],
@@ -172,11 +179,17 @@ void placeBidButtonForLiveBidsSection(
                       ),
                       SizedBox(width: 30),
                       // Bid Value
-                      Obx(
-                        () => Column(
+                      Obx(() {
+                        final newPriceDiscovery = priceDiscovery * 0.75;
+                        final yourOffer =
+                            bidController.currentHighestBidAmount.value == 0
+                                ? newPriceDiscovery +
+                                    bidController.yourOfferAmount.value
+                                : bidController.yourOfferAmount.value;
+                        return Column(
                           children: [
                             Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -192,8 +205,8 @@ void placeBidButtonForLiveBidsSection(
                               ),
                             ),
                           ],
-                        ),
-                      ),
+                        );
+                      }),
                       SizedBox(width: 30),
                       // Plus
                       GestureDetector(
@@ -226,9 +239,16 @@ void placeBidButtonForLiveBidsSection(
                         isLoading: bidController.isPlaceBidButtonLoading,
                         onTap: () {
                           // debugPrint("Place Bid Button Tapped");
+                          final newPriceDiscovery = priceDiscovery * 0.75;
+                          final yourOffer =
+                              bidController.currentHighestBidAmount.value == 0
+                                  ? newPriceDiscovery +
+                                      bidController.yourOfferAmount.value
+                                  : bidController.yourOfferAmount.value;
+
                           bidController.placeBid(
                             carId: carId,
-                            newBidAmount: bidController.yourOfferAmount.value,
+                            newBidAmount: yourOffer,
                           );
                           Get.back();
                           // offeringBidSheet(context);

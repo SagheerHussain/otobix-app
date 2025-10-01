@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 void autoBidButtonForLiveBidsSection(
   String carId,
   RxString remainingAuctionTime,
+  double priceDiscovery,
 ) {
   final CarDetailsController getxController = Get.put(
     CarDetailsController(carId),
@@ -130,16 +131,22 @@ void autoBidButtonForLiveBidsSection(
                             ),
                           ),
                           SizedBox(height: 4),
-                          Obx(
-                            () => Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value)}",
+                          Obx(() {
+                            final pd = priceDiscovery * 0.75;
+                            final yourOffer =
+                                getxController.currentHighestBidAmount.value ==
+                                        0
+                                    ? pd + getxController.yourOfferAmount.value
+                                    : getxController.yourOfferAmount.value;
+                            return Text(
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                                 color: AppColors.black,
                               ),
-                            ),
-                          ),
+                            );
+                          }),
                         ],
                       ),
                     ],
@@ -171,11 +178,16 @@ void autoBidButtonForLiveBidsSection(
                       ),
                       SizedBox(width: 30),
                       // Bid Value
-                      Obx(
-                        () => Column(
+                      Obx(() {
+                        final pd = priceDiscovery * 0.75;
+                        final yourOffer =
+                            getxController.currentHighestBidAmount.value == 0
+                                ? pd + getxController.yourOfferAmount.value
+                                : getxController.yourOfferAmount.value;
+                        return Column(
                           children: [
                             Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value)}",
+                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -193,8 +205,8 @@ void autoBidButtonForLiveBidsSection(
                               ),
                             ),
                           ],
-                        ),
-                      ),
+                        );
+                      }),
                       SizedBox(width: 30),
                       // Plus
                       GestureDetector(
@@ -226,10 +238,15 @@ void autoBidButtonForLiveBidsSection(
                         text: "Submit Auto Bid",
                         isLoading: getxController.isLoading,
                         onTap: () {
+                          final pd = priceDiscovery * 0.75;
+                          final yourOffer =
+                              getxController.currentHighestBidAmount.value == 0
+                                  ? pd + getxController.yourOfferAmount.value
+                                  : getxController.yourOfferAmount.value;
+
                           getxController.submitAutoBidForLiveSection(
                             carId: getxController.carId,
-                            maxAmount:
-                                getxController.yourOfferAmount.value.toInt(),
+                            maxAmount: yourOffer.toInt(),
                           );
                           // Get.back();
                           // Get.dialog(

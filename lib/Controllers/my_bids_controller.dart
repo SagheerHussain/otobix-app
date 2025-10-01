@@ -82,13 +82,14 @@ class MyBidsController extends GetxController {
           myBidCarsList
             ..clear()
             ..addAll(fetched);
-          debugPrint('myBidCarsList: ${myBidCarsList[0].toJson()}');
+          // debugPrint('myBidCarsList: ${myBidCarsList[0].toJson()}');
         } else {
           myBidCarsList.clear();
         }
       }
-    } catch (_) {
+    } catch (error) {
       myBidCarsList.clear();
+      debugPrint('myBidCarsList Error: $error');
     } finally {
       isLoading.value = false;
     }
