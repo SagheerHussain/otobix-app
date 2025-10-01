@@ -17,7 +17,7 @@ jobs:
       # Setup Flutter
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.22.0" # change to your version
+          flutter-version: "3.35.2" # change to your version
 
       # Install dependencies
       - run: flutter pub get
@@ -41,7 +41,7 @@ jobs:
       # Setup Flutter
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.22.0"
+          flutter-version: "3.35.2"
 
       # Install dependencies
       - run: flutter pub get
