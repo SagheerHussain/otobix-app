@@ -1,4 +1,4 @@
-package com.example.otobix
+package com.otobix.auctionapp
 
 import io.flutter.embedding.android.FlutterActivity
 

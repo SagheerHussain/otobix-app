@@ -57,27 +57,27 @@ class AppConstants {
   static const _localConfiguration = _EnvConfig(
     deploymentEnvironmentName: 'local',
     renderBaseUrl: 'http://192.168.100.99:4000/api/',
-    oneSignalAppId: '486e2dde-844f-46a7-be61-1890b79125ef',
+    oneSignalAppId: 'a6697fe1-be34-420f-9aa7-1fa369e1b07c',
   );
 
   static const _devConfiguration = _EnvConfig(
     deploymentEnvironmentName: 'dev',
     renderBaseUrl: 'https://otobix-app-backend-development.onrender.com/api/',
-    oneSignalAppId: '486e2dde-844f-46a7-be61-1890b79125ef',
+    oneSignalAppId: 'a6697fe1-be34-420f-9aa7-1fa369e1b07c',
   );
 
   static const _prodConfiguration = _EnvConfig(
     deploymentEnvironmentName: 'prod',
     renderBaseUrl: 'https://otobix-app-backend-rq8m.onrender.com/api/',
-    oneSignalAppId: '486e2dde-844f-46a7-be61-1890b79125ef',
+    oneSignalAppId: 'a6697fe1-be34-420f-9aa7-1fa369e1b07c',
   );
 
   static _EnvConfig get env =>
       deploymentEnvironment == DeploymentEnvironment.prod
-      ? _prodConfiguration
-      : deploymentEnvironment == DeploymentEnvironment.dev
-      ? _devConfiguration
-      : _localConfiguration;
+          ? _prodConfiguration
+          : deploymentEnvironment == DeploymentEnvironment.dev
+          ? _devConfiguration
+          : _localConfiguration;
 
   // convenience getters
   static String get envName => env.deploymentEnvironmentName; // 'dev' | 'prod'

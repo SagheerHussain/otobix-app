@@ -47,30 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCFQhwUma78s5ZoBYcQt72sJYSzIorfR6E',
-    appId: '1:349730100681:web:692a6862c415324d5f0418',
-    messagingSenderId: '349730100681',
-    projectId: 'otobix-auction-app',
-    authDomain: 'otobix-auction-app.firebaseapp.com',
-    storageBucket: 'otobix-auction-app.firebasestorage.app',
-    measurementId: 'G-PX3N2JK5KD',
+    apiKey: 'AIzaSyBswYeHU33yfNh4MFEyhcfPyLqMg5ZXmz8',
+    appId: '1:845981097587:web:02899aefc9086df9b49406',
+    messagingSenderId: '845981097587',
+    projectId: 'otobix-auction-app-final',
+    authDomain: 'otobix-auction-app-final.firebaseapp.com',
+    storageBucket: 'otobix-auction-app-final.firebasestorage.app',
+    measurementId: 'G-KBTBHYY7JP',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCkjgRe_95A3dz7gFh0VctlK3nS_XLEhA4',
-    appId: '1:349730100681:android:6df6b765a538e9985f0418',
-    messagingSenderId: '349730100681',
-    projectId: 'otobix-auction-app',
-    storageBucket: 'otobix-auction-app.firebasestorage.app',
+    apiKey: 'AIzaSyBOCTtoWbgDuXaVZFyrTBXlN1_oTj8x6DE',
+    appId: '1:845981097587:android:cc20217a520b5848b49406',
+    messagingSenderId: '845981097587',
+    projectId: 'otobix-auction-app-final',
+    storageBucket: 'otobix-auction-app-final.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCgHQPGIBrufqVQbei3Rb-Z6mG_a8hDCBs',
-    appId: '1:349730100681:ios:16922e77f531379e5f0418',
-    messagingSenderId: '349730100681',
-    projectId: 'otobix-auction-app',
-    storageBucket: 'otobix-auction-app.firebasestorage.app',
-    iosBundleId: 'com.example.otobixFrontend',
+    apiKey: 'AIzaSyBB-wjIKLovgSWFDpEoMHsgXPN3RyBr9wM',
+    appId: '1:845981097587:ios:59abc40588900899b49406',
+    messagingSenderId: '845981097587',
+    projectId: 'otobix-auction-app-final',
+    storageBucket: 'otobix-auction-app-final.firebasestorage.app',
+    iosBundleId: 'com.otobix.auctionapp',
   );
 
 }
