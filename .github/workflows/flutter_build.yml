@@ -44,9 +44,10 @@ jobs:
       # Build signed App Bundle
       - run: flutter build appbundle --release
 
+ # Upload AAB artifact so deploy job can use it
       - uses: actions/upload-artifact@v4
         with:
-          name: android-aab-${{ github.ref_name }}
+          name: release-aab
           path: build/app/outputs/bundle/release/app-release.aab
 
   deploy-android:
@@ -56,6 +57,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+ # Download the .aab from build job
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-aab
+          path: build/app/outputs/bundle/release/
+
+      # Deploy to Play Store
       - uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}
