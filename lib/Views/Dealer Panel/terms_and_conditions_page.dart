@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Widgets/empty_page_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:otobix/controllers/terms_and_conditions_controller.dart';
+import 'package:otobix/Controllers/terms_and_conditions_controller.dart';
 
 class TermsAndConditionsPage extends StatelessWidget {
   const TermsAndConditionsPage({super.key});
