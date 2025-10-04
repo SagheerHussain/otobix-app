@@ -71,7 +71,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         [CarsListTitleAndImage(title: 'Main Image', url: widget.car.imageUrl)];
     getxController.setImageUrls(imageUrls);
     getxController.oneClickPriceAmount.value = widget.car.oneClickPrice;
-    // _setCurrentHighestBid();
+    _setCurrentHighestBid();
 
     // Close screen when timer ends
     getxController.watchAndCloseOnTimerEnd(
@@ -92,6 +92,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     final double pd = widget.car.priceDiscovery;
 
     final double current = (hb == 0.0) ? pd * 0.75 : hb;
+
     getxController.currentHighestBidAmount.value = current;
   }
 
@@ -692,19 +693,26 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   ),
                 ),
                 const SizedBox(width: 5),
-                Obx(
-                  () => Text(
-                    // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount.value)}/-',
-                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(highestBidValue.value)}/-',
-                    // key: ValueKey(getxController.currentHighestBidAmount.value),
-                    key: ValueKey(highestBidValue.value),
+                Obx(() {
+                  final highestBid = highestBidValue.value;
+                  final baseBid = widget.car.priceDiscovery * 0.75;
+
+                  // use tolerance for floating-point check
+                  final isAnyoneHavePlacedBidYet =
+                      (highestBid - baseBid).abs() > 0.01;
+
+                  return Text(
+                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(isAnyoneHavePlacedBidYet ? highestBidValue.value : 0)}/-',
+                    key: ValueKey(
+                      isAnyoneHavePlacedBidYet ? highestBidValue.value : 0,
+                    ),
                     style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.green,
                       fontWeight: FontWeight.w600,
                     ),
-                  ),
-                ),
+                  );
+                }),
               ],
             ),
           ],

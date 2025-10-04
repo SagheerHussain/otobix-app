@@ -283,6 +283,7 @@ class RegistrationFormPage extends StatelessWidget {
                       _buildAddressFields(),
                       const SizedBox(height: 20),
                       _buildSubmitButton(),
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ),

@@ -159,11 +159,14 @@ void autoBidButtonForOtobuySection(
                           if (getxController.yourOfferAmount.value -
                                   decrement <=
                               getxController.currentHighestBidAmount.value) {
-                            ToastWidget.show(
-                              title:
-                                  "You can't bid less than the highest bid amount",
-                              context: Get.context!,
-                              type: ToastType.error,
+                            // ToastWidget.show(
+                            //   title:
+                            //       "You can't bid less than the highest bid amount",
+                            //   context: Get.context!,
+                            //   type: ToastType.error,
+                            // );
+                            debugPrint(
+                              "You can't bid less than the highest bid amount",
                             );
                           } else {
                             getxController.yourOfferAmount.value -= decrement;
