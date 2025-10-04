@@ -2,6 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Permissions -->
+	<!-- Camera -->
+	<key>NSCameraUsageDescription</key>
+	<string>App requires access to the camera to take profile pictures of users.</string>
+
+	<!-- Photo Library -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App requires access to your photo library to upload profile pictures of users.</string>
+
+	<!-- Notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+    <string>remote-notification</string>
+	</array>
+	<!-- <key>FirebaseAppDelegateProxyEnabled</key>
+	<true/> -->
+	<key>NSUserTrackingUsageDescription</key>
+	<string>App uses tracking to deliver personalized notifications.</string>
+	<!-- Permissions -->
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

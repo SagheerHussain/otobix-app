@@ -22,14 +22,6 @@ jobs:
       # Install dependencies
       - run: flutter pub get
 
-      # # Build APK
-      # - run: flutter build apk --release
-
-      # # Upload APK artifact
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: android-apk-${{ github.ref_name }}
-      #     path: build/app/outputs/flutter-apk/app-release.apk
       # Decode keystore from secret
       - name: Decode Keystore
         run: |
@@ -72,36 +64,52 @@ jobs:
           track: internal   # can be internal, alpha, beta, production
           status: completed
 
-
   # build-ios:
   #   name: Build iOS IPA
   #   runs-on: macos-latest
   #   steps:
-  #     # Checkout code
   #     - uses: actions/checkout@v4
 
-  #     # Setup Flutter
+  #     - name: Setup Flutter
   #     - uses: subosito/flutter-action@v2
   #       with:
   #         flutter-version: "3.35.2"
 
-  #     # Install dependencies
-  #     - run: flutter pub get
+  #     - name: Install dependencies
+  #       run: flutter pub get
 
-  #     # Build iOS IPA (no signing)
-  #     - run: flutter build ios --release --no-codesign
+  #     # Build iOS IPA (no signing yet, just simulator build)
+  #     - name: Build iOS (no codesign)
+  #       run: flutter build ios --release --no-codesign
 
-  #     # Package IPA (Xcode required step)
-  #     - name: Export IPA
-  #       run: |
-  #         mkdir -p build/ios/ipa
-  #         xcodebuild -exportArchive \
-  #           -archivePath build/ios/archive/MyApp.xcarchive \
-  #           -exportPath build/ios/ipa \
-  #           -exportOptionsPlist ExportOptions.plist || true
-
-  #     # Upload IPA artifact
   #     - uses: actions/upload-artifact@v4
   #       with:
-  #         name: ios-ipa-${{ github.ref_name }}
-  #         path: build/ios/ipa
+  #         name: ios-ipa
+  #         path: build/ios/iphoneos
+
+  # deploy-ios:
+  #   name: Deploy iOS to TestFlight
+  #   needs: build-ios
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: ios-ipa
+  #         path: build/ios/iphoneos
+
+  #     # Install fastlane
+  #     - name: Setup Fastlane
+  #       run: sudo gem install fastlane -NV
+
+  #     # Upload to TestFlight
+  #     - name: Upload to TestFlight
+  #       env:
+  #         APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+  #         APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+  #         APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APPSTORE_KEY_CONTENT }}
+  #       run: |
+  #         cd ios
+  #         fastlane pilot upload \
+  #           --api_key_path <(echo "{\"key_id\":\"$APP_STORE_CONNECT_API_KEY_ID\",\"issuer_id\":\"$APP_STORE_CONNECT_ISSUER_ID\",\"key\":\"$APP_STORE_CONNECT_KEY_CONTENT\",\"in_house\":false}") \
+  #           --ipa ../build/ios/iphoneos/Runner.ipa

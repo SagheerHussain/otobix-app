@@ -78,6 +78,7 @@ class CarDetailsController extends GetxController {
     // currentHighestBidAmount.value == 0  ? currentHighestBidAmount.value =  carDetails?.priceDiscovery.toDouble() ?? 0 : currentHighestBidAmount.value;
     await fetchCarDetails(carId: carId);
     listenUpdatedBidAndChangeHighestBidLocally();
+    listenOtobuyOfferAndChangeHighestBidLocally();
     // await fetchCarDetails(carId: '68821747968635d593293346');
     // debugPrint(carDetails?.toJson().toString() ?? 'null');
     // Initialize keys for each tab
@@ -285,8 +286,26 @@ class CarDetailsController extends GetxController {
 
       if (carDetails != null && carDetails!.id == incomingCarId) {
         currentHighestBidAmount.value = newBid;
-        yourOfferAmount.value = newBid;
+        yourOfferAmount.value = newBid + 1000;
         debugPrint('✅ Updated currentHighestBidAmount to $newBid');
+      }
+      debugPrint('📢 Bid update received: $data');
+    });
+  }
+
+  //  Listen and Update Bid locally
+  void listenOtobuyOfferAndChangeHighestBidLocally() {
+    SocketService.instance.joinRoom(SocketEvents.otobuyCarsSectionRoom);
+    SocketService.instance.on(SocketEvents.otobuyCarsSectionUpdated, (data) {
+      final double newOtobuyOffer = (data['highestBid'] as num).toDouble();
+      final String incomingCarId = data['id'];
+
+      if (carDetails != null && carDetails!.id == incomingCarId) {
+        currentHighestBidAmount.value = newOtobuyOffer;
+        yourOfferAmount.value = newOtobuyOffer + 1000;
+        debugPrint(
+          '✅ Updated currentHighestBidAmount to Otobuy Offer $newOtobuyOffer',
+        );
       }
       debugPrint('📢 Bid update received: $data');
     });
