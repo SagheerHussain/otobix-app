@@ -9,11 +9,13 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 class RegisterPinCodePage extends StatelessWidget {
   final String phoneNumber;
   final String userRole;
+  final String requestId;
 
   RegisterPinCodePage({
     super.key,
     required this.phoneNumber,
     required this.userRole,
+    required this.requestId,
   });
 
   final RegisterPinCodeController pinCodeFieldsController = Get.put(
@@ -45,7 +47,7 @@ class RegisterPinCodePage extends StatelessWidget {
                 children: [
                   _buildOtpMessageText(),
                   SizedBox(height: 30),
-                  _buildPinCodeTextField(context),
+                  _buildPinCodeTextField(context, requestId),
                   SizedBox(height: 20),
                   // ElevatedButton(
                   //   onPressed: () {
@@ -89,45 +91,82 @@ class RegisterPinCodePage extends StatelessWidget {
     ],
   );
 
-  Widget _buildPinCodeTextField(BuildContext parentContext) => PinCodeTextField(
-    appContext: parentContext,
-    inputFormatters: [
-      FilteringTextInputFormatter.digitsOnly,
-      LengthLimitingTextInputFormatter(6),
-    ],
-    keyboardType: TextInputType.number,
-    length: 6,
-    obscureText: false,
-    animationType: AnimationType.fade,
-    cursorColor: AppColors.green,
-    textStyle: TextStyle(fontSize: 20, color: AppColors.black),
-    pinTheme: PinTheme(
-      shape: PinCodeFieldShape.box,
-      borderRadius: BorderRadius.circular(8),
-      fieldHeight: 50,
-      fieldWidth: 40,
-      activeFillColor: AppColors.green.withValues(alpha: 0.2),
-      inactiveFillColor: AppColors.white,
-      selectedFillColor: AppColors.green.withValues(alpha: 0.1),
-      activeColor: AppColors.green,
-      inactiveColor: AppColors.grey,
-      selectedColor: AppColors.green,
-    ),
-    animationDuration: Duration(milliseconds: 300),
-    enableActiveFill: true,
-    onCompleted: (otpValue) {
-      pinCodeFieldsController.dummyVerifyOtp(
-        phoneNumber: phoneNumber,
-        otp: otpValue,
-        userType: userRole,
-      );
+  Widget _buildPinCodeTextField(
+    BuildContext parentContext,
+    String requestId,
+  ) => Obx(() {
+    final isFourDigit = pinCodeFieldsController.isFourDigit.value;
+    final otpLength = isFourDigit ? 4 : 6;
 
-      // pinCodeFieldsController.verifyOtp(
-      //   phoneNumber: phoneNumber,
-      //   otp: value,
-      // userType: userType,
-      // );
-    },
-    onChanged: (otpValue) {},
-  );
+    return Column(
+      children: [
+        // 🔹 The toggle chip
+        Align(
+          alignment: Alignment.centerRight,
+          child: FilterChip(
+            label: Text(
+              isFourDigit ? "4-digit mode" : "6-digit mode",
+              style: TextStyle(
+                color: isFourDigit ? Colors.white : AppColors.green,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            selected: isFourDigit,
+            onSelected:
+                (value) => pinCodeFieldsController.isFourDigit.value = value,
+            selectedColor: AppColors.green,
+            checkmarkColor: Colors.white,
+            backgroundColor: AppColors.green.withValues(alpha: 0.1),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // 🔹 The actual OTP input field
+        PinCodeTextField(
+          key: ValueKey(otpLength), // ✅ this resets the field safely on toggle
+          appContext: parentContext,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(otpLength),
+          ],
+          keyboardType: TextInputType.number,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          length: otpLength,
+          obscureText: false,
+          animationType: AnimationType.fade,
+          cursorColor: AppColors.green,
+          textStyle: TextStyle(fontSize: 20, color: AppColors.black),
+          pinTheme: PinTheme(
+            shape: PinCodeFieldShape.box,
+            borderRadius: BorderRadius.circular(8),
+            fieldHeight: 50,
+            fieldWidth: 40,
+            activeFillColor: AppColors.green.withValues(alpha: 0.2),
+            inactiveFillColor: AppColors.white,
+            selectedFillColor: AppColors.green.withValues(alpha: 0.1),
+            activeColor: AppColors.green,
+            inactiveColor: AppColors.grey,
+            selectedColor: AppColors.green,
+          ),
+          animationDuration: Duration(milliseconds: 300),
+          enableActiveFill: true,
+          onCompleted: (otpValue) {
+            // pinCodeFieldsController.dummyVerifyOtp(
+            //   phoneNumber: phoneNumber,
+            //   otp: otpValue,
+            //   userType: userRole,
+            // );
+
+            pinCodeFieldsController.verifyOtp(
+              requestId: requestId,
+              otp: otpValue,
+              phoneNumber: phoneNumber,
+            );
+          },
+          onChanged: (otpValue) {},
+        ),
+      ],
+    );
+  });
 }

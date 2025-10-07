@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
+import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Register/register_pin_code_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
@@ -21,6 +25,7 @@ class RegisterController extends GetxController {
     update();
   }
 
+  // Send OTP
   Future<void> sendOTP({required String phoneNumber}) async {
     isLoading.value = true;
     try {
@@ -49,41 +54,97 @@ class RegisterController extends GetxController {
       // }
 
       // For both pak and indian numbers
-      final RegExp pakIndiaRegex = RegExp(r'^[3-9]\d{9}$');
+      // final RegExp pakIndiaRegex = RegExp(r'^[3-9]\d{9}$');
 
       // For indian numbers only
-      // final RegExp indianRegex = RegExp(r'^[6-9]\d{9}$');
+      final RegExp indianRegex = RegExp(r'^[6-9]\d{9}$');
 
-      if (!pakIndiaRegex.hasMatch(phoneNumber)) {
+      if (!indianRegex.hasMatch(phoneNumber)) {
         ToastWidget.show(
           context: Get.context!,
-          title: "Enter a valid mobile number",
+          title: "Invalid mobile number",
+          subtitle: "Please enter a valid mobile number (starts with 6-9)",
           type: ToastType.error,
         );
         return;
       }
 
-      Get.to(
-        () => RegisterPinCodePage(
-          phoneNumber: phoneNumber,
-          userRole: selectedRole.value,
-        ),
+      final requestBody = {"mobile": phoneNumber};
+
+      final response = await ApiService.post(
+        endpoint: AppUrls.sendOtp,
+        body: requestBody,
       );
-      ToastWidget.show(
-        context: Get.context!,
-        title: "OTP Sent Successfully",
-        type: ToastType.success,
-      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final String requestId = data['data']['requestId'] ?? '';
+        final String internalStatusCode =
+            data['data']?['statusCode']?.toString() ?? '';
+
+        if (internalStatusCode == "101") {
+          // ✅ Success
+          Get.to(
+            () => RegisterPinCodePage(
+              phoneNumber: phoneNumber,
+              userRole: selectedRole.value,
+              requestId: requestId,
+            ),
+          );
+          ToastWidget.show(
+            context: Get.context!,
+            title: "OTP Sent Successfully",
+            type: ToastType.success,
+          );
+        } else if (internalStatusCode == "102") {
+          // ❌ Invalid details
+          ToastWidget.show(
+            context: Get.context!,
+            title: "Invalid Details",
+            subtitle: "Invalid ID or input combination.",
+            type: ToastType.error,
+          );
+        } else if (internalStatusCode == "104") {
+          // ❌ Retry limit exceeded
+          ToastWidget.show(
+            context: Get.context!,
+            title: "Retry Limit Exceeded",
+            subtitle: "You have reached maximum OTP attempts.",
+            type: ToastType.error,
+          );
+        } else {
+          // ❌ Unknown or unhandled code
+          ToastWidget.show(
+            context: Get.context!,
+            title: "Failed to send OTP",
+            subtitle: "Unexpected response code: $internalStatusCode",
+            type: ToastType.error,
+          );
+        }
+      } else {
+        debugPrint(
+          "Failed to send OTP: $data, status code ${response.statusCode}",
+        );
+        ToastWidget.show(
+          context: Get.context!,
+          title: "Failed to send OTP",
+          type: ToastType.error,
+        );
+      }
     } catch (e) {
       debugPrint(e.toString());
       ToastWidget.show(
         context: Get.context!,
-        title: "Failed to send OTP",
+        title: "Error sending OTP",
         type: ToastType.error,
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 
+  // Dummy send OTP
   Future<void> dummySendOtp({required String phoneNumber}) async {
     isLoading.value = true;
     // debugPrint("Sending OTP to $phoneNumber");
@@ -99,15 +160,16 @@ class RegisterController extends GetxController {
       }
 
       // For indian numbers only
-      // final RegExp indianRegex = RegExp(r'^[6-9]\d{9}$');
+      final RegExp indianRegex = RegExp(r'^[6-9]\d{9}$');
 
       // For both pak and indian numbers
-      final RegExp pakIndiaRegex = RegExp(r'^[3-9]\d{9}$');
+      // final RegExp pakIndiaRegex = RegExp(r'^[3-9]\d{9}$');
 
-      if (!pakIndiaRegex.hasMatch(phoneNumber)) {
+      if (!indianRegex.hasMatch(phoneNumber)) {
         ToastWidget.show(
           context: Get.context!,
-          title: "Enter a valid mobile number",
+          title: "Invalid mobile number",
+          subtitle: "Please enter a valid mobile number (starts with 6-9)",
           type: ToastType.error,
         );
         return;
@@ -118,6 +180,7 @@ class RegisterController extends GetxController {
           () => RegisterPinCodePage(
             phoneNumber: phoneNumber,
             userRole: selectedRole.value,
+            requestId: "",
           ),
         );
       });

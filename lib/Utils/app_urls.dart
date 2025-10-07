@@ -14,9 +14,11 @@ class AppUrls {
     baseUrl,
   ); // Socket base URL
 
-  static String get sendOtp => "${baseUrl}send-otp";
+  static String get sendOtp => "${baseUrl}otp/send-otp";
 
-  static String get verifyOtp => "${baseUrl}verify-otp";
+  static String get verifyOtp => "${baseUrl}otp/verify-otp";
+
+  static String get fetchDetails => "${baseUrl}otp/fetch-details";
 
   static String get login => "${baseUrl}user/login";
 

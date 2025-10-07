@@ -20,12 +20,16 @@ class SocketService {
     socket = IO.io(serverUrl, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
+      'reconnection': true, // ✅ enable auto reconnect
+      'reconnectionAttempts': 10, // ✅ retry up to 10 times
+      'reconnectionDelay': 3000, // ✅ every 3 seconds
     });
 
     socket.connect();
 
     socket.onConnect((_) {
       debugPrint('🟢 Connected to Otobix\'s Websocket Server.');
+      _onReconnect(); // ✅ call a custom function on reconnect
     });
 
     socket.onDisconnect((_) {
@@ -73,5 +77,20 @@ class SocketService {
   // Dispose socket on app closing
   void dispose() {
     socket.dispose();
+  }
+
+  // Add this helper
+  void _onReconnect() {
+    // ✅ Rejoin all rooms when reconnecting
+    socket.emit(SocketEvents.joinRoom, SocketEvents.upcomingBidsSectionRoom);
+    socket.emit(SocketEvents.joinRoom, SocketEvents.liveBidsSectionRoom);
+    socket.emit(SocketEvents.joinRoom, SocketEvents.otobuyCarsSectionRoom);
+    socket.emit(
+      SocketEvents.joinRoom,
+      SocketEvents.auctionCompletedCarsSectionRoom,
+    );
+
+    // ✅ Let the app know socket is reconnected (e.g., via callback or stream)
+    debugPrint('🔄 Socket reconnected, rooms rejoined');
   }
 }

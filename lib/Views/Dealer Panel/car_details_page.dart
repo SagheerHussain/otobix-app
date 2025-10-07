@@ -1398,7 +1398,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                 ),
                 videoCard(
                   label: 'Exhaust Smoke',
-                  videoUrl: carDetails.exhaustSmoke[0],
+                  videoUrl: carDetails.exhaustSmokeImages[0],
                 ),
               ],
             ),
