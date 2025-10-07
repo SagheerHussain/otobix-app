@@ -249,11 +249,14 @@ class RegisterPage extends StatelessWidget {
   Widget _buildContinueButton(BuildContext context) => ButtonWidget(
     text: 'Continue',
     isLoading: getxController.isLoading,
-    // onTap: () => getxController.sendOTP(phoneNumber: phoneController.text),
     onTap:
-        () => getxController.dummySendOtp(
+        () => getxController.sendOTP(
           phoneNumber: getxController.phoneController.text,
         ),
+    // onTap:
+    //     () => getxController.dummySendOtp(
+    //       phoneNumber: getxController.phoneController.text,
+    //     ),
     height: 40,
     width: 150,
     backgroundColor: AppColors.green,
