@@ -121,4 +121,26 @@ class GlobalFunctions {
         return DateFormat('dd-MM-yyyy').format(date); // fallback
     }
   }
+
+  // =====================================================
+  // 💰 Round & format amount to nearest 1000
+  // =====================================================
+  static T? roundToNearestThousand<T>(dynamic value) {
+    if (value == null) return null;
+
+    // Convert to number
+    final num? numValue =
+        (value is num) ? value : num.tryParse(value.toString());
+    if (numValue == null) return null;
+
+    // Round to nearest 1000
+    final rounded = ((numValue / 1000).round()) * 1000;
+
+    // Return in requested type
+    if (T == int) return rounded.toInt() as T;
+    if (T == double) return rounded.toDouble() as T;
+
+    // Fallback
+    return rounded as T;
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
@@ -109,7 +110,9 @@ void autoBidButtonForOtobuySection(
                           ),
                           SizedBox(height: 4),
                           Text(
-                            "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.oneClickPriceAmount.value)}",
+                            // "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.oneClickPriceAmount.value)}",
+                            'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(getxController.oneClickPriceAmount.value))}/-',
+
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
@@ -133,7 +136,9 @@ void autoBidButtonForOtobuySection(
                           SizedBox(height: 4),
                           Obx(
                             () => Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount.value)}",
+                              // "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.currentHighestBidAmount.value)}",
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(getxController.currentHighestBidAmount.value))}/-',
+
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -191,7 +196,9 @@ void autoBidButtonForOtobuySection(
                         () => Column(
                           children: [
                             Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value)}",
+                              // "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value)}",
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(getxController.yourOfferAmount.value))}/-',
+
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -201,7 +208,8 @@ void autoBidButtonForOtobuySection(
                             SizedBox(height: 4),
                             Obx(
                               () => Text(
-                                "Bid increased by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount.value)}",
+                                // "Bid increased by Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount.value)}",
+                                "Bid increased by Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(getxController.yourOfferAmount.value - getxController.currentHighestBidAmount.value))}/-",
                                 style: TextStyle(
                                   color: AppColors.grey,
                                   fontSize: 12,
