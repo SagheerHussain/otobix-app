@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 
 void placeBidButtonForOtobuySection(
@@ -176,7 +177,9 @@ void placeBidButtonForOtobuySection(
                         () => Column(
                           children: [
                             Text(
-                              "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.oneClickPriceAmount.value)}",
+                              // "Rs ${NumberFormat.decimalPattern('en_IN').format(bidController.oneClickPriceAmount.value)}",
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(bidController.oneClickPriceAmount.value))}/-',
+
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,

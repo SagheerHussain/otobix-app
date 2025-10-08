@@ -589,7 +589,9 @@ class LiveBidsPage extends StatelessWidget {
                 ),
                 Obx(
                   () => Text(
-                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
+                    // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
+                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(car.highestBid.value))}/-',
+
                     key: ValueKey(car.highestBid.value),
                     style: const TextStyle(
                       fontSize: 14,

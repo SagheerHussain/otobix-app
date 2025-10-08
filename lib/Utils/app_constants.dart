@@ -49,8 +49,6 @@ class AppConstants {
     "Ladakh",
     "Lakshadweep",
     "Puducherry",
-    "Patna",
-    "Kolkata",
   ];
 
   // ---- configuration per environment ----

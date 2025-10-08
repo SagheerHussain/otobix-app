@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Controllers/car_details_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 
 void placeBidButtonForUpcomingSection(
@@ -118,7 +119,9 @@ void placeBidButtonForUpcomingSection(
                                         .value;
 
                             return Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(highestBid)}",
+                              // "Rs. ${NumberFormat.decimalPattern('en_IN').format(highestBid)}",
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(highestBid))}/-',
+
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -149,7 +152,9 @@ void placeBidButtonForUpcomingSection(
                                     : bidController.yourOfferAmount.value;
 
                             return Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
+                              // "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(yourOffer))}/-',
+
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -197,7 +202,9 @@ void placeBidButtonForUpcomingSection(
                         return Column(
                           children: [
                             Text(
-                              "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
+                              // "Rs. ${NumberFormat.decimalPattern('en_IN').format(yourOffer)}",
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(yourOffer))}/-',
+
                               style: TextStyle(
                                 color: AppColors.blue,
                                 fontSize: 15,
@@ -206,7 +213,8 @@ void placeBidButtonForUpcomingSection(
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount.value)}",
+                              // "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount.value)}",
+                              "Bid increase by ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(bidController.yourOfferAmount.value - bidController.currentHighestBidAmount.value))}/-",
                               style: TextStyle(
                                 color: AppColors.grey,
                                 fontSize: 12,

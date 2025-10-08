@@ -129,8 +129,9 @@ class DealerHomeSearchSortFilterHelper {
     if (!isStateFilterApplied.value || selectedState.value == 'All States') {
       return carsList;
     }
-    final _stateOf = stateOf ?? (c) => (c.inspectionLocation);
+    final _stateOf = stateOf ?? (c) => (c.registrationState);
     final needle = selectedState.value.toLowerCase();
+
     return carsList
         .where((c) => _stateOf(c).toLowerCase().contains(needle))
         .toList();

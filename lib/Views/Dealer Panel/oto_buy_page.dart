@@ -562,7 +562,9 @@ class OtoBuyPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.oneClickPrice)}/-',
+                  // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.oneClickPrice)}/-',
+                  'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(car.oneClickPrice))}/-',
+
                   key: ValueKey(car.oneClickPrice),
                   style: const TextStyle(
                     fontSize: 14,

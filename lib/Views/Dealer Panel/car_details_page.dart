@@ -702,7 +702,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                       (highestBid - baseBid).abs() > 0.01;
 
                   return Text(
-                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(isAnyoneHavePlacedBidYet ? highestBidValue.value : 0)}/-',
+                    // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(isAnyoneHavePlacedBidYet ? highestBidValue.value : 0)}/-',
+                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(isAnyoneHavePlacedBidYet ? highestBidValue.value : 0))}/-',
                     key: ValueKey(
                       isAnyoneHavePlacedBidYet ? highestBidValue.value : 0,
                     ),
@@ -885,6 +886,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       icon: Icons.article_outlined,
       content: Column(
         children: [
+          buildRow('Appointment ID', carDetails.appointmentId),
           buildRow('RC Book Availability', carDetails.rcBookAvailability),
           buildRow('RC Condition', carDetails.rcCondition),
           buildRow('Mismatch In RC', carDetails.mismatchInRc),
