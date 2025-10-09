@@ -175,6 +175,38 @@ class CarDetailsController extends GetxController {
   }
 
   ////////////////////////////////////////
+  // Later if you want to increment/decrement by PD
+  // double getIncrementStep(double pdValue) {
+  //   if (pdValue <= 100000) {
+  //     return 1000;
+  //   } else if (pdValue <= 299000) {
+  //     return 2000;
+  //   } else if (pdValue <= 499000) {
+  //     return 3000;
+  //   } else if (pdValue <= 999000) {
+  //     return 4000;
+  //   } else {
+  //     return 5000;
+  //   }
+  // }
+  // /// Increase bid logic
+  // void increaseBid() {
+  //   final double pd = carDetails?.priceDiscovery.toDouble() ?? 0.0;
+  //   final step = getIncrementStep(pd);
+
+  //   yourOfferAmount.value += step;
+
+  //   if (isFirstClick) isFirstClick = false;
+  // }
+  // /// Decrease bid logic
+  // void decreaseBid() {
+  //   final pd = carDetails?.priceDiscovery.toDouble() ?? 0.0;
+  //   final step = getIncrementStep(pd);
+
+  //   if (yourOfferAmount.value - step >= currentHighestBidAmount.value) {
+  //     yourOfferAmount.value -= step;
+  //   }
+  // }
 
   /// increase bid logic
   void increaseBid() {

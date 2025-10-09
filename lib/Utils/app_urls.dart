@@ -116,6 +116,11 @@ class AppUrls {
   static String getUserMyBidsCarsList({required String userId}) =>
       "${baseUrl}user/get-user-my-bids-cars-list?userId=$userId";
 
+  static String getUserBidsForCar({
+    required String userId,
+    required String carId,
+  }) => "${baseUrl}user/get-user-bids-for-car?userId=$userId&carId=$carId";
+
   static String get uploadTermsAndConditions => "${baseUrl}terms/upload";
 
   static String get getLatestTermsAndConditions => "${baseUrl}terms/latest";
