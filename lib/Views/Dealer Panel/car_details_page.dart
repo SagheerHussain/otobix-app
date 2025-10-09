@@ -113,7 +113,16 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     // Set one click price amount
     // getxController.oneClickPriceAmount.value =
     //     getxController.currentHighestBidAmount.value + 10000;
+
     // Set your offer amount
+    // Later if you want to increment/decrement by PD
+    // final pd = widget.car.priceDiscovery;
+    // final incrementStep = getxController.getIncrementStep(pd);
+    // widget.currentOpenSection != homeController.otobuySectionScreen
+    //     ? getxController.yourOfferAmount.value =
+    //         getxController.currentHighestBidAmount.value + incrementStep
+    //     : getxController.yourOfferAmount.value =
+    //         getxController.oneClickPriceAmount.value;
     widget.currentOpenSection != homeController.otobuySectionScreen
         ? getxController.yourOfferAmount.value =
             getxController.currentHighestBidAmount.value + 4000

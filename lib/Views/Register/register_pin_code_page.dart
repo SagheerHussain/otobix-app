@@ -100,28 +100,6 @@ class RegisterPinCodePage extends StatelessWidget {
 
     return Column(
       children: [
-        // 🔹 The toggle chip
-        Align(
-          alignment: Alignment.centerRight,
-          child: FilterChip(
-            label: Text(
-              isFourDigit ? "4-digit mode" : "6-digit mode",
-              style: TextStyle(
-                color: isFourDigit ? Colors.white : AppColors.green,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            selected: isFourDigit,
-            onSelected:
-                (value) => pinCodeFieldsController.isFourDigit.value = value,
-            selectedColor: AppColors.green,
-            checkmarkColor: Colors.white,
-            backgroundColor: AppColors.green.withValues(alpha: 0.1),
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
         // 🔹 The actual OTP input field
         PinCodeTextField(
           key: ValueKey(otpLength), // ✅ this resets the field safely on toggle
@@ -165,6 +143,36 @@ class RegisterPinCodePage extends StatelessWidget {
             );
           },
           onChanged: (otpValue) {},
+        ),
+
+        const SizedBox(height: 16),
+
+        // 🔹 The toggle chip
+        Align(
+          alignment: Alignment.center,
+          child: FilterChip(
+            showCheckmark: false,
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            avatar: Icon(
+              isFourDigit ? Icons.toggle_on : Icons.toggle_off,
+              color: isFourDigit ? Colors.white : AppColors.green,
+              size: 25,
+            ),
+            label: Text(
+              isFourDigit ? "Switch to 6-digit" : "Switch to 4-digit",
+              style: TextStyle(
+                color: isFourDigit ? Colors.white : AppColors.green,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            selected: isFourDigit,
+            onSelected:
+                (value) =>
+                    pinCodeFieldsController.isFourDigit.value = !isFourDigit,
+            selectedColor: AppColors.green,
+            checkmarkColor: Colors.white,
+            backgroundColor: AppColors.green.withValues(alpha: 0.1),
+          ),
         ),
       ],
     );

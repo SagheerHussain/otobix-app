@@ -177,4 +177,28 @@ class MyBidsController extends GetxController {
   /// If your UI calls this version:
   Future<void> toggleFavorite(MyBidsCarsListModel car) =>
       toggleFavoriteById(car.id!);
+
+  // Get user bids for this car
+  Future<List<Map<String, dynamic>>> getUserBidsForCar(String carId) async {
+    try {
+      final url = AppUrls.getUserBidsForCar(userId: _userId, carId: carId);
+      final res = await ApiService.get(endpoint: url);
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        final List bids = data['bids'] ?? [];
+        return bids
+            .map<Map<String, dynamic>>(
+              (e) => {
+                'bidAmount': e['bidAmount'],
+                'time': e['time'],
+                'isActive': e['isActive'],
+              },
+            )
+            .toList();
+      }
+    } catch (e) {
+      debugPrint("Error fetching previous bids: $e");
+    }
+    return [];
+  }
 }
