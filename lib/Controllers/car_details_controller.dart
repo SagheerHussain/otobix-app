@@ -176,55 +176,57 @@ class CarDetailsController extends GetxController {
 
   ////////////////////////////////////////
   // Later if you want to increment/decrement by PD
-  // double getIncrementStep(double pdValue) {
-  //   if (pdValue <= 100000) {
-  //     return 1000;
-  //   } else if (pdValue <= 299000) {
-  //     return 2000;
-  //   } else if (pdValue <= 499000) {
-  //     return 3000;
-  //   } else if (pdValue <= 999000) {
-  //     return 4000;
-  //   } else {
-  //     return 5000;
-  //   }
-  // }
-  // /// Increase bid logic
-  // void increaseBid() {
-  //   final double pd = carDetails?.priceDiscovery.toDouble() ?? 0.0;
-  //   final step = getIncrementStep(pd);
+  double getIncrementStep(double pdValue) {
+    if (pdValue <= 100000) {
+      return 1000;
+    } else if (pdValue <= 299000) {
+      return 2000;
+    } else if (pdValue <= 499000) {
+      return 3000;
+    } else if (pdValue <= 999000) {
+      return 4000;
+    } else {
+      return 5000;
+    }
+  }
 
-  //   yourOfferAmount.value += step;
-
-  //   if (isFirstClick) isFirstClick = false;
-  // }
-  // /// Decrease bid logic
-  // void decreaseBid() {
-  //   final pd = carDetails?.priceDiscovery.toDouble() ?? 0.0;
-  //   final step = getIncrementStep(pd);
-
-  //   if (yourOfferAmount.value - step >= currentHighestBidAmount.value) {
-  //     yourOfferAmount.value -= step;
-  //   }
-  // }
-
-  /// increase bid logic
+  /// Increase bid logic
   void increaseBid() {
-    double increment = isFirstClick ? 1000 : 1000;
-    yourOfferAmount.value += increment;
+    final double pd = carDetails?.priceDiscovery.toDouble() ?? 0.0;
+    final step = getIncrementStep(pd);
 
-    // After first click, switch to 1000 increment
-    if (isFirstClick) {
-      isFirstClick = false;
-    }
+    yourOfferAmount.value += step;
+
+    if (isFirstClick) isFirstClick = false;
   }
 
+  /// Decrease bid logic
   void decreaseBid() {
-    double decrement = isFirstClick ? 4000 : 1000;
-    if (yourOfferAmount.value - decrement >= currentHighestBidAmount.value) {
-      yourOfferAmount.value -= decrement;
+    final pd = carDetails?.priceDiscovery.toDouble() ?? 0.0;
+    final step = getIncrementStep(pd);
+
+    if (yourOfferAmount.value - step >= currentHighestBidAmount.value) {
+      yourOfferAmount.value -= step;
     }
   }
+
+  // /// increase bid logic
+  // void increaseBid() {
+  //   double increment = isFirstClick ? 1000 : 1000;
+  //   yourOfferAmount.value += increment;
+
+  //   // After first click, switch to 1000 increment
+  //   if (isFirstClick) {
+  //     isFirstClick = false;
+  //   }
+  // }
+
+  // void decreaseBid() {
+  //   double decrement = isFirstClick ? 4000 : 1000;
+  //   if (yourOfferAmount.value - decrement >= currentHighestBidAmount.value) {
+  //     yourOfferAmount.value -= decrement;
+  //   }
+  // }
 
   /// Reset increments whenever sheet opens
   void resetBidIncrement() {
