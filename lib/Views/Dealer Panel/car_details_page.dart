@@ -159,7 +159,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                                     carDetails: getxController.carDetails!,
                                     getxController: getxController,
                                   ),
-                                  height: 180,
+                                  height: 190,
                                 ),
                               ),
                               SliverPersistentHeader(
@@ -650,6 +650,8 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   child: Text(
                     '${GlobalFunctions.getFormattedDate(date: carDetails.yearMonthOfManufacture, type: GlobalFunctions.year)} ${carDetails.make} ${carDetails.model} ${carDetails.variant}',
                     textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,

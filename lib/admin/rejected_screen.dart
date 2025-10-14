@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:otobix/admin/controller/rejection_controller.dart';
-import 'package:otobix/helpers/Preferences_helper.dart';
+import 'package:otobix/helpers/shared_prefs_helper.dart';
 
 class RejectedScreen extends StatefulWidget {
   final String userId;

@@ -5,7 +5,7 @@ import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
-import 'package:otobix/helpers/Preferences_helper.dart';
+import 'package:otobix/helpers/shared_prefs_helper.dart';
 import '../Models/user_notifications_model.dart';
 
 class UserNotificationsController extends GetxController {

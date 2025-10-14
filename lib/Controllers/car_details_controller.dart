@@ -14,7 +14,7 @@ import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 import 'package:otobix/Widgets/offering_bid_sheet.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
-import 'package:otobix/helpers/Preferences_helper.dart';
+import 'package:otobix/helpers/shared_prefs_helper.dart';
 
 class CarDetailsController extends GetxController {
   static const String imagesSectionKey = 'images';
