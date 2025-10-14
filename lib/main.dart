@@ -8,7 +8,7 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/splash/splash_screen.dart';
 import 'package:otobix/firebase_options.dart';
-import 'package:otobix/helpers/Preferences_helper.dart';
+import 'package:otobix/helpers/shared_prefs_helper.dart';
 
 void main() async {
   Get.config(enableLog: false);

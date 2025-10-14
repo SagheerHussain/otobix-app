@@ -102,7 +102,7 @@ void autoBidButtonForLiveBidsSection(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Current Pre-Bid",
+                            "Current Bid",
                             style: TextStyle(
                               color: AppColors.grey,
                               fontSize: 10,

@@ -9,7 +9,7 @@ import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
-import 'package:otobix/helpers/Preferences_helper.dart';
+import 'package:otobix/helpers/shared_prefs_helper.dart';
 
 class AdminOtoBuyCarsListController extends GetxController {
   RxInt otoBuyCarsCount = 0.obs;

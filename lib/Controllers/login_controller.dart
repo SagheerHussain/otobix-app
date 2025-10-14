@@ -12,7 +12,7 @@ import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/admin/rejected_screen.dart';
-import 'package:otobix/helpers/Preferences_helper.dart';
+import 'package:otobix/helpers/shared_prefs_helper.dart';
 
 class LoginController extends GetxController {
   @override
