@@ -216,6 +216,7 @@ class CarModel {
   final String latlong;
   final String retailAssociate;
   final int kmRangeLevel;
+  final String highestBidder;
   final int v;
   CarModel({
     required this.id,
@@ -435,6 +436,7 @@ class CarModel {
     required this.latlong,
     required this.retailAssociate,
     required this.kmRangeLevel,
+    required this.highestBidder,
     required this.v,
   });
 
@@ -675,6 +677,7 @@ class CarModel {
       latlong: json["latlong"] ?? 'N/A',
       retailAssociate: json["retailAssociate"] ?? 'N/A',
       kmRangeLevel: json["kmRangeLevel"] ?? 0,
+      highestBidder: json["highestBidder"] ?? 'N/A',
       v: json["__v"] ?? 0,
     );
   }
@@ -899,6 +902,7 @@ class CarModel {
     "latlong": latlong,
     "retailAssociate": retailAssociate,
     "kmRangeLevel": kmRangeLevel,
+    "highestBidder": highestBidder,
     "__v": v,
   };
 }

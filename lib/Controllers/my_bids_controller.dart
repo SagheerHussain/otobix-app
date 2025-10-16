@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:otobix/Models/my_bids_cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
+import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
@@ -179,26 +180,66 @@ class MyBidsController extends GetxController {
       toggleFavoriteById(car.id!);
 
   // Get user bids for this car
-  Future<List<Map<String, dynamic>>> getUserBidsForCar(String carId) async {
+  // was: Future<List<Map<String, dynamic>>> getUserBidsForCar(...)
+  Future<Map<String, dynamic>> getUserBidsForCar(String carId) async {
     try {
       final url = AppUrls.getUserBidsForCar(userId: _userId, carId: carId);
       final res = await ApiService.get(endpoint: url);
+
       if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
+        final data = jsonDecode(res.body) as Map<String, dynamic>;
+        final initialAuctionStatus = data['auctionStatus'];
+        final auctionStatus =
+            initialAuctionStatus == 'upcoming'
+                ? 'Upcoming'
+                : initialAuctionStatus == 'live'
+                ? 'Live'
+                : initialAuctionStatus == 'otobuy'
+                ? 'OtoBuy'
+                : 'Closed';
+        final highestBid = data['highestBid'];
+        final highestBidColor = data['highestBidColor'];
         final List bids = data['bids'] ?? [];
-        return bids
-            .map<Map<String, dynamic>>(
-              (e) => {
-                'bidAmount': e['bidAmount'],
-                'time': e['time'],
-                'isActive': e['isActive'],
-              },
-            )
-            .toList();
+
+        return {
+          'auctionStatus': auctionStatus,
+          'highestBid': highestBid,
+          'highestBidColor': highestBidColor,
+          'bids':
+              bids
+                  .map<Map<String, dynamic>>(
+                    (e) => {
+                      'bidAmount': e['bidAmount'],
+                      'time': e['time'],
+                      'isActive': e['isActive'],
+                    },
+                  )
+                  .toList(),
+        };
       }
     } catch (e) {
       debugPrint("Error fetching previous bids: $e");
     }
-    return [];
+
+    // safe empty shape
+    return {
+      'auctionStatus': null,
+      'highestBid': null,
+      'highestBidColor': null,
+      'bids': <Map<String, dynamic>>[],
+    };
+  }
+
+  Color auctionStatusColor(String? auctionStatus) {
+    switch ((auctionStatus ?? '').toLowerCase()) {
+      case 'upcoming':
+        return AppColors.blue;
+      case 'live':
+        return AppColors.green;
+      case 'otobuy':
+        return AppColors.grey;
+      default:
+        return AppColors.red;
+    }
   }
 }

@@ -17,6 +17,7 @@ import 'package:otobix/Widgets/accordion_widget.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
+import 'package:otobix/helpers/bid_color_change_helper.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:otobix/Models/cars_list_model.dart';
@@ -134,194 +135,193 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         backgroundColor: AppColors.white,
         body: LayoutBuilder(
           builder: (context, constraints) {
-            return Obx(
-              () =>
-                  getxController.isLoading.value
-                      ? Center(child: _buildLoading())
-                      : Stack(
-                        children: [
-                          CustomScrollView(
-                            controller: getxController.scrollController,
-                            slivers: [
-                              SliverToBoxAdapter(
-                                child: _buildCarImagesList(
-                                  imageUrls: imageUrls,
-                                  pageController: pageController,
-                                  getxController: getxController,
-                                  carDetails: getxController.carDetails!,
-                                  car: widget.car,
+            return Obx(() {
+              final isBusy = getxController.isLoading.value;
+              final carDetails = getxController.carDetails;
+
+              if (isBusy || carDetails == null) {
+                return Center(child: _buildLoading());
+              }
+
+              // from here on, use local non-null 'carDetails'
+              return
+              //  getxController.isLoading.value
+              //     ? Center(child: _buildLoading()) :
+              Stack(
+                children: [
+                  CustomScrollView(
+                    controller: getxController.scrollController,
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: _buildCarImagesList(
+                          imageUrls: imageUrls,
+                          pageController: pageController,
+                          getxController: getxController,
+                          carDetails: carDetails,
+                          car: widget.car,
+                        ),
+                      ),
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: _StickyHeaderDelegate(
+                          child: _buildMainDetails(
+                            carDetails: carDetails,
+                            getxController: getxController,
+                          ),
+                          height: 190,
+                        ),
+                      ),
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: _StickyHeaderDelegate(
+                          child: _buildStickyTabs(getxController),
+                          height: 40,
+                        ),
+                      ),
+                      SliverList(
+                        delegate: SliverChildListDelegate([
+                          // Each section wrapped with its GlobalKey
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Column(
+                              children: [
+                                Container(
+                                  key:
+                                      getxController
+                                          .sectionKeys[CarDetailsController
+                                          .imagesSectionKey],
+                                  child: _buildImagesSection(
+                                    car: getxController.carDetails!,
+                                    currentOpenSection:
+                                        widget.currentOpenSection,
+                                    remainingAuctionTime:
+                                        widget.remainingAuctionTime,
+                                  ),
                                 ),
-                              ),
-                              SliverPersistentHeader(
-                                pinned: true,
-                                delegate: _StickyHeaderDelegate(
-                                  child: _buildMainDetails(
+                                // Container(
+                                //   key:
+                                //       getxController
+                                //           .sectionKeys[CarDetailsController
+                                //           .basicDetailsSectionKey],
+                                //   child: _buildBasicDetails(
+                                //     carDetails:
+                                //         getxController.carDetails!,
+                                //   ),
+                                // ),
+                                Container(
+                                  key:
+                                      getxController
+                                          .sectionKeys[CarDetailsController
+                                          .documentDetailsSectionKey],
+                                  child: _buildDocumentDetails(
                                     carDetails: getxController.carDetails!,
                                     getxController: getxController,
                                   ),
-                                  height: 190,
                                 ),
-                              ),
-                              SliverPersistentHeader(
-                                pinned: true,
-                                delegate: _StickyHeaderDelegate(
-                                  child: _buildStickyTabs(getxController),
-                                  height: 40,
-                                ),
-                              ),
-                              SliverList(
-                                delegate: SliverChildListDelegate([
-                                  // Each section wrapped with its GlobalKey
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          key:
-                                              getxController
-                                                  .sectionKeys[CarDetailsController
-                                                  .imagesSectionKey],
-                                          child: _buildImagesSection(
-                                            car: getxController.carDetails!,
-                                            currentOpenSection:
-                                                widget.currentOpenSection,
-                                            remainingAuctionTime:
-                                                widget.remainingAuctionTime,
-                                          ),
-                                        ),
-                                        // Container(
-                                        //   key:
-                                        //       getxController
-                                        //           .sectionKeys[CarDetailsController
-                                        //           .basicDetailsSectionKey],
-                                        //   child: _buildBasicDetails(
-                                        //     carDetails:
-                                        //         getxController.carDetails!,
-                                        //   ),
-                                        // ),
-                                        Container(
-                                          key:
-                                              getxController
-                                                  .sectionKeys[CarDetailsController
-                                                  .documentDetailsSectionKey],
-                                          child: _buildDocumentDetails(
-                                            carDetails:
-                                                getxController.carDetails!,
-                                            getxController: getxController,
-                                          ),
-                                        ),
-                                        Container(
-                                          key:
-                                              getxController
-                                                  .sectionKeys[CarDetailsController
-                                                  .exteriorSectionKey],
-                                          child: _buildExterior(
-                                            carDetails:
-                                                getxController.carDetails!,
-                                            getxController: getxController,
-                                          ),
-                                        ),
-                                        Container(
-                                          key:
-                                              getxController
-                                                  .sectionKeys[CarDetailsController
-                                                  .engineBaySectionKey],
-                                          child: _buildEngineBay(
-                                            carDetails:
-                                                getxController.carDetails!,
-                                            getxController: getxController,
-                                          ),
-                                        ),
-                                        Container(
-                                          key:
-                                              getxController
-                                                  .sectionKeys[CarDetailsController
-                                                  .steeringBrakesAndSuspensionSectionKey],
-                                          child:
-                                              _buildSteeringBrackesAndSuspension(
-                                                carDetails:
-                                                    getxController.carDetails!,
-                                              ),
-                                        ),
-
-                                        Container(
-                                          key:
-                                              getxController
-                                                  .sectionKeys[CarDetailsController
-                                                  .interiorAndElectricalsSectionKey],
-                                          child: _buildInteriorAndElectricals(
-                                            carDetails:
-                                                getxController.carDetails!,
-                                            getxController: getxController,
-                                          ),
-                                        ),
-                                        Container(
-                                          key:
-                                              getxController
-                                                  .sectionKeys[CarDetailsController
-                                                  .airConditioningSectionKey],
-                                          child: _buildAirCondition(
-                                            carDetails:
-                                                getxController.carDetails!,
-                                            getxController: getxController,
-                                          ),
-                                        ),
-                                        SizedBox(height: 110),
-                                      ],
-                                    ),
+                                Container(
+                                  key:
+                                      getxController
+                                          .sectionKeys[CarDetailsController
+                                          .exteriorSectionKey],
+                                  child: _buildExterior(
+                                    carDetails: getxController.carDetails!,
+                                    getxController: getxController,
                                   ),
-                                ]),
-                              ),
-                            ],
-                          ),
+                                ),
+                                Container(
+                                  key:
+                                      getxController
+                                          .sectionKeys[CarDetailsController
+                                          .engineBaySectionKey],
+                                  child: _buildEngineBay(
+                                    carDetails: getxController.carDetails!,
+                                    getxController: getxController,
+                                  ),
+                                ),
+                                Container(
+                                  key:
+                                      getxController
+                                          .sectionKeys[CarDetailsController
+                                          .steeringBrakesAndSuspensionSectionKey],
+                                  child: _buildSteeringBrackesAndSuspension(
+                                    carDetails: getxController.carDetails!,
+                                  ),
+                                ),
 
-                          // SingleChildScrollView(
-                          //   padding: const EdgeInsets.only(bottom: 120),
-                          //   child: ConstrainedBox(
-                          //     constraints: BoxConstraints(
-                          //       minHeight: constraints.maxHeight,
-                          //     ),
-                          //     child: Column(
-                          //       children: [
-                          //         _buildCarImagesList(
-                          //           imageUrls: imageUrls,
-                          //           pageController: pageController,
-                          //           getxController: getxController,
-                          //           carDetails: getxController.carDetails!,
-                          //           car: widget.car,
-                          //         ),
-                          //         const SizedBox(height: 10),
-                          //         _buildMainDetails(
-                          //           carDetails: getxController.carDetails!,
-                          //         ),
-                          //         const SizedBox(height: 20),
-
-                          //         _buildCarDetails(
-                          //           carDetails: getxController.carDetails!,
-                          //           getxController: getxController,
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: _buildBidButton(
-                              getxController,
-                              homeController,
-                              context,
-                              widget.currentOpenSection,
-                              widget.car,
-                              widget.remainingAuctionTime,
+                                Container(
+                                  key:
+                                      getxController
+                                          .sectionKeys[CarDetailsController
+                                          .interiorAndElectricalsSectionKey],
+                                  child: _buildInteriorAndElectricals(
+                                    carDetails: getxController.carDetails!,
+                                    getxController: getxController,
+                                  ),
+                                ),
+                                Container(
+                                  key:
+                                      getxController
+                                          .sectionKeys[CarDetailsController
+                                          .airConditioningSectionKey],
+                                  child: _buildAirCondition(
+                                    carDetails: getxController.carDetails!,
+                                    getxController: getxController,
+                                  ),
+                                ),
+                                SizedBox(height: 110),
+                              ],
                             ),
                           ),
-                        ],
+                        ]),
                       ),
-            );
+                    ],
+                  ),
+
+                  // SingleChildScrollView(
+                  //   padding: const EdgeInsets.only(bottom: 120),
+                  //   child: ConstrainedBox(
+                  //     constraints: BoxConstraints(
+                  //       minHeight: constraints.maxHeight,
+                  //     ),
+                  //     child: Column(
+                  //       children: [
+                  //         _buildCarImagesList(
+                  //           imageUrls: imageUrls,
+                  //           pageController: pageController,
+                  //           getxController: getxController,
+                  //           carDetails: getxController.carDetails!,
+                  //           car: widget.car,
+                  //         ),
+                  //         const SizedBox(height: 10),
+                  //         _buildMainDetails(
+                  //           carDetails: getxController.carDetails!,
+                  //         ),
+                  //         const SizedBox(height: 20),
+
+                  //         _buildCarDetails(
+                  //           carDetails: getxController.carDetails!,
+                  //           getxController: getxController,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: _buildBidButton(
+                      getxController,
+                      homeController,
+                      context,
+                      widget.currentOpenSection,
+                      widget.car,
+                      widget.remainingAuctionTime,
+                    ),
+                  ),
+                ],
+              );
+            });
           },
         ),
       ),
@@ -712,15 +712,24 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   final isAnyoneHavePlacedBidYet =
                       (highestBid - baseBid).abs() > 0.01;
 
+                  final color = BidColorChangeHelper.getHighestBidColor(
+                    currentUserId: getxController.currentUserId,
+                    highestBidderUserId: getxController.latestHighestBidderId,
+                    hasUserBid: getxController.userHasBid,
+                    neutralColor: AppColors.black,
+                    winningColor: AppColors.green,
+                    losingColor: AppColors.red,
+                  );
+
                   return Text(
                     // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(isAnyoneHavePlacedBidYet ? highestBidValue.value : 0)}/-',
                     'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(isAnyoneHavePlacedBidYet ? highestBidValue.value : 0))}/-',
                     key: ValueKey(
                       isAnyoneHavePlacedBidYet ? highestBidValue.value : 0,
                     ),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: AppColors.green,
+                      color: color,
                       fontWeight: FontWeight.w600,
                     ),
                   );

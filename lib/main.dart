@@ -39,6 +39,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      navigatorKey:
+          Get.key, // enables Get.* navigation from services (for route to specific screen via notification click)
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
