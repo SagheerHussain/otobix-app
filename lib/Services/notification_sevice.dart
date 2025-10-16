@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:otobix/Services/notification_router.dart';
 import 'package:otobix/Utils/app_constants.dart';
 
 class NotificationService {
@@ -35,20 +37,15 @@ class NotificationService {
 
     // When the user taps a notification
     OneSignal.Notifications.addClickListener((event) {
-      // final n = event.notification;
-      // final reqId = n.additionalData?['requestId'];
-      // final ext = n.additionalData?['ext'];
-      // final env = n.additionalData?['env'];
+      // Navigate to specific screen when notification is clicked
+      final Map<String, dynamic> data = Map<String, dynamic>.from(
+        event.notification.additionalData ?? {},
+      );
 
-      // debugPrint(
-      //   '[PushClick] id=${n.notificationId} requestId=$reqId env=$env ext=$ext data=${n.additionalData}',
-      // );
-
-      //
-
-      final data = event.notification.additionalData ?? {};
-      // TODO: print or navigate based on your payload
-      // e.g., print('Tapped notif. data = $data');
+      // If your splash does async work, deferring avoids navigator race conditions:
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        NotificationRouter.go(data);
+      });
     });
 
     _inited = true;

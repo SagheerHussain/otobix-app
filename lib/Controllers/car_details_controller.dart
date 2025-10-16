@@ -69,14 +69,31 @@ class CarDetailsController extends GetxController {
   Worker? _timerWatcher;
   bool _closedOnce = false;
 
+  // ===== Add near other Rx fields =====
+  final RxnString _highestBidderUserId = RxnString();
+  final RxBool _hasUserBidOnThisCar = false.obs;
+  String? _currentUserId;
+  // public getters for UI
+  String? get currentUserId => _currentUserId;
+  String? get latestHighestBidderId => _highestBidderUserId.value;
+  bool get userHasBid => _hasUserBidOnThisCar.value;
+
   final String carId;
   CarDetailsController(this.carId);
 
   @override
   void onInit() async {
     super.onInit();
+
+    _currentUserId = await SharedPrefsHelper.getString(
+      SharedPrefsHelper.userIdKey,
+    );
     // currentHighestBidAmount.value == 0  ? currentHighestBidAmount.value =  carDetails?.priceDiscovery.toDouble() ?? 0 : currentHighestBidAmount.value;
     await fetchCarDetails(carId: carId);
+
+    // To Set the highest bid color
+    _initParticipationState();
+
     listenUpdatedBidAndChangeHighestBidLocally();
     listenOtobuyOfferAndChangeHighestBidLocally();
     // await fetchCarDetails(carId: '68821747968635d593293346');
@@ -88,28 +105,42 @@ class CarDetailsController extends GetxController {
     scrollController.addListener(() {
       for (var entry in sectionKeys.entries) {
         final context = entry.value.currentContext;
-        if (context != null) {
-          final box = context.findRenderObject() as RenderBox;
-          final position = box.localToGlobal(Offset.zero, ancestor: null).dy;
+        if (context == null) continue;
 
-          // Adjust 100 based on height of sticky headers
-          // if (position < MediaQuery.of(Get.context!).padding.top + 210 &&
-          //     position > 0) {
-          //   currentSection.value = entry.key;
+        final box = context.findRenderObject() as RenderBox?;
+        if (box == null || !box.attached) continue;
 
-          //   // Scroll horizontal tab bar
-          //   scrollToSectionTab(entry.key);
-          //   break;
-          // }
-          // Only mark section active if its top is at least 20px below the top
-          if (position >= 20 && position < Get.context!.size!.height / 2) {
-            currentSection.value = entry.key;
-            scrollToSectionTab(entry.key);
-            break;
-          }
+        final position = box.localToGlobal(Offset.zero).dy;
+
+        // Get a safe screen height even if no BuildContext yet
+        final window = WidgetsBinding.instance.platformDispatcher.views.first;
+        final physicalSize = window.physicalSize / window.devicePixelRatio;
+        final screenHeight = physicalSize.height;
+
+        if (position >= 20 && position < screenHeight / 2) {
+          currentSection.value = entry.key;
+          scrollToSectionTab(entry.key);
+          break;
         }
       }
     });
+
+    // scrollController.addListener(() {
+    //   for (var entry in sectionKeys.entries) {
+    //     final context = entry.value.currentContext;
+    //     if (context != null) {
+    //       final box = context.findRenderObject() as RenderBox;
+    //       final position = box.localToGlobal(Offset.zero, ancestor: null).dy;
+
+    //       // Only mark section active if its top is at least 20px below the top
+    //       if (position >= 20 && position < Get.context!.size!.height / 2) {
+    //         currentSection.value = entry.key;
+    //         scrollToSectionTab(entry.key);
+    //         break;
+    //       }
+    //     }
+    //   }
+    // });
   }
 
   Future<void> fetchCarDetails({required String carId}) async {
@@ -317,11 +348,21 @@ class CarDetailsController extends GetxController {
     SocketService.instance.on(SocketEvents.bidUpdated, (data) {
       final String incomingCarId = data['carId'];
       final double newBid = (data['highestBid'] as num).toDouble();
+      final String? bidderId = data['userId']?.toString();
 
       if (carDetails != null && carDetails!.id == incomingCarId) {
         currentHighestBidAmount.value = newBid;
         yourOfferAmount.value = newBid + 1000;
-        debugPrint('✅ Updated currentHighestBidAmount to $newBid');
+        // getIncrementStep(carDetails?.priceDiscovery.toDouble() ?? 1000);
+
+        // To change the highest bid color
+        if (bidderId != null && bidderId.isNotEmpty) {
+          _highestBidderUserId.value = bidderId;
+          if (_currentUserId != null && bidderId == _currentUserId) {
+            _hasUserBidOnThisCar.value = true;
+          }
+        }
+        // debugPrint('✅ Updated currentHighestBidAmount to $newBid');
       }
       debugPrint('📢 Bid update received: $data');
     });
@@ -337,6 +378,7 @@ class CarDetailsController extends GetxController {
       if (carDetails != null && carDetails!.id == incomingCarId) {
         currentHighestBidAmount.value = newOtobuyOffer;
         yourOfferAmount.value = newOtobuyOffer + 1000;
+        // getIncrementStep(carDetails?.priceDiscovery.toDouble() ?? 1000);
         debugPrint(
           '✅ Updated currentHighestBidAmount to Otobuy Offer $newOtobuyOffer',
         );
@@ -367,8 +409,8 @@ class CarDetailsController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        debugPrint("✅ Bid updated successfully: $data");
+        // final data = jsonDecode(response.body);
+        // debugPrint("✅ Bid updated successfully: $data");
         ToastWidget.show(
           context: Get.context!,
           title: "You're Winning! 🏆",
@@ -407,8 +449,9 @@ class CarDetailsController extends GetxController {
   Future<void> submitAutoBidForLiveSection({
     required String carId,
     required int maxAmount,
-    int increment = 1000,
   }) async {
+    // final increment = getIncrementStep( carDetails?.priceDiscovery.toDouble() ?? 1000,  );
+    final increment = 1000;
     try {
       Get.back();
       final userId = await SharedPrefsHelper.getString(
@@ -513,8 +556,9 @@ class CarDetailsController extends GetxController {
   Future<void> submitAutoBidUpto({
     required String carId,
     required int maxAmount,
-    int increment = 1000,
   }) async {
+    // final increment = getIncrementStep( carDetails?.priceDiscovery.toDouble() ?? 1000,  );
+    final increment = 1000;
     try {
       Get.back();
       final userId = await SharedPrefsHelper.getString(
@@ -743,6 +787,56 @@ class CarDetailsController extends GetxController {
         _maybeClose();
       }
     });
+  }
+
+  Future<void> _initParticipationState() async {
+    // 1) set current user id (if not already)
+    _currentUserId ??= await SharedPrefsHelper.getString(
+      SharedPrefsHelper.userIdKey,
+    );
+
+    // 2) highest bidder from carDetails (if your API returns it)
+    final hbId = carDetails?.highestBidder.toString();
+    if (hbId != null && hbId.isNotEmpty) {
+      _highestBidderUserId.value = hbId;
+    }
+
+    // 3) decide if the user has bid on this car
+    // Fast path: if user is current highest bidder, they obviously participated
+    if (_currentUserId != null &&
+        _currentUserId == _highestBidderUserId.value) {
+      _hasUserBidOnThisCar.value = true;
+      return;
+    }
+
+    // Pick ONE of the options below that fits your backend.
+    _hasUserBidOnThisCar.value = await _checkHasUserBidFromBackend(
+      carId: carId,
+      userId: _currentUserId,
+    );
+  }
+
+  /// Example backend checker (choose the API that matches your server)
+  Future<bool> _checkHasUserBidFromBackend({
+    required String carId,
+    required String? userId,
+  }) async {
+    if (userId == null) return false;
+
+    try {
+      final url = AppUrls.getUserBidsForCar(userId: userId, carId: carId);
+      final res = await ApiService.get(endpoint: url);
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        final List<dynamic> bids = data['bids'] ?? [];
+        return bids.isNotEmpty;
+      }
+
+      return false;
+    } catch (_) {
+      return false;
+    }
   }
 
   @override

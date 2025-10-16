@@ -54,6 +54,12 @@ class AppUrls {
   static String getCarsList({required String auctionStatus}) =>
       "${baseUrl}car/cars-list?auctionStatus=$auctionStatus";
 
+  static String get getCarDetailsForNotification =>
+      "${baseUrl}car/get-cars-list-model-for-a-car";
+
+  static String get getAuctionStatusAndRemainingTime =>
+      "${baseUrl}car/get-car-auction-status-and-remaining-time";
+
   static String updateUserThroughAdmin(String userId) =>
       "${baseUrl}user/update-user-through-admin/?userId=$userId";
 

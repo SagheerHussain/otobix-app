@@ -404,13 +404,25 @@ class MyBidsPage extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+      builder:
+          (_) => const Center(
+            child: CircularProgressIndicator(color: AppColors.green),
+          ),
     );
 
-    final data = await getxController.getUserBidsForCar(carId);
-    Navigator.pop(context); // close loader
+    // final data = await getxController.getUserBidsForCar(carId);
+    // Navigator.pop(context); // close loader
 
-    if (data.isEmpty) {
+    final resp = await getxController.getUserBidsForCar(carId);
+    Navigator.pop(context);
+
+    final String? auctionStatus = resp['auctionStatus'] as String?;
+    final num? highestBid = resp['highestBid'] as num?;
+    final String? highestBidColor = resp['highestBidColor'] as String?;
+    final List<Map<String, dynamic>> bids =
+        (resp['bids'] as List).cast<Map<String, dynamic>>();
+
+    if (bids.isEmpty) {
       ToastWidget.show(
         context: Get.context!,
         title: 'No Bids',
@@ -421,16 +433,16 @@ class MyBidsPage extends StatelessWidget {
     }
 
     // If your API returns both car info + bids, you can unpack them:
-    final carInfo =
-        data.firstWhere(
-          (e) => e.containsKey('carInfo'),
-          orElse: () => {'carInfo': null},
-        )['carInfo'];
+    // final carInfo =
+    //     data.firstWhere(
+    //       (e) => e.containsKey('carInfo'),
+    //       orElse: () => {'carInfo': null},
+    //     )['carInfo'];
 
-    final bids =
-        carInfo == null
-            ? data
-            : data.where((e) => e.containsKey('bidAmount')).toList();
+    // final bids =
+    //     carInfo == null
+    //         ? data
+    //         : data.where((e) => e.containsKey('bidAmount')).toList();
 
     showModalBottomSheet(
       context: context,
@@ -450,7 +462,7 @@ class MyBidsPage extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   Container(
                     height: 5,
                     width: 60,
@@ -459,65 +471,99 @@ class MyBidsPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
 
                   // === Car Header (Optional) ===
-                  if (carInfo != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              carInfo['imageUrl'] ?? '',
-                              height: 60,
-                              width: 90,
-                              fit: BoxFit.cover,
-                              errorBuilder:
-                                  (_, __, ___) => Container(
-                                    height: 60,
-                                    width: 90,
-                                    color: Colors.grey.shade200,
-                                    child: const Icon(
-                                      Icons.directions_car,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                            ),
+                  // if (carInfo != null)
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  //     child: Row(
+                  //       children: [
+                  //         ClipRRect(
+                  //           borderRadius: BorderRadius.circular(10),
+                  //           child: Image.network(
+                  //             carInfo['imageUrl'] ?? '',
+                  //             height: 60,
+                  //             width: 90,
+                  //             fit: BoxFit.cover,
+                  //             errorBuilder:
+                  //                 (_, __, ___) => Container(
+                  //                   height: 60,
+                  //                   width: 90,
+                  //                   color: Colors.grey.shade200,
+                  //                   child: const Icon(
+                  //                     Icons.directions_car,
+                  //                     color: Colors.grey,
+                  //                   ),
+                  //                 ),
+                  //           ),
+                  //         ),
+                  //         const SizedBox(width: 12),
+                  //         Expanded(
+                  //           child: Column(
+                  //             crossAxisAlignment: CrossAxisAlignment.start,
+                  //             children: [
+                  //               Text(
+                  //                 carInfo['name'] ?? '',
+                  //                 style: const TextStyle(
+                  //                   fontSize: 16,
+                  //                   fontWeight: FontWeight.bold,
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 4),
+                  //               Text(
+                  //                 "FMV/PD: ₹${NumberFormat('#,##,###').format(carInfo['priceDiscovery'] ?? 0)}",
+                  //                 style: TextStyle(
+                  //                   fontSize: 13,
+                  //                   color: AppColors.grey,
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+
+                  // if (carInfo != null) const Divider(height: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (auctionStatus != null)
+                        _buildSheetTopContainer(
+                          label: 'Auction Status',
+                          value: auctionStatus,
+                          color: getxController.auctionStatusColor(
+                            auctionStatus,
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  carInfo['name'] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "FMV/PD: ₹${NumberFormat('#,##,###').format(carInfo['priceDiscovery'] ?? 0)}",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: AppColors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        ),
+                      if (highestBid != null)
+                        _buildSheetTopContainer(
+                          label: 'Highest Bid',
+                          value:
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(highestBid))}/-',
+                          color:
+                              highestBidColor == 'green'
+                                  ? AppColors.green
+                                  : AppColors.red,
+                        ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: const Text(
+                        "Your Previous Bids",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-
-                  if (carInfo != null) const Divider(height: 25),
-
-                  const Text(
-                    "Your Previous Bids",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const Divider(),
 
@@ -549,7 +595,8 @@ class MyBidsPage extends StatelessWidget {
                           ),
                           child: ListTile(
                             leading: const Icon(
-                              Icons.currency_rupee,
+                              // Icons.currency_rupee,
+                              Icons.gavel,
                               color: AppColors.green,
                             ),
                             title: Text(
@@ -574,6 +621,61 @@ class MyBidsPage extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  // Sheet top container
+  Widget _buildSheetTopContainer({
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    final card = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 10),
+          Text(
+            value,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: color,
+              letterSpacing: 0.2,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.grey,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Flexible(
+      fit: FlexFit.loose, // allows shrinking when space is tight
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 100, maxWidth: 150),
+        child: SizedBox(
+          width: 150, // preferred/initial width when space allows
+          child: card,
+        ),
+      ),
     );
   }
 }

@@ -11,6 +11,7 @@ class AppConstants {
   static final ImagesSectionIds imagesSectionIds = ImagesSectionIds();
   static final TabBarWidgetControllerTags tabBarWidgetControllerTags =
       TabBarWidgetControllerTags();
+  static final HomeScreenSections homeScreenSections = HomeScreenSections();
 
   static const List<String> indianStates = [
     "Andhra Pradesh",
@@ -142,6 +143,14 @@ class TabBarWidgetControllerTags {
   final String myCarsTabs = 'mycars_tabs';
 
   List<String> get all => [homeTabs, myCarsTabs];
+}
+
+// Home Screen Sections e.g. live, upcoming, otobuy, marketplace
+class HomeScreenSections {
+  final String liveBidsSectionScreen = 'live_bids';
+  final String upcomingSectionScreen = 'upcoming';
+  final String otobuySectionScreen = 'otobuy';
+  final String marketplaceSectionScreen = 'marketplace';
 }
 
 // Environments Configuration class
