@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
@@ -20,8 +19,8 @@ class SplashController extends GetxController {
     token = await SharedPrefsHelper.getString(SharedPrefsHelper.tokenKey);
     userType = await SharedPrefsHelper.getString(SharedPrefsHelper.userTypeKey);
 
-    debugPrint("token: $token");
-    debugPrint("userType: $userType");
+    // debugPrint("token: $token");
+    // debugPrint("userType: $userType");
 
     Future.delayed(const Duration(seconds: 3), () {
       if (token != null) {

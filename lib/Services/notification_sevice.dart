@@ -18,16 +18,6 @@ class NotificationService {
 
     // When a notification arrives in foreground: just show it
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {
-      // final n = event.notification;
-      // final reqId = n.additionalData?['requestId'];
-      // final ext = n.additionalData?['ext']; // "dev:<mongoId>"
-      // final env = n.additionalData?['env']; // "dev" | "prod"
-
-      // // Simple log (replace with your logger/analytics)
-      // debugPrint(
-      //   '[PushFG] id=${n.notificationId} requestId=$reqId env=$env ext=$ext title=${n.title}',
-      // );
-
       // Only call this if you want to stop the default auto-display:
       event.preventDefault();
 

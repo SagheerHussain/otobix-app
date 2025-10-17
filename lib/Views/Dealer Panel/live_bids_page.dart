@@ -11,6 +11,7 @@ import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
+import 'package:otobix/helpers/bid_color_change_helper.dart';
 import 'package:otobix/helpers/dealer_home_search_sort_filter_helper.dart';
 
 class LiveBidsPage extends StatelessWidget {
@@ -577,31 +578,42 @@ class LiveBidsPage extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Text(
-                  'Highest Bid: ',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.grey,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Obx(
-                  () => Text(
-                    // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.highestBid.value)}/-',
-                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(car.highestBid.value))}/-',
+            Obx(() {
+              // Resolve color:
+              final color = BidColorChangeHelper.getHighestBidColor(
+                currentUserId: getxController.currentUserId,
+                highestBidderUserId: getxController.highestBidders[car.id],
+                hasUserBid: getxController.carsUserHasBidOn.contains(car.id),
+                neutralColor: AppColors.black,
+                winningColor: AppColors.green,
+                losingColor: AppColors.red,
+              );
 
-                    key: ValueKey(car.highestBid.value),
+              return Row(
+                children: [
+                  Text(
+                    'Highest Bid: ',
                     style: const TextStyle(
                       fontSize: 14,
-                      color: AppColors.green,
+                      color: AppColors.grey,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-              ],
-            ),
+                  Obx(
+                    () => Text(
+                      'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(car.highestBid.value))}/-',
+
+                      key: ValueKey(car.highestBid.value),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: color,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }),
             // Text(
             //   'Fair Market Value: Rs. ${NumberFormat.decimalPattern('en_IN').format(car.priceDiscovery)}/-',
             //   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),

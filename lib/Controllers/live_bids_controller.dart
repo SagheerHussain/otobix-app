@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/cars_list_model.dart';
@@ -22,16 +23,26 @@ class LiveBidsController extends GetxController {
   final RxMap<String, RxString> remainingTimes = <String, RxString>{}.obs;
   final Map<String, Timer> _timers = {};
 
+  // Who is currently winning each car (already suggested)
+  final RxMap<String, String> highestBidders = <String, String>{}.obs;
+
+  // Set of cars the current user has *ever* bid on
+  final RxSet<String> carsUserHasBidOn = <String>{}.obs;
+
+  // Cache to avoid re-hitting the API for the same car again
+  final Map<String, bool> _userHasBidCache = <String, bool>{};
+
+  String? currentUserId;
+
   @override
   void onInit() async {
     super.onInit();
-
-    final userId =
+    currentUserId =
         await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
 
     // Fetch cars then wishlist, then apply hearts
     await fetchLiveBidsCarsList();
-    await _fetchAndApplyWishlist(userId: userId);
+    await _fetchAndApplyWishlist(userId: currentUserId!);
 
     // Listen to realtime wishlist updates
     _listenWishlistRealtime();
@@ -97,6 +108,8 @@ class LiveBidsController extends GetxController {
 
         filteredLiveBidsCarsList.assignAll(filtered);
 
+        await _seedParticipationForVisibleCars(filtered);
+
         // filteredLiveBidsCarsList.assignAll(
         //   liveBidsCarsList.where(
         //     (car) => car.auctionStatus == AppConstants.auctionStatuses.live,
@@ -144,11 +157,21 @@ class LiveBidsController extends GetxController {
     SocketService.instance.on(SocketEvents.bidUpdated, (data) {
       final String carId = data['carId'];
       final int highestBid = data['highestBid'];
+      final String? bidderId = data['userId']?.toString();
 
       final index = filteredLiveBidsCarsList.indexWhere((c) => c.id == carId);
       if (index != -1) {
         filteredLiveBidsCarsList[index].highestBid.value =
             highestBid.toDouble(); // ✅ this is the real-time field
+      }
+      // 🔹 Track who is now highest bidder
+      if (bidderId != null && bidderId.isNotEmpty) {
+        highestBidders[carId] = bidderId;
+
+        // 🔹 If it's the current user, mark that they have participated
+        if (currentUserId != null && bidderId == currentUserId) {
+          carsUserHasBidOn.add(carId);
+        }
       }
       debugPrint('📢 Bid update received: $data');
     });
@@ -335,6 +358,7 @@ class LiveBidsController extends GetxController {
           (c) => c.id == id,
         ); // simple & growable-safe
         _showLessRemainingTimeCarsOnTop();
+
         liveBidsCarsCount.value = filteredLiveBidsCarsList.length;
         return;
       }
@@ -352,11 +376,15 @@ class LiveBidsController extends GetxController {
         if (idx == -1) {
           // brand-new → add, then start its timer
           filteredLiveBidsCarsList.add(incoming);
+          // Seed participation for just this car (if not cached)
+          await _seedParticipationForVisibleCars([incoming]);
           // await startAuctionCountdown(incoming);
         } else {
           // existing → cancel old timer, replace model, restart timer
           // filteredLiveBidsCarsList[idx].auctionTimer?.cancel();
           filteredLiveBidsCarsList[idx] = incoming;
+          // Seed participation for just this car (if not cached)
+          await _seedParticipationForVisibleCars([incoming]);
           // await startAuctionCountdown(filteredLiveBidsCarsList[idx]);
         }
 
@@ -560,5 +588,63 @@ class LiveBidsController extends GetxController {
     filteredLiveBidsCarsList.sort(
       (a, b) => remaining(a).compareTo(remaining(b)),
     );
+  }
+
+  // Seed Participation For Visible Cars
+  Future<void> _seedParticipationForVisibleCars(
+    List<CarsListModel> cars,
+  ) async {
+    if ((currentUserId ?? '').isEmpty) return;
+
+    // Only check those we haven't cached yet
+    final idsToCheck = <String>[];
+    for (final c in cars) {
+      if (!_userHasBidCache.containsKey(c.id)) {
+        idsToCheck.add(c.id);
+      }
+    }
+    if (idsToCheck.isEmpty) return;
+
+    const int maxConcurrent = 6; // be nice to your API
+    for (int i = 0; i < idsToCheck.length; i += maxConcurrent) {
+      final chunk = idsToCheck.sublist(
+        i,
+        math.min(i + maxConcurrent, idsToCheck.length),
+      );
+      final results = await Future.wait(
+        chunk.map(
+          (id) => _checkHasUserBidFromBackend(carId: id, userId: currentUserId),
+        ),
+      );
+      for (int j = 0; j < chunk.length; j++) {
+        final id = chunk[j];
+        final has = results[j];
+        _userHasBidCache[id] = has; // memoize
+        if (has) carsUserHasBidOn.add(id); // drive UI color
+      }
+    }
+  }
+
+  /// Example backend checker (choose the API that matches your server)
+  Future<bool> _checkHasUserBidFromBackend({
+    required String carId,
+    required String? userId,
+  }) async {
+    if (userId == null) return false;
+
+    try {
+      final url = AppUrls.getUserBidsForCar(userId: userId, carId: carId);
+      final res = await ApiService.get(endpoint: url);
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        final List<dynamic> bids = data['bids'] ?? [];
+        return bids.isNotEmpty;
+      }
+
+      return false;
+    } catch (_) {
+      return false;
+    }
   }
 }

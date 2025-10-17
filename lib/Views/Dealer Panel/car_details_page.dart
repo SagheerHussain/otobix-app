@@ -712,14 +712,19 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
                   final isAnyoneHavePlacedBidYet =
                       (highestBid - baseBid).abs() > 0.01;
 
-                  final color = BidColorChangeHelper.getHighestBidColor(
-                    currentUserId: getxController.currentUserId,
-                    highestBidderUserId: getxController.latestHighestBidderId,
-                    hasUserBid: getxController.userHasBid,
-                    neutralColor: AppColors.black,
-                    winningColor: AppColors.green,
-                    losingColor: AppColors.red,
-                  );
+                  final color =
+                      widget.currentOpenSection ==
+                              homeController.otobuySectionScreen
+                          ? AppColors.green
+                          : BidColorChangeHelper.getHighestBidColor(
+                            currentUserId: getxController.currentUserId,
+                            highestBidderUserId:
+                                getxController.latestHighestBidderId,
+                            hasUserBid: getxController.userHasBid,
+                            neutralColor: AppColors.black,
+                            winningColor: AppColors.green,
+                            losingColor: AppColors.red,
+                          );
 
                   return Text(
                     // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(isAnyoneHavePlacedBidYet ? highestBidValue.value : 0)}/-',

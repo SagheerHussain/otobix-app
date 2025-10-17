@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Models/cars_list_model.dart';
@@ -22,15 +23,26 @@ class UpcomingController extends GetxController {
   final RxMap<String, RxString> remainingTimes = <String, RxString>{}.obs;
   final Map<String, Timer> _timers = {};
 
+  // Who is currently winning each car (already suggested)
+  final RxMap<String, String> highestBidders = <String, String>{}.obs;
+
+  // Set of cars the current user has *ever* bid on
+  final RxSet<String> carsUserHasBidOn = <String>{}.obs;
+
+  // Cache to avoid re-hitting the API for the same car again
+  final Map<String, bool> _userHasBidCache = <String, bool>{};
+
+  String? currentUserId;
+
   @override
   void onInit() async {
     super.onInit();
-    final userId =
+    currentUserId =
         await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey) ?? '';
 
     // Fetch cars then wishlist, then apply hearts
     await fetchUpcomingCarsList();
-    await _fetchAndApplyWishlist(userId: userId);
+    await _fetchAndApplyWishlist(userId: currentUserId!);
 
     // Listen to realtime wishlist updates
     _listenWishlistRealtime();
@@ -66,6 +78,10 @@ class UpcomingController extends GetxController {
               return car.upcomingUntil != null &&
                   car.upcomingUntil!.isAfter(currentTime);
             }).toList();
+
+        await _seedParticipationForVisibleCars(
+          filteredUpcomingCarsList.toList(),
+        );
 
         upcomingCarsCount.value = filteredUpcomingCarsList.length;
 
@@ -343,9 +359,13 @@ class UpcomingController extends GetxController {
         final idx = filteredUpcomingCarsList.indexWhere((c) => c.id == id);
         if (idx == -1) {
           filteredUpcomingCarsList.add(incoming);
+          // Seed participation for just this car (if not cached)
+          await _seedParticipationForVisibleCars([incoming]);
         } else {
           // replace model (no model timers to cancel anymore)
           filteredUpcomingCarsList[idx] = incoming;
+          // Seed participation for just this car (if not cached)
+          await _seedParticipationForVisibleCars([incoming]);
         }
 
         // refresh all timers via the single entry-point
@@ -363,14 +383,82 @@ class UpcomingController extends GetxController {
     SocketService.instance.on(SocketEvents.bidUpdated, (data) {
       final String carId = data['carId'];
       final int highestBid = data['highestBid'];
+      final String? bidderId = data['userId']?.toString();
 
       final index = filteredUpcomingCarsList.indexWhere((c) => c.id == carId);
       if (index != -1) {
         filteredUpcomingCarsList[index].highestBid.value =
             highestBid.toDouble(); // ✅ this is the real-time field
       }
+      // 🔹 Track who is now highest bidder
+      if (bidderId != null && bidderId.isNotEmpty) {
+        highestBidders[carId] = bidderId;
+
+        // 🔹 If it's the current user, mark that they have participated
+        if (currentUserId != null && bidderId == currentUserId) {
+          carsUserHasBidOn.add(carId);
+        }
+      }
       debugPrint('📢 Bid update received: $data');
     });
+  }
+
+  //  Seed Participation For Visible Cars
+  Future<void> _seedParticipationForVisibleCars(
+    List<CarsListModel> cars,
+  ) async {
+    if ((currentUserId ?? '').isEmpty) return;
+
+    // Only check those we haven't cached yet
+    final idsToCheck = <String>[];
+    for (final c in cars) {
+      if (!_userHasBidCache.containsKey(c.id)) {
+        idsToCheck.add(c.id);
+      }
+    }
+    if (idsToCheck.isEmpty) return;
+
+    const int maxConcurrent = 6; // be nice to your API
+    for (int i = 0; i < idsToCheck.length; i += maxConcurrent) {
+      final chunk = idsToCheck.sublist(
+        i,
+        math.min(i + maxConcurrent, idsToCheck.length),
+      );
+      final results = await Future.wait(
+        chunk.map(
+          (id) => _checkHasUserBidFromBackend(carId: id, userId: currentUserId),
+        ),
+      );
+      for (int j = 0; j < chunk.length; j++) {
+        final id = chunk[j];
+        final has = results[j];
+        _userHasBidCache[id] = has; // memoize
+        if (has) carsUserHasBidOn.add(id); // drive UI color
+      }
+    }
+  }
+
+  /// Example backend checker (choose the API that matches your server)
+  Future<bool> _checkHasUserBidFromBackend({
+    required String carId,
+    required String? userId,
+  }) async {
+    if (userId == null) return false;
+
+    try {
+      final url = AppUrls.getUserBidsForCar(userId: userId, carId: carId);
+      final res = await ApiService.get(endpoint: url);
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        final List<dynamic> bids = data['bids'] ?? [];
+        return bids.isNotEmpty;
+      }
+
+      return false;
+    } catch (_) {
+      return false;
+    }
   }
 
   @override
