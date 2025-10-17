@@ -9,6 +9,7 @@ import 'package:otobix/Models/car_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Utils/socket_events.dart';
 import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
@@ -405,6 +406,8 @@ class CarDetailsController extends GetxController {
           'carId': carId,
           'newBidAmount': newBidAmount,
           'userId': currentUserId,
+          'auctionSection':
+              AppConstants.homeScreenSections.liveBidsSectionScreen,
         },
       );
 
@@ -464,6 +467,8 @@ class CarDetailsController extends GetxController {
           'userId': userId,
           'autoBidAmount': maxAmount,
           'increment': increment,
+          'auctionSection':
+              AppConstants.homeScreenSections.liveBidsSectionScreen,
         },
       );
 
@@ -508,6 +513,8 @@ class CarDetailsController extends GetxController {
           'carId': carId,
           'newBidAmount': newBidAmount,
           'userId': currentUserId,
+          'auctionSection':
+              AppConstants.homeScreenSections.upcomingSectionScreen,
         },
       );
 
@@ -571,6 +578,8 @@ class CarDetailsController extends GetxController {
           'userId': userId,
           'autoBidAmount': maxAmount,
           'increment': increment,
+          'auctionSection':
+              AppConstants.homeScreenSections.upcomingSectionScreen,
         },
       );
 

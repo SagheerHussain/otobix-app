@@ -1,16 +1,13 @@
 // lib/Services/notification_router.dart
 import 'dart:convert';
-
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/live_bids_controller.dart';
 import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Services/auction_countdown_for_notification_car.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Dealer%20Panel/car_details_page.dart';
-import 'package:otobix/Views/splash/splash_screen.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 // Notification Routes
@@ -44,7 +41,8 @@ class NotificationRouter {
 
     push() {
       if (page == null) {
-        Get.to(() => SplashScreen());
+        // Get.to(() => SplashScreen());
+        return;
       } else if (replacePreviousScreens) {
         Get.offAll(() => page);
       } else {
@@ -67,8 +65,8 @@ class NotificationRouter {
       return _buildCarDetailsFromParams(navigateToScreen, parametersForScreen);
     }
 
-    // Default fallback to return open splash screen (in case of error)
-    return SplashScreen();
+    // Default fallback
+    return null;
   }
 
   // ---------- Helpers ----------
