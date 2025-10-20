@@ -59,7 +59,7 @@ class ForgetPasswordPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(AppImages.forgetPasswordPageOneImage, width: 250),
+              Image.asset(AppImages.forgetPasswordPageOneImage, width: 150),
               const SizedBox(height: 15),
               const Text(
                 'Enter your phone number',
@@ -73,8 +73,8 @@ class ForgetPasswordPage extends StatelessWidget {
                 isLoading: forgetPasswordController.isSendOtpLoading,
                 onPressed: () {
                   forgetPasswordController.unfocusKeyBoardOnApiCall();
-                  // forgetPasswordController.sendOTP();
-                  forgetPasswordController.goToPage(1);
+                  forgetPasswordController.sendOTP();
+                  // forgetPasswordController.goToPage(1);
                 },
               ),
               const SizedBox(height: 30),
@@ -115,8 +115,8 @@ class ForgetPasswordPage extends StatelessWidget {
                 label: 'Verify OTP',
                 onPressed: () {
                   forgetPasswordController.unfocusKeyBoardOnApiCall();
-                  // forgetPasswordController.verifyOtp();
-                  forgetPasswordController.goToPage(2);
+                  forgetPasswordController.verifyOtp();
+                  // forgetPasswordController.goToPage(2);
                 },
                 isLoading: forgetPasswordController.isVerifyOtpLoading,
               ),
