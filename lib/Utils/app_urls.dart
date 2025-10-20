@@ -24,6 +24,8 @@ class AppUrls {
 
   static String get register => "${baseUrl}user/register";
 
+  static String get setNewPassword => "${baseUrl}user/set-new-password";
+
   static String get allUsersList => "${baseUrl}user/all-users-list";
 
   static String get approvedUsersList => "${baseUrl}user/approved-users-list";

@@ -209,7 +209,7 @@ class RegistrationFormController extends GetxController {
           title: "registered successfully!",
           type: ToastType.success,
         );
-        Get.to(() => LoginPage());
+        Get.offAll(() => LoginPage());
         // Optional if want to navigate to waiting page
         // final chosen = selectedEntityType ?? '';
         // final docs = chosen.isNotEmpty ? await _fetchEntityDocuments(chosen) : const <String>[];
@@ -251,25 +251,25 @@ class RegistrationFormController extends GetxController {
     }
   }
 
-  Future<void> dummySubmitForm({required String userRole}) async {
-    try {
-      isLoading.value = true;
-      await Future.delayed(const Duration(seconds: 2));
-      final docs = await _fetchEntityDocuments(selectedEntityType ?? '');
-      Get.to(
-        () => WaitingForApprovalPage(
-          // documents:  entityDocuments[selectedEntityType ?? 'Individual'] ??
-          //   entityDocuments['Individual']!,
-          documents: docs,
-          userRole: userRole,
-        ),
-      );
-    } catch (e) {
-      debugPrint(e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  // Future<void> dummySubmitForm({required String userRole}) async {
+  //   try {
+  //     isLoading.value = true;
+  //     await Future.delayed(const Duration(seconds: 2));
+  //     final docs = await _fetchEntityDocuments(selectedEntityType ?? '');
+  //     Get.to(
+  //       () => WaitingForApprovalPage(
+  //         // documents:  entityDocuments[selectedEntityType ?? 'Individual'] ??
+  //         //   entityDocuments['Individual']!,
+  //         documents: docs,
+  //         userRole: userRole,
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     debugPrint(e.toString());
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   Future<bool> validateUsername() async {
     String userName = dealerNameController.text.trim();

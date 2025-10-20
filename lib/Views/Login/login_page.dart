@@ -4,6 +4,7 @@ import 'package:otobix/Controllers/register_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
 import 'package:get/get.dart';
+import 'package:otobix/Views/Dealer%20Panel/forget_password_page.dart';
 import 'package:otobix/Views/Register/register_page.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 
@@ -28,9 +29,9 @@ class LoginPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _buildAppLogo(),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
                     _buildSignInText(),
-                    SizedBox(height: 40),
+                    SizedBox(height: 30),
                     _buildCustomTextField(
                       icon: Icons.person,
                       label: 'User Name / User ID',
@@ -39,6 +40,7 @@ class LoginPage extends StatelessWidget {
                       keyboardType: TextInputType.text,
                       isRequired: true,
                     ),
+                    SizedBox(height: 15),
                     _buildCustomTextField(
                       icon: Icons.lock,
                       label: 'Password',
@@ -48,6 +50,7 @@ class LoginPage extends StatelessWidget {
                       isRequired: true,
                       isPasswordField: true,
                     ),
+                    SizedBox(height: 15),
                     _buildCustomTextField(
                       label: 'Contact Number',
                       controller: getxController.phoneNumberController,
@@ -63,6 +66,8 @@ class LoginPage extends StatelessWidget {
                       },
                     ),
                     SizedBox(height: 10),
+                    _buildForgetPasswordButton(),
+                    SizedBox(height: 15),
                     _buildContinueButton(context),
                     SizedBox(height: 50),
                     Row(
@@ -169,7 +174,8 @@ class LoginPage extends StatelessWidget {
 
       // Contact number specific
       if (label == "Contact Number" && text.isNotEmpty) {
-        if (!RegExp(r'^[0-9]{10}$').hasMatch(text)) {
+        // if (!RegExp(r'^[0-9]{10}$').hasMatch(text)) {
+        if (!RegExp(r'^[6-9]\d{9}$').hasMatch(text)) {
           return "Enter a valid 10-digit phone number";
         }
       }
@@ -307,8 +313,27 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-        SizedBox(height: 15),
+        // SizedBox(height: 15),
       ],
+    );
+  }
+
+  // Forget Password Button
+  Widget _buildForgetPasswordButton() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 8.0),
+        child: GestureDetector(
+          onTap: () {
+            Get.to(() => ForgetPasswordPage());
+          },
+          child: Text(
+            'Forgot Password?',
+            style: TextStyle(color: AppColors.red, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
     );
   }
 

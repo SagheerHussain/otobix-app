@@ -145,62 +145,62 @@ class RegisterController extends GetxController {
   }
 
   // Dummy send OTP
-  Future<void> dummySendOtp({required String phoneNumber}) async {
-    isLoading.value = true;
-    // debugPrint("Sending OTP to $phoneNumber");
-    try {
-      if (selectedRole.value.isEmpty) {
-        //   ToastWidget.show(
-        //     context: Get.context!,
-        //     title: "Please select a role",
-        //     type: ToastType.error,
-        //   );
-        //   return;
-        selectedRole.value = AppConstants.roles.dealer;
-      }
+  // Future<void> dummySendOtp({required String phoneNumber}) async {
+  //   isLoading.value = true;
+  //   // debugPrint("Sending OTP to $phoneNumber");
+  //   try {
+  //     if (selectedRole.value.isEmpty) {
+  //       //   ToastWidget.show(
+  //       //     context: Get.context!,
+  //       //     title: "Please select a role",
+  //       //     type: ToastType.error,
+  //       //   );
+  //       //   return;
+  //       selectedRole.value = AppConstants.roles.dealer;
+  //     }
 
-      // For indian numbers only
-      final RegExp indianRegex = RegExp(r'^[6-9]\d{9}$');
+  //     // For indian numbers only
+  //     final RegExp indianRegex = RegExp(r'^[6-9]\d{9}$');
 
-      // For both pak and indian numbers
-      // final RegExp pakIndiaRegex = RegExp(r'^[3-9]\d{9}$');
+  //     // For both pak and indian numbers
+  //     // final RegExp pakIndiaRegex = RegExp(r'^[3-9]\d{9}$');
 
-      if (!indianRegex.hasMatch(phoneNumber)) {
-        ToastWidget.show(
-          context: Get.context!,
-          title: "Invalid mobile number",
-          subtitle: "Please enter a valid mobile number (starts with 6-9)",
-          type: ToastType.error,
-        );
-        return;
-      }
+  //     if (!indianRegex.hasMatch(phoneNumber)) {
+  //       ToastWidget.show(
+  //         context: Get.context!,
+  //         title: "Invalid mobile number",
+  //         subtitle: "Please enter a valid mobile number (starts with 6-9)",
+  //         type: ToastType.error,
+  //       );
+  //       return;
+  //     }
 
-      await Future.delayed(const Duration(seconds: 2), () {
-        Get.to(
-          () => RegisterPinCodePage(
-            phoneNumber: phoneNumber,
-            userRole: selectedRole.value,
-            requestId: "",
-          ),
-        );
-      });
-      debugPrint("OTP Sent Successfully (Dummy) $phoneNumber $selectedRole");
-      ToastWidget.show(
-        context: Get.context!,
-        title: "OTP Sent Successfully (Dummy)",
-        type: ToastType.success,
-      );
-    } catch (e) {
-      debugPrint(e.toString());
-      ToastWidget.show(
-        context: Get.context!,
-        title: "Failed to send OTP",
-        type: ToastType.error,
-      );
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  //     await Future.delayed(const Duration(seconds: 2), () {
+  //       Get.to(
+  //         () => RegisterPinCodePage(
+  //           phoneNumber: phoneNumber,
+  //           userRole: selectedRole.value,
+  //           requestId: "",
+  //         ),
+  //       );
+  //     });
+  //     debugPrint("OTP Sent Successfully (Dummy) $phoneNumber $selectedRole");
+  //     ToastWidget.show(
+  //       context: Get.context!,
+  //       title: "OTP Sent Successfully (Dummy)",
+  //       type: ToastType.success,
+  //     );
+  //   } catch (e) {
+  //     debugPrint(e.toString());
+  //     ToastWidget.show(
+  //       context: Get.context!,
+  //       title: "Failed to send OTP",
+  //       type: ToastType.error,
+  //     );
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   // Clear fields
   void clearFields() {

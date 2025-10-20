@@ -87,20 +87,20 @@ class RegisterPinCodeController extends GetxController {
     }
   }
 
-  // Dummy verify OTP
-  Future<void> dummyVerifyOtp({
-    required String phoneNumber,
-    required String otp,
-    required String userType,
-  }) async {
-    ToastWidget.show(
-      context: Get.context!,
-      title: "OTP Verified Successfully",
-      type: ToastType.success,
-    );
-    Get.delete<RegistrationFormController>();
-    Get.to(
-      () => RegistrationFormPage(userRole: userType, phoneNumber: phoneNumber),
-    );
-  }
+  // // Dummy verify OTP
+  // Future<void> dummyVerifyOtp({
+  //   required String phoneNumber,
+  //   required String otp,
+  //   required String userType,
+  // }) async {
+  //   ToastWidget.show(
+  //     context: Get.context!,
+  //     title: "OTP Verified Successfully",
+  //     type: ToastType.success,
+  //   );
+  //   Get.delete<RegistrationFormController>();
+  //   Get.to(
+  //     () => RegistrationFormPage(userRole: userType, phoneNumber: phoneNumber),
+  //   );
+  // }
 }
