@@ -104,21 +104,21 @@ class CustomerHomepage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Car image placeholder
-            Container(
-              height: 90,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
-                color: Colors.grey,
-              ),
-              child: Center(
-                child: Image.asset(
-                  AppImages.hondaCity1,
-                  height: 90,
-                  width: 200,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+            // Container(
+            //   height: 90,
+            //   decoration: const BoxDecoration(
+            //     borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+            //     color: Colors.grey,
+            //   ),
+            //   child: Center(
+            //     child: Image.asset(
+            //       AppImages.hondaCity1,
+            //       height: 90,
+            //       width: 200,
+            //       fit: BoxFit.cover,
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
