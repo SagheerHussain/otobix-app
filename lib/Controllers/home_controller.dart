@@ -31,7 +31,8 @@ class HomeController extends GetxController {
   TextEditingController searchStateController = TextEditingController();
 
   // Screen types
-  final String liveBidsSectionScreen = 'live_bids';
+  // final String liveBidsSectionScreen = 'live_bids';
+  final String liveBidsSectionScreen = 'live';
   final String upcomingSectionScreen = 'upcoming';
   final String otobuySectionScreen = 'otobuy';
   final String marketplaceSectionScreen = 'marketplace';
