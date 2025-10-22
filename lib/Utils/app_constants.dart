@@ -147,7 +147,8 @@ class TabBarWidgetControllerTags {
 
 // Home Screen Sections e.g. live, upcoming, otobuy, marketplace
 class HomeScreenSections {
-  final String liveBidsSectionScreen = 'live_bids';
+  // final String liveBidsSectionScreen = 'live_bids';
+  final String liveBidsSectionScreen = 'live';
   final String upcomingSectionScreen = 'upcoming';
   final String otobuySectionScreen = 'otobuy';
   final String marketplaceSectionScreen = 'marketplace';
