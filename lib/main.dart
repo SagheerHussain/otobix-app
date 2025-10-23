@@ -14,13 +14,13 @@ void main() async {
   Get.config(enableLog: false);
   WidgetsFlutterBinding.ensureInitialized();
 
-  debugPrint('>>> BEFORE Firebase.init');
+  // debugPrint('>>> BEFORE Firebase.init');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  debugPrint('>>> AFTER Firebase.init');
+  // debugPrint('>>> AFTER Firebase.init');
 
-  debugPrint('>>> BEFORE OneSignal.init');
+  // debugPrint('>>> BEFORE OneSignal.init');
   await NotificationService.instance.init();
-  debugPrint('>>> AFTER OneSignal.init');
+  // debugPrint('>>> AFTER OneSignal.init');
 
   await SharedPrefsHelper.init();
 
