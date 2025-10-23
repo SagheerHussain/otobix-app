@@ -13,6 +13,10 @@ class NotificationService {
   Future<void> init() async {
     if (_inited) return;
 
+    // before initialize():
+    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+    debugPrint('OneSignal App ID: ${AppConstants.oneSignalAppId}');
+
     OneSignal.initialize(AppConstants.oneSignalAppId); // start SDK
     await OneSignal.Notifications.requestPermission(true); // show OS prompt
 

@@ -13,9 +13,14 @@ import 'package:otobix/helpers/shared_prefs_helper.dart';
 void main() async {
   Get.config(enableLog: false);
   WidgetsFlutterBinding.ensureInitialized();
+
+  debugPrint('>>> BEFORE Firebase.init');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // init OneSignal
+  debugPrint('>>> AFTER Firebase.init');
+
+  debugPrint('>>> BEFORE OneSignal.init');
   await NotificationService.instance.init();
+  debugPrint('>>> AFTER OneSignal.init');
 
   await SharedPrefsHelper.init();
 
