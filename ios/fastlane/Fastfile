@@ -1,41 +1,87 @@
 default_platform(:ios)
 
 platform :ios do
-  lane :codesign_setup do
-    # One-time bootstrap to create and upload certs/profiles to the ios_signing branch
+  desc "CI: install signing, build IPA with Flutter, upload to TestFlight"
+  lane :ci do
+    api_key_path = ENV['ASC_API_KEY_PATH'] || "fastlane/api_key.json"
+    UI.user_error!("ASC_API_KEY_PATH not found: #{api_key_path}") unless File.exist?(api_key_path)
+
+    # Install/renew signing from your signing repo (branch ios_signing)
     match(
       type: "appstore",
-      git_url: "https://github.com/SagheerHussain/otobix-app.git",              # we'll set in CI; locally you can hardcode too
-      git_branch: "ios_signing",
-      api_key_path: "fastlane/asc_api_key_json_for_github_actions.json",
-      team_id: "734JT7MU9R",             # or hardcode your team
-      readonly: false
+      app_identifier: ENV['IOS_BUNDLE_ID'],
+      git_url: ENV['MATCH_GIT_URL'],
+      git_branch: ENV['MATCH_GIT_BRANCH'] || "ios_signing",
+      api_key_path: api_key_path,
+      readonly: false,                          # allow auto-renewals in CI
+      keychain_name: "build.keychain",
+      keychain_password: ENV['CI_KEYCHAIN_PASSWORD']
     )
-  end
 
-  lane :codesign do
-    # CI/read-only usage (downloads profiles/certs created above)
-    match(
-      type: "appstore",
-      git_url: "https://github.com/SagheerHussain/otobix-app.git",
-      git_branch: "ios_signing",
-      api_key_path: "fastlane/asc_api_key_json_for_github_actions.json",
-      readonly: true
+    # Ensure build number always increases for App Store
+    # (We run inside ios/, so Info.plist is at Runner/Info.plist)
+    build_no = ENV['GITHUB_RUN_NUMBER'] || Time.now.to_i.to_s
+    sh(%Q{/usr/libexec/PlistBuddy -c "Set :CFBundleVersion #{build_no}" "Runner/Info.plist"})
+
+    # Build the IPA via Flutter (Xcode uses the cert/profile installed by match)
+    sh("flutter build ipa --release")
+
+    # Find the produced IPA
+    ipa_files = Dir["../build/ios/ipa/*.ipa"]
+    UI.user_error!("No IPA found at ../build/ios/ipa") if ipa_files.empty?
+    ipa_path = ipa_files.sort_by { |f| File.mtime(f) }.last
+    UI.message("IPA: #{ipa_path}")
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      api_key_path: api_key_path,
+      ipa: ipa_path,
+      skip_waiting_for_build_processing: true,
+      distribute_external: true,
+      uses_non_exempt_encryption: false
     )
-  end
-
-  lane :build do
-    # typical build lane (optional)
-    gym(
-      workspace: "Runner.xcworkspace",
-      scheme: "Runner",
-      configuration: "Release",
-      export_method: "app-store"
-    )
-  end
-
-  lane :release do
-    # upload to TestFlight (optional)
-    pilot(api_key_path: "fastlane/asc_api_key_json_for_github_actions.json")
   end
 end
+
+
+# default_platform(:ios)
+
+# platform :ios do
+#   lane :codesign_setup do
+#     # One-time bootstrap to create and upload certs/profiles to the ios_signing branch
+#     match(
+#       type: "appstore",
+#       git_url: "https://github.com/SagheerHussain/otobix-app.git",              # we'll set in CI; locally you can hardcode too
+#       git_branch: "ios_signing",
+#       api_key_path: "fastlane/asc_api_key_json_for_github_actions.json",
+#       team_id: "734JT7MU9R",             # or hardcode your team
+#       readonly: false
+#     )
+#   end
+
+#   lane :codesign do
+#     # CI/read-only usage (downloads profiles/certs created above)
+#     match(
+#       type: "appstore",
+#       git_url: "https://github.com/SagheerHussain/otobix-app.git",
+#       git_branch: "ios_signing",
+#       api_key_path: "fastlane/asc_api_key_json_for_github_actions.json",
+#       readonly: true
+#     )
+#   end
+
+#   lane :build do
+#     # typical build lane (optional)
+#     gym(
+#       workspace: "Runner.xcworkspace",
+#       scheme: "Runner",
+#       configuration: "Release",
+#       export_method: "app-store"
+#     )
+#   end
+
+#   lane :release do
+#     # upload to TestFlight (optional)
+#     pilot(api_key_path: "fastlane/asc_api_key_json_for_github_actions.json")
+#   end
+# end
