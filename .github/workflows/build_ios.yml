@@ -1,137 +1,128 @@
 # # .github/workflows/build_ios.yml
 
-name: Deploy on App Store
-
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch: # optional: lets you trigger manually
-
-jobs:
-  test-ios:
-    name: Simulate iOS Build
-    runs-on: macos-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Print Test Message
-        run: echo "✅ iOS workflow triggered successfully! (No build yet)"
-
-
-# name: Deploy on App Store
+# name: Deploy iOS App to App Store
 
 # on:
 #   push:
 #     branches:
 #       - main
 #       # - development
+#   workflow_dispatch:
+
+# env:
+#   APP_IDENTIFIER: com.otobix.auctionapp         # <-- your bundle id
+#   IOS_SCHEME: Runner                            # <-- your Xcode scheme (Flutter default)
+#   IOS_WORKSPACE: ios/Runner.xcworkspace         # Flutter uses workspace
+#   IOS_CONFIGURATION: Release
+#   APPLE_TEAM_ID: YOUR_TEAM_ID                   # <-- e.g. 1A2BC3D4EF (put real value)
+#   MATCH_GIT_URL: ${{ github.server_url }}/${{ github.repository }} # same repo
+#   MATCH_GIT_BRANCH: ios_signing
 
 # jobs:
-#   build-android:
-#     name: Build Android APK
-#     runs-on: ubuntu-latest
+#   build-and-upload-ios:
+#     name: Build & Upload to TestFlight
+#     runs-on: macos-latest
+#     timeout-minutes: 60
+
 #     steps:
-#       # Checkout code
-#       - uses: actions/checkout@v4
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0  # match needs full history/branches
+
+#       # Setup Ruby (for fastlane) with caching
+#       - name: Setup Ruby
+#         uses: ruby/setup-ruby@v1
+#         with:
+#           ruby-version: '3.2'
+#           bundler-cache: true
+
+#       - name: Install Fastlane
+#         run: |
+#           gem install fastlane --no-document
 
 #       # Setup Flutter
-#       - uses: subosito/flutter-action@v2
+#       - name: Setup Flutter
+#         uses: subosito/flutter-action@v2
 #         with:
-#           flutter-version: "3.35.2" # change to your version
+#           flutter-version: "3.35.2"
 
-#       # Install dependencies
-#       - run: flutter pub get
+#       - name: Flutter pub get
+#         run: flutter pub get
 
-#       # Decode keystore from secret
-#       - name: Decode Keystore
+#       # CocoaPods cache speeds up iOS builds
+#       - name: Cache CocoaPods
+#         uses: actions/cache@v4
+#         with:
+#           path: |
+#             ios/Pods
+#             ~/Library/Caches/CocoaPods
+#             ~/.cocoapods
+#           key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+#           restore-keys: |
+#             ${{ runner.os }}-pods-
+
+#       - name: Install CocoaPods
+#         working-directory: ios
+#         run: pod install --repo-update
+
+#       # Write App Store Connect API key file used by fastlane (pilot/deliver)
+#       - name: Create ASC API key file
 #         run: |
-#           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
-#           cat > android/key.properties <<EOL
-#           storePassword=${{ secrets.KEYSTORE_PASSWORD }}
-#           keyPassword=${{ secrets.KEY_PASSWORD }}
-#           keyAlias=${{ secrets.KEY_ALIAS }}
-#           storeFile=upload-keystore.jks
-#           EOL
+#           echo '${{ secrets.ASC_API_KEY_JSON }}' > fastlane_api_key.json
 
-#       # Build signed App Bundle
-#       - run: flutter build appbundle --release
+#       # Configure keychain for code signing (used by match to import certs/profiles)
+#       - name: Create CI keychain
+#         run: |
+#           security create-keychain -p "${{ secrets.CI_KEYCHAIN_PASSWORD }}" build.keychain
+#           security set-keychain-settings -lut 21600 build.keychain
+#           security unlock-keychain -p "${{ secrets.CI_KEYCHAIN_PASSWORD }}" build.keychain
+#           security list-keychains -d user -s build.keychain $(security list-keychains -d user | sed 's/[",]//g')
+#           security default-keychain -s build.keychain
 
-#  # Upload AAB artifact so deploy job can use it
-#       - uses: actions/upload-artifact@v4
-#         with:
-#           name: release-aab
-#           path: build/app/outputs/bundle/release/app-release.aab
+#       # Pull certs & provisioning profiles from the ios_signing branch via fastlane match
+#       - name: Fetch signing assets with match (appstore)
+#         env:
+#           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+#         run: |
+#           fastlane run match \
+#             type:appstore \
+#             app_identifier:$APP_IDENTIFIER \
+#             readonly:true \
+#             git_url:$MATCH_GIT_URL \
+#             git_branch:$MATCH_GIT_BRANCH \
+#             keychain_name:build.keychain \
+#             keychain_password:${{ secrets.CI_KEYCHAIN_PASSWORD }}
 
-#   deploy-android:
-#     name: Deploy Android App to Play Store
-#     needs: build-android
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
+#       # Build a signed IPA (Flutter -> Xcode)
+#       - name: Build signed IPA
+#         env:
+#           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/fastlane_api_key.json
+#         run: |
+#           # Ensure Xcode uses correct team and signing style (project should already be set)
+#           # Build IPA with Flutter (codesigning handled by Xcode using matched profiles)
+#           flutter build ipa --release
 
-#  # Download the .aab from build job
-#       - uses: actions/download-artifact@v4
-#         with:
-#           name: release-aab
-#           path: build/app/outputs/bundle/release/
+#       # Upload to TestFlight using fastlane pilot
+#       - name: Upload to TestFlight
+#         run: |
+#           IPA_PATH=$(ls -t build/ios/ipa/*.ipa | head -n 1)
+#           echo "Uploading $IPA_PATH to TestFlight…"
+#           fastlane pilot upload \
+#             --api_key_path fastlane_api_key.json \
+#             --ipa "$IPA_PATH" \
+#             --skip_waiting_for_build_processing true \
+#             --distribute_external true \
+#             --uses_non_exempt_encryption false
 
-#       # Deploy to Play Store
-#       - uses: r0adkll/upload-google-play@v1
-#         with:
-#           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}
-#           packageName: com.otobix.auctionapp
-#           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-#           track: internal   # can be internal, alpha, beta, production
-#           status: completed
-
-#   # build-ios:
-#   #   name: Build iOS IPA
-#   #   runs-on: macos-latest
-#   #   steps:
-#   #     - uses: actions/checkout@v4
-
-#   #     - name: Setup Flutter
-#   #     - uses: subosito/flutter-action@v2
-#   #       with:
-#   #         flutter-version: "3.35.2"
-
-#   #     - name: Install dependencies
-#   #       run: flutter pub get
-
-#   #     # Build iOS IPA (no signing yet, just simulator build)
-#   #     - name: Build iOS (no codesign)
-#   #       run: flutter build ios --release --no-codesign
-
-#   #     - uses: actions/upload-artifact@v4
-#   #       with:
-#   #         name: ios-ipa
-#   #         path: build/ios/iphoneos
-
-#   # deploy-ios:
-#   #   name: Deploy iOS to TestFlight
-#   #   needs: build-ios
-#   #   runs-on: macos-latest
-#   #   steps:
-#   #     - uses: actions/checkout@v4
-#   #     - uses: actions/download-artifact@v4
-#   #       with:
-#   #         name: ios-ipa
-#   #         path: build/ios/iphoneos
-
-#   #     # Install fastlane
-#   #     - name: Setup Fastlane
-#   #       run: sudo gem install fastlane -NV
-
-#   #     # Upload to TestFlight
-#   #     - name: Upload to TestFlight
-#   #       env:
-#   #         APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-#   #         APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-#   #         APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APPSTORE_KEY_CONTENT }}
-#   #       run: |
-#   #         cd ios
-#   #         fastlane pilot upload \
-#   #           --api_key_path <(echo "{\"key_id\":\"$APP_STORE_CONNECT_API_KEY_ID\",\"issuer_id\":\"$APP_STORE_CONNECT_ISSUER_ID\",\"key\":\"$APP_STORE_CONNECT_KEY_CONTENT\",\"in_house\":false}") \
-#   #           --ipa ../build/ios/iphoneos/Runner.ipa
+#     #  When deploy for production then uncomment this and comment out above upload to testflight using fastlane pilot thing
+#       # - name: Upload to App Store (submit for review)
+#       #   run: |
+#       #     IPA_PATH=$(ls -t build/ios/ipa/*.ipa | head -n 1)
+#       #     fastlane deliver \
+#       #       --api_key_path fastlane_api_key.json \
+#       #       --ipa "$IPA_PATH" \
+#       #       --submit_for_review true \
+#       #       --automatic_release true \
+#       #       --skip_screenshots true \
+#       #       --skip_metadata true
