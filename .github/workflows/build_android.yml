@@ -1,7 +1,6 @@
 # .github/workflows/build_android.yml
 
-# name: Flutter Build APK & IPA
-name: Deploy on Play Store
+name: Deploy Android App to Play Store
 
 on:
   push:
@@ -66,53 +65,3 @@ jobs:
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: internal   # can be internal, alpha, beta, production
           status: completed
-
-  # build-ios:
-  #   name: Build iOS IPA
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: Setup Flutter
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         flutter-version: "3.35.2"
-
-  #     - name: Install dependencies
-  #       run: flutter pub get
-
-  #     # Build iOS IPA (no signing yet, just simulator build)
-  #     - name: Build iOS (no codesign)
-  #       run: flutter build ios --release --no-codesign
-
-  #     - uses: actions/upload-artifact@v4
-  #       with:
-  #         name: ios-ipa
-  #         path: build/ios/iphoneos
-
-  # deploy-ios:
-  #   name: Deploy iOS to TestFlight
-  #   needs: build-ios
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/download-artifact@v4
-  #       with:
-  #         name: ios-ipa
-  #         path: build/ios/iphoneos
-
-  #     # Install fastlane
-  #     - name: Setup Fastlane
-  #       run: sudo gem install fastlane -NV
-
-  #     # Upload to TestFlight
-  #     - name: Upload to TestFlight
-  #       env:
-  #         APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-  #         APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-  #         APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APPSTORE_KEY_CONTENT }}
-  #       run: |
-  #         cd ios
-  #         fastlane pilot upload \
-  #           --api_key_path <(echo "{\"key_id\":\"$APP_STORE_CONNECT_API_KEY_ID\",\"issuer_id\":\"$APP_STORE_CONNECT_ISSUER_ID\",\"key\":\"$APP_STORE_CONNECT_KEY_CONTENT\",\"in_house\":false}") \
-  #           --ipa ../build/ios/iphoneos/Runner.ipa
