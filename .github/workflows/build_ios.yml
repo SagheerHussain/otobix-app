@@ -15,7 +15,8 @@ env:
   IOS_WORKSPACE: ios/Runner.xcworkspace         # Flutter uses workspace
   IOS_CONFIGURATION: Release
   APPLE_TEAM_ID: 734JT7MU9R                   # <-- e.g. 1A2BC3D4EF (put real value)
-  MATCH_GIT_URL: ${{ github.server_url }}/${{ github.repository }} # same repo
+  # MATCH_GIT_URL: ${{ github.server_url }}/${{ github.repository }} # same repo
+  MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }} # same repo
   MATCH_GIT_BRANCH: ios_signing
 
 jobs:
@@ -88,7 +89,7 @@ jobs:
           fastlane run match \
             type:appstore \
             app_identifier:$APP_IDENTIFIER \
-            readonly:true \
+            readonly:false \
             git_url:$MATCH_GIT_URL \
             git_branch:$MATCH_GIT_BRANCH \
             keychain_name:build.keychain \
