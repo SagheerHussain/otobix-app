@@ -1,4 +1,7 @@
-name: Flutter Build APK & IPA
+# .github/workflows/build_android.yml
+
+# name: Flutter Build APK & IPA
+name: Deploy on Play Store
 
 on:
   push:
