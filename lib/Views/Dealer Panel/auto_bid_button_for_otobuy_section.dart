@@ -5,13 +5,12 @@ import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/global_functions.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:otobix/Widgets/congratulations_dialog_widget.dart';
-import 'package:otobix/Widgets/toast_widget.dart';
 
 // Auto Bid Sheet
 void autoBidButtonForOtobuySection(
   String carId,
   RxString remainingAuctionTime,
+  double priceDiscovery,
 ) {
   final CarDetailsController getxController = Get.put(
     CarDetailsController(carId),
@@ -160,7 +159,10 @@ void autoBidButtonForOtobuySection(
                       // Minus
                       GestureDetector(
                         onTap: () {
-                          int decrement = 1000;
+                          final decrement = getxController.getIncrementStep(
+                            priceDiscovery,
+                          );
+                          // int decrement = 1000;
                           if (getxController.yourOfferAmount.value -
                                   decrement <=
                               getxController.currentHighestBidAmount.value) {
@@ -223,7 +225,10 @@ void autoBidButtonForOtobuySection(
                       // Plus
                       GestureDetector(
                         onTap: () {
-                          int increment = 1000;
+                          final increment = getxController.getIncrementStep(
+                            priceDiscovery,
+                          );
+                          // int increment = 1000;
                           if (getxController.yourOfferAmount.value +
                                   increment <=
                               getxController.oneClickPriceAmount.value) {
