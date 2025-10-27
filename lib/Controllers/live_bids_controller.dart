@@ -106,9 +106,10 @@ class LiveBidsController extends GetxController {
                 )
                 .toList(); // <-- materialize snapshot
 
-        filteredLiveBidsCarsList.assignAll(filtered);
-
+        // Check if user has bid on any car or he is the highest bidder
         await _seedParticipationForVisibleCars(filtered);
+
+        filteredLiveBidsCarsList.assignAll(filtered);
 
         // filteredLiveBidsCarsList.assignAll(
         //   liveBidsCarsList.where(
@@ -625,7 +626,7 @@ class LiveBidsController extends GetxController {
     }
   }
 
-  /// Example backend checker (choose the API that matches your server)
+  // Example backend checker (choose the API that matches your server)
   Future<bool> _checkHasUserBidFromBackend({
     required String carId,
     required String? userId,
@@ -639,7 +640,45 @@ class LiveBidsController extends GetxController {
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         final List<dynamic> bids = data['bids'] ?? [];
-        return bids.isNotEmpty;
+        final has = bids.isNotEmpty;
+
+        // ✅ Minimal fix: if the user's top bid equals the current highestBid we have,
+        // mark them as the highest bidder so your helper shows GREEN after cold start.
+        if (has) {
+          double maxUserBid = 0;
+          for (final b in bids) {
+            // Adjust the key to whatever your API uses: amount / bidAmount / value
+            final raw =
+                (b is Map)
+                    ? (b['amount'] ?? b['bidAmount'] ?? b['value'])
+                    : null;
+            double? v;
+            if (raw is num) v = raw.toDouble();
+            if (raw is String) v = double.tryParse(raw);
+            if (v != null && v > maxUserBid) maxUserBid = v;
+          }
+
+          // Find the car we already loaded
+          CarsListModel? car;
+          try {
+            car = filteredLiveBidsCarsList.firstWhere((c) => c.id == carId);
+          } catch (_) {
+            try {
+              car = liveBidsCarsList.firstWhere((c) => c.id == carId);
+            } catch (_) {}
+          }
+
+          if (car != null) {
+            final currentHighest = car.highestBid.value.toDouble();
+            // Use a tiny tolerance for rounding issues
+            if ((currentHighest - maxUserBid).abs() < 0.5) {
+              highestBidders[carId] =
+                  userId; // ← this makes it GREEN on relaunch
+            }
+          }
+        }
+
+        return has;
       }
 
       return false;
@@ -647,4 +686,26 @@ class LiveBidsController extends GetxController {
       return false;
     }
   }
+
+  // Future<bool> _checkHasUserBidFromBackend1({
+  //   required String carId,
+  //   required String? userId,
+  // }) async {
+  //   if (userId == null) return false;
+
+  //   try {
+  //     final url = AppUrls.getUserBidsForCar(userId: userId, carId: carId);
+  //     final res = await ApiService.get(endpoint: url);
+
+  //     if (res.statusCode == 200) {
+  //       final data = jsonDecode(res.body);
+  //       final List<dynamic> bids = data['bids'] ?? [];
+  //       return bids.isNotEmpty;
+  //     }
+
+  //     return false;
+  //   } catch (_) {
+  //     return false;
+  //   }
+  // }
 }

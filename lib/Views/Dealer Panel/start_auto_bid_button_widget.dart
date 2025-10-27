@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Views/Dealer%20Panel/auto_bid_button_for_live_bids_section.dart';
-import 'package:otobix/Views/Dealer%20Panel/auto_bid_button_for_ocb70_section.dart';
+import 'package:otobix/Views/Dealer%20Panel/auto_bid_button_for_otobuy_section.dart';
 import 'package:otobix/Views/Dealer%20Panel/auto_bid_button_for_upcoming_section.dart';
 import 'package:otobix/Widgets/button_widget.dart';
 import 'package:get/get.dart';
@@ -54,7 +54,11 @@ class StartAutoBidButtonWidget extends StatelessWidget {
             priceDiscovery,
           );
         } else if (currentOpenSection == homeController.otobuySectionScreen) {
-          autoBidButtonForOtobuySection(carId, remainingAuctionTime);
+          autoBidButtonForOtobuySection(
+            carId,
+            remainingAuctionTime,
+            priceDiscovery,
+          );
         } else if (currentOpenSection ==
             homeController.marketplaceSectionScreen) {
           defaultAutoBidSheet(carId, remainingAuctionTime);
