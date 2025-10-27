@@ -5,8 +5,8 @@ name: Deploy iOS App to App Store
 on:
   push:
     branches:
-      - main
-      # - development
+      # - main
+      - development
   workflow_dispatch:
 
 env:
