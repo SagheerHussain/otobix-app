@@ -104,15 +104,21 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/fastlane_api_key.json
+          APP_IDENTIFIER: ${{ env.APP_IDENTIFIER }}
+          MATCH_GIT_URL: ${{ env.MATCH_GIT_URL }}
+          MATCH_GIT_BRANCH: ${{ env.MATCH_GIT_BRANCH }}
+          CI_KEYCHAIN_PASSWORD: ${{ secrets.CI_KEYCHAIN_PASSWORD }}
         run: |
+          echo "Using APP_IDENTIFIER=$APP_IDENTIFIER"
           fastlane match appstore \
-            app_identifier:="$APP_IDENTIFIER" \
-            readonly:false \
-            git_url:$MATCH_GIT_URL \
-            git_branch:$MATCH_GIT_BRANCH \
-            keychain_name:build.keychain \
-            keychain_password:${{ secrets.CI_KEYCHAIN_PASSWORD }} \
-            api_key_path:$APP_STORE_CONNECT_API_KEY_PATH
+          app_identifier="$APP_IDENTIFIER" \
+          readonly:false \
+          git_url="$MATCH_GIT_URL" \
+          git_branch="$MATCH_GIT_BRANCH" \
+          keychain_name:build.keychain \
+          keychain_password="$CI_KEYCHAIN_PASSWORD" \
+          api_key_path="$APP_STORE_CONNECT_API_KEY_PATH"
+
 
       # Build signed IPA using Flutter
       - name: Build signed IPA
