@@ -106,7 +106,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/fastlane_api_key.json
         run: |
           fastlane match appstore \
-            app_identifier:"$APP_IDENTIFIER" \
+            app_identifier:="$APP_IDENTIFIER" \
             readonly:false \
             git_url:$MATCH_GIT_URL \
             git_branch:$MATCH_GIT_BRANCH \
