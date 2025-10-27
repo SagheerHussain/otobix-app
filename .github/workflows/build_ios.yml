@@ -70,7 +70,7 @@ jobs:
       # Write App Store Connect API key file used by fastlane (pilot/deliver)
       - name: Create ASC API key file
         run: |
-          echo '${{ secrets.ASC_API_KEY_JSON }}' > fastlane_api_key.json
+          echo "${{ secrets.ASC_API_KEY_JSON }}" > fastlane_api_key.json
 
       # Configure keychain for code signing (used by match to import certs/profiles)
       - name: Create CI keychain
