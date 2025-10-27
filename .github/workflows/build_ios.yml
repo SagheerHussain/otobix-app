@@ -87,15 +87,15 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/fastlane_api_key.json
         run: |
-          fastlane match \
-            type: appstore \
-            app_identifier: $APP_IDENTIFIER \
-            readonly: false \
-            git_url: $MATCH_GIT_URL \
-            git_branch: $MATCH_GIT_BRANCH \
-            keychain_name: build.keychain \
-            keychain_password: ${{ secrets.CI_KEYCHAIN_PASSWORD }} \
-            api_key_path: $APP_STORE_CONNECT_API_KEY_PATH
+          fastlane match appstore \
+            app_identifier:$APP_IDENTIFIER \
+            readonly:false \
+            git_url:$MATCH_GIT_URL \
+            git_branch:$MATCH_GIT_BRANCH \
+            keychain_name:build.keychain \
+            keychain_password:${{ secrets.CI_KEYCHAIN_PASSWORD }} \
+            api_key_path:$APP_STORE_CONNECT_API_KEY_PATH
+
 
       # - name: Fetch signing assets with match (appstore)
       #   env:
