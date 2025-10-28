@@ -170,22 +170,22 @@ class RegistrationFormController extends GetxController {
       final userModel = UserModel(
         userRole: userRole,
         location: selectedState ?? "",
-        userName: dealerNameController.text,
-        email: dealerEmailController.text,
-        dealershipName: dealershipNameController.text,
+        userName: dealerNameController.text.trim(),
+        email: dealerEmailController.text.trim(),
+        dealershipName: dealershipNameController.text.trim(),
         entityType: selectedEntityType ?? "",
-        primaryContactPerson: primaryContactPersonController.text,
-        primaryContactNumber: primaryMobileController.text,
+        primaryContactPerson: primaryContactPersonController.text.trim(),
+        primaryContactNumber: primaryMobileController.text.trim(),
         password: passwordController.text,
         phoneNumber: contactNumber,
         secondaryContactPerson:
             secondaryContactPersonController.text.isEmpty
                 ? null
-                : secondaryContactPersonController.text,
+                : secondaryContactPersonController.text.trim(),
         secondaryContactNumber:
             secondaryMobileController.text.isEmpty
                 ? null
-                : secondaryMobileController.text,
+                : secondaryMobileController.text.trim(),
         addressList: addressControllers.map((e) => e.text).toList(),
         id: '',
         approvalStatus: 'Pending',
