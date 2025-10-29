@@ -3,34 +3,46 @@
 
 
 # .github/workflows/build_ios.yml
-
 name: Deploy iOS App to App Store
 on:
   push:
-    branches:
-      - development
+    branches: [ development ]
+
 jobs:
   build:
     name: Build & Upload to TestFlight
     runs-on: macos-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Select Xcode (optional but explicit)
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.35.2" 
-      - name: Install dependencies
+          flutter-version: "3.35.2"
+
+      - name: Flutter pub get
         run: flutter pub get
-      - name: Build iOS app
+
+      # If you want to prebuild Flutter intermediates (optional):
+      # - name: Flutter build ios (no codesign)
+      #   run: flutter build ios --release --no-codesign
+
+      - name: CocoaPods install
         run: |
           cd ios
           pod install
-          cd ..
+
       - name: Install Fastlane
         run: sudo gem install fastlane -NV
+
       - name: Build and upload to TestFlight
         env:
+          # If you store the p8 as base64, set is_key_content_base64: true in Fastfile
           APP_STORE_P8_KEY: ${{ secrets.APPSTORE_P8 }}
           APP_STORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
           APP_STORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}

@@ -1,21 +1,37 @@
-
 default_platform(:ios)
+
 platform :ios do
   desc "Build and upload to TestFlight"
   lane :beta do
-    # Build the app (with automatic signing)
-    build_app(
-      scheme: "Runner",                     # Xcode scheme name
-      export_method: "app-store",           # Export for App Store
-      include_bitcode: false
+    # Make CI safer (disables keychain prompts etc.)
+    setup_ci
+
+    # Force automatic signing for the project/workspace scheme
+    automatic_code_signing(
+      use_automatic_signing: true,
+      team_id: "734JT7MU9R"
     )
-    # Upload to TestFlight using API key
+
+    # Build/Archive
+    build_app(
+      scheme: "Runner",
+      configuration: "Release",
+      export_method: "app-store",
+      # Let Xcode create/fetch the right profiles
+      xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=734JT7MU9R CODE_SIGN_STYLE=Automatic",
+      # Export options -> automatic signing
+      export_options: {
+        signingStyle: "automatic"
+      }
+    )
+
+    # Upload to TestFlight using inline API key
     upload_to_testflight(
       api_key: app_store_connect_api_key(
         key_id: ENV["APP_STORE_KEY_ID"],
         issuer_id: ENV["APP_STORE_ISSUER_ID"],
         key_content: ENV["APP_STORE_P8_KEY"],
-        is_key_content_base64: false
+        is_key_content_base64: false   # see NOTE below if you switch to base64
       ),
       skip_waiting_for_build_processing: true
     )
