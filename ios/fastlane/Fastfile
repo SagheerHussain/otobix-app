@@ -4,7 +4,6 @@ default_platform(:ios)
 platform :ios do
   desc "Build and upload to TestFlight"
   lane :beta do
-    # 1) App Store Connect auth via key CONTENT (no file)
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_KEY_ID"],
       issuer_id: ENV["APP_STORE_ISSUER_ID"],
@@ -13,28 +12,25 @@ platform :ios do
       in_house: false
     )
 
-    # Ensure no conflicting env flags are set
+    # make sure nothing forces adhoc/dev
     ENV.delete('SIGH_AD_HOC')
     ENV.delete('SIGH_DEVELOPMENT')
     ENV.delete('MATCH_TYPE')
 
-    # Read bundle id from Appfile
     app_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
 
-    # 2) Download & INSTALL an **App Store** provisioning profile
+    # Download & install an **App Store** profile (no adhoc/dev flags at all)
     profile_path = sigh(
       api_key: api_key,
       app_identifier: app_id,
-      app_store: true,       # 👈 explicit
-      skip_install: false,   # install into ~/Library/MobileDevice/Provisioning Profiles
-      force: true            # create/update if needed
+      skip_install: false,
+      force: true,
+      platform: "ios"
     )
 
-    # Get profile UUID for export options
     profile_uuid = Actions.lane_context[SharedValues::SIGH_UDID]
     UI.user_error!("Failed to get provisioning profile UUID") if profile_uuid.to_s.empty?
 
-    # 3) Archive + export using that exact profile (manual export)
     gym(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -42,15 +38,14 @@ platform :ios do
       clean: true,
       export_method: "app-store",
       export_options: {
-        provisioningProfiles: {
-          app_id => profile_uuid
-        },
+        provisioningProfiles: { app_id => profile_uuid },
         signingStyle: "manual"
       },
-      xcargs: "-allowProvisioningUpdates" # harmless to keep
+      xcargs: "-allowProvisioningUpdates"
+      # If you still hit signing issues, uncomment the next line:
+      # codesigning_identity: "Apple Distribution"
     )
 
-    # 4) Upload to TestFlight
     upload_to_testflight(
       api_key: api_key,
       skip_waiting_for_build_processing: true,
