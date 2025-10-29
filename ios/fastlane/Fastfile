@@ -8,7 +8,8 @@ platform :ios do
       key_id: ENV["APP_STORE_KEY_ID"],
       issuer_id: ENV["APP_STORE_ISSUER_ID"],
       # key_filepath: File.expand_path("./fastlane/AuthKey_#{ENV['APP_STORE_KEY_ID']}.p8", __dir__),
-      key_filepath: File.expand_path("./fastlane/AuthKey_#{ENV['APP_STORE_KEY_ID']}.p8", __dir__),
+      key_content: ENV["APP_STORE_P8_KEY"],  # <— use content, not a path
+      # key_filepath: File.expand_path("./fastlane/AuthKey_#{ENV['APP_STORE_KEY_ID']}.p8", __dir__),
       duration: 1200,
       in_house: false
     )
