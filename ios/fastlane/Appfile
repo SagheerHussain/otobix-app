@@ -1,3 +1,12 @@
+# Appfile
+app_identifier("com.otobix.auctionapp") # Your iOS bundle ID
+apple_id("parekhamit@hotmail.com")         # Apple Developer email
+itc_team_id("734JT7MU9R")     # App Store Connect team ID
+team_id("734JT7MU9R")         # Developer Portal team ID
+# These are the credentials for App Store Connect API key (.p8)
+api_key_path(nil) # We’ll provide key inline in workflow, not a file
+
+
 # app_identifier("[[APP_IDENTIFIER]]") # The bundle identifier of your app
 # apple_id("[[APPLE_ID]]") # Your Apple Developer Portal username
 
