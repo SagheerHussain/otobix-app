@@ -19,7 +19,16 @@ platform :ios do
     app_id  = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
     team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id) || ENV["APP_STORE_TEAM_ID"]
 
-    # Get & install an App Store profile for your app target (Runner)
+    # 0) Ensure project uses Automatic signing at build time
+    automatic_code_signing(
+      path: "Runner.xcodeproj",
+      use_automatic_signing: true,
+      team_id: team_id,
+      targets: ["Runner"] # add other app/extension targets here if you have them
+    )
+    update_project_team(path: "Runner.xcodeproj", teamid: team_id)
+
+    # 1) Fetch & install the App Store profile for the app target (Runner)
     profile_path = sigh(
       api_key: api_key,
       app_identifier: app_id,
@@ -31,6 +40,7 @@ platform :ios do
     profile_name = Actions.lane_context[SharedValues::SIGH_NAME]
     UI.user_error!("Missing provisioning profile name") if profile_name.to_s.empty?
 
+    # 2) Build archive (Automatic at build time; allow Xcode to fetch things if needed)
     gym(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -38,18 +48,13 @@ platform :ios do
       clean: true,
       export_method: "app-store",
 
-      # Tell the exporter which profile to embed for the **app bundle id** only
+      # Embed the right App Store profile ONLY for the app bundle id at export time
       export_options: {
-        provisioningProfiles: { app_id => profile_name },
-        signingStyle: "manual",
-        signingCertificate: "Apple Distribution",
-        teamID: team_id
+        provisioningProfiles: { app_id => profile_name }
       },
 
-      # IMPORTANT: only set team & manual here; DO NOT pass PROVISIONING_PROFILE_SPECIFIER or CODE_SIGN_IDENTITY
-      # so Pods remain on Automatic (no profiles).
-      # xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=#{team_id}"
-      xcargs: "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=#{team_id}"
+      # Let Xcode create any missing signing bits during the archive step (no manual profiles for Pods)
+      xcargs: "-allowProvisioningUpdates CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=#{team_id}"
     )
 
     upload_to_testflight(
@@ -60,6 +65,7 @@ platform :ios do
     )
   end
 end
+
 
 
 
