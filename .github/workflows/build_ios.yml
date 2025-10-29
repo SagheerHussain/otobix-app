@@ -1,289 +1,73 @@
 # .github/workflows/build_ios.yml
-
-name: Deploy iOS App to App Store
+name: Deploy iOS App to TestFlight
 
 on:
   push:
     branches:
-      - development
-  workflow_dispatch:
-
-env:
-  APP_IDENTIFIER: com.otobix.auctionapp         # <-- your bundle id
-  IOS_SCHEME: Runner                            # <-- your Xcode scheme (Flutter default)
-  IOS_WORKSPACE: ios/Runner.xcworkspace        # Flutter uses workspace
-  IOS_CONFIGURATION: Release
-  APPLE_TEAM_ID: 734JT7MU9R                     # <-- e.g. 1A2BC3D4EF (put real value)
-  MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}   # Git repo for match
-  MATCH_GIT_BRANCH: ios_signing
+      - main
 
 jobs:
-  build-and-upload-ios:
-    name: Build & Upload to TestFlight
+  build-and-upload:
     runs-on: macos-latest
-    timeout-minutes: 60
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      # Setup Ruby (for Fastlane)
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
-
-      - name: Install Fastlane
-        run: gem install fastlane --no-document
-
-      # Setup Node.js (needed to generate API key JSON)
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      # Setup Flutter
-      - name: Setup Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.35.2"
+          channel: stable
 
       - name: Flutter pub get
         run: flutter pub get
 
-      # Cache CocoaPods
-      - name: Cache CocoaPods
-        uses: actions/cache@v4
-        with:
-          path: |
-            ios/Pods
-            ~/Library/Caches/CocoaPods
-            ~/.cocoapods
-          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
+      # Optional but fine to keep
+      - name: Flutter precache iOS
+        run: flutter precache --ios
 
-      - name: Install CocoaPods
-        working-directory: ios
-        run: pod install --repo-update
+      - name: Install fastlane (no bundler needed)
+        run: |
+          sudo gem install fastlane -NV
 
-      # Create App Store Connect API key JSON from .p8 secret
-      - name: Create ASC API key file from P8 secret
+      # --- Import your Apple Distribution certificate (.p12) into a temp keychain ---
+      - name: Install signing certificate
         env:
-          ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-          KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-          IN_HOUSE: false
-          P8_CONTENT: ${{ secrets.APPSTORE_P8 }}
+          IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
+          IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
         run: |
-          node -e "
-          const fs = require('fs');
-          const json = {
-            issuer_id: process.env.ISSUER_ID,
-            key_id: process.env.KEY_ID,
-            in_house: process.env.IN_HOUSE === 'true',
-            key: process.env.P8_CONTENT.replace(/\r?\n/g,'\\n')
-          };
-          fs.writeFileSync('fastlane_api_key.json', JSON.stringify(json));
-          console.log('✅ fastlane_api_key.json created from P8 secret!');
-          "
-
-      # Configure CI keychain for code signing
-      - name: Create CI keychain
-        run: |
-          security create-keychain -p "${{ secrets.CI_KEYCHAIN_PASSWORD }}" build.keychain
+          echo "$IOS_CERT_P12_BASE64" | base64 --decode > dist_cert.p12
+          security create-keychain -p "" build.keychain
           security set-keychain-settings -lut 21600 build.keychain
-          security unlock-keychain -p "${{ secrets.CI_KEYCHAIN_PASSWORD }}" build.keychain
-          security list-keychains -d user -s build.keychain $(security list-keychains -d user | sed 's/[",]//g')
+          security unlock-keychain -p "" build.keychain
+          security import dist_cert.p12 -k build.keychain -P "$IOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security list-keychains -s build.keychain login.keychain
           security default-keychain -s build.keychain
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" build.keychain
 
-      # Fetch signing certificates & profiles
-      - name: Fetch signing assets with match (appstore)
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/fastlane_api_key.json
-          CI_KEYCHAIN_PASSWORD: ${{ secrets.CI_KEYCHAIN_PASSWORD }}
+          
+
+      # --- Build Flutter iOS artifacts from repo root (no codesign here) ---
+      - name: Build Flutter iOS artifacts (no codesign)
         run: |
-          echo "Using APP_IDENTIFIER=$APP_IDENTIFIER"
-          fastlane match appstore \
-            --app_identifier "$APP_IDENTIFIER" \
-            --readonly false \
-            --git_url "$MATCH_GIT_URL" \
-            --git_branch "$MATCH_GIT_BRANCH" \
-            --keychain_name build.keychain \
-            --keychain_password "$CI_KEYCHAIN_PASSWORD" \
-            --api_key_path "$APP_STORE_CONNECT_API_KEY_PATH"
+          flutter build ios --release --no-codesign
 
-
-      # Build signed IPA using Flutter
-      - name: Build signed IPA
-        env:
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/fastlane_api_key.json
-        run: flutter build ipa --release
-
-      # Upload to TestFlight
-      - name: Upload to TestFlight
+      # --- CocoaPods inside ios/ ---
+      - name: Pod install (inside ios)
         run: |
-          IPA_PATH=$(ls -t build/ios/ipa/*.ipa | head -n 1)
-          echo "Uploading $IPA_PATH to TestFlight…"
-          fastlane pilot upload \
-            --api_key_path fastlane_api_key.json \
-            --ipa "$IPA_PATH" \
-            --skip_waiting_for_build_processing true \
-            --distribute_external true \
-            --uses_non_exempt_encryption false
+          cd ios
+          pod install --repo-update
 
-      # Optional: delete CI keychain after job
-      - name: Delete CI keychain
-        if: always()
-        run: security delete-keychain build.keychain
-
+      # --- Run fastlane from ios/ (Fastfile located at ios/fastlane/Fastfile) ---
+      - name: Build and upload to TestFlight
+        env:
+          APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+          APP_STORE_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
+          APP_STORE_P8_KEY: ${{ secrets.APP_STORE_P8_KEY }}
+        run: |
+          cd ios
+          fastlane beta
 
 
-# # .github/workflows/build_ios.yml
-
-# name: Deploy iOS App to App Store
-
-# on:
-#   push:
-#     branches:
-#       # - main
-#       - development
-#   workflow_dispatch:
-
-# env:
-#   APP_IDENTIFIER: com.otobix.auctionapp         # <-- your bundle id
-#   IOS_SCHEME: Runner                            # <-- your Xcode scheme (Flutter default)
-#   IOS_WORKSPACE: ios/Runner.xcworkspace         # Flutter uses workspace
-#   IOS_CONFIGURATION: Release
-#   APPLE_TEAM_ID: 734JT7MU9R                   # <-- e.g. 1A2BC3D4EF (put real value)
-#   # MATCH_GIT_URL: ${{ github.server_url }}/${{ github.repository }} # same repo
-#   MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }} # same repo
-#   MATCH_GIT_BRANCH: ios_signing
-
-# jobs:
-#   build-and-upload-ios:
-#     name: Build & Upload to TestFlight
-#     runs-on: macos-latest
-#     timeout-minutes: 60
-
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0  # match needs full history/branches
-
-#       # Setup Ruby (for fastlane) with caching
-#       - name: Setup Ruby
-#         uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: '3.2'
-#           bundler-cache: true
-
-#       - name: Install Fastlane
-#         run: |
-#           gem install fastlane --no-document
-
-#       # Setup Flutter
-#       - name: Setup Flutter
-#         uses: subosito/flutter-action@v2
-#         with:
-#           flutter-version: "3.35.2"
-
-#       - name: Flutter pub get
-#         run: flutter pub get
-
-#       # CocoaPods cache speeds up iOS builds
-#       - name: Cache CocoaPods
-#         uses: actions/cache@v4
-#         with:
-#           path: |
-#             ios/Pods
-#             ~/Library/Caches/CocoaPods
-#             ~/.cocoapods
-#           key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
-#           restore-keys: |
-#             ${{ runner.os }}-pods-
-
-#       - name: Install CocoaPods
-#         working-directory: ios
-#         run: pod install --repo-update
-
-#       # Write App Store Connect API key file used by fastlane (pilot/deliver)
-#       - name: Create ASC API key file
-#         run: |
-#           echo "${{ secrets.ASC_API_KEY_JSON }}" > fastlane_api_key.json
-
-#       # Configure keychain for code signing (used by match to import certs/profiles)
-#       - name: Create CI keychain
-#         run: |
-#           security create-keychain -p "${{ secrets.CI_KEYCHAIN_PASSWORD }}" build.keychain
-#           security set-keychain-settings -lut 21600 build.keychain
-#           security unlock-keychain -p "${{ secrets.CI_KEYCHAIN_PASSWORD }}" build.keychain
-#           security list-keychains -d user -s build.keychain $(security list-keychains -d user | sed 's/[",]//g')
-#           security default-keychain -s build.keychain
-
-#       # Pull certs & provisioning profiles from the ios_signing branch via fastlane match
-#       - name: Fetch signing assets with match (appstore)
-#         env:
-#           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-#           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/fastlane_api_key.json
-#         run: |
-#           fastlane match appstore \
-#             app_identifier:$APP_IDENTIFIER \
-#             readonly:false \
-#             git_url:$MATCH_GIT_URL \
-#             git_branch:$MATCH_GIT_BRANCH \
-#             keychain_name:build.keychain \
-#             keychain_password:${{ secrets.CI_KEYCHAIN_PASSWORD }} \
-#             api_key_path:$APP_STORE_CONNECT_API_KEY_PATH
 
 
-#       # - name: Fetch signing assets with match (appstore)
-#       #   env:
-#       #     FASTLANE_USER: ${{ secrets.APPLE_ID }}
-#       #     MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-#       #   run: |
-#       #     fastlane run match \
-#       #       type:appstore \
-#       #       app_identifier:$APP_IDENTIFIER \
-#       #       readonly:false \
-#       #       git_url:$MATCH_GIT_URL \
-#       #       git_branch:$MATCH_GIT_BRANCH \
-#       #       keychain_name:build.keychain \
-#       #       keychain_password:${{ secrets.CI_KEYCHAIN_PASSWORD }}
-
-#       # Build a signed IPA (Flutter -> Xcode)
-#       - name: Build signed IPA
-#         env:
-#           APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/fastlane_api_key.json
-#         run: |
-#           # Ensure Xcode uses correct team and signing style (project should already be set)
-#           # Build IPA with Flutter (codesigning handled by Xcode using matched profiles)
-#           flutter build ipa --release
-
-#       # Upload to TestFlight using fastlane pilot
-#       - name: Upload to TestFlight
-#         run: |
-#           IPA_PATH=$(ls -t build/ios/ipa/*.ipa | head -n 1)
-#           echo "Uploading $IPA_PATH to TestFlight…"
-#           fastlane pilot upload \
-#             --api_key_path fastlane_api_key.json \
-#             --ipa "$IPA_PATH" \
-#             --skip_waiting_for_build_processing true \
-#             --distribute_external true \
-#             --uses_non_exempt_encryption false
-
-#     #  When deploy for production then uncomment this and comment out above upload to testflight using fastlane pilot thing
-#       # - name: Upload to App Store (submit for review)
-#       #   run: |
-#       #     IPA_PATH=$(ls -t build/ios/ipa/*.ipa | head -n 1)
-#       #     fastlane deliver \
-#       #       --api_key_path fastlane_api_key.json \
-#       #       --ipa "$IPA_PATH" \
-#       #       --submit_for_review true \
-#       #       --automatic_release true \
-#       #       --skip_screenshots true \
-#       #       --skip_metadata true
