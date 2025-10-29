@@ -23,8 +23,14 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       clean: true,
-      xcargs: "-allowProvisioningUpdates"
-    )
+      xcargs: [
+        "-allowProvisioningUpdates",
+        "-authenticationKeyPath #{File.join(__dir__, '..', 'AuthKey_' + ENV['APP_STORE_KEY_ID'] + '.p8')}",
+        "-authenticationKeyID #{ENV['APP_STORE_KEY_ID']}",
+        "-authenticationKeyIssuerID #{ENV['APP_STORE_ISSUER_ID']}"
+              ].join(" ")
+        )
+
 
     upload_to_testflight(
       api_key: api_key,

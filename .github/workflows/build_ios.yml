@@ -45,6 +45,20 @@ jobs:
           security default-keychain -s build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" build.keychain
 
+      - name: Write App Store Connect API key for Xcode
+        env:
+          APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+          APP_STORE_P8_KEY: ${{ secrets.APP_STORE_P8_KEY }}
+        run: |
+          cd ios
+          mkdir -p fastlane
+          # This file path will be passed to xcodebuild
+          cat > AuthKey_${APP_STORE_KEY_ID}.p8 <<'EOF'
+          ${APP_STORE_P8_KEY}
+          EOF
+          chmod 600 AuthKey_${APP_STORE_KEY_ID}.p8
+
+
       # --- Build Flutter iOS artifacts from repo root (no codesign here) ---
       - name: Build Flutter iOS artifacts (no codesign)
         run: |
