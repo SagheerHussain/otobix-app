@@ -27,6 +27,9 @@ platform :ios do
       force: true,
       platform: "ios"
     )
+    
+    sh %Q[security cms -D -i "#{profile_path}" > /tmp/profile.plist]
+    sh %Q[/usr/libexec/PlistBuddy -c 'Print :Entitlements:aps-environment' /tmp/profile.plist]
 
     profile_name = Actions.lane_context[SharedValues::SIGH_NAME]
     UI.user_error!("Missing provisioning profile name") if profile_name.to_s.empty?
@@ -48,7 +51,8 @@ platform :ios do
 
       # IMPORTANT: only set team & manual here; DO NOT pass PROVISIONING_PROFILE_SPECIFIER or CODE_SIGN_IDENTITY
       # so Pods remain on Automatic (no profiles).
-      xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=#{team_id}"
+      # xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=#{team_id}"
+      xcargs: "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=#{team_id}"
     )
 
     upload_to_testflight(
