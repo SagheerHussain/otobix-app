@@ -39,7 +39,7 @@ jobs:
           security default-keychain -s build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" build.keychain
 
-      - name: Debug: list identities (should be empty before fastlane cert)
+      - name: Debug list identities (should be empty before fastlane cert)
         run: security find-identity -v -p codesigning || true
 
       - name: Build Flutter iOS artifacts (no codesign)
