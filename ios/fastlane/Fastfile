@@ -1,4 +1,3 @@
-# ios/fastlane/Fastfile
 default_platform(:ios)
 
 platform :ios do
@@ -12,14 +11,15 @@ platform :ios do
       in_house: false
     )
 
-    # make sure nothing forces adhoc/dev
+    # Clean any env hints that force adhoc/dev
     ENV.delete('SIGH_AD_HOC')
     ENV.delete('SIGH_DEVELOPMENT')
     ENV.delete('MATCH_TYPE')
 
     app_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id) || ENV["APP_STORE_TEAM_ID"]
 
-    # Download & install an **App Store** profile (no adhoc/dev flags at all)
+    # Download & install an App Store profile
     profile_path = sigh(
       api_key: api_key,
       app_identifier: app_id,
@@ -28,8 +28,9 @@ platform :ios do
       platform: "ios"
     )
 
-    profile_uuid = Actions.lane_context[SharedValues::SIGH_UDID]
-    UI.user_error!("Failed to get provisioning profile UUID") if profile_uuid.to_s.empty?
+    # Use the installed profile's NAME (what Xcode expects in Specifier)
+    profile_name = Actions.lane_context[SharedValues::SIGH_NAME]
+    UI.user_error!("Missing provisioning profile name") if profile_name.to_s.empty?
 
     gym(
       workspace: "Runner.xcworkspace",
@@ -37,13 +38,15 @@ platform :ios do
       configuration: "Release",
       clean: true,
       export_method: "app-store",
+      # Manual signing export; map Bundle ID -> Profile NAME
       export_options: {
-        provisioningProfiles: { app_id => profile_uuid },
-        signingStyle: "manual"
+        provisioningProfiles: { app_id => profile_name },
+        signingStyle: "manual",
+        signingCertificate: "Apple Distribution",
+        teamID: team_id
       },
-      xcargs: "-allowProvisioningUpdates"
-      # If you still hit signing issues, uncomment the next line:
-      # codesigning_identity: "Apple Distribution"
+      # Hard-force Manual signing during the build, so Xcode doesn't ask for accounts or dev profiles
+      xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER='#{profile_name}' CODE_SIGN_IDENTITY='Apple Distribution'"
     )
 
     upload_to_testflight(
@@ -54,7 +57,6 @@ platform :ios do
     )
   end
 end
-
 
 
 
