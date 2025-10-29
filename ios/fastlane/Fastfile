@@ -12,14 +12,22 @@ platform :ios do
       in_house: false
     )
 
-    # make sure nothing forces adhoc/dev
+    # clear conflicting env
     ENV.delete('SIGH_AD_HOC')
     ENV.delete('SIGH_DEVELOPMENT')
     ENV.delete('MATCH_TYPE')
 
     app_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
 
-    # Download & install an **App Store** profile (no adhoc/dev flags at all)
+    # 1) Create / install an Apple Distribution certificate on this runner
+    cert(
+      api_key: api_key,
+      development: false,    # => Distribution
+      platform: "ios",
+      force: false           # set true ONLY if you need to revoke an old cert to create a new one
+    )
+
+    # 2) Download & install an App Store provisioning profile for that bundle id
     profile_path = sigh(
       api_key: api_key,
       app_identifier: app_id,
@@ -31,6 +39,7 @@ platform :ios do
     profile_uuid = Actions.lane_context[SharedValues::SIGH_UDID]
     UI.user_error!("Failed to get provisioning profile UUID") if profile_uuid.to_s.empty?
 
+    # 3) Build with that exact profile (manual export)
     gym(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -42,7 +51,7 @@ platform :ios do
         signingStyle: "manual"
       },
       xcargs: "-allowProvisioningUpdates"
-      # If you still hit signing issues, uncomment the next line:
+      # If needed, you can pin the identity:
       # codesigning_identity: "Apple Distribution"
     )
 
@@ -54,7 +63,6 @@ platform :ios do
     )
   end
 end
-
 
 
 

@@ -45,6 +45,17 @@ jobs:
           security default-keychain -s build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" build.keychain
 
+
+      - name: Prepare build keychain (no p12 import)
+        run: |
+          security create-keychain -p "" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          security unlock-keychain -p "" build.keychain
+          security list-keychains -s build.keychain login.keychain
+          security default-keychain -s build.keychain
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" build.keychain
+
+
       - name: Debug list code signing identities
         run: |
           security find-identity -v -p codesigning
