@@ -1,6 +1,6 @@
 # fastlane/Appfile
-app_identifier "com.otobix.auctionapp"   # <-- change this
-apple_id "parekhamit@hotmail.com"                 # <-- change this (your Apple ID email)
+app_identifier "com.otobix.auctionapp"  
+apple_id "parekhamit@hotmail.com"                
 
 # Optional but helpful if you’re in multiple teams:
 # team_id "ABCDE12345"

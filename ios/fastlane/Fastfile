@@ -13,44 +13,44 @@ platform :ios do
       in_house: false
     )
 
+    # Ensure no conflicting env flags are set
+    ENV.delete('SIGH_AD_HOC')
+    ENV.delete('SIGH_DEVELOPMENT')
+    ENV.delete('MATCH_TYPE')
+
     # Read bundle id from Appfile
     app_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
 
-    # 2) Download & INSTALL an App Store provisioning profile for this bundle id
-    #    This uses the same API key object (no file). It places the profile in
-    #    ~/Library/MobileDevice/Provisioning Profiles and exposes its UUID.
+    # 2) Download & INSTALL an **App Store** provisioning profile
     profile_path = sigh(
       api_key: api_key,
       app_identifier: app_id,
-      adhoc: false,
-      development: false,
-      skip_install: false,   # install to the default profiles folder
+      app_store: true,       # 👈 explicit
+      skip_install: false,   # install into ~/Library/MobileDevice/Provisioning Profiles
       force: true            # create/update if needed
     )
 
-    # Grab the profile UUID for export options
+    # Get profile UUID for export options
     profile_uuid = Actions.lane_context[SharedValues::SIGH_UDID]
     UI.user_error!("Failed to get provisioning profile UUID") if profile_uuid.to_s.empty?
 
-    # 3) Build archive and export IPA using the exact provisioning profile
+    # 3) Archive + export using that exact profile (manual export)
     gym(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
       configuration: "Release",
       clean: true,
       export_method: "app-store",
-      # Tell Xcode to use MANUAL signing with our installed profile
       export_options: {
         provisioningProfiles: {
           app_id => profile_uuid
         },
         signingStyle: "manual"
       },
-      # We can still keep this; it won't hurt, but it's no longer required:
-      xcargs: "-allowProvisioningUpdates"
+      xcargs: "-allowProvisioningUpdates" # harmless to keep
     )
 
-    # 4) Upload to TestFlight using the same API key object
+    # 4) Upload to TestFlight
     upload_to_testflight(
       api_key: api_key,
       skip_waiting_for_build_processing: true,
@@ -59,7 +59,6 @@ platform :ios do
     )
   end
 end
-
 
 
 
