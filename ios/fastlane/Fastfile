@@ -27,9 +27,6 @@ platform :ios do
       force: true,
       platform: "ios"
     )
-    
-    sh %Q[security cms -D -i "#{profile_path}" > /tmp/profile.plist]
-    sh %Q[/usr/libexec/PlistBuddy -c 'Print :Entitlements:aps-environment' /tmp/profile.plist]
 
     profile_name = Actions.lane_context[SharedValues::SIGH_NAME]
     UI.user_error!("Missing provisioning profile name") if profile_name.to_s.empty?
