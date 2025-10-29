@@ -1,42 +1,40 @@
+# fastlane/Fastfile
 default_platform(:ios)
 
 platform :ios do
   desc "Build and upload to TestFlight"
   lane :beta do
-    # Make CI safer (disables keychain prompts etc.)
-    setup_ci
-
-    # Force automatic signing for the project/workspace scheme
-    automatic_code_signing(
-      use_automatic_signing: true,
-      team_id: "734JT7MU9R"
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_KEY_ID"],
+      issuer_id: ENV["APP_STORE_ISSUER_ID"],
+      key_filepath: File.expand_path("../fastlane/AuthKey_#{ENV['APP_STORE_KEY_ID']}.p8", __dir__),
+      duration: 1200,
+      in_house: false
     )
 
-    # Build/Archive
-    build_app(
+    # Ensure Flutter has produced iOS artifacts (Pods, xcworkspace are already in ios/)
+    sh("flutter build ios --release --no-codesign")
+
+    gym(
+      workspace: "ios/Runner.xcworkspace",
       scheme: "Runner",
       configuration: "Release",
       export_method: "app-store",
-      # Let Xcode create/fetch the right profiles
-      xcargs: "-allowProvisioningUpdates DEVELOPMENT_TEAM=734JT7MU9R CODE_SIGN_STYLE=Automatic",
-      # Export options -> automatic signing
-      export_options: {
-        signingStyle: "automatic"
-      }
+      clean: true,
+      silent: false,
+      # Let Xcode fetch/create provisioning profiles automatically for the bundle id
+      xcargs: "-allowProvisioningUpdates"
     )
 
-    # Upload to TestFlight using inline API key
     upload_to_testflight(
-      api_key: app_store_connect_api_key(
-        key_id: ENV["APP_STORE_KEY_ID"],
-        issuer_id: ENV["APP_STORE_ISSUER_ID"],
-        key_content: ENV["APP_STORE_P8_KEY"],
-        is_key_content_base64: false   # see NOTE below if you switch to base64
-      ),
-      skip_waiting_for_build_processing: true
+      api_key: api_key,
+      skip_waiting_for_build_processing: true, # speeds things up
+      submit_for_beta_review: false,
+      distribute_external: false # flip to true if you want external testers immediately
     )
   end
 end
+
 
 
 

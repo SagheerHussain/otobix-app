@@ -1,55 +1,76 @@
-
-
-
-
 # .github/workflows/build_ios.yml
-name: Deploy iOS App to App Store
+name: Deploy iOS App to TestFlight
+
 on:
   push:
-    branches: [ development ]
+    branches:
+      - development
 
 jobs:
-  build:
-    name: Build & Upload to TestFlight
+  build-and-upload:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Select Xcode (optional but explicit)
-        run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.35.2"
+          channel: stable
 
       - name: Flutter pub get
         run: flutter pub get
 
-      # If you want to prebuild Flutter intermediates (optional):
-      # - name: Flutter build ios (no codesign)
-      #   run: flutter build ios --release --no-codesign
+      # Optional: ensure iOS platforms generated
+      - name: Flutter precache iOS
+        run: flutter precache --ios
 
-      - name: CocoaPods install
+      - name: Install bundler & fastlane
         run: |
-          cd ios
-          pod install
+          sudo gem install bundler:2.5.11
+          sudo gem install fastlane -NV
 
-      - name: Install Fastlane
-        run: sudo gem install fastlane -NV
+      # --- Restore signing: import the .p12 into a temporary keychain ---
+      - name: Install signing certificate
+        env:
+          IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
+          IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+        run: |
+          echo "$IOS_CERT_P12_BASE64" | base64 --decode > dist_cert.p12
+          security create-keychain -p "" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          security unlock-keychain -p "" build.keychain
+          security import dist_cert.p12 -k build.keychain -P "$IOS_CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security list-keychains -s build.keychain login.keychain
+          security default-keychain -s build.keychain
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" build.keychain
 
+      # --- Write App Store Connect API key file from secrets ---
+      - name: Create API key file
+        env:
+          APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+          APP_STORE_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
+          APP_STORE_P8_KEY: ${{ secrets.APP_STORE_P8_KEY }}
+        run: |
+          mkdir -p fastlane
+          cat > fastlane/AuthKey_${APP_STORE_KEY_ID}.p8 <<'EOF'
+          ${APP_STORE_P8_KEY}
+          EOF
+          # Lock down permissions
+          chmod 600 fastlane/AuthKey_${APP_STORE_KEY_ID}.p8
+
+      # --- Build & upload via fastlane (uses Fastfile below) ---
       - name: Build and upload to TestFlight
         env:
-          # If you store the p8 as base64, set is_key_content_base64: true in Fastfile
-          APP_STORE_P8_KEY: ${{ secrets.APPSTORE_P8 }}
-          APP_STORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-          APP_STORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+          APP_STORE_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
         run: |
           cd ios
-          fastlane beta
-
+          # Make sure CocoaPods are installed
+          pod install --repo-update
+          cd ..
+          bundle exec fastlane ios beta || fastlane ios beta
 
 
 

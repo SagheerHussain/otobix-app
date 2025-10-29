@@ -1,10 +1,11 @@
-# Appfile
-app_identifier("com.otobix.auctionapp") # Your iOS bundle ID
-apple_id("parekhamit@hotmail.com")         # Apple Developer email
-itc_team_id("734JT7MU9R")     # App Store Connect team ID
-team_id("734JT7MU9R")         # Developer Portal team ID
-# These are the credentials for App Store Connect API key (.p8)
-api_key_path(nil) # We’ll provide key inline in workflow, not a file
+# fastlane/Appfile
+app_identifier "com.otobix.auctionapp"   # <-- change this
+apple_id "parekhamit@hotmail.com"                 # <-- change this (your Apple ID email)
+
+# Optional but helpful if you’re in multiple teams:
+# team_id "ABCDE12345"
+# itc_team_id "123456789"
+
 
 
 # app_identifier("[[APP_IDENTIFIER]]") # The bundle identifier of your app
