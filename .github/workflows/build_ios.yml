@@ -22,16 +22,15 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      # Optional: ensure iOS platforms generated
+      # Optional but fine to keep
       - name: Flutter precache iOS
         run: flutter precache --ios
 
-      - name: Install bundler & fastlane
+      - name: Install fastlane (no bundler needed)
         run: |
-          sudo gem install bundler:2.5.11
           sudo gem install fastlane -NV
 
-      # --- Restore signing: import the .p12 into a temporary keychain ---
+      # --- Import your Apple Distribution certificate (.p12) into a temp keychain ---
       - name: Install signing certificate
         env:
           IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
@@ -46,21 +45,18 @@ jobs:
           security default-keychain -s build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" build.keychain
 
-      # --- Write App Store Connect API key file from secrets ---
-      - name: Create API key file
-        env:
-          APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
-          APP_STORE_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
-          APP_STORE_P8_KEY: ${{ secrets.APP_STORE_P8_KEY }}
+      # --- Build Flutter iOS artifacts from repo root (no codesign here) ---
+      - name: Build Flutter iOS artifacts (no codesign)
         run: |
-          mkdir -p fastlane
-          cat > fastlane/AuthKey_${APP_STORE_KEY_ID}.p8 <<'EOF'
-          ${APP_STORE_P8_KEY}
-          EOF
-          # Lock down permissions
-          chmod 600 fastlane/AuthKey_${APP_STORE_KEY_ID}.p8
+          flutter build ios --release --no-codesign
 
-      # --- Build & upload via fastlane (uses Fastfile below) ---
+      # --- CocoaPods inside ios/ ---
+      - name: Pod install (inside ios)
+        run: |
+          cd ios
+          pod install --repo-update
+
+      # --- Run fastlane from ios/ (Fastfile located at ios/fastlane/Fastfile) ---
       - name: Build and upload to TestFlight
         env:
           APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
@@ -68,9 +64,8 @@ jobs:
           APP_STORE_P8_KEY: ${{ secrets.APP_STORE_P8_KEY }}
         run: |
           cd ios
-          pod install --repo-update
-          # Run fastlane directly (no bundle exec)
           fastlane beta
+
 
 
 

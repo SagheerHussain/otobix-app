@@ -15,7 +15,7 @@ platform :ios do
     )
 
     # Prepare Flutter artifacts
-    sh("cd .. && flutter build ios --release --no-codesign && cd ios")
+    # sh("cd .. && flutter build ios --release --no-codesign && cd ios")
 
     gym(
       workspace: "Runner.xcworkspace",
