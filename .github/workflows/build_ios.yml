@@ -45,6 +45,10 @@ jobs:
           security default-keychain -s build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" build.keychain
 
+      - name: Debug list code signing identities
+        run: |
+          security find-identity -v -p codesigning
+
           
 
       # --- Build Flutter iOS artifacts from repo root (no codesign here) ---
