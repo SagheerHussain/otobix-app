@@ -1,31 +1,56 @@
-# fastlane/Fastfile
+# ios/fastlane/Fastfile
 default_platform(:ios)
 
 platform :ios do
   desc "Build and upload to TestFlight"
   lane :beta do
+    # 1) App Store Connect auth via key CONTENT (no file)
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_KEY_ID"],
       issuer_id: ENV["APP_STORE_ISSUER_ID"],
-      # key_filepath: File.expand_path("./fastlane/AuthKey_#{ENV['APP_STORE_KEY_ID']}.p8", __dir__),
-      key_content: ENV["APP_STORE_P8_KEY"],  # <— use content, not a path
-      # key_filepath: File.expand_path("./fastlane/AuthKey_#{ENV['APP_STORE_KEY_ID']}.p8", __dir__),
+      key_content: ENV["APP_STORE_P8_KEY"],
       duration: 1200,
       in_house: false
     )
 
-    # Prepare Flutter artifacts
-    # sh("cd .. && flutter build ios --release --no-codesign && cd ios")
+    # Read bundle id from Appfile
+    app_id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
 
+    # 2) Download & INSTALL an App Store provisioning profile for this bundle id
+    #    This uses the same API key object (no file). It places the profile in
+    #    ~/Library/MobileDevice/Provisioning Profiles and exposes its UUID.
+    profile_path = sigh(
+      api_key: api_key,
+      app_identifier: app_id,
+      adhoc: false,
+      development: false,
+      skip_install: false,   # install to the default profiles folder
+      force: true            # create/update if needed
+    )
+
+    # Grab the profile UUID for export options
+    profile_uuid = Actions.lane_context[SharedValues::SIGH_UDID]
+    UI.user_error!("Failed to get provisioning profile UUID") if profile_uuid.to_s.empty?
+
+    # 3) Build archive and export IPA using the exact provisioning profile
     gym(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
       configuration: "Release",
-      export_method: "app-store",
       clean: true,
+      export_method: "app-store",
+      # Tell Xcode to use MANUAL signing with our installed profile
+      export_options: {
+        provisioningProfiles: {
+          app_id => profile_uuid
+        },
+        signingStyle: "manual"
+      },
+      # We can still keep this; it won't hurt, but it's no longer required:
       xcargs: "-allowProvisioningUpdates"
     )
 
+    # 4) Upload to TestFlight using the same API key object
     upload_to_testflight(
       api_key: api_key,
       skip_waiting_for_build_processing: true,
