@@ -65,12 +65,23 @@ jobs:
         env:
           APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
           APP_STORE_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
+          APP_STORE_P8_KEY: ${{ secrets.APP_STORE_P8_KEY }}
         run: |
+          # Create API key file INSIDE ios/fastlane
+          mkdir -p ios/fastlane
+          cat > ios/fastlane/AuthKey_${APP_STORE_KEY_ID}.p8 <<'EOF'
+          ${APP_STORE_P8_KEY}
+          EOF
+          chmod 600 ios/fastlane/AuthKey_${APP_STORE_KEY_ID}.p8
+
+          # CocoaPods install (you already had this)
           cd ios
-          # Make sure CocoaPods are installed
           pod install --repo-update
-          cd ..
-          bundle exec fastlane ios beta || fastlane ios beta
+
+          # Run fastlane **from ios/**
+          # If no Gemfile, the second command runs
+          bundle exec fastlane beta || fastlane beta
+
 
 
 
