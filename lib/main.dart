@@ -5,37 +5,23 @@ import 'package:get/get.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Services/notification_sevice.dart';
 import 'package:otobix/Utils/app_colors.dart';
+import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
-import 'package:otobix/Views/splash/splash_screen.dart';
+import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
+import 'package:otobix/Views/Login/login_page.dart';
+import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/firebase_options.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
 
 void main() async {
-  Get.config(enableLog: false);
-  WidgetsFlutterBinding.ensureInitialized();
+  final start = await init();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  await NotificationService.instance.init();
-
-  await SharedPrefsHelper.init();
-
-  final userId = await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey);
-  if (userId != null && userId.isNotEmpty) {
-    await NotificationService.instance.login(userId);
-  }
-
-  // Initialize socket connection globally
-  SocketService.instance.initSocket(AppUrls.socketBaseUrl);
-  // // await Get.putAsync<ConnectivityService>(() => ConnectivityService().init());
-
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-  runApp(const MyApp());
+  runApp(MyApp(home: start));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Widget home;
+  const MyApp({super.key, required this.home});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +44,50 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: SplashScreen(),
+      // home: SplashScreen(),
+      home: home,
     );
   }
+}
+
+// Initialize important services and return first screen
+Future<Widget> init() async {
+  Get.config(enableLog: false);
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await NotificationService.instance.init();
+
+  await SharedPrefsHelper.init();
+
+  final userId = await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey);
+  if (userId != null && userId.isNotEmpty) {
+    await NotificationService.instance.login(userId);
+  }
+
+  // Initialize socket connection globally
+  SocketService.instance.initSocket(AppUrls.socketBaseUrl);
+  // // await Get.putAsync<ConnectivityService>(() => ConnectivityService().init());
+
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  final token = await SharedPrefsHelper.getString(SharedPrefsHelper.tokenKey);
+  final userType = await SharedPrefsHelper.getString(
+    SharedPrefsHelper.userTypeKey,
+  );
+
+  Widget start;
+
+  if (token != null && token.isNotEmpty) {
+    if (userType == AppConstants.roles.admin) {
+      start = AdminDashboard();
+    } else {
+      start = BottomNavigationPage();
+    }
+  } else {
+    start = LoginPage();
+  }
+
+  return start;
 }

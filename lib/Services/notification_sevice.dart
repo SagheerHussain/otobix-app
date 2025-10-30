@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:otobix/Services/notification_router.dart';
 import 'package:otobix/Utils/app_constants.dart';
+import 'package:otobix/Widgets/toast_widget.dart';
 
 class NotificationService {
   NotificationService._();
@@ -18,6 +20,38 @@ class NotificationService {
 
     // When a notification arrives in foreground: just show it
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+      // Access custom payload
+      final Map<String, dynamic> data = Map<String, dynamic>.from(
+        event.notification.additionalData ?? {},
+      );
+      final String type = '${data['type'] ?? ''}';
+
+      if (type == 'OUTBID') {
+        // Stop the push notification
+        // event.preventDefault();
+
+        // Show your own toast
+        final ctx = Get.context;
+        if (ctx != null) {
+          final carName = '${data['carName'] ?? ''}';
+          final newBid = data['newBid']?.toString() ?? '';
+          final body =
+              data['body'] ?? 'You’ve been outbid on $carName at Rs. $newBid.';
+          Future.delayed(Duration(seconds: 2), () {
+            ToastWidget.show(
+              context: ctx,
+              toastDuration: 5,
+              title: 'You’ve been outbid',
+              subtitle: body.toString(),
+              type: ToastType.error,
+            );
+          });
+        }
+        // If you ALSO want the OS banner, remove preventDefault() and keep display()
+        // event.notification.display();
+        return;
+      }
+
       // Only call this if you want to stop the default auto-display:
       event.preventDefault();
 

@@ -72,22 +72,22 @@ class AccountController extends GetxController {
       final token = await SharedPrefsHelper.getString(
         SharedPrefsHelper.tokenKey,
       );
-      print('Token: $token');
+      // debugPrint('Token: $token');
 
       if (token == null) {
-        print('User not logged in');
+        debugPrint('User not logged in');
         return;
       }
 
       final response = await ApiService.get(
         endpoint: AppUrls.getUserProfile,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
+        // headers: {
+        //   'Authorization': 'Bearer $token',
+        //   'Content-Type': 'application/json',
+        // },
       );
 
-      debugPrint('API response: ${response.body}');
+      // debugPrint('API response: ${response.body}');
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body)['profile'];
 
