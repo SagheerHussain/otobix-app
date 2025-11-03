@@ -162,6 +162,7 @@ class EditProfileScreen extends StatelessWidget {
             controller: controller,
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
+              enabled: false,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 12,
                 vertical: 10,
