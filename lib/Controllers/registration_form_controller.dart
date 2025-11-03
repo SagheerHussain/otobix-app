@@ -5,7 +5,6 @@ import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Login/login_page.dart';
-import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Widgets/terms_and_conditions_bottom_sheet_widget.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'dart:convert';

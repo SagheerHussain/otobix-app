@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:otobix/Controllers/rejection_controller.dart';
 import 'package:otobix/Utils/app_images.dart';
-import 'package:otobix/admin/controller/rejection_controller.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
 
 class RejectedScreen extends StatefulWidget {
@@ -15,8 +15,8 @@ class RejectedScreen extends StatefulWidget {
 }
 
 class _RejectedScreenState extends State<RejectedScreen> {
-  final UserCommentController userCommentController = Get.put(
-    UserCommentController(),
+  final RejectionController rejectionController = Get.put(
+    RejectionController(),
   );
 
   @override
@@ -31,7 +31,7 @@ class _RejectedScreenState extends State<RejectedScreen> {
   }
 
   Future<void> _fetchComment() async {
-    await userCommentController.fetchUserComment(widget.userId);
+    await rejectionController.fetchUserComment(widget.userId);
   }
 
   @override
@@ -77,14 +77,14 @@ class _RejectedScreenState extends State<RejectedScreen> {
                     border: Border.all(color: Colors.redAccent, width: 1.2),
                   ),
                   child:
-                      userCommentController.isLoading.value
+                      rejectionController.isLoading.value
                           ? const Center(child: CircularProgressIndicator())
                           : Text(
-                            userCommentController
+                            rejectionController
                                     .rejectionComment
                                     .value
                                     .isNotEmpty
-                                ? userCommentController.rejectionComment.value
+                                ? rejectionController.rejectionComment.value
                                 : "Your application has been rejected. Please contact support for more details.",
                             style: const TextStyle(
                               fontSize: 16,

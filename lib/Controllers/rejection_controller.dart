@@ -6,7 +6,7 @@ import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
-class UserCommentController extends GetxController {
+class RejectionController extends GetxController {
   /// loading indicator
   RxBool isLoading = false.obs;
 

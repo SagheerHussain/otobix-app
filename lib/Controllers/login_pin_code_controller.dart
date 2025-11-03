@@ -1,11 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otobix/Controllers/login_controller.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
-import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 
 class LoginPinCodeController extends GetxController {

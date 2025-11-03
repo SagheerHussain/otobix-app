@@ -19,18 +19,23 @@ class EditProfileScreen extends StatelessWidget {
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Get.back();
-            },
-          ),
+          // leading: IconButton(
+          //   icon: const Icon(Icons.arrow_back, color: Colors.black),
+          //   onPressed: () {
+          //     Get.back();
+          //   },
+          // ),
           elevation: 0,
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
+          // backgroundColor: AppColors.green,
+          iconTheme: const IconThemeData(color: AppColors.green),
+          // automaticallyImplyLeading: false,
           title: const Text(
             'Edit My Profile',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
           actions: [
             TextButton(
@@ -162,6 +167,7 @@ class EditProfileScreen extends StatelessWidget {
             controller: controller,
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
+              enabled: false,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 12,
                 vertical: 10,
