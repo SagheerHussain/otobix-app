@@ -5,13 +5,10 @@ import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Services/notification_sevice.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
-import 'package:otobix/Views/Customer%20Panel/customer_homepage.dart';
+import 'package:otobix/Views/Dealer%20Panel/rejected_screen.dart';
 import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
-import 'package:otobix/Views/Sales%20Manager%20Panel/sales_manager_homepage.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
-import 'package:otobix/admin/admin_dashboard.dart';
-import 'package:otobix/admin/rejected_screen.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
 
 class LoginController extends GetxController {
@@ -43,7 +40,7 @@ class LoginController extends GetxController {
         body: requestBody,
       );
       final data = jsonDecode(response.body);
-      debugPrint("Status Code: ${response.statusCode}");
+      // debugPrint("Status Code: ${response.statusCode}");
       if (response.statusCode == 200) {
         final token = data['token'];
         final user = data['user'];
@@ -58,11 +55,11 @@ class LoginController extends GetxController {
         // Link current userid in OneSignal to receive push notifications
         await NotificationService.instance.login(userId);
 
-        if (approvalStatus == 'Approved') {
+        if (approvalStatus == AppConstants.roles.userStatusApproved) {
           await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
         }
 
-        debugPrint("Token saved in local: $token");
+        // debugPrint("Token saved in local: $token");
         await SharedPrefsHelper.saveString(
           SharedPrefsHelper.userKey,
           jsonEncode(user),
@@ -77,36 +74,43 @@ class LoginController extends GetxController {
           entityType,
         );
         // debugPrint("userId: $userId");
-        if (userType == AppConstants.roles.admin) {
-          Get.offAll(() => AdminDashboard());
-        } else {
-          if (approvalStatus == 'Pending') {
-            final entityType = (user['entityType'] as String?)?.trim();
-            final entityDocuments = await _fetchEntityDocuments(entityType);
-            Get.to(
-              () => WaitingForApprovalPage(
-                documents: entityDocuments,
-                userRole: userType,
-              ),
-            );
-          } else if (approvalStatus == 'Approved') {
-            if (userType == AppConstants.roles.customer) {
-              Get.offAll(() => CustomerHomepage());
-            } else if (userType == AppConstants.roles.salesManager) {
-              Get.offAll(() => SalesManagerHomepage());
-            } else if (userType == AppConstants.roles.dealer) {
-              Get.offAll(() => BottomNavigationPage());
-            }
-          } else if (approvalStatus == 'Rejected') {
-            Get.to(() => RejectedScreen(userId: user['id']));
+        // if (userType == AppConstants.roles.admin) {
+        //   Get.offAll(() => AdminDashboard());
+        // } else {
+        if (approvalStatus == AppConstants.roles.userStatusPending) {
+          final entityType = (user['entityType'] as String?)?.trim();
+          final entityDocuments = await _fetchEntityDocuments(entityType);
+          Get.to(
+            () => WaitingForApprovalPage(
+              documents: entityDocuments,
+              userRole: userType,
+            ),
+          );
+        } else if (approvalStatus == AppConstants.roles.userStatusApproved) {
+          // if (userType == AppConstants.roles.customer) {
+          //   Get.offAll(() => CustomerHomepage());
+          // } else if (userType == AppConstants.roles.salesManager) {
+          //   Get.offAll(() => SalesManagerHomepage());
+          // } else
+          if (userType == AppConstants.roles.dealer) {
+            Get.offAll(() => BottomNavigationPage());
           } else {
             ToastWidget.show(
               context: Get.context!,
-              title: "Invalid approval status. Please contact admin.",
+              title: "No Account associated with these credentials.",
               type: ToastType.error,
             );
           }
+        } else if (approvalStatus == AppConstants.roles.userStatusRejected) {
+          Get.to(() => RejectedScreen(userId: user['id']));
+        } else {
+          ToastWidget.show(
+            context: Get.context!,
+            title: "Invalid approval status. Please contact admin.",
+            type: ToastType.error,
+          );
         }
+        // }
       } else {
         debugPrint("data: $data");
         ToastWidget.show(

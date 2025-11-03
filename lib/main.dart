@@ -9,7 +9,6 @@ import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Views/Login/login_page.dart';
-import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/firebase_options.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
 
@@ -80,11 +79,15 @@ Future<Widget> init() async {
   Widget start;
 
   if (token != null && token.isNotEmpty) {
-    if (userType == AppConstants.roles.admin) {
-      start = AdminDashboard();
-    } else {
+    // if (userType == AppConstants.roles.admin) {
+    //   start = AdminDashboard();
+    // } else {
+    if (userType == AppConstants.roles.dealer) {
       start = BottomNavigationPage();
+    } else {
+      start = LoginPage();
     }
+    // }
   } else {
     start = LoginPage();
   }

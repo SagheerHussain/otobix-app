@@ -1,9 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
-import 'package:otobix/admin/admin_dashboard.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
-import 'package:otobix/Utils/app_constants.dart';
 
 class SplashController extends GetxController {
   String? token;
@@ -24,11 +22,11 @@ class SplashController extends GetxController {
 
     Future.delayed(const Duration(seconds: 3), () {
       if (token != null) {
-        if (userType == AppConstants.roles.admin) {
-          Get.off(() => AdminDashboard());
-        } else {
-          Get.off(() => BottomNavigationPage());
-        }
+        // if (userType == AppConstants.roles.admin) {
+        //   Get.off(() => AdminDashboard());
+        // } else {
+        Get.off(() => BottomNavigationPage());
+        // }
       } else {
         Get.off(() => LoginPage());
       }

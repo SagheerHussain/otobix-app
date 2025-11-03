@@ -12,8 +12,6 @@ import 'package:otobix/Controllers/registration_form_controller.dart';
 import 'package:otobix/Controllers/splash_controller.dart';
 import 'package:otobix/Controllers/tab_bar_buttons_controller.dart';
 import 'package:otobix/Controllers/user_preferences_controller.dart';
-import 'package:otobix/admin/controller/admin_approved_users_list_controller.dart';
-import 'package:otobix/admin/controller/admin_rejected_users_list_controller.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -33,7 +31,5 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => TabBarButtonsController());
     // Get.lazyPut(() => TabBarWidgetController());
     Get.lazyPut(() => UserPreferencesController());
-    Get.lazyPut(() => AdminApprovedUsersListController());
-    Get.lazyPut(() => AdminRejectedUserListController());
   }
 }

@@ -6,6 +6,7 @@ import 'package:otobix/Controllers/bottom_navigation_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Dealer%20Panel/dealer_guide_page.dart';
+import 'package:otobix/Views/Dealer%20Panel/delete_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/edit_account_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/privacy_policy_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/terms_and_conditions_page.dart';
@@ -180,6 +181,15 @@ class _AccountPageState extends State<AccountPage> {
                     description: "View dealer guide.",
                     onTap: () {
                       Get.to(DealerGuidePage());
+                    },
+                  ),
+                  ProfileOption(
+                    icon: Icons.delete,
+                    color: Colors.red,
+                    title: "Delete Account",
+                    description: "Delete your account securely.",
+                    onTap: () {
+                      Get.to(DeleteAccountPage());
                     },
                   ),
                   ProfileOption(
