@@ -26,7 +26,6 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
-
 		<!-- ===== Defined By Muhammad Ahsan ===== -->
 		<!-- ===== Permissions you need (Camera + Photos + Location + Tracking etc) ===== -->
 		<key>NSCameraUsageDescription</key>
@@ -39,19 +38,16 @@
 		<string>OtoBix Dealer App needs access to your location to show nearby cars, dealerships, and improve your app experience.</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
-
-  		<!-- ===== Background modes for OneSignal ===== -->
+		<!-- ===== Background modes for OneSignal ===== -->
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>remote-notification</string>
 			<string>fetch</string>
 		</array>
-		
-  		<!-- ===== Tell App Store that app uses encryption ===== -->
+		<!-- ===== Tell App Store that app uses encryption ===== -->
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		<!-- ===== Defined By Muhammad Ahsan ===== -->
-
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>

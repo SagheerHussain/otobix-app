@@ -71,20 +71,32 @@ dependencies:
   # flutter_local_notifications: ^19.2.0
   # permission_handler: ^12.0.1
 
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "lib/assets/images/appLogo.png"
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "lib/assets/images/appLogo.png"
 
 # flutter_native_splash:
-#   color: "#FFFFFF"                # background color
-#   image: lib/assets/images/splashLogo.png
+#   color: "#FFFFFF"
+#   image: "lib/assets/images/splashLogo.png"
 #   android: true
 #   ios: true
 #   web: false
 #   android_12:
-#     image: lib/assets/images/splashLogo.png
+#     image: "lib/assets/images/splashLogo.png"
 #     icon_background_color: "#FFFFFF"
+
+# flutter_launcher_icons:
+#   android: true
+#   ios: true
+#   image_path: "lib/assets/images/appLogo.png"
+#   # --- Android adaptive icon (recommended) ---
+#   adaptive_icon_background: "#FFFFFF"
+#   adaptive_icon_foreground: "lib/assets/images/appLogo.png"
+#   # Android 13+ monochrome (optional but nice for theming):
+#   adaptive_icon_monochrome: "lib/assets/images/appLogo.png"
+#   # --- iOS specifics ---
+#   remove_alpha_ios: true
 
 dev_dependencies:
   flutter_test:

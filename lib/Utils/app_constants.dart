@@ -67,7 +67,8 @@ class AppConstants {
 
   static const _prodConfiguration = _EnvConfig(
     deploymentEnvironmentName: 'prod',
-    renderBaseUrl: 'https://otobix-app-backend-rq8m.onrender.com/api/',
+    // renderBaseUrl: 'https://otobix-app-backend-rq8m.onrender.com/api/',
+    renderBaseUrl: 'https://ob-dealerapp-kong.onrender.com/api/',
     oneSignalAppId: 'a6697fe1-be34-420f-9aa7-1fa369e1b07c',
   );
 

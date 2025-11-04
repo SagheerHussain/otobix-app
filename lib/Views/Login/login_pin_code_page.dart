@@ -65,7 +65,7 @@ class LoginPinCodePage extends StatelessWidget {
 
   // App Logo
   Widget _buildAppLogo() =>
-      Image.asset(AppImages.appLogo, height: 150, width: 150);
+      Image.asset(AppImages.otobixLogo, height: 150, width: 150);
 
   Widget _buildOtpMessageText() => Column(
     children: [

@@ -1,4 +1,5 @@
 class AppImages {
+  static const String otobixLogo = 'lib/assets/images/otobixLogo.png';
   static const String appLogo = 'lib/assets/images/appLogo.png';
   static const String splashLogo = 'lib/assets/images/splashLogo.png';
 
