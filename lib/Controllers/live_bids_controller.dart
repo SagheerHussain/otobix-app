@@ -426,6 +426,45 @@ class LiveBidsController extends GetxController {
     }
 
     void startFor(CarsListModel car) {
+      // make sure an RxString exists for this id
+      remainingTimes.putIfAbsent(car.id, () => ''.obs);
+
+      _timers[car.id]?.cancel();
+
+      final endAt = computeLiveEnd(car);
+      if (endAt == null) {
+        remainingTimes[car.id]!.value = 'N/A';
+        return;
+      }
+
+      String fmt(Duration d) {
+        String two(int n) => n.toString().padLeft(2, '0');
+        return '${two(d.inHours)}h : ${two(d.inMinutes % 60)}m : ${two(d.inSeconds % 60)}s';
+      }
+
+      void tick() {
+        final diff = endAt.difference(DateTime.now());
+        if (diff.isNegative || diff.inSeconds <= 0) {
+          remainingTimes[car.id]!.value = '00h : 00m : 00s';
+          _timers[car.id]?.cancel();
+          _timers.remove(car.id);
+
+          // MINIMAL path: don’t mutate lists here (let socket/server remove it)
+          // If you must remove here, use addPostFrameCallback (optional).
+
+          return;
+        }
+        remainingTimes[car.id]!.value = fmt(diff);
+      }
+
+      tick();
+      _timers[car.id] = Timer.periodic(
+        const Duration(seconds: 1),
+        (_) => tick(),
+      );
+    }
+
+    void startFor1(CarsListModel car) {
       _timers[car.id]?.cancel();
 
       final endAt = computeLiveEnd(car);
@@ -464,10 +503,6 @@ class LiveBidsController extends GetxController {
       startFor(car);
     }
   }
-
-  // Get remaining time for car details screen
-  RxString getCarRemainingTimeForNextScreen(String carId) =>
-      remainingTimes.putIfAbsent(carId, () => ''.obs);
 
   // Listen to timer exteded updates
   void _listenToExtendedTimerRealtime() {
@@ -708,4 +743,12 @@ class LiveBidsController extends GetxController {
   //     return false;
   //   }
   // }
+
+  // // Get remaining time for car details screen
+  // RxString getCarRemainingTimeForNextScreen(String carId) =>
+  //     remainingTimes.putIfAbsent(carId, () => ''.obs);
+
+  RxString getCarRemainingTimeForNextScreen(String carId) {
+    return remainingTimes[carId] ?? ''.obs;
+  }
 }

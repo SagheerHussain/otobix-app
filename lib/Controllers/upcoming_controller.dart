@@ -284,6 +284,36 @@ class UpcomingController extends GetxController {
     }
 
     void startFor(CarsListModel car) {
+      // ensure an Rx exists BEFORE any widget reads it
+      remainingTimes.putIfAbsent(car.id, () => ''.obs);
+
+      _timers[car.id]?.cancel();
+      final until = car.upcomingUntil;
+      if (until == null) {
+        remainingTimes[car.id]!.value = 'N/A';
+        return;
+      }
+
+      void tick() {
+        final diff = until.difference(DateTime.now());
+        if (diff.isNegative || diff.inSeconds <= 0) {
+          remainingTimes[car.id]!.value = '00h : 00m : 00s';
+          // ... (see section 2 for list mutations)
+          return;
+        }
+        String two(int n) => n.toString().padLeft(2, '0');
+        remainingTimes[car.id]!.value =
+            '${two(diff.inHours)}h : ${two(diff.inMinutes % 60)}m : ${two(diff.inSeconds % 60)}s';
+      }
+
+      tick();
+      _timers[car.id] = Timer.periodic(
+        const Duration(seconds: 1),
+        (_) => tick(),
+      );
+    }
+
+    void startFor1(CarsListModel car) {
       _timers[car.id]?.cancel();
 
       final until = car.upcomingUntil; // your model’s target DateTime
@@ -527,7 +557,10 @@ class UpcomingController extends GetxController {
     super.onClose();
   }
 
-  // Get remaining time for car details screen
-  RxString getCarRemainingTimeForNextScreen(String carId) =>
-      remainingTimes.putIfAbsent(carId, () => ''.obs);
+  // // Get remaining time for car details screen
+  // RxString getCarRemainingTimeForNextScreen(String carId) =>
+  //     remainingTimes.putIfAbsent(carId, () => ''.obs);
+  RxString getCarRemainingTimeForNextScreen(String carId) {
+    return remainingTimes[carId] ?? ''.obs; // do NOT insert into the map here
+  }
 }

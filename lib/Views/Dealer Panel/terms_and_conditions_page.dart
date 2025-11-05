@@ -38,7 +38,9 @@ class TermsAndConditionsPage extends StatelessWidget {
 
       body: Obx(() {
         if (termsAndConditionsController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.green),
+          );
         }
         if (termsAndConditionsController.error.value != null) {
           return Center(
