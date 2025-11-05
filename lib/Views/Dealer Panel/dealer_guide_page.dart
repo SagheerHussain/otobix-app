@@ -36,7 +36,9 @@ class DealerGuidePage extends StatelessWidget {
 
       body: Obx(() {
         if (dealerGuideController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.green),
+          );
         }
         if (dealerGuideController.error.value != null) {
           return Center(

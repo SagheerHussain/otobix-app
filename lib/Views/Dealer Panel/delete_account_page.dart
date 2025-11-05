@@ -63,7 +63,9 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(), // uses theme color
+              child: CircularProgressIndicator(
+                color: AppColors.green,
+              ), // uses theme color
             ),
         ],
       ),

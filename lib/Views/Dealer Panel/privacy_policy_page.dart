@@ -36,7 +36,9 @@ class PrivacyPolicyPage extends StatelessWidget {
 
       body: Obx(() {
         if (privacyPolicyController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.green),
+          );
         }
         if (privacyPolicyController.error.value != null) {
           return Center(
