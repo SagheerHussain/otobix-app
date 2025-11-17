@@ -24,6 +24,7 @@ class CarsListModel {
   final String registrationNumber;
   final String registeredRto;
   final String registrationState;
+  final DateTime? registrationDate;
   final String inspectionLocation;
   final bool isInspected;
   final int cubicCapacity;
@@ -59,6 +60,7 @@ class CarsListModel {
     required this.registrationNumber,
     required this.registeredRto,
     required this.registrationState,
+    required this.registrationDate,
     required this.inspectionLocation,
     required this.isInspected,
     required this.cubicCapacity,
@@ -88,20 +90,16 @@ class CarsListModel {
       make: data['make'] ?? '',
       model: data['model'] ?? '',
       variant: data['variant'] ?? '',
-      priceDiscovery:
-          data['priceDiscovery'] is double
-              ? data['priceDiscovery']
-              : double.tryParse(data['priceDiscovery']?.toString() ?? '0') ??
-                  0.0,
+      priceDiscovery: data['priceDiscovery'] is double
+          ? data['priceDiscovery']
+          : double.tryParse(data['priceDiscovery']?.toString() ?? '0') ?? 0.0,
       yearMonthOfManufacture: parseMongoDbDate(data["yearMonthOfManufacture"]),
-      odometerReadingInKms:
-          data['odometerReadingInKms'] is int
-              ? data['odometerReadingInKms']
-              : int.tryParse(data['odometerReadingInKms']?.toString() ?? '0'),
-      ownerSerialNumber:
-          data['ownerSerialNumber'] is int
-              ? data['ownerSerialNumber']
-              : int.tryParse(data['ownerSerialNumber']?.toString() ?? ''),
+      odometerReadingInKms: data['odometerReadingInKms'] is int
+          ? data['odometerReadingInKms']
+          : int.tryParse(data['odometerReadingInKms']?.toString() ?? '0'),
+      ownerSerialNumber: data['ownerSerialNumber'] is int
+          ? data['ownerSerialNumber']
+          : int.tryParse(data['ownerSerialNumber']?.toString() ?? ''),
       fuelType: data['fuelType'] ?? '',
       commentsOnTransmission: data['commentsOnTransmission'] ?? '',
       roadTaxValidity: data['roadTaxValidity'] ?? '',
@@ -109,6 +107,7 @@ class CarsListModel {
       registrationNumber: data['registrationNumber'],
       registeredRto: data['registeredRto'],
       registrationState: data["registrationState"] ?? 'N/A',
+      registrationDate: parseMongoDbDate(data["registrationDate"]),
       inspectionLocation: data['inspectionLocation'],
       isInspected: data['isInspected'] ?? false,
       cubicCapacity: data['cubicCapacity'] ?? 0,
@@ -127,10 +126,9 @@ class CarsListModel {
       otobuyOffer:
           double.tryParse(data['otobuyOffer']?.toString() ?? '0') ?? 0.0,
       soldAt: double.tryParse(data['soldAt']?.toString() ?? '0') ?? 0.0,
-      imageUrls:
-          (data['imageUrls'] as List<dynamic>?)
-              ?.map((e) => CarsListTitleAndImage.fromJson(e))
-              .toList(),
+      imageUrls: (data['imageUrls'] as List<dynamic>?)
+          ?.map((e) => CarsListTitleAndImage.fromJson(e))
+          .toList(),
     );
   }
 
@@ -152,6 +150,7 @@ class CarsListModel {
       'registrationNumber': registrationNumber,
       'registeredRto': registeredRto,
       'registrationState': registrationState,
+      'registrationDate': registrationDate,
       'inspectionLocation': inspectionLocation,
       'isInspected': isInspected,
       'cubicCapacity': cubicCapacity,

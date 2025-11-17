@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:otobix/Controllers/login_controller.dart';
 import 'package:otobix/Services/notification_sevice.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Login/login_page.dart';
@@ -226,7 +227,7 @@ class AccountController extends GetxController {
           type: ToastType.success,
         );
         imageFile.value = null;
-        // getUserProfile();
+        getUserProfile();
 
         Get.back();
         // ToastWidget.show(
@@ -289,7 +290,7 @@ class AccountController extends GetxController {
           title: 'Logout successful',
           type: ToastType.success,
         );
-
+        Get.delete<LoginController>();
         Get.offAll(() => LoginPage());
       } else {
         ToastWidget.show(
