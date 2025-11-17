@@ -475,9 +475,9 @@ class LiveBidsPage extends StatelessWidget {
       // iconDetail(Icons.confirmation_number, 'Variant', '[2014–2017]'),
       iconDetail(
         Icons.calendar_month,
-        'Year of Manufacture',
+        'Registration Date',
         GlobalFunctions.getFormattedDate(
-              date: car.yearMonthOfManufacture,
+              date: car.registrationDate,
               type: GlobalFunctions.monthYear,
             ) ??
             'N/A',

@@ -562,9 +562,9 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
       // iconDetail(Icons.confirmation_number, 'Variant', '[2014–2017]'),
       iconDetail(
         Icons.calendar_month,
-        'Year of Manufacture',
+        'Registration Date',
         GlobalFunctions.getFormattedDate(
-              date: carDetails.yearMonthOfManufacture,
+              date: carDetails.registrationDate,
               type: GlobalFunctions.monthYear,
             ) ??
             'N/A',

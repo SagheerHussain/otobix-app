@@ -9,6 +9,7 @@ import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Views/Login/login_page.dart';
+import 'package:otobix/Views/Register/register_pin_code_page.dart';
 import 'package:otobix/firebase_options.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
 
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      // home: SplashScreen(),
+      // home: RegisterPinCodePage(phoneNumber: '', userRole: '', requestId: ''),
       home: home,
     );
   }
