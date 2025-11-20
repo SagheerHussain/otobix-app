@@ -44,7 +44,7 @@
 			<string>remote-notification</string>
 			<string>fetch</string>
 		</array>
-		<!-- ===== Tell App Store that app uses encryption ===== -->
+		<!-- ===== Tell App Store that app only uses standard encryption like HTTPS/TLS ===== -->
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 		<!-- ===== Defined By Muhammad Ahsan ===== -->
