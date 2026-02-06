@@ -32,10 +32,10 @@
 		<string>App requires access to the camera to take profile pictures of users.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>App requires access to your photo library to upload profile pictures of users.</string>
-		<key>NSUserTrackingUsageDescription</key>
-		<string>App uses tracking to deliver personalized notifications.</string>
+		<!-- <key>NSUserTrackingUsageDescription</key>
+		<string>App uses tracking to deliver personalized notifications.</string> -->
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>OtoBix Dealer App needs access to your location to show nearby cars, dealerships, and improve your app experience.</string>
+		<string>OtoBix Dealer App may request your location only for features that need it.</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<!-- ===== Background modes for OneSignal ===== -->
