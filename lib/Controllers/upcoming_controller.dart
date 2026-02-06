@@ -48,6 +48,7 @@ class UpcomingController extends GetxController {
     _listenWishlistRealtime();
     _listenUpcomingCarsSectionRealtime();
     _listenUpdatedBidAndChangeHighestBidLocally();
+    _listenToCustomerExpectedPriceRealtime();
   }
 
   final RxList<CarsListModel> filteredUpcomingCarsList = <CarsListModel>[].obs;
@@ -91,9 +92,9 @@ class UpcomingController extends GetxController {
         // for (var car in upcomingCarsList) {
         //   await startAuctionCountdown(car);
         // }
-        for (var car in filteredUpcomingCarsList) {
-          debugPrint('Upcoming cars list: ${car.toJson()}');
-        }
+        // for (var car in filteredUpcomingCarsList) {
+        //   debugPrint('Upcoming cars list: ${car.toJson()}');
+        // }
       } else {
         filteredUpcomingCarsList.value = [];
         upcomingCarsCount.value = 0;
@@ -528,6 +529,38 @@ class UpcomingController extends GetxController {
       return false;
     }
   }
+
+  // Listen to Customer Expected Price realtime
+  void _listenToCustomerExpectedPriceRealtime() {
+    SocketService.instance.on(SocketEvents.customerExpectedPriceUpdated, (
+      data,
+    ) {
+      final String carId = data['carId'].toString();
+      final double newCustomerExpectedPrice =
+          (data['newCustomerExpectedPrice'] as num).toDouble();
+      final double variableMargin =
+          (data['newVariableMargin'] as num).toDouble();
+
+      // find the car in the list by its id
+      final int index = filteredUpcomingCarsList.indexWhere(
+        (car) => car.id == carId,
+      );
+
+      if (index != -1) {
+        // ✅ update the RxDouble correctly
+        filteredUpcomingCarsList[index].customerExpectedPrice.value =
+            newCustomerExpectedPrice;
+        filteredUpcomingCarsList[index].variableMargin.value = variableMargin;
+
+        debugPrint(
+          '📢 New expected price / variable margin received for car $carId: $newCustomerExpectedPrice',
+        );
+      } else {
+        debugPrint('⚠️ carId $carId not found in filteredUpcomingCarsList');
+      }
+    });
+  }
+
   // Future<bool> _checkHasUserBidFromBackend1({
   //   required String carId,
   //   required String? userId,

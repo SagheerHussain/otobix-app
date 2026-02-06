@@ -2,7 +2,7 @@
 // import 'package:otobix/Models/car_model.dart';
 // import 'package:otobix/Models/cars_list_model.dart';
 
-// class WishlistCarsListModel {
+// class PurchasedCarsListModel {
 //   final String? id;
 //   final String imageUrl;
 //   final String make;
@@ -23,7 +23,7 @@
 //   final RxDouble highestBid;
 //   final List<CarsListTitleAndImage>? imageUrls;
 
-//   WishlistCarsListModel({
+//   PurchasedCarsListModel({
 //     this.id,
 //     required this.imageUrl,
 //     required this.make,
@@ -46,11 +46,11 @@
 //   });
 
 //   // Factory constructor to create a Car from JSON map
-//   factory WishlistCarsListModel.fromJson({
+//   factory PurchasedCarsListModel.fromJson({
 //     required String documentId,
 //     required Map<String, dynamic> data,
 //   }) {
-//     return WishlistCarsListModel(
+//     return PurchasedCarsListModel(
 //       id: documentId,
 //       imageUrl: data['imageUrl'] ?? '',
 //       make: data['make'] ?? '',

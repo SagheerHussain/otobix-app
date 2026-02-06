@@ -33,6 +33,9 @@ class OtoBuyController extends GetxController {
 
     // Listen to realtime otobuy cars section updates
     _listenOtoBuyCarsSectionRealtime();
+
+    // List if customer updated the one click price of car
+    _listenToCustomerUpdatedOneClickPriceRealtime();
   }
 
   final RxList<CarsListModel> filteredOtoBuyCarsList = <CarsListModel>[].obs;
@@ -277,6 +280,28 @@ class OtoBuyController extends GetxController {
         // update count
         otoBuyCarsCount.value = filteredOtoBuyCarsList.length;
         return;
+      }
+    });
+  }
+
+  // Listen to Customer updated One Click Price realtime
+  void _listenToCustomerUpdatedOneClickPriceRealtime() {
+    SocketService.instance.on(SocketEvents.customerOneClickPriceUpdated, (
+      data,
+    ) {
+      final String carId = data['carId'];
+      final double newCustomerOneClickPrice =
+          (data['newCustomerOneClickPrice'] as num).toDouble();
+
+      // Check if the carId matches a car's id
+      final idx = filteredOtoBuyCarsList.indexWhere((c) => c.id == carId);
+      if (idx != -1) {
+        // Update the customerOneClickPrice in auctionDetails
+        filteredOtoBuyCarsList[idx].oneClickPrice.value =
+            newCustomerOneClickPrice;
+        debugPrint(
+          '📢 New one click price update received for car $carId: $newCustomerOneClickPrice',
+        );
       }
     });
   }

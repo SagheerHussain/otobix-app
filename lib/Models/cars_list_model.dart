@@ -36,9 +36,12 @@ class CarsListModel {
   final int upcomingTime;
   final DateTime? upcomingUntil;
   final DateTime? liveAt;
-  final double oneClickPrice;
+  final RxDouble oneClickPrice;
   final double otobuyOffer;
   final double soldAt;
+  final RxDouble customerExpectedPrice;
+  final RxDouble fixedMargin;
+  final RxDouble variableMargin;
   final List<CarsListTitleAndImage>? imageUrls;
 
   final RxBool isFavorite;
@@ -75,6 +78,9 @@ class CarsListModel {
     required this.oneClickPrice,
     required this.otobuyOffer,
     required this.soldAt,
+    required this.customerExpectedPrice,
+    required this.fixedMargin,
+    required this.variableMargin,
     required this.imageUrls,
     bool isFavorite = false,
   }) : isFavorite = isFavorite.obs;
@@ -90,16 +96,20 @@ class CarsListModel {
       make: data['make'] ?? '',
       model: data['model'] ?? '',
       variant: data['variant'] ?? '',
-      priceDiscovery: data['priceDiscovery'] is double
-          ? data['priceDiscovery']
-          : double.tryParse(data['priceDiscovery']?.toString() ?? '0') ?? 0.0,
+      priceDiscovery:
+          data['priceDiscovery'] is double
+              ? data['priceDiscovery']
+              : double.tryParse(data['priceDiscovery']?.toString() ?? '0') ??
+                  0.0,
       yearMonthOfManufacture: parseMongoDbDate(data["yearMonthOfManufacture"]),
-      odometerReadingInKms: data['odometerReadingInKms'] is int
-          ? data['odometerReadingInKms']
-          : int.tryParse(data['odometerReadingInKms']?.toString() ?? '0'),
-      ownerSerialNumber: data['ownerSerialNumber'] is int
-          ? data['ownerSerialNumber']
-          : int.tryParse(data['ownerSerialNumber']?.toString() ?? ''),
+      odometerReadingInKms:
+          data['odometerReadingInKms'] is int
+              ? data['odometerReadingInKms']
+              : int.tryParse(data['odometerReadingInKms']?.toString() ?? '0'),
+      ownerSerialNumber:
+          data['ownerSerialNumber'] is int
+              ? data['ownerSerialNumber']
+              : int.tryParse(data['ownerSerialNumber']?.toString() ?? ''),
       fuelType: data['fuelType'] ?? '',
       commentsOnTransmission: data['commentsOnTransmission'] ?? '',
       roadTaxValidity: data['roadTaxValidity'] ?? '',
@@ -121,14 +131,26 @@ class CarsListModel {
       upcomingTime: data['upcomingTime'] ?? 0,
       upcomingUntil: parseMongoDbDate(data["upcomingUntil"]),
       liveAt: parseMongoDbDate(data["liveAt"]),
-      oneClickPrice:
-          double.tryParse(data['oneClickPrice']?.toString() ?? '0') ?? 0.0,
+      oneClickPrice: RxDouble(
+        double.tryParse(data['oneClickPrice']?.toString() ?? '0') ?? 0.0,
+      ),
       otobuyOffer:
           double.tryParse(data['otobuyOffer']?.toString() ?? '0') ?? 0.0,
       soldAt: double.tryParse(data['soldAt']?.toString() ?? '0') ?? 0.0,
-      imageUrls: (data['imageUrls'] as List<dynamic>?)
-          ?.map((e) => CarsListTitleAndImage.fromJson(e))
-          .toList(),
+      customerExpectedPrice: RxDouble(
+        double.tryParse(data['customerExpectedPrice']?.toString() ?? '0') ??
+            0.0,
+      ),
+      fixedMargin: RxDouble(
+        double.tryParse(data['fixedMargin']?.toString() ?? '0') ?? 0.0,
+      ),
+      variableMargin: RxDouble(
+        double.tryParse(data['variableMargin']?.toString() ?? '0') ?? 0.0,
+      ),
+      imageUrls:
+          (data['imageUrls'] as List<dynamic>?)
+              ?.map((e) => CarsListTitleAndImage.fromJson(e))
+              .toList(),
     );
   }
 
@@ -154,7 +176,7 @@ class CarsListModel {
       'inspectionLocation': inspectionLocation,
       'isInspected': isInspected,
       'cubicCapacity': cubicCapacity,
-      'highestBid': highestBid,
+      'highestBid': highestBid.value,
       'auctionStartTime': auctionStartTime,
       'auctionEndTime': auctionEndTime,
       'auctionDuration': auctionDuration,
@@ -162,9 +184,12 @@ class CarsListModel {
       'upcomingTime': upcomingTime,
       'upcomingUntil': upcomingUntil,
       'liveAt': liveAt,
-      'oneClickPrice': oneClickPrice,
+      'oneClickPrice': oneClickPrice.value,
       'otobuyOffer': otobuyOffer,
       'soldAt': soldAt,
+      'customerExpectedPrice': customerExpectedPrice.value,
+      'fixedMargin': fixedMargin.value,
+      'variableMargin': variableMargin.value,
       'imageUrls': imageUrls?.map((e) => e.toJson()).toList(),
     };
   }

@@ -3,25 +3,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:otobix/Network/socket_service.dart';
+import 'package:otobix/Services/app_update_service.dart';
 import 'package:otobix/Services/notification_sevice.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Utils/app_urls.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Views/Login/login_page.dart';
-import 'package:otobix/Views/Register/register_pin_code_page.dart';
 import 'package:otobix/firebase_options.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:otobix/Network/api_service.dart';
 
 void main() async {
   final start = await init();
-
   runApp(MyApp(home: start));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final Widget home;
   const MyApp({super.key, required this.home});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    // ✅ run after first frame to ensure context exists
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppUpdateService.instance.checkOnLaunch(appKey: AppConstants.appKey);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +61,7 @@ class MyApp extends StatelessWidget {
       ),
 
       // home: RegisterPinCodePage(phoneNumber: '', userRole: '', requestId: ''),
-      home: home,
+      home: widget.home,
     );
   }
 }
@@ -64,6 +80,13 @@ Future<Widget> init() async {
   final userId = await SharedPrefsHelper.getString(SharedPrefsHelper.userIdKey);
   if (userId != null && userId.isNotEmpty) {
     await NotificationService.instance.login(userId);
+    // Save App Version On App Launch -> fire-and-forget (do NOT await)
+          Future.microtask(
+            () => addActivityLogSafe(
+              userId: userId,
+              eventDetails: 'User launched the app',
+            ),
+          );
   }
 
   // Initialize socket connection globally
@@ -76,6 +99,8 @@ Future<Widget> init() async {
   final userType = await SharedPrefsHelper.getString(
     SharedPrefsHelper.userTypeKey,
   );
+
+   
 
   Widget start;
 
@@ -95,3 +120,53 @@ Future<Widget> init() async {
 
   return start;
 }
+
+
+
+  // Get app version
+  Future<String> _getAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      // info.version => "1.0.7"
+      // info.buildNumber => "12"
+      return '${info.version}(${info.buildNumber})';
+    } catch (e) {
+      debugPrint('Failed to get app version: $e');
+      return '';
+    }
+  }
+
+  // Add activity log
+  Future<void> addActivityLogSafe({
+    required String userId,
+    required String eventDetails,
+  }) async {
+    try {
+      if (userId.isEmpty) return;
+
+      final appVersion = await _getAppVersion();
+
+      final requestBody = {
+        'userId': userId,
+        'event': AppConstants.activityLogEvents.appLaunched,
+        'eventDetails': eventDetails,
+        'appVersion': appVersion,
+      };
+
+      final response = await ApiService.post(
+        endpoint: AppUrls.saveAppVersionOnAppLaunch,
+        body: requestBody,
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("Activity log added");
+      } else {
+        debugPrint(
+          "Activity log failed: ${response.statusCode} ${response.body}",
+        );
+      }
+    } catch (e) {
+      // ✅ swallow errors so it never affects login
+      debugPrint("Activity log error: $e");
+    }
+  }

@@ -12,6 +12,10 @@ class AppConstants {
   static final TabBarWidgetControllerTags tabBarWidgetControllerTags =
       TabBarWidgetControllerTags();
   static final HomeScreenSections homeScreenSections = HomeScreenSections();
+  static final ActivityLogEvents activityLogEvents = ActivityLogEvents();
+
+  // App Key for update app info
+  static const String appKey = 'dealer';
 
   static const List<String> indianStates = [
     "Andhra Pradesh",
@@ -55,7 +59,7 @@ class AppConstants {
   // ---- configuration per environment ----
   static const _localConfiguration = _EnvConfig(
     deploymentEnvironmentName: 'local',
-    renderBaseUrl: 'http://192.168.100.99:4000/api/',
+    renderBaseUrl: 'http://192.168.2.35:4000/api/',
     oneSignalAppId: 'a6697fe1-be34-420f-9aa7-1fa369e1b07c',
   );
 
@@ -153,6 +157,12 @@ class HomeScreenSections {
   final String upcomingSectionScreen = 'upcoming';
   final String otobuySectionScreen = 'otobuy';
   final String marketplaceSectionScreen = 'marketplace';
+}
+
+// Activity log events
+class ActivityLogEvents {
+  final String login = 'login';
+  final String appLaunched = 'app-launched';
 }
 
 // Environments Configuration class

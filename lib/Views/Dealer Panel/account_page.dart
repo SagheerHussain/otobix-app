@@ -29,9 +29,9 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Obx(
+    return Scaffold(
+      body: SafeArea(
+        child: Obx(
           () => SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -126,13 +126,13 @@ class _AccountPageState extends State<AccountPage> {
                       nav.currentIndex.value = 1;
                       Future.microtask(() {
                         final tabs = Get.put(
-                          TabBarWidgetController(tabLength: 2),
+                          TabBarWidgetController(tabLength: 3),
                           tag:
                               AppConstants
                                   .tabBarWidgetControllerTags
                                   .myCarsTabs,
                         );
-                        tabs.setSelectedTab(0); // 0 = My Bids, 1 = Wishlist
+                        tabs.setSelectedTab(0); // 0 = My Bids, 2 = Wishlist
                       });
                     },
                   ),
@@ -146,13 +146,13 @@ class _AccountPageState extends State<AccountPage> {
                       nav.currentIndex.value = 1;
                       Future.microtask(() {
                         final tabs = Get.put(
-                          TabBarWidgetController(tabLength: 2),
+                          TabBarWidgetController(tabLength: 3),
                           tag:
                               AppConstants
                                   .tabBarWidgetControllerTags
                                   .myCarsTabs,
                         );
-                        tabs.setSelectedTab(1); // 0 = My Bids, 1 = Wishlist
+                        tabs.setSelectedTab(2); // 0 = My Bids, 2 = Wishlist
                       });
                     },
                   ),
