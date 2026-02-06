@@ -71,7 +71,7 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
         widget.car.imageUrls ??
         [CarsListTitleAndImage(title: 'Main Image', url: widget.car.imageUrl)];
     getxController.setImageUrls(imageUrls);
-    getxController.oneClickPriceAmount.value = widget.car.oneClickPrice;
+    getxController.oneClickPriceAmount.value = widget.car.oneClickPrice.value;
     _setCurrentHighestBid();
 
     // Close screen when timer ends
@@ -130,10 +130,10 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     //     : getxController.yourOfferAmount.value =
     //         getxController.oneClickPriceAmount.value;
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        body: LayoutBuilder(
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      body: SafeArea(
+        child: LayoutBuilder(
           builder: (context, constraints) {
             return Obx(() {
               final isBusy = getxController.isLoading.value;
@@ -2483,103 +2483,112 @@ class _CarDetailsPageState extends State<CarDetailsPage> {
     CarsListModel car,
     Rx<String> remainingAuctionTime,
   ) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
-      ),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: AppColors.white.withValues(alpha: 0.5),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            border: Border(
-              top: BorderSide(color: AppColors.green.withValues(alpha: 0.5)),
-              left: BorderSide(color: AppColors.green.withValues(alpha: 0.5)),
-              right: BorderSide(color: AppColors.green.withValues(alpha: 0.5)),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.2),
-                blurRadius: 10,
-                spreadRadius: 5,
-                offset: const Offset(5, 0),
+    return currentOpenSection != homeController.defaultSectionScreen
+        ? ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.white.withValues(alpha: 0.5),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                border: Border(
+                  top: BorderSide(
+                    color: AppColors.green.withValues(alpha: 0.5),
+                  ),
+                  left: BorderSide(
+                    color: AppColors.green.withValues(alpha: 0.5),
+                  ),
+                  right: BorderSide(
+                    color: AppColors.green.withValues(alpha: 0.5),
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.black.withValues(alpha: 0.2),
+                    blurRadius: 10,
+                    spreadRadius: 5,
+                    offset: const Offset(5, 0),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (currentOpenSection != homeController.otobuySectionScreen)
-                Obx(
-                  () => Text(
-                    // getxController.remainingTime.value,
-                    remainingAuctionTime.value,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: AppColors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 20),
-
-              /// LOGIC: check if type is marketplace
-              if (currentOpenSection == homeController.marketplaceSectionScreen)
-                SizedBox(
-                  width: double.infinity,
-                  child: ButtonWidget(
-                    text: 'Request for Auction',
-                    onTap: () {
-                      Get.dialog(
-                        CongratulationsDialogWidget(
-                          icon: Icons.assignment_turned_in_outlined,
-                          iconSize: 25,
-                          title: "Request Sent!",
-                          message:
-                              "Your request to list this car in auction has been submitted.",
-                          buttonText: "OK",
-                          onButtonTap: () => Get.back(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (currentOpenSection != homeController.otobuySectionScreen)
+                    Obx(
+                      () => Text(
+                        // getxController.remainingTime.value,
+                        remainingAuctionTime.value,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: AppColors.red,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    },
-                    isLoading: false.obs,
-                    height: 35,
-                    fontSize: 12,
-                    elevation: 10,
-                    backgroundColor: AppColors.blue,
-                  ),
-                )
-              /// Show two buttons
-              else
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    PlaceBidButtonWidget(
-                      currentOpenSection: currentOpenSection,
-                      getxController: getxController,
-                      remainingAuctionTime: widget.remainingAuctionTime,
-                      priceDiscovery: car.priceDiscovery,
+                      ),
                     ),
-                    StartAutoBidButtonWidget(
-                      currentOpenSection: currentOpenSection,
-                      carId: getxController.carId,
-                      remainingAuctionTime: widget.remainingAuctionTime,
-                      priceDiscovery: car.priceDiscovery,
+                  const SizedBox(height: 20),
+
+                  /// LOGIC: check if type is marketplace
+                  if (currentOpenSection ==
+                      homeController.marketplaceSectionScreen)
+                    SizedBox(
+                      width: double.infinity,
+                      child: ButtonWidget(
+                        text: 'Request for Auction',
+                        onTap: () {
+                          Get.dialog(
+                            CongratulationsDialogWidget(
+                              icon: Icons.assignment_turned_in_outlined,
+                              iconSize: 25,
+                              title: "Request Sent!",
+                              message:
+                                  "Your request to list this car in auction has been submitted.",
+                              buttonText: "OK",
+                              onButtonTap: () => Get.back(),
+                            ),
+                          );
+                        },
+                        isLoading: false.obs,
+                        height: 35,
+                        fontSize: 12,
+                        elevation: 10,
+                        backgroundColor: AppColors.blue,
+                      ),
+                    )
+                  /// Show two buttons
+                  else
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        PlaceBidButtonWidget(
+                          currentOpenSection: currentOpenSection,
+                          getxController: getxController,
+                          remainingAuctionTime: widget.remainingAuctionTime,
+                          priceDiscovery: car.priceDiscovery,
+                        ),
+                        StartAutoBidButtonWidget(
+                          currentOpenSection: currentOpenSection,
+                          carId: getxController.carId,
+                          remainingAuctionTime: widget.remainingAuctionTime,
+                          priceDiscovery: car.priceDiscovery,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              const SizedBox(height: 10),
-            ],
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        )
+        : const SizedBox();
   }
 
   Widget _buildLoading() {

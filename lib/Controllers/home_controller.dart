@@ -36,6 +36,7 @@ class HomeController extends GetxController {
   final String upcomingSectionScreen = 'upcoming';
   final String otobuySectionScreen = 'otobuy';
   final String marketplaceSectionScreen = 'marketplace';
+  final String defaultSectionScreen = 'default';
 
   // Search functionality
   final RxString searchText = ''.obs;

@@ -108,14 +108,16 @@ void autoBidButtonForOtobuySection(
                             ),
                           ),
                           SizedBox(height: 4),
-                          Text(
-                            // "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.oneClickPriceAmount.value)}",
-                            'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(getxController.oneClickPriceAmount.value))}/-',
+                          Obx(
+                            () => Text(
+                              // "Rs. ${NumberFormat.decimalPattern('en_IN').format(getxController.oneClickPriceAmount.value)}",
+                              'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(getxController.oneClickPriceAmount.value))}/-',
 
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: AppColors.black,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                color: AppColors.black,
+                              ),
                             ),
                           ),
                         ],

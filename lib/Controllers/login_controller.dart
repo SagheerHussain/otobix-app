@@ -10,6 +10,7 @@ import 'package:otobix/Views/Register/waiting_for_approval_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/bottom_navigation_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class LoginController extends GetxController {
   @override
@@ -86,6 +87,13 @@ class LoginController extends GetxController {
               userRole: userType,
             ),
           );
+          // fire-and-forget (do NOT await)
+          Future.microtask(
+            () => addActivityLogSafe(
+              userId: userId,
+              eventDetails: 'User status was pending',
+            ),
+          );
         } else if (approvalStatus == AppConstants.roles.userStatusApproved) {
           // if (userType == AppConstants.roles.customer) {
           //   Get.offAll(() => CustomerHomepage());
@@ -94,6 +102,13 @@ class LoginController extends GetxController {
           // } else
           if (userType == AppConstants.roles.dealer) {
             Get.offAll(() => BottomNavigationPage());
+            // fire-and-forget (do NOT await)
+            Future.microtask(
+              () => addActivityLogSafe(
+                userId: userId,
+                eventDetails: 'Logged in successfully',
+              ),
+            );
           } else {
             ToastWidget.show(
               context: Get.context!,
@@ -103,6 +118,13 @@ class LoginController extends GetxController {
           }
         } else if (approvalStatus == AppConstants.roles.userStatusRejected) {
           Get.to(() => RejectedScreen(userId: user['id']));
+          // fire-and-forget (do NOT await)
+          Future.microtask(
+            () => addActivityLogSafe(
+              userId: userId,
+              eventDetails: 'User status was rejected',
+            ),
+          );
         } else {
           ToastWidget.show(
             context: Get.context!,
@@ -175,6 +197,54 @@ class LoginController extends GetxController {
       debugPrint("Error: $error");
     }
     return fallback;
+  }
+
+  // Get app version
+  Future<String> _getAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      // info.version => "1.0.7"
+      // info.buildNumber => "12"
+      return '${info.version}(${info.buildNumber})';
+    } catch (e) {
+      debugPrint('Failed to get app version: $e');
+      return '';
+    }
+  }
+
+  // Add activity log
+  Future<void> addActivityLogSafe({
+    required String userId,
+    required String eventDetails,
+  }) async {
+    try {
+      if (userId.isEmpty) return;
+
+      final appVersion = await _getAppVersion();
+
+      final requestBody = {
+        'userId': userId,
+        'event': AppConstants.activityLogEvents.login,
+        'eventDetails': eventDetails,
+        'appVersion': appVersion,
+      };
+
+      final response = await ApiService.post(
+        endpoint: AppUrls.addUserActivityLog,
+        body: requestBody,
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("Activity log added");
+      } else {
+        debugPrint(
+          "Activity log failed: ${response.statusCode} ${response.body}",
+        );
+      }
+    } catch (e) {
+      // ✅ swallow errors so it never affects login
+      debugPrint("Activity log error: $e");
+    }
   }
 
   // Clear fields

@@ -561,17 +561,29 @@ class OtoBuyPage extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Text(
-                  // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.oneClickPrice)}/-',
-                  'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(car.oneClickPrice))}/-',
-
-                  key: ValueKey(car.oneClickPrice),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.green,
-                    fontWeight: FontWeight.w600,
+                Obx(
+                  () => Text(
+                    'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(car.oneClickPrice.value))}/-',
+                    key: ValueKey(car.oneClickPrice),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.green,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
+
+                // Text(
+                //   // 'Rs. ${NumberFormat.decimalPattern('en_IN').format(car.oneClickPrice)}/-',
+                //   'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(car.oneClickPrice))}/-',
+
+                //   key: ValueKey(car.oneClickPrice),
+                //   style: const TextStyle(
+                //     fontSize: 14,
+                //     color: AppColors.green,
+                //     fontWeight: FontWeight.w600,
+                //   ),
+                // ),
               ],
             ),
             // Text(

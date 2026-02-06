@@ -97,6 +97,7 @@ class CarDetailsController extends GetxController {
 
     listenUpdatedBidAndChangeHighestBidLocally();
     listenOtobuyOfferAndChangeHighestBidLocally();
+    _listenToCustomerUpdatedOneClickPriceRealtime();
     // await fetchCarDetails(carId: '68821747968635d593293346');
     // debugPrint(carDetails?.toJson().toString() ?? 'null');
     // Initialize keys for each tab
@@ -846,6 +847,23 @@ class CarDetailsController extends GetxController {
     } catch (_) {
       return false;
     }
+  }
+
+  // Listen to Customer updated One Click Price realtime
+  void _listenToCustomerUpdatedOneClickPriceRealtime() {
+    SocketService.instance.on(SocketEvents.customerOneClickPriceUpdated, (
+      data,
+    ) {
+      final String incomingCarId = '${data['carId']}';
+      if (incomingCarId != carId) return; // ✅ SUPER IMPORTANT
+
+      final double newPrice =
+          (data['newCustomerOneClickPrice'] as num).toDouble();
+
+      oneClickPriceAmount.value = newPrice;
+
+      debugPrint('📢 One click price updated for $incomingCarId: $newPrice');
+    });
   }
 
   @override

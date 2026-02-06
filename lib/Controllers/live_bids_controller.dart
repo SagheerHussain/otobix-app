@@ -54,6 +54,7 @@ class LiveBidsController extends GetxController {
     listenUpdatedBidAndChangeHighestBidLocally();
     // listenToAuctionWonEvent();
     _listenToExtendedTimerRealtime();
+    _listenToCustomerExpectedPriceRealtime();
   }
 
   final RxList<CarsListModel> filteredLiveBidsCarsList = <CarsListModel>[].obs;
@@ -720,6 +721,37 @@ class LiveBidsController extends GetxController {
     } catch (_) {
       return false;
     }
+  }
+
+  // Listen to Customer Expected Price realtime
+  void _listenToCustomerExpectedPriceRealtime() {
+    SocketService.instance.on(SocketEvents.customerExpectedPriceUpdated, (
+      data,
+    ) {
+      final String carId = data['carId'].toString();
+      final double newCustomerExpectedPrice =
+          (data['newCustomerExpectedPrice'] as num).toDouble();
+      final double variableMargin =
+          (data['newVariableMargin'] as num).toDouble();
+
+      // find the car in the list by its id
+      final int index = filteredLiveBidsCarsList.indexWhere(
+        (car) => car.id == carId,
+      );
+
+      if (index != -1) {
+        // ✅ update the RxDouble correctly
+        filteredLiveBidsCarsList[index].customerExpectedPrice.value =
+            newCustomerExpectedPrice;
+        filteredLiveBidsCarsList[index].variableMargin.value = variableMargin;
+
+        debugPrint(
+          '📢 New expected price / variable margin received for car $carId: $newCustomerExpectedPrice',
+        );
+      } else {
+        debugPrint('⚠️ carId $carId not found in filteredUpcomingCarsList');
+      }
+    });
   }
 
   // Future<bool> _checkHasUserBidFromBackend1({

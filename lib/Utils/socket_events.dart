@@ -7,10 +7,16 @@ class SocketEvents {
 
   // Custom Events (match your backend)
   static const String bidUpdated = 'bid-updated';
+  static const String otobuyOfferUpdated = 'otobuy-offer-updated';
+  static const String customerExpectedPriceUpdated =
+      'customer-expected-price-updated';
+  static const String customerOneClickPriceUpdated =
+      'customer-one-click-price-updated';
   static const String auctionEnded = 'auction-ended';
   static const String auctionExtended = 'auction-extended';
   static const String wishlistUpdated = 'wishlist-updated';
   static const String myBidsUpdated = 'my-bids-updated';
+  static const String purchasedCarsUpdated = 'purchased-cars-updated';
   static const String upcomingBidsSectionUpdated =
       'upcoming-bids-section-updated';
   static const String liveBidsSectionUpdated = 'live-bids-section-updated';

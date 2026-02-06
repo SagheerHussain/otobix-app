@@ -80,4 +80,13 @@ class BidColorChangeHelper {
       losingColor: losingColor,
     );
   }
+
+  /// Deal price should be visible ONLY to dealers who have bid on that car
+  /// and only if customerExpectedPrice is available (> 0).
+  static bool shouldShowDealPrice({
+    required bool hasUserBidOnCar,
+    required double customerExpectedPrice,
+  }) {
+    return hasUserBidOnCar && customerExpectedPrice > 0;
+  }
 }

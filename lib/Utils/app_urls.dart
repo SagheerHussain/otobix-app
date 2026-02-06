@@ -129,6 +129,18 @@ class AppUrls {
     required String carId,
   }) => "${baseUrl}user/get-user-bids-for-car?userId=$userId&carId=$carId";
 
+  static String getUserPurchasedCarsCount({required String userId}) =>
+      "${baseUrl}user/get-user-purchased-cars-count?userId=$userId";
+
+  static String getUserPurchasedCarsList({required String userId}) =>
+      "${baseUrl}user/get-user-purchased-cars-list?userId=$userId";
+
+  static String get addUserActivityLog =>
+      "${baseUrl}user/add-user-activity-log";
+
+  static String get saveAppVersionOnAppLaunch =>
+      "${baseUrl}user/save-app-version-on-app-launch";
+
   static String get uploadTermsAndConditions => "${baseUrl}terms/upload";
 
   static String get getLatestTermsAndConditions => "${baseUrl}terms/latest";
@@ -157,6 +169,10 @@ class AppUrls {
   // GET one entity (with documents) by name
   static String getEntityDocumentsByName({required String entityName}) =>
       "${baseUrl}entity-documents/get-entity-documents-by-name/${Uri.encodeComponent(entityName)}";
+
+  // GET app update info
+  static String getAppUpdateInfo({required String appKey}) =>
+      "${baseUrl}admin/get-app-update-info?appKey=$appKey";
 
   // Socket URL Extraction
   static String _extractSocketBaseUrl(String url) {

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:otobix/Models/wishlist_cars_list_model.dart';
+import 'package:otobix/Models/cars_list_model.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Network/socket_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
@@ -11,7 +11,7 @@ import 'package:otobix/Widgets/toast_widget.dart';
 class WishlistController extends GetxController {
   // UI state
   final RxBool isLoading = false.obs;
-  final RxList<WishlistCarsListModel> carsList = <WishlistCarsListModel>[].obs;
+  final RxList<CarsListModel> carsList = <CarsListModel>[].obs;
 
   // 🔴 Single source of truth for hearts in this page
   final RxSet<String> wishlistCarsIds = <String>{}.obs;
@@ -71,10 +71,17 @@ class WishlistController extends GetxController {
           final List list = (json['myWishlistCars'] ?? []) as List;
           final fetched =
               list
-                  .map(
-                    (car) => WishlistCarsListModel.fromJson(
-                      documentId: '${car['id']}',
-                      data: car,
+                  // .map(
+                  //   (car) => WishlistCarsListModel.fromJson(
+                  //     documentId: '${car['id']}',
+                  //     data: car,
+                  //   ),
+                  // )
+                  // .toList();
+                  .map<CarsListModel>(
+                    (e) => CarsListModel.fromJson(
+                      id: e['id'] as String,
+                      data: Map<String, dynamic>.from(e as Map),
                     ),
                   )
                   .toList();
@@ -172,6 +179,5 @@ class WishlistController extends GetxController {
   }
 
   /// If your UI calls this version:
-  Future<void> toggleFavorite(WishlistCarsListModel car) =>
-      toggleFavoriteById(car.id!);
+  Future<void> toggleFavorite(CarsListModel car) => toggleFavoriteById(car.id);
 }

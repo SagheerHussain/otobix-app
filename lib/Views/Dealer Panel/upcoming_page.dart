@@ -13,6 +13,7 @@ import 'package:otobix/Widgets/car_deck_view_card_widget.dart';
 import 'package:otobix/Widgets/empty_data_widget.dart';
 import 'package:otobix/Widgets/shimmer_widget.dart';
 import 'package:otobix/helpers/bid_color_change_helper.dart';
+import 'package:otobix/helpers/car_margin_helpers.dart';
 import 'package:otobix/helpers/dealer_home_search_sort_filter_helper.dart';
 
 class UpcomingPage extends StatelessWidget {
@@ -672,6 +673,62 @@ class UpcomingPage extends StatelessWidget {
             ),
           ],
         ),
+
+        Obx(() {
+          final hasUserBidOnCar = upcomingController.carsUserHasBidOn.contains(
+            car.id,
+          );
+
+          final canShowDealPrice = BidColorChangeHelper.shouldShowDealPrice(
+            hasUserBidOnCar: hasUserBidOnCar,
+            customerExpectedPrice: car.customerExpectedPrice.value,
+          );
+
+          if (!canShowDealPrice) return const SizedBox.shrink();
+
+          final double expectedPriceAmountAfterMarginAdjustment =
+              CarMarginHelpers.netAfterMarginsFlexible(
+                originalPrice: car.customerExpectedPrice.value,
+                priceDiscovery: car.priceDiscovery,
+                fixedMargin: car.fixedMargin.value,
+                variableMargin: car.variableMargin.value,
+              );
+
+          final Color dealPriceColor =
+              car.highestBid.value >= expectedPriceAmountAfterMarginAdjustment
+                  ? AppColors.green
+                  : AppColors.red;
+
+          return Column(
+            children: [
+              Divider(),
+              Row(
+                children: [
+                  Text(
+                    'Deal Price: ',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Obx(
+                    () => Text(
+                      'Rs. ${NumberFormat.decimalPattern('en_IN').format(GlobalFunctions.roundToNearestThousand<int>(expectedPriceAmountAfterMarginAdjustment))}/-',
+
+                      key: ValueKey(car.highestBid.value),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: dealPriceColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        }),
       ],
     );
   }

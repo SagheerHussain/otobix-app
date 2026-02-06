@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:otobix/Controllers/home_controller.dart';
 import 'package:otobix/Controllers/my_bids_controller.dart';
 import 'package:otobix/Controllers/my_cars_controller.dart';
+import 'package:otobix/Controllers/purchased_cars_controller.dart';
 import 'package:otobix/Controllers/wishlist_controller.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_constants.dart';
+import 'package:otobix/Views/Dealer%20Panel/purchased_cars_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/my_bids_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/user_notifications_page.dart';
 import 'package:otobix/Views/Dealer%20Panel/wishlist_page.dart';
@@ -23,14 +25,20 @@ class MyCarsPage extends StatelessWidget {
     permanent: true,
   );
 
+  // PurchasedCarsController for getting realtime purchased cars length
+  final PurchasedCarsController purchasedCars = Get.put(
+    PurchasedCarsController(),
+    permanent: true,
+  );
+
   // MyBidsController for getting realtime my bids length
   final MyBidsController myBids = Get.put(MyBidsController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
           children: [
             SizedBox(height: 20),
             _buildSearchBar(context),
@@ -40,27 +48,20 @@ class MyCarsPage extends StatelessWidget {
               child: Obx(() {
                 //  Lengths of each tab
                 final myBidsCarsLength = myBids.myBidCarsIds.length;
-                // final ocbNegoCarsLength = 2;
+                final purchasedCarsLength =
+                    purchasedCars.purchasedCarsIds.length;
                 final wishlistCarsLength = wishlist.wishlistCarsIds.length;
 
                 return TabBarWidget(
                   controllerTag:
                       AppConstants.tabBarWidgetControllerTags.myCarsTabs,
-                  titles: [
-                    'My Bids',
-                    //  'Ocb Nego',
-                    'Wishlist',
-                  ],
+                  titles: ['My Bids', 'Purchased', 'Wishlist'],
                   counts: [
                     myBidsCarsLength,
-                    // ocbNegoCarsLength,
+                    purchasedCarsLength,
                     wishlistCarsLength,
                   ],
-                  screens: [
-                    MyBidsPage(),
-                    //  OcbNegoPage(),
-                    WishlistPage(),
-                  ],
+                  screens: [MyBidsPage(), PurchasedCarsPage(), WishlistPage()],
                   titleSize: 10,
                   countSize: 8,
                   spaceFromSides: 10,
