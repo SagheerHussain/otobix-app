@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:otobix/Utils/app_colors.dart';
 import 'package:otobix/Utils/app_images.dart';
+import 'package:otobix/Views/Dealer%20Panel/service_history_page.dart';
 
 class AddOnsPage extends StatelessWidget {
   const AddOnsPage({super.key});
@@ -39,29 +42,29 @@ class AddOnsPage extends StatelessWidget {
 
                 /// Add-On Cards
                 AddOnCard(
-                  icon: Icons.verified,
-                  color: Colors.green,
-                  title: "Premium Inspection",
+                  icon: Icons.receipt_long,
+                  color: AppColors.blue,
+                  title: "Service History",
                   description:
-                      "Get a detailed 200-point inspection report for peace of mind.",
-                  price: "999",
+                      "View your car’s previous service and maintenance records in one place.",
+                  onTap: () => Get.to(() => ServiceHistoryPage()),
                 ),
-                AddOnCard(
-                  icon: Icons.local_shipping,
-                  color: Colors.blue,
-                  title: "Doorstep Delivery",
-                  description:
-                      "We’ll deliver your car safely to your doorstep anywhere in the country.",
-                  price: "4,999",
-                ),
-                AddOnCard(
-                  icon: Icons.security,
-                  color: Colors.red,
-                  title: "Extended Warranty",
-                  description:
-                      "Protect your car with 1 year extended warranty on engine & gearbox.",
-                  price: "2,999",
-                ),
+                // AddOnCard(
+                //   icon: Icons.verified,
+                //   color: Colors.green,
+                //   title: "Premium Inspection",
+                //   description:
+                //       "Get a detailed 200-point inspection report for peace of mind.",
+                //   price: "999",
+                // ),
+                // AddOnCard(
+                //   icon: Icons.security,
+                //   color: Colors.red,
+                //   title: "Extended Warranty",
+                //   description:
+                //       "Protect your car with 1 year extended warranty on engine & gearbox.",
+                //   price: "2,999",
+                // ),
               ],
             ),
           ),
@@ -76,7 +79,8 @@ class AddOnCard extends StatelessWidget {
   final Color color;
   final String title;
   final String description;
-  final String price;
+  final VoidCallback onTap;
+  // final String price;
 
   const AddOnCard({
     super.key,
@@ -84,7 +88,8 @@ class AddOnCard extends StatelessWidget {
     required this.color,
     required this.title,
     required this.description,
-    required this.price,
+    required this.onTap,
+    // required this.price,
   });
 
   @override
@@ -92,12 +97,10 @@ class AddOnCard extends StatelessWidget {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 7),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          // Handle add-on selection here if needed
-        },
+        borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -126,7 +129,7 @@ class AddOnCard extends StatelessWidget {
                         color: Colors.black87,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 3),
                     Text(
                       description,
                       style: TextStyle(fontSize: 12, color: Colors.grey[700]),
@@ -134,15 +137,15 @@ class AddOnCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 3),
-              Text(
-                'Rs. $price/-',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
+              // const SizedBox(width: 3),
+              // Text(
+              //   'Rs. $price/-',
+              //   style: TextStyle(
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.bold,
+              //     color: color,
+              //   ),
+              // ),
             ],
           ),
         ),

@@ -75,7 +75,8 @@ class LoginPage extends StatelessWidget {
                       children: [
                         Text(
                           'Don\'t have an account?',
-                          style: TextStyle(color: AppColors.grey),
+                          style: TextStyle(color: AppColors.black,
+                            fontWeight: FontWeight.w600),
                         ),
                         SizedBox(width: 5),
                         InkWell(
@@ -92,7 +93,7 @@ class LoginPage extends StatelessWidget {
                               'Register',
                               style: TextStyle(
                                 color: AppColors.green,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),

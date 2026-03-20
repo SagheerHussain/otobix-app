@@ -81,12 +81,12 @@ Future<Widget> init() async {
   if (userId != null && userId.isNotEmpty) {
     await NotificationService.instance.login(userId);
     // Save App Version On App Launch -> fire-and-forget (do NOT await)
-          Future.microtask(
-            () => addActivityLogSafe(
-              userId: userId,
-              eventDetails: 'User launched the app',
-            ),
-          );
+    Future.microtask(
+      () => addActivityLogSafe(
+        userId: userId,
+        eventDetails: 'User launched the app',
+      ),
+    );
   }
 
   // Initialize socket connection globally
@@ -100,20 +100,14 @@ Future<Widget> init() async {
     SharedPrefsHelper.userTypeKey,
   );
 
-   
-
   Widget start;
 
   if (token != null && token.isNotEmpty) {
-    // if (userType == AppConstants.roles.admin) {
-    //   start = AdminDashboard();
-    // } else {
     if (userType == AppConstants.roles.dealer) {
       start = BottomNavigationPage();
     } else {
       start = LoginPage();
     }
-    // }
   } else {
     start = LoginPage();
   }
@@ -121,52 +115,51 @@ Future<Widget> init() async {
   return start;
 }
 
-
-
-  // Get app version
-  Future<String> _getAppVersion() async {
-    try {
-      final info = await PackageInfo.fromPlatform();
-      // info.version => "1.0.7"
-      // info.buildNumber => "12"
-      return '${info.version}(${info.buildNumber})';
-    } catch (e) {
-      debugPrint('Failed to get app version: $e');
-      return '';
-    }
+// Get app version
+Future<String> _getAppVersion() async {
+  try {
+    final info = await PackageInfo.fromPlatform();
+    // info.version => "1.0.7"
+    // info.buildNumber => "12"
+    return '${info.version}(${info.buildNumber})';
+  } catch (e) {
+    debugPrint('Failed to get app version: $e');
+    return '';
   }
+}
 
-  // Add activity log
-  Future<void> addActivityLogSafe({
-    required String userId,
-    required String eventDetails,
-  }) async {
-    try {
-      if (userId.isEmpty) return;
+// Add activity log
+Future<void> addActivityLogSafe({
+  required String userId,
+  required String eventDetails,
+}) async {
+  try {
+    if (userId.isEmpty) return;
 
-      final appVersion = await _getAppVersion();
+    final appVersion = await _getAppVersion();
 
-      final requestBody = {
-        'userId': userId,
-        'event': AppConstants.activityLogEvents.appLaunched,
-        'eventDetails': eventDetails,
-        'appVersion': appVersion,
-      };
+    final requestBody = {
+      'userId': userId,
+      'event': AppConstants.activityLogEvents.appLaunched,
+      'eventDetails': eventDetails,
+      'appName': AppConstants.appDisplayName,
+      'appVersion': appVersion,
+    };
 
-      final response = await ApiService.post(
-        endpoint: AppUrls.saveAppVersionOnAppLaunch,
-        body: requestBody,
+    final response = await ApiService.post(
+      endpoint: AppUrls.saveAppVersionOnAppLaunch,
+      body: requestBody,
+    );
+
+    if (response.statusCode == 200) {
+      debugPrint("Activity log added");
+    } else {
+      debugPrint(
+        "Activity log failed: ${response.statusCode} ${response.body}",
       );
-
-      if (response.statusCode == 200) {
-        debugPrint("Activity log added");
-      } else {
-        debugPrint(
-          "Activity log failed: ${response.statusCode} ${response.body}",
-        );
-      }
-    } catch (e) {
-      // ✅ swallow errors so it never affects login
-      debugPrint("Activity log error: $e");
     }
+  } catch (e) {
+    // ✅ swallow errors so it never affects login
+    debugPrint("Activity log error: $e");
   }
+}

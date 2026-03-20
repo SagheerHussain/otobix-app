@@ -64,4 +64,8 @@ class AppImages {
       'lib/assets/images/forgetPassword2.png';
   static const String forgetPasswordPageThreeImage =
       'lib/assets/images/forgetPassword3.png';
+
+  // Service History Banner
+  static const String serviceHistoryBanner =
+      'lib/assets/images/serviceHistoryBanner.jpg';
 }

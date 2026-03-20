@@ -114,7 +114,7 @@ class CarModel {
   final List<String>
   lhsQuarterPanelImages; // divided into lhsQuarterPanelWithRearDoorOpenImages and lhsQuarterPanelImages
   final List<String> rearMain; // renamed to rearMainImages
-  final String rearWithBootDoorOpen; // renamed to rearWithBootDoorOpenImages
+  final String rearWithBootDoorOpen; // renamed to bootDoorOpenImages
   final List<String>
   rearBumperImages; // divided into rearBumperLhs45DegreeImages, rearBumperRhs45DegreeImages and rearBumperImages
   final List<String> lhsTailLampImages;
@@ -309,7 +309,7 @@ class CarModel {
   final List<String> lhsRearWheelImages;
   final List<String> lhsQuarterPanelWithRearDoorOpenImages;
   final List<String> rearMainImages;
-  final List<String> rearWithBootDoorOpenImages;
+  final List<String> bootDoorOpenImages;
   final List<String> rearBumperLhs45DegreeImages;
   final List<String> rearBumperRhs45DegreeImages;
   final List<String> rhsFullViewImages;
@@ -716,7 +716,7 @@ class CarModel {
     required this.lhsRearWheelImages,
     required this.lhsQuarterPanelWithRearDoorOpenImages,
     required this.rearMainImages,
-    required this.rearWithBootDoorOpenImages,
+    required this.bootDoorOpenImages,
     required this.rearBumperLhs45DegreeImages,
     required this.rearBumperRhs45DegreeImages,
     required this.rhsFullViewImages,
@@ -1190,9 +1190,7 @@ class CarModel {
         json["lhsQuarterPanelWithRearDoorOpenImages"],
       ),
       rearMainImages: parseStringList(json["rearMainImages"]),
-      rearWithBootDoorOpenImages: parseStringList(
-        json["rearWithBootDoorOpenImages"],
-      ),
+      bootDoorOpenImages: parseStringList(json["bootDoorOpenImages"]),
       rearBumperLhs45DegreeImages: parseStringList(
         json["rearBumperLhs45DegreeImages"],
       ),
@@ -1706,8 +1704,7 @@ class CarModel {
     "lhsQuarterPanelWithRearDoorOpenImages":
         lhsQuarterPanelWithRearDoorOpenImages.map((x) => x).toList(),
     "rearMainImages": rearMainImages.map((x) => x).toList(),
-    "rearWithBootDoorOpenImages":
-        rearWithBootDoorOpenImages.map((x) => x).toList(),
+    "bootDoorOpenImages": bootDoorOpenImages.map((x) => x).toList(),
     "rearBumperLhs45DegreeImages":
         rearBumperLhs45DegreeImages.map((x) => x).toList(),
     "rearBumperRhs45DegreeImages":

@@ -15,6 +15,7 @@ import 'package:otobix/Utils/app_constants.dart';
 import 'package:otobix/Views/Login/login_page.dart';
 import 'package:otobix/Widgets/toast_widget.dart';
 import 'package:otobix/helpers/shared_prefs_helper.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:otobix/Network/api_service.dart';
 import 'package:otobix/Utils/app_urls.dart';
@@ -310,6 +311,19 @@ class AccountController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  // Get app version
+  Future<String> getAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      // info.version => "1.0.7"
+      // info.buildNumber => "12"
+      return '${info.version} (${info.buildNumber})';
+    } catch (e) {
+      debugPrint('Failed to get app version: $e');
+      return '';
     }
   }
 }
