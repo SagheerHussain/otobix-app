@@ -47,6 +47,8 @@ class LoginController extends GetxController {
         final user = data['user'];
         final userType = user['userType'];
         final userId = user['id'];
+        final phoneNumber = user['phoneNumber'];
+        final email = user['email'];
         final approvalStatus = user['approvalStatus'];
         final entityType = user['entityType'] ?? "";
         // debugPrint("userType: $userType");
@@ -58,6 +60,10 @@ class LoginController extends GetxController {
 
         if (approvalStatus == AppConstants.roles.userStatusApproved) {
           await SharedPrefsHelper.saveString(SharedPrefsHelper.tokenKey, token);
+          await SharedPrefsHelper.saveString(
+            SharedPrefsHelper.userApprovalStatusKey,
+            approvalStatus,
+          );
         }
 
         // debugPrint("Token saved in local: $token");
@@ -68,6 +74,14 @@ class LoginController extends GetxController {
         await SharedPrefsHelper.saveString(
           SharedPrefsHelper.userTypeKey,
           userType,
+        );
+        await SharedPrefsHelper.saveString(
+          SharedPrefsHelper.userPhoneNumberKey,
+          phoneNumber,
+        );
+        await SharedPrefsHelper.saveString(
+          SharedPrefsHelper.userEmailKey,
+          email,
         );
         await SharedPrefsHelper.saveString(SharedPrefsHelper.userIdKey, userId);
         await SharedPrefsHelper.saveString(
@@ -92,6 +106,7 @@ class LoginController extends GetxController {
             () => addActivityLogSafe(
               userId: userId,
               eventDetails: 'User status was pending',
+              approvalStatus: approvalStatus,
             ),
           );
         } else if (approvalStatus == AppConstants.roles.userStatusApproved) {
@@ -107,6 +122,7 @@ class LoginController extends GetxController {
               () => addActivityLogSafe(
                 userId: userId,
                 eventDetails: 'Logged in successfully',
+                approvalStatus: approvalStatus,
               ),
             );
           } else {
@@ -123,6 +139,7 @@ class LoginController extends GetxController {
             () => addActivityLogSafe(
               userId: userId,
               eventDetails: 'User status was rejected',
+              approvalStatus: approvalStatus,
             ),
           );
         } else {
@@ -216,6 +233,7 @@ class LoginController extends GetxController {
   Future<void> addActivityLogSafe({
     required String userId,
     required String eventDetails,
+    required String approvalStatus,
   }) async {
     try {
       if (userId.isEmpty) return;
@@ -226,7 +244,9 @@ class LoginController extends GetxController {
         'userId': userId,
         'event': AppConstants.activityLogEvents.login,
         'eventDetails': eventDetails,
+        'appName': AppConstants.appDisplayName,
         'appVersion': appVersion,
+        'metadata': {'approvalStatus': approvalStatus},
       };
 
       final response = await ApiService.post(

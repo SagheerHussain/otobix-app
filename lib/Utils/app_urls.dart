@@ -166,6 +166,26 @@ class AppUrls {
   static String get getEntityNamesList =>
       "${baseUrl}entity-documents/get-entity-names-list";
 
+  static String get fetchSampleServiceHistoryPdf =>
+      "${baseUrl}service-history/fetch-sample-pdf";
+
+  static String fetchServiceHistory({
+    required String registrationNumber,
+    required String userId,
+  }) =>
+      "${baseUrl}service-history/fetch-details?registrationNumber=$registrationNumber&userId=$userId";
+
+  static String fetchServiceHistoryReportsList({required String userId}) =>
+      "${baseUrl}service-history/fetch-reports-list?userId=$userId";
+
+  static String get submitServiceHistoryRequest =>
+      "${baseUrl}service-history/submit-request";
+
+  static String get createRazorpayOrder => "${baseUrl}razorpay/create-order";
+
+  static String get verifyRazorpayPayment =>
+      "${baseUrl}razorpay/verify-payment";
+
   // GET one entity (with documents) by name
   static String getEntityDocumentsByName({required String entityName}) =>
       "${baseUrl}entity-documents/get-entity-documents-by-name/${Uri.encodeComponent(entityName)}";

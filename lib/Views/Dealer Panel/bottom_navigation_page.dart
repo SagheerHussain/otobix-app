@@ -57,12 +57,12 @@ class BottomNavigationPage extends StatelessWidget {
             //   selectedColor: AppColors.red,
             // ),
 
-            // /// Add Ons
-            // SalomonBottomBarItem(
-            //   icon: Icon(CupertinoIcons.add),
-            //   title: Text("Add Ons"),
-            //   selectedColor: AppColors.yellow,
-            // ),
+            /// Add Ons
+            SalomonBottomBarItem(
+              icon: Icon(CupertinoIcons.add),
+              title: Text("Add Ons"),
+              selectedColor: AppColors.red,
+            ),
 
             /// Account
             SalomonBottomBarItem(

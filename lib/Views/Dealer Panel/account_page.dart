@@ -201,6 +201,32 @@ class _AccountPageState extends State<AccountPage> {
                       accountController.logout();
                     },
                   ),
+                  const SizedBox(height: 15),
+                  FutureBuilder(
+                    future: accountController.getAppVersion(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.grey.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Text(
+                            'App Version: ${snapshot.data}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
                 ],
               ),
             ),
